@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>台股追蹤清單 — 股價推算總覽</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #0f1117; color: #e2e8f0; padding: 20px; }
+  h1 { font-size: 20px; font-weight: 700; color: #f8fafc; margin-bottom: 4px; }
+  .meta { font-size: 12px; color: #64748b; margin-bottom: 24px; }
+  .update-btn { background: #3b82f6; color: #fff; border: none; padding: 6px 14px; border-radius: 8px; font-size: 12px; cursor: pointer; margin-left: 12px; }
+  .update-btn:hover { background: #2563eb; }
+  .section { margin-bottom: 28px; }
+  .section-title { font-size: 13px; font-weight: 600; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px; padding-left: 4px; border-left: 3px solid #3b82f6; padding-left: 8px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  thead tr { background: #1e2535; }
+  th { padding: 10px 12px; text-align: right; color: #64748b; font-size: 11px; font-weight: 600; text-transform: uppercase; white-space: nowrap; }
+  th:first-child, th:nth-child(2) { text-align: left; }
+  td { padding: 10px 12px; border-bottom: 1px solid #1a2030; text-align: right; white-space: nowrap; }
+  td:first-child, td:nth-child(2) { text-align: left; }
+  tr:hover td { background: #1a2030; }
+  .code { color: #3b82f6; font-weight: 700; font-size: 13px; }
+  .name { color: #f8fafc; font-weight: 600; }
+  .name a { color: #f8fafc; text-decoration: none; }
+  .name a:hover { color: #3b82f6; }
+  .green { color: #22c55e; font-weight: 700; }
+  .yellow { color: #eab308; font-weight: 700; }
+  .red { color: #ef4444; font-weight: 700; }
+  .gray { color: #64748b; }
+  .price-cell { font-size: 14px; font-weight: 700; }
+  .loading { color: #64748b; font-size: 12px; }
+  .badge { display: inline-block; padding: 2px 7px; border-radius: 8px; font-size: 10px; font-weight: 700; }
+  .badge-up { background: #14532d; color: #86efac; }
+  .badge-fair { background: #713f12; color: #fde68a; }
+  .badge-down { background: #450a0a; color: #fca5a5; }
+  .divider { border: none; border-top: 1px solid #1e2535; margin: 0; }
+  .footer { font-size: 10px; color: #334155; margin-top: 24px; text-align: center; }
+</style>
+</head>
+<body>
+
+<h1>📊 台股追蹤清單 — 股價推算總覽</h1>
+<p class="meta">
+  最後更新：<span id="lastUpdate">載入中...</span>
+  <button class="update-btn" onclick="fetchAllPrices()">🔄 更新即時股價</button>
+</p>
+
+<!-- ETF -->
+<div class="section">
+  <div class="section-title">ETF</div>
+  <table>
+    <thead>
+      <tr>
+        <th>代號</th>
+        <th>名稱</th>
+        <th>TTM EPS</th>
+        <th>低本益比</th>
+        <th>均本益比</th>
+        <th>高本益比</th>
+        <th>便宜價</th>
+        <th>合理價</th>
+        <th>昂貴價</th>
+        <th>目前股價</th>
+        <th>vs合理價%</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="code">0050</td>
+        <td class="name"><a href="0050_analysis.html" target="_blank">元大台灣50</a></td>
+        <td>5.18</td>
+        <td>13.2x</td>
+        <td>15.8x</td>
+        <td>19.5x</td>
+        <td>68</td>
+        <td>82</td>
+        <td>101</td>
+        <td class="price-cell loading" id="price-0050">載入...</td>
+        <td id="vs-0050" class="loading">—</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- AI/半導體 -->
+<div class="section">
+  <div class="section-title">AI／半導體</div>
+  <table>
+    <thead>
+      <tr>
+        <th>代號</th>
+        <th>名稱</th>
+        <th>TTM EPS</th>
+        <th>低本益比</th>
+        <th>均本益比</th>
+        <th>高本益比</th>
+        <th>便宜價</th>
+        <th>合理價</th>
+        <th>昂貴價</th>
+        <th>目前股價</th>
+        <th>vs合理價%</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="code">2330</td>
+        <td class="name"><a href="2330_analysis.html" target="_blank">台積電</a></td>
+        <td>66.26</td>
+        <td>18.2x</td>
+        <td>24.5x</td>
+        <td>31.8x</td>
+        <td>1,206</td>
+        <td>1,623</td>
+        <td>2,107</td>
+        <td class="price-cell loading" id="price-2330">載入...</td>
+        <td id="vs-2330" class="loading">—</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- AI/網通 -->
+<div class="section">
+  <div class="section-title">AI／網通</div>
+  <table>
+    <thead>
+      <tr>
+        <th>代號</th>
+        <th>名稱</th>
+        <th>TTM EPS</th>
+        <th>低本益比</th>
+        <th>均本益比</th>
+        <th>高本益比</th>
+        <th>便宜價</th>
+        <th>合理價</th>
+        <th>昂貴價</th>
+        <th>目前股價</th>
+        <th>vs合理價%</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="code">2345</td>
+        <td class="name"><a href="2345_per_analysis_2026_2.html" target="_blank">智邦</a></td>
+        <td>79.05</td>
+        <td>15x</td>
+        <td>22x</td>
+        <td>30x</td>
+        <td>1,186</td>
+        <td>1,739</td>
+        <td>2,372</td>
+        <td class="price-cell loading" id="price-2345">載入...</td>
+        <td id="vs-2345" class="loading">—</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<p class="footer">⚠️ 本頁僅供參考，不構成投資建議。股市有風險，請自行判斷。數據來源：Yahoo Finance、公開財報。</p>
+
+<script>
+const stocks = [
+  { id: '0050', fairValue: 82, expensiveValue: 101 },
+  { id: '2330', fairValue: 1623, expensiveValue: 2107 },
+  { id: '2345', fairValue: 1739, expensiveValue: 2372 },
+];
+
+async function fetchPrice(stockId) {
+  try {
+    const res = await fetch(`https://query1.finance.yahoo.com/v8/finance/chart/${stockId}.TW?interval=1d&range=1d`);
+    const data = await res.json();
+    const price = data?.chart?.result?.[0]?.meta?.regularMarketPrice;
+    return price ? Math.round(price * 10) / 10 : null;
+  } catch {
+    return null;
+  }
+}
+
+function calcVs(price, fairValue) {
+  const pct = ((price - fairValue) / fairValue * 100).toFixed(1);
+  const sign = pct > 0 ? '+' : '';
+  return { pct: `${sign}${pct}%`, cls: price < fairValue ? 'green' : price > fairValue * 1.3 ? 'red' : 'yellow',
+    badge: price < fairValue ? 'badge-up' : price > fairValue * 1.3 ? 'badge-down' : 'badge-fair',
+    label: price < fairValue ? '低估' : price > fairValue * 1.3 ? '偏貴' : '合理' };
+}
+
+async function fetchAllPrices() {
+  document.getElementById('lastUpdate').textContent = '更新中...';
+  for (const s of stocks) {
+    const price = await fetchPrice(s.id);
+    const priceEl = document.getElementById(`price-${s.id}`);
+    const vsEl = document.getElementById(`vs-${s.id}`);
+    if (price) {
+      priceEl.textContent = price.toLocaleString();
+      priceEl.className = 'price-cell';
+      const v = calcVs(price, s.fairValue);
+      vsEl.innerHTML = `<span class="${v.cls}">${v.pct}</span> <span class="badge ${v.badge}">${v.label}</span>`;
+      vsEl.className = '';
+    } else {
+      priceEl.textContent = '無法取得';
+      priceEl.className = 'price-cell gray';
+      vsEl.textContent = '—';
+    }
+  }
+  const now = new Date();
+  document.getElementById('lastUpdate').textContent =
+    `${now.getFullYear()}/${String(now.getMonth()+1).padStart(2,'0')}/${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+}
+
+// 自動載入
+window.addEventListener('load', fetchAllPrices);
+</script>
+</body>
+</html>
