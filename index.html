@@ -83,6 +83,33 @@
   </table>
 </div>
 
+<!-- AI/伺服器 -->
+<div class="section">
+  <div class="section-title">AI／伺服器</div>
+  <table>
+    <thead>
+      <tr>
+        <th>代號</th><th>名稱</th><th>TTM EPS</th><th>低本益比</th><th>均本益比</th><th>高本益比</th><th>便宜價</th><th>合理價</th><th>昂貴價</th><th>目前股價</th><th>vs合理價%</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="code">2382</td>
+        <td class="name"><a href="2382_analysis.html" target="_blank">廣達</a></td>
+        <td>19.45</td>
+        <td>13x</td>
+        <td>18x</td>
+        <td>26x</td>
+        <td>253</td>
+        <td>350</td>
+        <td>506</td>
+        <td class="price-cell loading" id="price-2382">載入...</td>
+        <td id="vs-2382" class="loading">—</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
 <!-- AI/半導體 -->
 <div class="section">
   <div class="section-title">AI／半導體</div>
@@ -164,6 +191,7 @@ const stocks = [
   { id: '0050', fairValue: 50, expensiveValue: 67 },
   { id: '2330', fairValue: 1458, expensiveValue: 1855 },
   { id: '2345', fairValue: 1225, expensiveValue: 1507 },
+  { id: '2382', fairValue: 350, expensiveValue: 506 },
 ];
 
 async function fetchPrice(stockId) {

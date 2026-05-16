@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>廣達 2382 — 2026 股價推算分析</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #0f1117; color: #e2e8f0; padding: 16px; }
+  h1 { font-size: 18px; font-weight: 700; color: #f8fafc; margin-bottom: 4px; }
+  .subtitle { font-size: 12px; color: #94a3b8; margin-bottom: 16px; }
+  .tabs { display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; }
+  .tab { padding: 6px 14px; border-radius: 20px; font-size: 12px; cursor: pointer; border: 1px solid #334155; color: #94a3b8; background: transparent; transition: all 0.2s; }
+  .tab.active { background: #3b82f6; color: #fff; border-color: #3b82f6; }
+  .tab:hover:not(.active) { border-color: #64748b; color: #e2e8f0; }
+  .panel { display: none; }
+  .panel.active { display: block; }
+  canvas { width: 100% !important; border-radius: 10px; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+  .card { background: #1e2535; border: 1px solid #2d3748; border-radius: 10px; padding: 14px; }
+  .card h3 { font-size: 12px; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
+  .card .val { font-size: 22px; font-weight: 700; }
+  .card .note { font-size: 11px; color: #64748b; margin-top: 4px; }
+  .green { color: #22c55e; } .yellow { color: #eab308; } .red { color: #ef4444; } .blue { color: #3b82f6; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 12px; }
+  th { background: #1e2535; color: #64748b; padding: 8px 10px; text-align: left; font-weight: 600; font-size: 11px; text-transform: uppercase; }
+  td { padding: 8px 10px; border-bottom: 1px solid #1e2535; }
+  tr:hover td { background: #1a2030; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: 600; }
+  .badge-buy { background: #14532d; color: #86efac; }
+  .badge-watch { background: #713f12; color: #fde68a; }
+  .badge-avoid { background: #450a0a; color: #fca5a5; }
+  .scenario-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 12px; }
+  .scenario-card { border-radius: 10px; padding: 14px; text-align: center; }
+  .bear { background: linear-gradient(135deg, #1a0a0a, #2d1010); border: 1px solid #7f1d1d; }
+  .base { background: linear-gradient(135deg, #0a1a0a, #102d10); border: 1px solid #14532d; }
+  .bull { background: linear-gradient(135deg, #0a0f1a, #10182d); border: 1px solid #1d4ed8; }
+  .sc-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.7; margin-bottom: 6px; }
+  .sc-price { font-size: 22px; font-weight: 800; margin: 4px 0; }
+  .sc-detail { font-size: 10px; opacity: 0.65; line-height: 1.6; }
+  .section-title { font-size: 13px; font-weight: 600; color: #cbd5e1; margin: 16px 0 8px; }
+  .buy-signal { background: #0f2a1e; border: 1px solid #166534; border-radius: 10px; padding: 14px; margin-top: 12px; }
+  .buy-signal h3 { color: #86efac; font-size: 13px; margin-bottom: 8px; }
+  .buy-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid #1a3a2a; gap: 8px; }
+  .buy-row:last-child { border-bottom: none; }
+  .current-price-badge { background: #1e3a5f; border: 1px solid #3b82f6; border-radius: 8px; padding: 10px 14px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px; }
+  .back-btn { color: #64748b; font-size: 12px; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; padding: 5px 10px; border: 1px solid #334155; border-radius: 8px; margin-bottom: 12px; transition: all 0.2s; }
+  .back-btn:hover { color: #e2e8f0; border-color: #64748b; }
+</style>
+</head>
+<body>
+
+<a href="index.html" class="back-btn">← 返回總覽</a>
+
+<h1>🖥️ 廣達電腦 (2382) — 2026 股價推算分析</h1>
+<p class="subtitle">本益比河流圖 ✦ 三情境估值 ✦ 分批買點建議 ✦ 更新時間：2026年5月16日</p>
+
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('river', this)">📈 PER 河流圖</button>
+  <button class="tab" onclick="switchTab('scenario', this)">🎯 三情境買點</button>
+  <button class="tab" onclick="switchTab('eps', this)">📊 EPS 趨勢</button>
+  <button class="tab" onclick="switchTab('summary', this)">📋 完整摘要</button>
+</div>
+
+<!-- TAB 1: PER River -->
+<div id="tab-river" class="panel active">
+  <div class="current-price-badge">
+    <span style="color:#94a3b8;font-size:12px;">目前股價（2026/5/16）</span>
+    <span style="color:#3b82f6;font-size:20px;font-weight:800;">$ 306</span>
+    <span style="color:#22c55e;font-size:12px;">PER ≈ 15.7x（TTM EPS 19.45元）偏便宜區</span>
+  </div>
+  <canvas id="riverChart" height="340"></canvas>
+  <p style="font-size:11px;color:#475569;margin-top:8px;text-align:center;">* 2026Q2後為預估數值（年化EPS約24–28元），河流帶代表不同本益比倍數估值</p>
+</div>
+
+<!-- TAB 2: 三情境 -->
+<div id="tab-scenario" class="panel">
+  <div class="grid2">
+    <div class="card"><h3>2025 全年 EPS（實際）</h3><div class="val blue">19.45 元</div><div class="note">YoY +26% ｜ 2024年: 15.49元</div></div>
+    <div class="card"><h3>2026 法人 EPS 預估</h3><div class="val green">24–28 元</div><div class="note">大摩 28.25元 / 美系外資 24.66元</div></div>
+  </div>
+  <div class="section-title">2026 全年三情境 EPS 與股價推算</div>
+  <div class="scenario-grid">
+    <div class="scenario-card bear">
+      <div class="sc-label">🐻 悲觀</div>
+      <div class="sc-price red">195–280</div>
+      <div class="sc-detail">EPS 18–20元<br>PER 10–14x<br>AI需求趨緩<br>NB業務拖累</div>
+    </div>
+    <div class="scenario-card base">
+      <div class="sc-label">⚖️ 基本</div>
+      <div class="sc-price green">320–440</div>
+      <div class="sc-detail">EPS 24–26元<br>PER 13–18x<br>GB300持續放量<br>AI伺服器佔比擴大</div>
+    </div>
+    <div class="scenario-card bull">
+      <div class="sc-label">🚀 樂觀</div>
+      <div class="sc-price" style="color:#60a5fa;">450–580</div>
+      <div class="sc-detail">EPS 28–30元<br>PER 18–22x<br>Vera Rubin提前出貨<br>ASIC機架新訂單</div>
+    </div>
+  </div>
+  <div class="buy-signal">
+    <h3>💰 2026 分批建倉買點建議</h3>
+    <div class="buy-row">
+      <span style="color:#86efac;font-size:13px;font-weight:600;">第一批（40%）</span>
+      <span style="color:#fde68a;font-size:14px;font-weight:700;">240–290 元</span>
+      <span class="badge badge-buy">積極進場 PER 12–15x</span>
+    </div>
+    <div class="buy-row">
+      <span style="color:#86efac;font-size:13px;font-weight:600;">第二批（40%）</span>
+      <span style="color:#fde68a;font-size:14px;font-weight:700;">290–350 元</span>
+      <span class="badge badge-buy">主力倉位 PER 15–18x</span>
+    </div>
+    <div class="buy-row">
+      <span style="color:#86efac;font-size:13px;font-weight:600;">第三批（20%）</span>
+      <span style="color:#fde68a;font-size:14px;font-weight:700;">350–420 元</span>
+      <span class="badge badge-watch">動能追加 PER 18–22x</span>
+    </div>
+    <div class="buy-row" style="border-top:1px solid #166534;margin-top:8px;padding-top:10px;">
+      <span style="color:#fca5a5;font-size:12px;">觀望/分批減倉</span>
+      <span style="color:#fca5a5;font-size:13px;font-weight:700;">500 元以上</span>
+      <span class="badge badge-avoid">PER > 26x</span>
+    </div>
+    <p style="font-size:11px;color:#22c55e;margin-top:10px;">💡 目前股價 306元 落在第二批主力倉位區間，是不錯的進場點！</p>
+  </div>
+</div>
+
+<!-- TAB 3: EPS -->
+<div id="tab-eps" class="panel">
+  <canvas id="epsChart" height="300"></canvas>
+  <div class="grid2">
+    <div class="card"><h3>5年EPS CAGR（2020–2025）</h3><div class="val green">+22%</div><div class="note">從 6.52元 → 19.45元</div></div>
+    <div class="card"><h3>殖利率（2025配息15.6元）</h3><div class="val blue">~5.1%</div><div class="note">以306元計算，高殖利率支撐股價</div></div>
+  </div>
+</div>
+
+<!-- TAB 4: Summary -->
+<div id="tab-summary" class="panel">
+  <div class="section-title">📌 關鍵基本面數據</div>
+  <table>
+    <thead><tr><th>指標</th><th>數值</th><th>評估</th></tr></thead>
+    <tbody>
+      <tr><td>目前股價（2026/5/16）</td><td style="color:#22c55e;font-weight:700;">306 元</td><td><span class="badge badge-buy">偏便宜區</span></td></tr>
+      <tr><td>2025 全年 EPS</td><td style="color:#3b82f6;font-weight:700;">19.45 元（YoY+26%）</td><td><span class="badge badge-buy">穩健成長</span></td></tr>
+      <tr><td>2026F EPS 法人預估</td><td>24–28 元</td><td><span class="badge badge-buy">持續上修</span></td></tr>
+      <tr><td>目前本益比</td><td style="color:#22c55e;font-weight:700;">~15.7x（偏便宜）</td><td><span class="badge badge-buy">吸引</span></td></tr>
+      <tr><td>大摩目標價</td><td style="color:#3b82f6;font-weight:700;">400 元</td><td><span class="badge badge-buy">買進</span></td></tr>
+      <tr><td>美系外資目標價</td><td style="color:#3b82f6;font-weight:700;">385 元</td><td><span class="badge badge-buy">加碼</span></td></tr>
+      <tr><td>現金殖利率</td><td style="color:#22c55e;font-weight:700;">~5.1%（配息15.6元）</td><td><span class="badge badge-buy">高殖利率</span></td></tr>
+      <tr><td>4月營收年增</td><td style="color:#22c55e;font-weight:700;">+120.71%</td><td><span class="badge badge-buy">爆發成長</span></td></tr>
+      <tr><td>AI伺服器佔比（2026F）</td><td>~68%</td><td><span class="badge badge-buy">結構優化</span></td></tr>
+      <tr><td>歷史PER區間</td><td>低13x / 均18x / 高26x</td><td><span class="badge badge-watch">參考</span></td></tr>
+    </tbody>
+  </table>
+  <div class="section-title" style="margin-top:20px;">⚡ 催化劑 vs 風險</div>
+  <div class="grid2">
+    <div class="card">
+      <h3>🚀 利多</h3>
+      <div style="font-size:12px;line-height:1.9;color:#86efac;">
+        ✓ GB300 已超越GB200成出貨主力<br>
+        ✓ Vera Rubin 下半年接棒放量<br>
+        ✓ ASIC 機架級新專案下半年出貨<br>
+        ✓ 4月營收年增120%創新高<br>
+        ✓ 高殖利率5%+提供支撐<br>
+        ✓ 目前PER僅15.7x歷史偏低
+      </div>
+    </div>
+    <div class="card">
+      <h3>⚠️ 風險</h3>
+      <div style="font-size:12px;line-height:1.9;color:#fca5a5;">
+        ✗ NB業務前景保守，成本上漲<br>
+        ✗ AI伺服器毛利率受GPU漲價壓縮<br>
+        ✗ 部分項目轉向寄售模式<br>
+        ✗ 客戶集中度高（少數CSP大廠）<br>
+        ✗ 美中關稅不確定性<br>
+        ✗ 競爭加劇（鴻海、緯創等）
+      </div>
+    </div>
+  </div>
+  <p style="font-size:10px;color:#475569;margin-top:14px;line-height:1.6;">⚠️ 本分析僅供參考，不構成投資建議。股市有風險，投資前請自行判斷。</p>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<script>
+function switchTab(id, btn) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  btn.classList.add('active');
+  if (id === 'eps' && !window.epsDrawn) drawEPS();
+}
+
+const quarters = ['23Q1','23Q2','23Q3','23Q4','24Q1','24Q2','24Q3','24Q4','25Q1','25Q2','25Q3','25Q4','26Q1','26Q2E','26Q3E','26Q4E'];
+const ttmEPS =   [9.44, 9.96, 10.29, 10.29, 11.74, 13.05, 14.04, 15.49, 17.42, 17.82, 17.86, 19.45, 19.45, 22, 25, 28];
+const closePx =  [152, 238.5, 253.5, 224.5, 247, 312, 268, 291, 269.5, 274.5, 281.5, 272, 306, null, null, null];
+
+function makeRiverBand(epsArr, mult) { return epsArr.map(e => +(e * mult).toFixed(0)); }
+
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    const ctx = document.getElementById('riverChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: quarters,
+        datasets: [
+          { label: 'PER 30x（昂貴）', data: makeRiverBand(ttmEPS,30), borderColor:'#ef4444', backgroundColor:'rgba(239,68,68,0.04)', borderWidth:1, borderDash:[5,4], pointRadius:0, fill:false },
+          { label: 'PER 26x（偏貴）', data: makeRiverBand(ttmEPS,26), borderColor:'#f97316', backgroundColor:'rgba(249,115,22,0.06)', borderWidth:1.5, pointRadius:0, fill:'-1' },
+          { label: 'PER 18x（合理）', data: makeRiverBand(ttmEPS,18), borderColor:'#eab308', backgroundColor:'rgba(234,179,8,0.07)', borderWidth:1.5, pointRadius:0, fill:'-1' },
+          { label: 'PER 13x（便宜）', data: makeRiverBand(ttmEPS,13), borderColor:'#22c55e', backgroundColor:'rgba(34,197,94,0.07)', borderWidth:1.5, pointRadius:0, fill:'-1' },
+          { label: 'PER 10x（底部）', data: makeRiverBand(ttmEPS,10), borderColor:'#3b82f6', backgroundColor:'rgba(59,130,246,0.04)', borderWidth:1, borderDash:[5,4], pointRadius:0, fill:'-1' },
+          { label: '實際/目前股價', data: closePx, borderColor:'#ffffff', borderWidth:2.5, pointRadius:3, pointBackgroundColor:'#fff', fill:false, tension:0.3, spanGaps:true },
+        ]
+      },
+      options: {
+        responsive:true, interaction:{ mode:'index', intersect:false },
+        plugins: {
+          legend:{ labels:{ color:'#94a3b8', font:{size:11}, boxWidth:18 } },
+          tooltip:{ backgroundColor:'#1e2535', titleColor:'#f8fafc', bodyColor:'#94a3b8', borderColor:'#334155', borderWidth:1 }
+        },
+        scales: {
+          x:{ ticks:{ color:'#64748b', font:{size:10}, maxRotation:45 }, grid:{ color:'rgba(30,37,53,0.8)' } },
+          y:{ ticks:{ color:'#64748b', font:{size:10}, callback: v => v.toLocaleString() }, grid:{ color:'rgba(30,37,53,0.8)' } }
+        }
+      }
+    });
+  }, 200);
+});
+
+function drawEPS() {
+  window.epsDrawn = true;
+  const ctx2 = document.getElementById('epsChart').getContext('2d');
+  const years = ['2020','2021','2022','2023','2024','2025','2026E'];
+  const eps   = [6.52, 8.73, 7.51, 12.3, 15.49, 19.45, 26];
+  new Chart(ctx2, {
+    type: 'bar',
+    data: {
+      labels: years,
+      datasets: [{
+        label: '年度 EPS（元）',
+        data: eps,
+        backgroundColor: eps.map((v,i) => i===6?'rgba(59,130,246,0.7)':'rgba(34,197,94,0.7)'),
+        borderColor: eps.map((v,i) => i===6?'#3b82f6':'#22c55e'),
+        borderWidth:1.5, borderRadius:6
+      }]
+    },
+    options: {
+      responsive:true,
+      plugins:{ legend:{ labels:{ color:'#94a3b8' } }, tooltip:{ backgroundColor:'#1e2535', bodyColor:'#94a3b8' } },
+      scales: {
+        x:{ ticks:{ color:'#64748b' }, grid:{ color:'rgba(30,37,53,0.8)' } },
+        y:{ ticks:{ color:'#64748b', callback: v => v+'元' }, grid:{ color:'rgba(30,37,53,0.8)' } }
+      }
+    }
+  });
+}
+</script>
+</body>
+</html>
