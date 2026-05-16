@@ -168,13 +168,57 @@ const stocks = [
 
 async function fetchPrice(stockId) {
   try {
-    const proxyUrl = `https://script.google.com/macros/s/AKfycbzpPEq2nJyrc39B_bsR8JxkKSK6YUfNvrWgRc-xEhDDatFIbny33yUSC3Nfm_hVkr_VqA/exec?id=${stockId}`;
-    const res = await fetch(proxyUrl);
+    const proxyUrl = `https://script.google.com/macros/s/AKfycbzt47dsu6KjTm-U-RDKooeQ3TVAzu2lw7G1csqd1_p81UJuPxD6S-9V_iZUPehwlLI66w/exec?id=${stockId}`;
+    const res = await fetch(proxyUrl, { redirect: 'follow' });
     const data = await res.json();
-    if (data.price && data.price !== '-') return parseFloat(data.price);
-  } catch {}
+    if (data.price && data.price !== '-' && data.price !== null) {
+      return parseFloat(data.price);
+    }
+  } catch(e) {
+    console.error('fetchPrice error:', stockId, e);
+  }
   return null;
 }
+
+function calcVs(price, fairValue) {
+  const pct = ((price - fairValue) / fairValue * 100).toFixed(1);
+  const sign = pct > 0 ? '+' : '';
+  return {
+    pct: `${sign}${pct}%`,
+    cls: price < fairValue ? 'green' : price > fairValue * 1.3 ? 'red' : 'yellow',
+    badge: price < fairValue ? 'badge-up' : price > fairValue * 1.3 ? 'badge-down' : 'badge-fair',
+    label: price < fairValue ? '低估' : price > fairValue * 1.3 ? '偏貴' : '合理'
+  };
+}
+
+async function fetchAllPrices() {
+  document.getElementById('lastUpdate').textContent = '更新中...';
+  for (const s of stocks) {
+    const price = await fetchPrice(s.id);
+    const priceEl = document.getElementById(`price-${s.id}`);
+    const vsEl = document.getElementById(`vs-${s.id}`);
+    if (price) {
+      priceEl.textContent = price.toLocaleString();
+      priceEl.className = 'price-cell';
+      const v = calcVs(price, s.fairValue);
+      vsEl.innerHTML = `<span class="${v.cls}">${v.pct}</span> <span class="badge ${v.badge}">${v.label}</span>`;
+      vsEl.className = '';
+    } else {
+      priceEl.textContent = '無法取得';
+      priceEl.className = 'price-cell gray';
+      vsEl.textContent = '—';
+    }
+  }
+  const now = new Date();
+  document.getElementById('lastUpdate').textContent =
+    `${now.getFullYear()}/${String(now.getMonth()+1).padStart(2,'0')}/${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
+}
+
+// 頁面載入時執行一次
+window.addEventListener('load', fetchAllPrices);
+
+// 每60秒自動更新
+setInterval(fetchAllPrices, 60000);
 
 function calcVs(price, fairValue) {
   const pct = ((price - fairValue) / fairValue * 100).toFixed(1);
