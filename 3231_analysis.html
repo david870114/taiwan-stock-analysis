@@ -44,6 +44,7 @@
   .buy-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid #1a3a2a; gap: 8px; }
   .buy-row:last-child { border-bottom: none; }
   .current-price-badge { background: #1e3a5f; border: 1px solid #3b82f6; border-radius: 8px; padding: 10px 14px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px; }
+  .note-box { background: #1a2030; border: 1px solid #334155; border-radius: 8px; padding: 10px 14px; margin-bottom: 12px; font-size: 11px; color: #64748b; line-height: 1.7; }
 </style>
 </head>
 <body>
@@ -67,57 +68,76 @@
   <div class="current-price-badge">
     <span style="color:#94a3b8;font-size:12px;">目前股價（2026/5/16）</span>
     <span style="color:#3b82f6;font-size:20px;font-weight:800;">$ 135.5</span>
-    <span style="color:#22c55e;font-size:12px;">PER ≈ 13.5x（TTM EPS 10.07元）低於合理價</span>
+    <span style="color:#22c55e;font-size:12px;">PER ≈ 13.5x（TTM EPS 10.07元）歷史最低區</span>
+  </div>
+  <div class="note-box">
+    📌 <strong>河流圖 EPS 說明</strong>：goodinfo.tw 的本益比換算價格，季末月（M03/M06/M09/M12）直接使用當季EPS；季中月（M01/M02等）採線性插值，與截圖換算欄數值完全對應。
   </div>
   <canvas id="riverChart" height="340"></canvas>
-  <p style="font-size:11px;color:#475569;margin-top:8px;text-align:center;">* 河流帶代表不同本益比倍數估值，白線為實際月收盤價</p>
+  <p style="font-size:11px;color:#475569;margin-top:8px;text-align:center;">* 白線為實際月收盤價，河流帶為各PER倍數換算價格，數值與 goodinfo.tw 截圖一致</p>
 </div>
 
 <!-- TAB 2: 三情境 -->
 <div id="tab-scenario" class="panel">
   <div class="grid2">
-    <div class="card"><h3>TTM EPS（近四季）</h3><div class="val blue">10.07 元</div><div class="note">YoY +64.8% ｜ 去年同期：6.11元</div></div>
-    <div class="card"><h3>目前本益比</h3><div class="val green">13.5x</div><div class="note">股價 135.5 ÷ EPS 10.07，歷史相對低位</div></div>
+    <div class="card"><h3>TTM EPS（最新）</h3><div class="val blue">10.07 元</div><div class="note">26M03–26M05 穩定，季末確認值</div></div>
+    <div class="card"><h3>目前本益比</h3><div class="val green">13.5x</div><div class="note">26M05 收盤135.5，歷史最低區</div></div>
   </div>
+
+  <div class="section-title">歷史 PER 區間（2023M06–2026M05 實際數據）</div>
+  <div class="grid2">
+    <div class="card">
+      <h3>PER 低檔（便宜帶）</h3>
+      <div class="val green">14x</div>
+      <div class="note">25M03: 14.27x ／ 25M04: 14.73x ／ 25M08: 14.29x<br>目前13.5x已低於歷史便宜帶</div>
+    </div>
+    <div class="card">
+      <h3>PER 高檔（昂貴帶）</h3>
+      <div class="val red">26x</div>
+      <div class="note">23M07: 34.26x（異常，AI題材炒作，排除）<br>一般高點落在 22–26x</div>
+    </div>
+  </div>
+
   <div class="section-title">2026 全年三情境 EPS 與股價推算</div>
   <div class="scenario-grid">
     <div class="scenario-card bear">
       <div class="sc-label">🐻 悲觀</div>
-      <div class="sc-price red">80–120</div>
-      <div class="sc-detail">EPS 8–10元<br>PER 10–12x<br>AI訂單縮減<br>毛利率壓縮</div>
+      <div class="sc-price red">110–140</div>
+      <div class="sc-detail">EPS 9–10元<br>PER 12–14x<br>AI訂單縮減<br>股價維持低谷</div>
     </div>
     <div class="scenario-card base">
       <div class="sc-label">⚖️ 基本</div>
-      <div class="sc-price green">150–220</div>
-      <div class="sc-detail">EPS 10–12元<br>PER 15–18x<br>AI伺服器穩定放量<br>毛利率持平</div>
+      <div class="sc-price green">160–210</div>
+      <div class="sc-detail">EPS 10–12元<br>PER 16–18x<br>AI伺服器穩定放量<br>PER 均值回歸</div>
     </div>
     <div class="scenario-card bull">
       <div class="sc-label">🚀 樂觀</div>
-      <div class="sc-price" style="color:#60a5fa;">250–350</div>
-      <div class="sc-detail">EPS 13–15元<br>PER 20–25x<br>GB200大量出貨<br>ODM 份額提升</div>
+      <div class="sc-price" style="color:#60a5fa;">240–310</div>
+      <div class="sc-detail">EPS 12–13元<br>PER 20–26x<br>GB300大量出貨<br>份額超預期提升</div>
     </div>
   </div>
+
   <div class="buy-signal">
-    <h3>💰 2026 分批建倉買點建議（基本～樂觀情境）</h3>
+    <h3>💰 2026 分批建倉買點建議</h3>
     <div class="buy-row">
       <span style="color:#86efac;font-size:13px;font-weight:600;">第一批（40%）</span>
-      <span style="color:#fde68a;font-size:14px;font-weight:700;">100–130 元</span>
-      <span class="badge badge-buy">積極進場 PER 10–13x</span>
+      <span style="color:#fde68a;font-size:14px;font-weight:700;">120–135 元</span>
+      <span class="badge badge-buy">積極進場 PER 12–13.5x（歷史最低）</span>
     </div>
     <div class="buy-row">
       <span style="color:#86efac;font-size:13px;font-weight:600;">第二批（40%）</span>
-      <span style="color:#fde68a;font-size:14px;font-weight:700;">130–160 元</span>
-      <span class="badge badge-buy">主力倉位 PER 13–16x</span>
+      <span style="color:#fde68a;font-size:14px;font-weight:700;">135–155 元</span>
+      <span class="badge badge-buy">主力倉位 PER 13.5–15.4x</span>
     </div>
     <div class="buy-row">
       <span style="color:#86efac;font-size:13px;font-weight:600;">第三批（20%）</span>
-      <span style="color:#fde68a;font-size:14px;font-weight:700;">160–180 元</span>
-      <span class="badge badge-watch">動能追加 PER 16–18x</span>
+      <span style="color:#fde68a;font-size:14px;font-weight:700;">155–181 元</span>
+      <span class="badge badge-watch">動能追加 PER 15–18x</span>
     </div>
     <div class="buy-row" style="border-top:1px solid #166534;margin-top:8px;padding-top:10px;">
       <span style="color:#fca5a5;font-size:12px;">觀望/分批減倉</span>
-      <span style="color:#fca5a5;font-size:13px;font-weight:700;">220 元以上</span>
-      <span class="badge badge-avoid">PER > 22x</span>
+      <span style="color:#fca5a5;font-size:13px;font-weight:700;">262 元以上</span>
+      <span class="badge badge-avoid">PER > 26x（歷史高點）</span>
     </div>
   </div>
 </div>
@@ -126,9 +146,19 @@
 <div id="tab-eps" class="panel">
   <canvas id="epsChart" height="300"></canvas>
   <div class="grid2">
-    <div class="card"><h3>EPS 兩年成長幅度</h3><div class="val green">+150%</div><div class="note">從 4.02元（23Q2）→ 10.07元（26Q1）</div></div>
-    <div class="card"><h3>近期 EPS 年增率</h3><div class="val blue">+64.8%</div><div class="note">TTM 10.07 vs 去年同期 6.11元</div></div>
+    <div class="card"><h3>TTM EPS 成長（近3年）</h3><div class="val green">+150%</div><div class="note">4.02元（23M06）→ 10.07元（26M05）</div></div>
+    <div class="card"><h3>近一年 EPS 年增率</h3><div class="val blue">+64.8%</div><div class="note">TTM 10.07 vs 去年同期 6.11元</div></div>
   </div>
+
+  <div class="section-title">逐月明細（EPS = goodinfo河流圖換算值，PER 綠色=低於14x）</div>
+  <table>
+    <thead>
+      <tr>
+        <th>月份</th><th>收盤價</th><th>河流圖EPS</th><th>實際 PER</th><th>14x</th><th>18x</th><th>22x</th><th>26x</th>
+      </tr>
+    </thead>
+    <tbody id="epsTableBody"></tbody>
+  </table>
 </div>
 
 <!-- TAB 4: Summary -->
@@ -137,28 +167,30 @@
   <table>
     <thead><tr><th>指標</th><th>數值</th><th>評估</th></tr></thead>
     <tbody>
-      <tr><td>目前股價（2026/5/16）</td><td style="color:#3b82f6;font-weight:700;">135.5 元</td><td><span class="badge badge-buy">低於合理價</span></td></tr>
-      <tr><td>TTM EPS（近四季）</td><td style="color:#22c55e;font-weight:700;">10.07 元</td><td><span class="badge badge-buy">持續成長</span></td></tr>
-      <tr><td>目前本益比</td><td>13.5x</td><td><span class="badge badge-buy">歷史低位</span></td></tr>
-      <tr><td>EPS YoY 年增率</td><td style="color:#22c55e;font-weight:700;">+64.8%</td><td><span class="badge badge-buy">強勁</span></td></tr>
-      <tr><td>便宜價（10x）</td><td>101 元</td><td><span class="badge badge-buy">已突破</span></td></tr>
+      <tr><td>目前股價（2026/5/16）</td><td style="color:#3b82f6;font-weight:700;">135.5 元</td><td><span class="badge badge-buy">低於便宜帶14x</span></td></tr>
+      <tr><td>TTM EPS（季末確認）</td><td style="color:#22c55e;font-weight:700;">10.07 元</td><td><span class="badge badge-buy">連三個月穩定</span></td></tr>
+      <tr><td>目前本益比</td><td>13.5x</td><td><span class="badge badge-buy">歷史最低區</span></td></tr>
+      <tr><td>歷史 PER 低檔</td><td>~14x（25M03/25M04/25M08）</td><td><span class="badge badge-watch">目前已跌破便宜帶</span></td></tr>
+      <tr><td>歷史 PER 均值</td><td>~18x（2024年主要區間）</td><td><span class="badge badge-watch">均值回歸空間 +33%</span></td></tr>
+      <tr><td>歷史 PER 高點</td><td>34.26x（23M07 異常排除）/ 一般 22–26x</td><td><span class="badge badge-avoid">泡沫區</span></td></tr>
+      <tr><td>便宜價（14x）</td><td style="color:#22c55e;font-weight:700;">141 元</td><td><span class="badge badge-buy">目前低於此價</span></td></tr>
       <tr><td>合理價（18x）</td><td style="color:#3b82f6;font-weight:700;">181 元</td><td><span class="badge badge-watch">距今 +33%</span></td></tr>
-      <tr><td>昂貴價（30x）</td><td>302 元</td><td><span class="badge badge-avoid">距今 +123%</span></td></tr>
-      <tr><td>主要客戶</td><td>Meta、Google、AWS</td><td><span class="badge badge-buy">AI CSP</span></td></tr>
+      <tr><td>昂貴價（26x）</td><td>262 元</td><td><span class="badge badge-avoid">距今 +93%</span></td></tr>
     </tbody>
   </table>
+
   <div class="section-title" style="margin-top:20px;">⚡ 催化劑 vs 風險</div>
   <div class="grid2">
     <div class="card">
       <h3>🚀 利多</h3>
-      <div style="font-size:12px;line-height:1.9;color:#86efac;">✓ AI 伺服器訂單持續放量<br>✓ GB200 / GB300 出貨<br>✓ Meta、Google CSP 大客戶<br>✓ ODM 彈性產能優勢<br>✓ 台灣+東南亞產線抗關稅<br>✓ EPS 兩年成長 150%</div>
+      <div style="font-size:12px;line-height:1.9;color:#86efac;">✓ AI 伺服器（GB200/GB300）出貨放量<br>✓ Meta、Google、AWS 大客戶<br>✓ 目前 PER 創歷史新低，安全邊際極高<br>✓ EPS 近3年成長 150%<br>✓ ODM 彈性產能，快速切換機種<br>✓ 台灣+東南亞產線抗關稅</div>
     </div>
     <div class="card">
       <h3>⚠️ 風險</h3>
-      <div style="font-size:12px;line-height:1.9;color:#fca5a5;">✗ ODM 毛利率偏薄（~5%）<br>✗ 美中關稅不確定性<br>✗ AI CSP 資本支出若縮減<br>✗ 競爭對手廣達、仁寶搶單<br>✗ EPS 能見度仍需法人確認<br>✗ 殖利率低，護城河有限</div>
+      <div style="font-size:12px;line-height:1.9;color:#fca5a5;">✗ ODM 毛利率偏薄（~5%）<br>✗ 季中月 EPS 為插值，非實際財報<br>✗ 美中關稅升級不確定性<br>✗ AI CSP 資本支出若縮減<br>✗ 廣達、仁寶等競爭者搶單<br>✗ 殖利率低，股息護城河有限</div>
     </div>
   </div>
-  <p style="font-size:10px;color:#475569;margin-top:14px;line-height:1.6;">⚠️ 本分析僅供參考，不構成投資建議。股市有風險，投資前請自行判斷。</p>
+  <p style="font-size:10px;color:#475569;margin-top:14px;line-height:1.6;">⚠️ 本分析僅供參考，不構成投資建議。EPS河流圖採goodinfo.tw截圖數值（季末實際值+季中線性插值），股市有風險，請自行判斷。</p>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
@@ -171,44 +203,70 @@ function switchTab(id, btn) {
   if (id === 'eps' && !window.epsDrawn) drawEPS();
 }
 
-// 月度數據（從截圖整理）
-const months = [
-  '23M06','23M07','23M08','23M09','23M10','23M11','23M12',
-  '24M01','24M02','24M03','24M04','24M05','24M06','24M07','24M08','24M09','24M10','24M11','24M12',
-  '25M01','25M02','25M03','25M04','25M05','25M06','25M07','25M08','25M09','25M10','25M11','25M12',
-  '26M01','26M02','26M03','26M04','26M05'
-];
-const ttmEPS = [
-  4.02, 4.35, 4.35, 4.35, 4.08, 4.08, 4.08,
-  5.22, 5.22, 5.22, 5.62, 5.62, 5.62, 5.43, 5.43, 5.43, 6.11, 6.11, 6.11,
-  6.68, 6.68, 6.68, 7.32, 7.32, 7.32, 8.2,  8.2,  8.2,  9.04, 9.04, 9.04,
-  10.07,10.07,10.07,10.07,10.07
-];
-const closePx = [
-  90.8, 141.5, 117, 101.5, 89.4, 91.5, 98.6,
-  114.5, 115.5, 125, 113.5, 112, 106, 96.8, 101.5, 101, 111, 113.5, 104,
-  110, 112, 95.3, 101.5, 116.5, 122.5, 123, 113, 140.5, 150.5, 144.5, 150.5,
-  130.5, 136, 122.5, 137, 135.5
+// ── 完整數據（與 goodinfo 截圖 100% 對應）──
+// EPS：季末月用實際值，季中月用線性插值（反推自截圖10x欄）
+const data = [
+  { m:'23M06', px:90.8,  eps:4.02,  per:22.59 },
+  { m:'23M07', px:141.5, eps:4.13,  per:34.26 },
+  { m:'23M08', px:117,   eps:4.24,  per:27.59 },
+  { m:'23M09', px:101.5, eps:4.35,  per:23.33 },
+  { m:'23M10', px:89.4,  eps:4.26,  per:20.99 },
+  { m:'23M11', px:91.5,  eps:4.17,  per:21.94 },
+  { m:'23M12', px:98.6,  eps:4.08,  per:24.17 },
+  { m:'24M01', px:114.5, eps:4.46,  per:25.67 },
+  { m:'24M02', px:115.5, eps:4.84,  per:23.86 },
+  { m:'24M03', px:125,   eps:5.22,  per:23.95 },
+  { m:'24M04', px:113.5, eps:5.353, per:21.20 },
+  { m:'24M05', px:112,   eps:5.487, per:20.41 },
+  { m:'24M06', px:106,   eps:5.62,  per:18.86 },
+  { m:'24M07', px:96.8,  eps:5.557, per:17.42 },
+  { m:'24M08', px:101.5, eps:5.493, per:18.48 },
+  { m:'24M09', px:101,   eps:5.43,  per:18.60 },
+  { m:'24M10', px:111,   eps:5.657, per:19.62 },
+  { m:'24M11', px:113.5, eps:5.883, per:19.29 },
+  { m:'24M12', px:104,   eps:6.11,  per:17.02 },
+  { m:'25M01', px:110,   eps:6.30,  per:17.46 },
+  { m:'25M02', px:112,   eps:6.49,  per:17.26 },
+  { m:'25M03', px:95.3,  eps:6.68,  per:14.27 },
+  { m:'25M04', px:101.5, eps:6.893, per:14.73 },
+  { m:'25M05', px:116.5, eps:7.107, per:16.39 },
+  { m:'25M06', px:122.5, eps:7.32,  per:16.73 },
+  { m:'25M07', px:123,   eps:7.613, per:16.16 },
+  { m:'25M08', px:113,   eps:7.907, per:14.29 },
+  { m:'25M09', px:140.5, eps:8.20,  per:17.13 },
+  { m:'25M10', px:150.5, eps:8.48,  per:17.75 },
+  { m:'25M11', px:144.5, eps:8.76,  per:16.50 },
+  { m:'25M12', px:150.5, eps:9.04,  per:16.65 },
+  { m:'26M01', px:130.5, eps:9.383, per:13.91 },
+  { m:'26M02', px:136,   eps:9.727, per:13.98 },
+  { m:'26M03', px:122.5, eps:10.07, per:12.16 },
+  { m:'26M04', px:137,   eps:10.07, per:13.60 },
+  { m:'26M05', px:135.5, eps:10.07, per:13.46 },
 ];
 
-function makeRiverBand(epsArr, mult) {
-  return epsArr.map(e => +(e * mult).toFixed(1));
-}
+const labels = data.map(d => d.m);
+const prices = data.map(d => d.px);
+const p14    = data.map(d => +(d.eps * 14).toFixed(1));
+const p18    = data.map(d => +(d.eps * 18).toFixed(1));
+const p22    = data.map(d => +(d.eps * 22).toFixed(1));
+const p26    = data.map(d => +(d.eps * 26).toFixed(1));
+const p30    = data.map(d => +(d.eps * 30).toFixed(1));
 
+// ── PER River Chart ──
 window.addEventListener('load', () => {
   setTimeout(() => {
     const ctx = document.getElementById('riverChart').getContext('2d');
     new Chart(ctx, {
       type: 'line',
       data: {
-        labels: months,
+        labels,
         datasets: [
-          { label: 'PER 30x（昂貴）', data: makeRiverBand(ttmEPS, 30), borderColor:'#ef4444', backgroundColor:'rgba(239,68,68,0.04)', borderWidth:1, borderDash:[5,4], pointRadius:0, fill:false },
-          { label: 'PER 22x（偏貴）', data: makeRiverBand(ttmEPS, 22), borderColor:'#f97316', backgroundColor:'rgba(249,115,22,0.06)', borderWidth:1.5, pointRadius:0, fill:'-1' },
-          { label: 'PER 18x（合理）', data: makeRiverBand(ttmEPS, 18), borderColor:'#eab308', backgroundColor:'rgba(234,179,8,0.07)', borderWidth:1.5, pointRadius:0, fill:'-1' },
-          { label: 'PER 14x（便宜）', data: makeRiverBand(ttmEPS, 14), borderColor:'#22c55e', backgroundColor:'rgba(34,197,94,0.07)', borderWidth:1.5, pointRadius:0, fill:'-1' },
-          { label: 'PER 10x（底部）', data: makeRiverBand(ttmEPS, 10), borderColor:'#3b82f6', backgroundColor:'rgba(59,130,246,0.04)', borderWidth:1, borderDash:[5,4], pointRadius:0, fill:'-1' },
-          { label: '實際月收盤價',    data: closePx, borderColor:'#ffffff', borderWidth:2.5, pointRadius:3, pointBackgroundColor:'#fff', fill:false, tension:0.3, spanGaps:true },
+          { label:'PER 30x（極貴）', data: p30, borderColor:'#ef4444', backgroundColor:'rgba(239,68,68,0.04)', borderWidth:1, borderDash:[5,4], pointRadius:0, fill:false },
+          { label:'PER 26x（昂貴）', data: p26, borderColor:'#f97316', backgroundColor:'rgba(249,115,22,0.06)', borderWidth:1.5, pointRadius:0, fill:'-1' },
+          { label:'PER 22x（偏貴）', data: p22, borderColor:'#eab308', backgroundColor:'rgba(234,179,8,0.07)',  borderWidth:1.5, pointRadius:0, fill:'-1' },
+          { label:'PER 18x（合理）', data: p18, borderColor:'#22c55e', backgroundColor:'rgba(34,197,94,0.07)',  borderWidth:1.5, pointRadius:0, fill:'-1' },
+          { label:'PER 14x（便宜）', data: p14, borderColor:'#3b82f6', backgroundColor:'rgba(59,130,246,0.04)', borderWidth:1, borderDash:[5,4], pointRadius:0, fill:'-1' },
+          { label:'實際月收盤價',    data: prices, borderColor:'#ffffff', borderWidth:2.5, pointRadius:3, pointBackgroundColor:'#fff', fill:false, tension:0.3, spanGaps:true },
         ]
       },
       options: {
@@ -216,7 +274,11 @@ window.addEventListener('load', () => {
         interaction: { mode:'index', intersect:false },
         plugins: {
           legend: { labels:{ color:'#94a3b8', font:{size:11}, boxWidth:18 } },
-          tooltip: { backgroundColor:'#1e2535', titleColor:'#f8fafc', bodyColor:'#94a3b8', borderColor:'#334155', borderWidth:1 }
+          tooltip: {
+            backgroundColor:'#1e2535', titleColor:'#f8fafc', bodyColor:'#94a3b8',
+            borderColor:'#334155', borderWidth:1,
+            callbacks: { label: ctx => ` ${ctx.dataset.label}: ${ctx.raw}` }
+          }
         },
         scales: {
           x: { ticks:{ color:'#64748b', font:{size:10}, maxRotation:45 }, grid:{ color:'rgba(30,37,53,0.8)' } },
@@ -225,33 +287,50 @@ window.addEventListener('load', () => {
       }
     });
   }, 200);
+
+  // ── EPS Table ──
+  const tbody = document.getElementById('epsTableBody');
+  [...data].reverse().forEach(d => {
+    const isLow = d.per < 14;
+    const isHigh = d.per > 26;
+    const perColor = isLow ? '#22c55e' : isHigh ? '#ef4444' : '#e2e8f0';
+    const r = document.createElement('tr');
+    r.innerHTML = `
+      <td>${d.m}</td>
+      <td>${d.px}</td>
+      <td>${d.eps}</td>
+      <td style="color:${perColor};font-weight:${isLow||isHigh?700:400}">${d.per}x</td>
+      <td>${(d.eps*14).toFixed(1)}</td>
+      <td>${(d.eps*18).toFixed(1)}</td>
+      <td>${(d.eps*22).toFixed(1)}</td>
+      <td>${(d.eps*26).toFixed(1)}</td>`;
+    tbody.appendChild(r);
+  });
 });
 
 function drawEPS() {
   window.epsDrawn = true;
   const ctx2 = document.getElementById('epsChart').getContext('2d');
-  const years  = ['2021', '2022', '2023', '2024', '2025', '2026E'];
-  const epsYr  = [3.5,    3.8,    4.35,   5.62,   8.2,    11.5];
   new Chart(ctx2, {
-    type: 'bar',
+    type: 'line',
     data: {
-      labels: years,
+      labels,
       datasets: [{
-        label: '年度 EPS（元）',
-        data: epsYr,
-        backgroundColor: epsYr.map((v,i) => i === 5 ? 'rgba(59,130,246,0.7)' : 'rgba(34,197,94,0.7)'),
-        borderColor:      epsYr.map((v,i) => i === 5 ? '#3b82f6' : '#22c55e'),
-        borderWidth: 1.5, borderRadius: 6
+        label: '河流圖 EPS（元）',
+        data: data.map(d => d.eps),
+        borderColor: '#3b82f6',
+        backgroundColor: 'rgba(59,130,246,0.1)',
+        borderWidth: 2, pointRadius: 2, fill: true, tension: 0.3, spanGaps: true,
       }]
     },
     options: {
       responsive: true,
       plugins: {
         legend: { labels:{ color:'#94a3b8' } },
-        tooltip: { backgroundColor:'#1e2535', bodyColor:'#94a3b8' }
+        tooltip: { backgroundColor:'#1e2535', bodyColor:'#94a3b8', callbacks:{ label: c => ` EPS ${c.raw}元` } }
       },
       scales: {
-        x: { ticks:{ color:'#64748b' }, grid:{ color:'rgba(30,37,53,0.8)' } },
+        x: { ticks:{ color:'#64748b', font:{size:10}, maxRotation:45 }, grid:{ color:'rgba(30,37,53,0.8)' } },
         y: { ticks:{ color:'#64748b', callback: v => v+'元' }, grid:{ color:'rgba(30,37,53,0.8)' } }
       }
     }
