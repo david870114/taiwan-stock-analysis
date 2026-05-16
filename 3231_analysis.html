@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>緯創 3231 PER 河流圖分析</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;600&display=swap');
+
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #1c2128;
+    --border: #30363d;
+    --text: #e6edf3;
+    --text-muted: #7d8590;
+    --accent: #58a6ff;
+    --green: #3fb950;
+    --red: #f85149;
+    --yellow: #d29922;
+    --purple: #bc8cff;
+    --orange: #ffa657;
+
+    --per10: rgba(100,200,100,0.7);
+    --per14: rgba(80,180,220,0.7);
+    --per18: rgba(240,200,80,0.7);
+    --per22: rgba(240,140,60,0.7);
+    --per26: rgba(220,100,100,0.7);
+    --per30: rgba(180,60,180,0.7);
+    --price: #ffffff;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans TC', sans-serif;
+    min-height: 100vh;
+  }
+
+  .header {
+    background: linear-gradient(135deg, #0d1117 0%, #1a2332 50%, #0d1117 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 20px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .back-link {
+    color: var(--accent);
+    text-decoration: none;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    opacity: 0.8;
+    transition: opacity 0.2s;
+  }
+  .back-link:hover { opacity: 1; }
+
+  .stock-title {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .stock-badge {
+    background: linear-gradient(135deg, #1f4e8c, #2d7dd2);
+    color: white;
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: 1px;
+  }
+
+  h1 {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .live-price {
+    text-align: right;
+  }
+  .live-price .price-val {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .live-price .price-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+
+  .tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid var(--border);
+    padding: 0 32px;
+    background: var(--surface);
+  }
+
+  .tab {
+    padding: 14px 22px;
+    cursor: pointer;
+    font-size: 14px;
+    color: var(--text-muted);
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    font-weight: 500;
+  }
+  .tab:hover { color: var(--text); }
+  .tab.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+
+  .container { padding: 28px 32px; max-width: 1200px; margin: 0 auto; }
+
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* ── KPI Cards ── */
+  .kpi-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+
+  .kpi-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .kpi-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+  }
+  .kpi-card.blue::before { background: var(--accent); }
+  .kpi-card.green::before { background: var(--green); }
+  .kpi-card.yellow::before { background: var(--yellow); }
+  .kpi-card.red::before { background: var(--red); }
+
+  .kpi-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 10px;
+    font-weight: 500;
+  }
+  .kpi-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 26px;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1;
+  }
+  .kpi-sub {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 6px;
+  }
+
+  /* ── Chart ── */
+  .chart-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 24px;
+    margin-bottom: 20px;
+  }
+  .chart-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 20px;
+  }
+  .chart-wrap { position: relative; height: 420px; }
+
+  /* ── Valuation Table ── */
+  .val-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .val-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 24px;
+    text-align: center;
+  }
+  .val-card.cheap { border-color: rgba(63,185,80,0.4); background: rgba(63,185,80,0.05); }
+  .val-card.fair  { border-color: rgba(88,166,255,0.4); background: rgba(88,166,255,0.05); }
+  .val-card.exp   { border-color: rgba(248,81,73,0.4); background: rgba(248,81,73,0.05); }
+
+  .val-tag {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+  }
+  .val-card.cheap .val-tag { color: var(--green); }
+  .val-card.fair  .val-tag { color: var(--accent); }
+  .val-card.exp   .val-tag { color: var(--red); }
+
+  .val-price {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 36px;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+  .val-card.cheap .val-price { color: var(--green); }
+  .val-card.fair  .val-price { color: var(--accent); }
+  .val-card.exp   .val-price { color: var(--red); }
+
+  .val-per { font-size: 13px; color: var(--text-muted); }
+
+  /* ── EPS Table ── */
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .data-table th {
+    background: var(--surface2);
+    color: var(--text-muted);
+    font-weight: 600;
+    padding: 10px 14px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .data-table td {
+    padding: 9px 14px;
+    border-bottom: 1px solid rgba(48,54,61,0.5);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+  }
+  .data-table tr:hover td { background: var(--surface2); }
+
+  .up { color: var(--red); }
+  .down { color: var(--green); }
+
+  /* ── Summary ── */
+  .summary-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  .summary-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 22px;
+  }
+  .summary-section h3 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--accent);
+    margin-bottom: 14px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 10px;
+  }
+  .summary-section p {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.8;
+    margin-bottom: 8px;
+  }
+  .summary-section p strong { color: var(--text); }
+
+  .legend-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid var(--border);
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+  .legend-dot {
+    width: 12px; height: 12px; border-radius: 2px;
+  }
+
+  .highlight-box {
+    background: rgba(88,166,255,0.08);
+    border: 1px solid rgba(88,166,255,0.2);
+    border-radius: 8px;
+    padding: 16px;
+    margin-top: 16px;
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--text-muted);
+  }
+  .highlight-box strong { color: var(--accent); }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div style="display:flex;align-items:center;gap:24px">
+    <a href="index.html" class="back-link">← 返回總覽</a>
+    <div class="stock-title">
+      <div class="stock-badge">3231</div>
+      <h1>緯創資通</h1>
+    </div>
+  </div>
+  <div class="live-price">
+    <div class="price-val" id="livePrice">135.5</div>
+    <div class="price-label">即時股價（元）</div>
+  </div>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="switchTab('river')">PER 河流圖</div>
+  <div class="tab" onclick="switchTab('valuation')">估值分析</div>
+  <div class="tab" onclick="switchTab('eps')">EPS 趨勢</div>
+  <div class="tab" onclick="switchTab('summary')">完整摘要</div>
+</div>
+
+<!-- ════ TAB 1：PER 河流圖 ════ -->
+<div id="river" class="tab-content active">
+  <div class="container">
+    <div class="kpi-row">
+      <div class="kpi-card blue">
+        <div class="kpi-label">TTM EPS</div>
+        <div class="kpi-value">10.07</div>
+        <div class="kpi-sub">近四季累計（元）</div>
+      </div>
+      <div class="kpi-card green">
+        <div class="kpi-label">目前 PER</div>
+        <div class="kpi-value">13.46x</div>
+        <div class="kpi-sub">26M05 收盤 135.5</div>
+      </div>
+      <div class="kpi-card yellow">
+        <div class="kpi-label">歷史 PER 均值</div>
+        <div class="kpi-value">~18x</div>
+        <div class="kpi-sub">2023–2026 估計</div>
+      </div>
+      <div class="kpi-card red">
+        <div class="kpi-label">EPS YoY 成長</div>
+        <div class="kpi-value">+64.8%</div>
+        <div class="kpi-sub">10.07 vs 6.11（去年同期）</div>
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <div class="chart-title">緯創 3231 ── PER 河流圖（2023M06 – 2026M05）</div>
+      <div class="chart-wrap">
+        <canvas id="riverChart"></canvas>
+      </div>
+      <div class="legend-row">
+        <div class="legend-item"><div class="legend-dot" style="background:rgba(100,200,100,0.7)"></div>PER 10x（底部）</div>
+        <div class="legend-item"><div class="legend-dot" style="background:rgba(80,180,220,0.7)"></div>PER 14x（偏低）</div>
+        <div class="legend-item"><div class="legend-dot" style="background:rgba(240,200,80,0.7)"></div>PER 18x（合理）</div>
+        <div class="legend-item"><div class="legend-dot" style="background:rgba(240,140,60,0.7)"></div>PER 22x（偏貴）</div>
+        <div class="legend-item"><div class="legend-dot" style="background:rgba(220,100,100,0.7)"></div>PER 26x（昂貴）</div>
+        <div class="legend-item"><div class="legend-dot" style="background:rgba(180,60,180,0.7)"></div>PER 30x（極貴）</div>
+        <div class="legend-item"><div class="legend-dot" style="background:white"></div>月收盤價</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ TAB 2：估值分析 ════ -->
+<div id="valuation" class="tab-content">
+  <div class="container">
+    <div class="kpi-row">
+      <div class="kpi-card blue">
+        <div class="kpi-label">當前股價</div>
+        <div class="kpi-value">135.5</div>
+        <div class="kpi-sub">2026M05</div>
+      </div>
+      <div class="kpi-card green">
+        <div class="kpi-label">TTM EPS</div>
+        <div class="kpi-value">10.07</div>
+        <div class="kpi-sub">近四季合計</div>
+      </div>
+      <div class="kpi-card yellow">
+        <div class="kpi-label">目前 PER</div>
+        <div class="kpi-value">13.46x</div>
+        <div class="kpi-sub">歷史低位</div>
+      </div>
+      <div class="kpi-card red">
+        <div class="kpi-label">距合理價</div>
+        <div class="kpi-value">-24%</div>
+        <div class="kpi-sub">135.5 vs 181（18x）</div>
+      </div>
+    </div>
+
+    <div class="val-grid">
+      <div class="val-card cheap">
+        <div class="val-tag">便宜價</div>
+        <div class="val-price">101</div>
+        <div class="val-per">EPS 10.07 × PER 10x</div>
+      </div>
+      <div class="val-card fair">
+        <div class="val-tag">合理價</div>
+        <div class="val-price">181</div>
+        <div class="val-per">EPS 10.07 × PER 18x</div>
+      </div>
+      <div class="val-card exp">
+        <div class="val-tag">昂貴價</div>
+        <div class="val-price">302</div>
+        <div class="val-per">EPS 10.07 × PER 30x</div>
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <div class="chart-title">三情境買點分析（以當前 EPS 10.07 為基準）</div>
+      <div class="chart-wrap" style="height:300px">
+        <canvas id="valChart"></canvas>
+      </div>
+    </div>
+
+    <div class="highlight-box">
+      📊 <strong>估值解讀</strong>：緯創目前 PER 13.46x 處於歷史相對低位。EPS 受惠於 AI 伺服器需求，從 2023M06 的 4.02 元大幅成長至 10.07 元，成長幅度達 <strong>+150%</strong>。在 AI 伺服器訂單持續成長前提下，若 PER 均值回歸至 18x，合理股價約 <strong>181 元</strong>，較當前 135.5 仍有約 <strong>33%</strong> 的上漲空間。
+    </div>
+  </div>
+</div>
+
+<!-- ════ TAB 3：EPS 趨勢 ════ -->
+<div id="eps" class="tab-content">
+  <div class="container">
+    <div class="chart-card">
+      <div class="chart-title">近四季 TTM EPS 走勢（2023M06 – 2026M05）</div>
+      <div class="chart-wrap" style="height:350px">
+        <canvas id="epsChart"></canvas>
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <div class="chart-title">歷史月份完整數據</div>
+      <div style="overflow-x:auto">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>交易月份</th>
+              <th>收盤價</th>
+              <th>漲跌幅</th>
+              <th>近四季 EPS</th>
+              <th>目前 PER</th>
+              <th>PER 14x</th>
+              <th>PER 18x</th>
+              <th>PER 22x</th>
+            </tr>
+          </thead>
+          <tbody id="dataTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ TAB 4：完整摘要 ════ -->
+<div id="summary" class="tab-content">
+  <div class="container">
+    <div class="summary-grid">
+      <div class="summary-section">
+        <h3>🏢 公司基本資料</h3>
+        <p><strong>代號</strong>：3231 緯創資通</p>
+        <p><strong>產業</strong>：電子 / 伺服器 / ODM</p>
+        <p><strong>主要業務</strong>：伺服器、筆電、工業電腦 ODM 代工</p>
+        <p><strong>AI 伺服器佔比</strong>：快速拉升中，為近期股價催化劑</p>
+        <p><strong>主要客戶</strong>：Meta、Google、AWS 等雲端大廠</p>
+      </div>
+
+      <div class="summary-section">
+        <h3>📈 EPS 成長軌跡</h3>
+        <p><strong>23M06</strong>：EPS 4.02 元，PER 22.59x</p>
+        <p><strong>24M01</strong>：EPS 5.22 元，PER 25.67x（高峰期）</p>
+        <p><strong>25M01</strong>：EPS 6.68 元，PER 17.46x</p>
+        <p><strong>25M12</strong>：EPS 9.04 元，PER 16.65x</p>
+        <p><strong>26M05</strong>：EPS 10.07 元，PER <strong>13.46x</strong>（近低位）</p>
+      </div>
+
+      <div class="summary-section">
+        <h3>💰 目前估值狀況</h3>
+        <p><strong>股價</strong>：135.5 元（2026M05）</p>
+        <p><strong>目前 PER</strong>：13.46x — 近年低位</p>
+        <p><strong>便宜價</strong>（10x）：101 元</p>
+        <p><strong>合理價</strong>（18x）：181 元</p>
+        <p><strong>昂貴價</strong>（30x）：302 元</p>
+        <p><strong>距合理價</strong>：約 +33% 空間</p>
+      </div>
+
+      <div class="summary-section">
+        <h3>⚠️ 風險與注意事項</h3>
+        <p><strong>正面催化劑</strong>：AI 伺服器需求、GB200 訂單放量</p>
+        <p><strong>風險一</strong>：ODM 毛利率偏薄，需確認 AI 訂單占比提升幅度</p>
+        <p><strong>風險二</strong>：美中關稅、供應鏈轉移成本</p>
+        <p><strong>風險三</strong>：EPS 估計仍需法人預估值確認</p>
+        <p><strong>建議</strong>：可搭配 goodinfo.tw 近 3–5 年 PER 區間確認估值區間</p>
+      </div>
+    </div>
+
+    <div class="highlight-box" style="margin-top:20px">
+      🔍 <strong>分析結論</strong>：緯創 EPS 在 AI 伺服器需求帶動下，兩年內成長超過 150%，但股價反映遲緩，目前 PER 13.46x 仍低於歷史均值（約 18x）。若 EPS 維持 10 元以上水準且 PER 均值回歸，股價合理區間約 <strong>181–221 元</strong>（18x–22x）。當前 135.5 元具吸引力，但需留意 AI 訂單能見度與毛利率動向。
+    </div>
+  </div>
+</div>
+
+<script>
+// ── 數據 ──
+const rawData = [
+  { m:'23M06', price:90.8,  chg:'+36.1%', eps:4.02, per:22.59, p10:40.2, p14:56.28, p18:72.36, p22:88.44 },
+  { m:'23M07', price:141.5, chg:'+55.8%', eps:4.35, per:34.26, p10:41.3, p14:57.82, p18:74.34, p22:90.86 },
+  { m:'23M08', price:117,   chg:'-17.3%', eps:4.35, per:27.59, p10:42.4, p14:59.36, p18:76.32, p22:93.28 },
+  { m:'23M09', price:101.5, chg:'-13.2%', eps:4.35, per:23.33, p10:43.5, p14:60.9,  p18:78.3,  p22:95.7  },
+  { m:'23M10', price:89.4,  chg:'-11.9%', eps:4.08, per:20.99, p10:42.6, p14:59.64, p18:76.68, p22:93.72 },
+  { m:'23M11', price:91.5,  chg:'+2.35%', eps:4.08, per:21.94, p10:41.7, p14:58.38, p18:75.06, p22:91.74 },
+  { m:'23M12', price:98.6,  chg:'+7.76%', eps:4.08, per:24.17, p10:40.8, p14:57.12, p18:73.44, p22:89.76 },
+  { m:'24M01', price:114.5, chg:'+16.1%', eps:5.22, per:25.67, p10:44.6, p14:62.44, p18:80.28, p22:98.12 },
+  { m:'24M02', price:115.5, chg:'+0.87%', eps:5.22, per:23.86, p10:48.4, p14:67.76, p18:87.12, p22:106.5 },
+  { m:'24M03', price:125,   chg:'+8.23%', eps:5.22, per:23.95, p10:52.2, p14:73.08, p18:93.96, p22:114.8 },
+  { m:'24M04', price:113.5, chg:'-9.2%',  eps:5.62, per:21.2,  p10:53.53,p14:74.95, p18:96.36, p22:117.8 },
+  { m:'24M05', price:112,   chg:'-1.32%', eps:5.62, per:20.41, p10:54.87,p14:76.81, p18:98.76, p22:120.7 },
+  { m:'24M06', price:106,   chg:'-5.36%', eps:5.62, per:18.86, p10:56.2, p14:78.68, p18:101.2, p22:123.6 },
+  { m:'24M07', price:96.8,  chg:'-8.68%', eps:5.43, per:17.42, p10:55.57,p14:77.79, p18:100,   p22:122.2 },
+  { m:'24M08', price:101.5, chg:'+4.86%', eps:5.43, per:18.48, p10:54.93,p14:76.91, p18:98.88, p22:120.9 },
+  { m:'24M09', price:101,   chg:'-0.49%', eps:5.43, per:18.6,  p10:54.3, p14:76.02, p18:97.74, p22:119.5 },
+  { m:'24M10', price:111,   chg:'+9.9%',  eps:6.11, per:19.62, p10:56.57,p14:79.19, p18:101.8, p22:124.4 },
+  { m:'24M11', price:113.5, chg:'+2.25%', eps:6.11, per:19.29, p10:58.83,p14:82.37, p18:105.9, p22:129.4 },
+  { m:'24M12', price:104,   chg:'-8.37%', eps:6.11, per:17.02, p10:61.1, p14:85.54, p18:110,   p22:134.4 },
+  { m:'25M01', price:110,   chg:'+5.77%', eps:6.68, per:17.46, p10:63,   p14:88.2,  p18:113.4, p22:138.6 },
+  { m:'25M02', price:112,   chg:'+1.82%', eps:6.68, per:17.26, p10:64.9, p14:90.86, p18:116.8, p22:142.8 },
+  { m:'25M03', price:95.3,  chg:'-14.9%', eps:6.68, per:14.27, p10:66.8, p14:93.52, p18:120.2, p22:147   },
+  { m:'25M04', price:101.5, chg:'+6.51%', eps:7.32, per:14.72, p10:68.93,p14:96.51, p18:124.1, p22:151.7 },
+  { m:'25M05', price:116.5, chg:'+14.8%', eps:7.32, per:16.39, p10:71.07,p14:99.49, p18:127.9, p22:156.3 },
+  { m:'25M06', price:122.5, chg:'+5.15%', eps:7.32, per:16.73, p10:73.2, p14:102.5, p18:131.8, p22:161   },
+  { m:'25M07', price:123,   chg:'+0.41%', eps:8.2,  per:16.16, p10:76.13,p14:106.6, p18:137,   p22:167.5 },
+  { m:'25M08', price:113,   chg:'-8.13%', eps:8.2,  per:14.29, p10:79.07,p14:110.7, p18:142.3, p22:173.9 },
+  { m:'25M09', price:140.5, chg:'+24.3%', eps:8.2,  per:17.13, p10:82,   p14:114.8, p18:147.6, p22:180.4 },
+  { m:'25M10', price:150.5, chg:'+7.12%', eps:9.04, per:17.75, p10:84.8, p14:118.7, p18:152.6, p22:186.6 },
+  { m:'25M11', price:144.5, chg:'-3.99%', eps:9.04, per:16.5,  p10:87.6, p14:122.6, p18:157.7, p22:192.7 },
+  { m:'25M12', price:150.5, chg:'+4.15%', eps:9.04, per:16.65, p10:90.4, p14:126.6, p18:162.7, p22:198.9 },
+  { m:'26M01', price:130.5, chg:'-13.3%', eps:10.07,per:13.91, p10:93.83,p14:131.4, p18:168.9, p22:206.4 },
+  { m:'26M02', price:136,   chg:'+4.21%', eps:10.07,per:13.98, p10:97.27,p14:136.2, p18:175.1, p22:214   },
+  { m:'26M03', price:122.5, chg:'-9.93%', eps:10.07,per:12.16, p10:100.7,p14:141,   p18:181.3, p22:221.5 },
+  { m:'26M04', price:137,   chg:'+11.8%', eps:10.07,per:13.6,  p10:100.7,p14:141,   p18:181.3, p22:221.5 },
+  { m:'26M05', price:135.5, chg:'-1.09%', eps:10.07,per:13.46, p10:100.7,p14:141,   p18:181.3, p22:221.5 },
+];
+
+const labels  = rawData.map(d => d.m);
+const prices  = rawData.map(d => d.price);
+const p10arr  = rawData.map(d => d.p10);
+const p14arr  = rawData.map(d => d.p14);
+const p18arr  = rawData.map(d => d.p18);
+const p22arr  = rawData.map(d => d.p22);
+const p26arr  = rawData.map(d => d.p10 ? d.p10 * 2.6 : null); // approx
+const p30arr  = rawData.map(d => d.p10 ? d.p10 * 3.0 : null);
+
+// use actual p26/p30 from table where available (simplified: compute from EPS)
+const p26real = rawData.map(d => +(d.eps * 26).toFixed(1));
+const p30real = rawData.map(d => +(d.eps * 30).toFixed(1));
+
+// ── PER River Chart ──
+const riverCtx = document.getElementById('riverChart').getContext('2d');
+new Chart(riverCtx, {
+  type: 'line',
+  data: {
+    labels,
+    datasets: [
+      { label:'PER 30x（極貴）', data: p30real, borderColor:'rgba(180,60,180,0.7)', backgroundColor:'rgba(180,60,180,0.05)', borderWidth:1.5, pointRadius:0, fill:false, tension:0.3 },
+      { label:'PER 26x（昂貴）', data: p26real, borderColor:'rgba(220,100,100,0.7)', backgroundColor:'rgba(220,100,100,0.05)', borderWidth:1.5, pointRadius:0, fill:false, tension:0.3 },
+      { label:'PER 22x（偏貴）', data: p22arr,  borderColor:'rgba(240,140,60,0.7)',  backgroundColor:'rgba(240,140,60,0.05)',  borderWidth:1.5, pointRadius:0, fill:false, tension:0.3 },
+      { label:'PER 18x（合理）', data: p18arr,  borderColor:'rgba(240,200,80,0.7)',  backgroundColor:'rgba(240,200,80,0.05)',  borderWidth:1.5, pointRadius:0, fill:false, tension:0.3 },
+      { label:'PER 14x（偏低）', data: p14arr,  borderColor:'rgba(80,180,220,0.7)',  backgroundColor:'rgba(80,180,220,0.05)',  borderWidth:1.5, pointRadius:0, fill:false, tension:0.3 },
+      { label:'PER 10x（底部）', data: p10arr,  borderColor:'rgba(100,200,100,0.7)', backgroundColor:'rgba(100,200,100,0.05)', borderWidth:1.5, pointRadius:0, fill:false, tension:0.3 },
+      { label:'月收盤價', data: prices, borderColor:'#ffffff', backgroundColor:'rgba(255,255,255,0.1)', borderWidth:2.5, pointRadius:3, pointBackgroundColor:'#ffffff', fill:false, tension:0.3, spanGaps:true, z:10 },
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    interaction: { mode:'index', intersect:false },
+    plugins: {
+      legend: { display:false },
+      tooltip: {
+        backgroundColor:'#1c2128',
+        borderColor:'#30363d',
+        borderWidth:1,
+        titleColor:'#e6edf3',
+        bodyColor:'#7d8590',
+        padding:12,
+      }
+    },
+    scales: {
+      x: { grid:{ color:'rgba(48,54,61,0.4)' }, ticks:{ color:'#7d8590', font:{size:11}, maxRotation:45 } },
+      y: { grid:{ color:'rgba(48,54,61,0.4)' }, ticks:{ color:'#7d8590', font:{size:11} }, min:30 }
+    }
+  }
+});
+
+// ── Valuation Bar Chart ──
+const valCtx = document.getElementById('valChart').getContext('2d');
+new Chart(valCtx, {
+  type: 'bar',
+  data: {
+    labels: ['便宜價（10x）','偏低（14x）','合理（18x）','偏貴（22x）','昂貴（26x）','極貴（30x）'],
+    datasets: [{
+      label: '估值價格',
+      data: [101, 141, 181, 221.5, 261.8, 302.1],
+      backgroundColor: [
+        'rgba(63,185,80,0.6)','rgba(80,180,220,0.6)','rgba(240,200,80,0.6)',
+        'rgba(240,140,60,0.6)','rgba(220,100,100,0.6)','rgba(180,60,180,0.6)'
+      ],
+      borderColor: [
+        'rgba(63,185,80,1)','rgba(80,180,220,1)','rgba(240,200,80,1)',
+        'rgba(240,140,60,1)','rgba(220,100,100,1)','rgba(180,60,180,1)'
+      ],
+      borderWidth: 1.5, borderRadius: 6
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { display:false },
+      annotation: {},
+      tooltip: { callbacks: { label: ctx => ` ${ctx.raw} 元` } }
+    },
+    scales: {
+      x: { grid:{ color:'rgba(48,54,61,0.4)' }, ticks:{ color:'#7d8590' } },
+      y: { grid:{ color:'rgba(48,54,61,0.4)' }, ticks:{ color:'#7d8590', callback: v => v+' 元' }, min:0, max:320 }
+    }
+  }
+});
+
+// ── EPS Trend Chart ──
+const epsCtx = document.getElementById('epsChart').getContext('2d');
+const epsData = rawData.map(d => d.eps);
+new Chart(epsCtx, {
+  type: 'line',
+  data: {
+    labels,
+    datasets: [{
+      label: 'TTM EPS（元）',
+      data: epsData,
+      borderColor: '#58a6ff',
+      backgroundColor: 'rgba(88,166,255,0.12)',
+      borderWidth: 2.5, pointRadius: 3, fill: true, tension: 0.4, spanGaps: true,
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { labels:{ color:'#7d8590' } },
+      tooltip: { callbacks: { label: ctx => ` EPS ${ctx.raw} 元` } }
+    },
+    scales: {
+      x: { grid:{ color:'rgba(48,54,61,0.4)' }, ticks:{ color:'#7d8590', font:{size:11}, maxRotation:45 } },
+      y: { grid:{ color:'rgba(48,54,61,0.4)' }, ticks:{ color:'#7d8590', callback: v => v+' 元' }, min:3 }
+    }
+  }
+});
+
+// ── Data Table ──
+const tbody = document.getElementById('dataTableBody');
+[...rawData].reverse().forEach(d => {
+  const isUp = d.chg.startsWith('+');
+  const cls  = isUp ? 'up' : 'down';
+  tbody.innerHTML += `
+    <tr>
+      <td>${d.m}</td>
+      <td class="${cls}">${d.price}</td>
+      <td class="${cls}">${d.chg}</td>
+      <td>${d.eps}</td>
+      <td>${d.per}x</td>
+      <td>${d.p14}</td>
+      <td>${d.p18}</td>
+      <td>${d.p22}</td>
+    </tr>`;
+});
+
+// ── Tab switching ──
+function switchTab(id) {
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// ── Live Price ──
+async function fetchPrice() {
+  try {
+    const r = await fetch('https://taiwan-stock-price.david870114.workers.dev/?id=3231');
+    const data = await r.json();
+    if (data && data.price) {
+      document.getElementById('livePrice').textContent = data.price;
+    }
+  } catch(e) { /* 保留預設值 */ }
+}
+fetchPrice();
+setInterval(fetchPrice, 60000);
+</script>
+</body>
+</html>
