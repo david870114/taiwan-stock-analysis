@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>台積電 (2330) PER 河流圖分析</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: #0f1117; color: #e0e0e0; min-height: 100vh; }
+  .header { background: linear-gradient(135deg, #1a1f2e 0%, #0d1321 100%); padding: 20px 24px; border-bottom: 1px solid #2a3045; display: flex; align-items: center; gap: 16px; }
+  .back-link { color: #7cb9e8; text-decoration: none; font-size: 14px; white-space: nowrap; }
+  .back-link:hover { color: #a8d4f5; }
+  .title-block h1 { font-size: 22px; color: #fff; font-weight: 700; }
+  .title-block p { font-size: 13px; color: #8899aa; margin-top: 2px; }
+  .price-badge { margin-left: auto; text-align: right; }
+  .price-badge .live-price { font-size: 28px; font-weight: 700; color: #4ecdc4; }
+  .price-badge .price-label { font-size: 11px; color: #667; }
+
+  .tabs { display: flex; background: #151920; border-bottom: 1px solid #2a3045; overflow-x: auto; }
+  .tab { padding: 12px 20px; cursor: pointer; font-size: 14px; color: #778899; white-space: nowrap; border-bottom: 3px solid transparent; transition: all 0.2s; }
+  .tab.active { color: #4ecdc4; border-bottom-color: #4ecdc4; background: #1a2030; }
+  .tab:hover:not(.active) { color: #aab; background: #1a1f2a; }
+
+  .tab-content { display: none; padding: 20px; }
+  .tab-content.active { display: block; }
+
+  .chart-container { position: relative; height: 420px; background: #151920; border-radius: 10px; padding: 16px; border: 1px solid #2a3045; }
+
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 20px; }
+  .card { background: #151920; border-radius: 10px; padding: 16px; border: 1px solid #2a3045; text-align: center; }
+  .card .label { font-size: 12px; color: #778899; margin-bottom: 6px; }
+  .card .value { font-size: 22px; font-weight: 700; }
+  .card.cheap .value { color: #4ecdc4; }
+  .card.fair .value { color: #f7dc6f; }
+  .card.expensive .value { color: #e74c3c; }
+  .card.current .value { color: #fff; }
+  .card .sub { font-size: 11px; color: #556; margin-top: 4px; }
+
+  .scenario-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-bottom: 20px; }
+  .scenario { background: #151920; border-radius: 10px; padding: 20px; border: 1px solid #2a3045; }
+  .scenario h3 { font-size: 15px; margin-bottom: 12px; }
+  .scenario.bull h3 { color: #e74c3c; }
+  .scenario.base h3 { color: #f7dc6f; }
+  .scenario.bear h3 { color: #4ecdc4; }
+  .scenario .row { display: flex; justify-content: space-between; font-size: 13px; padding: 5px 0; border-bottom: 1px solid #1e2535; }
+  .scenario .row:last-child { border: none; }
+  .scenario .row .k { color: #889; }
+  .scenario .row .v { font-weight: 600; color: #ddd; }
+
+  .eps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; margin-bottom: 20px; }
+  .eps-item { background: #151920; border-radius: 8px; padding: 14px; border: 1px solid #2a3045; }
+  .eps-item .yr { font-size: 11px; color: #778; }
+  .eps-item .ep { font-size: 18px; font-weight: 700; color: #4ecdc4; }
+  .eps-item .chg { font-size: 11px; margin-top: 2px; }
+  .chg.up { color: #e74c3c; }
+  .chg.dn { color: #2ecc71; }
+
+  .summary-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .summary-table th { background: #1a2030; color: #4ecdc4; padding: 10px 12px; text-align: left; border-bottom: 1px solid #2a3045; }
+  .summary-table td { padding: 9px 12px; border-bottom: 1px solid #1e2535; }
+  .summary-table tr:hover td { background: #1a1f2a; }
+  .highlight { background: #ffd70022; }
+
+  .per-zone { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+  .per-cheap { background: #4ecdc422; color: #4ecdc4; }
+  .per-fair { background: #f7dc6f22; color: #f7dc6f; }
+  .per-high { background: #e74c3c22; color: #e74c3c; }
+  .per-over { background: #ff000033; color: #ff6b6b; }
+
+  .update-time { font-size: 11px; color: #445; text-align: right; margin-top: 8px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="title-block">
+    <a href="index.html" class="back-link">← 返回總覽</a>
+    <h1>台積電 (2330)</h1>
+    <p>AI半導體 ‧ 本益比河流圖分析</p>
+  </div>
+  <div class="price-badge">
+    <div class="price-label">即時股價</div>
+    <div class="live-price" id="livePrice">載入中…</div>
+    <div class="price-label" id="priceChange">--</div>
+  </div>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="switchTab(0)">📈 PER 河流圖</div>
+  <div class="tab" onclick="switchTab(1)">🎯 三情境買點</div>
+  <div class="tab" onclick="switchTab(2)">💹 EPS 趨勢</div>
+  <div class="tab" onclick="switchTab(3)">📋 完整摘要</div>
+</div>
+
+<!-- Tab 0: PER River Chart -->
+<div class="tab-content active" id="tab0">
+  <div class="cards">
+    <div class="card cheap"><div class="label">便宜價（17x）</div><div class="value">1,126</div><div class="sub">EPS 66.26 × 17</div></div>
+    <div class="card fair"><div class="label">合理價（22x）</div><div class="value">1,458</div><div class="sub">EPS 66.26 × 22</div></div>
+    <div class="card expensive"><div class="label">昂貴價（28x）</div><div class="value">1,855</div><div class="sub">EPS 66.26 × 28</div></div>
+    <div class="card current"><div class="label">最新收盤（26M05）</div><div class="value">2,265</div><div class="sub">PER 34.18x ⚠️ 偏高</div></div>
+  </div>
+  <div class="chart-container">
+    <canvas id="perChart"></canvas>
+  </div>
+  <div class="update-time">數據來源：Goodinfo.tw ‧ 截至 2026M05</div>
+</div>
+
+<!-- Tab 1: Scenarios -->
+<div class="tab-content" id="tab1">
+  <div class="cards">
+    <div class="card cheap"><div class="label">目前估值</div><div class="value">34.2x</div><div class="sub">顯著高於歷史均值</div></div>
+    <div class="card fair"><div class="label">TTM EPS</div><div class="value">66.26</div><div class="sub">近四季合計（元）</div></div>
+    <div class="card expensive"><div class="label">距便宜價</div><div class="value">-50%</div><div class="sub">需跌至 1,126 才算便宜</div></div>
+  </div>
+  <div class="scenario-grid">
+    <div class="scenario bull">
+      <h3>🔴 樂觀情境（EPS 80元，PER 28x）</h3>
+      <div class="row"><span class="k">預估 EPS</span><span class="v">80 元</span></div>
+      <div class="row"><span class="k">樂觀 PER</span><span class="v">28x</span></div>
+      <div class="row"><span class="k">目標價</span><span class="v">2,240 元</span></div>
+      <div class="row"><span class="k">較現價</span><span class="v">-1.1%（約平）</span></div>
+      <div class="row"><span class="k">建議</span><span class="v">不建議追高</span></div>
+    </div>
+    <div class="scenario base">
+      <h3>🟡 基本情境（EPS 75元，PER 22x）</h3>
+      <div class="row"><span class="k">預估 EPS</span><span class="v">75 元</span></div>
+      <div class="row"><span class="k">合理 PER</span><span class="v">22x</span></div>
+      <div class="row"><span class="k">合理價</span><span class="v">1,650 元</span></div>
+      <div class="row"><span class="k">較現價</span><span class="v">-27%（高估）</span></div>
+      <div class="row"><span class="k">建議</span><span class="v">等待回調</span></div>
+    </div>
+    <div class="scenario bear">
+      <h3>🟢 保守情境（EPS 70元，PER 17x）</h3>
+      <div class="row"><span class="k">預估 EPS</span><span class="v">70 元</span></div>
+      <div class="row"><span class="k">便宜 PER</span><span class="v">17x</span></div>
+      <div class="row"><span class="k">便宜價</span><span class="v">1,190 元</span></div>
+      <div class="row"><span class="k">較現價</span><span class="v">-47%（顯著高估）</span></div>
+      <div class="row"><span class="k">建議</span><span class="v">大幅回調才買</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- Tab 2: EPS Trend -->
+<div class="tab-content" id="tab2">
+  <div class="eps-grid">
+    <div class="eps-item"><div class="yr">2021</div><div class="ep">23.01</div><div class="chg up">+16%</div></div>
+    <div class="eps-item"><div class="yr">2022</div><div class="ep">39.20</div><div class="chg up">+70%</div></div>
+    <div class="eps-item"><div class="yr">2023</div><div class="ep">32.34</div><div class="chg dn">-18%</div></div>
+    <div class="eps-item"><div class="yr">2024</div><div class="ep">45.25</div><div class="chg up">+40%</div></div>
+    <div class="eps-item"><div class="yr">2025</div><div class="ep">66.26</div><div class="chg up">+46%</div></div>
+    <div class="eps-item"><div class="yr">2026E（法人）</div><div class="ep">~80</div><div class="chg up">+21%（預估）</div></div>
+  </div>
+  <div class="chart-container">
+    <canvas id="epsChart"></canvas>
+  </div>
+</div>
+
+<!-- Tab 3: Full Summary -->
+<div class="tab-content" id="tab3">
+  <table class="summary-table">
+    <tr><th colspan="2">基本資料</th></tr>
+    <tr><td>股票代號</td><td>2330</td></tr>
+    <tr><td>公司名稱</td><td>台積電（TSMC）</td></tr>
+    <tr><td>產業類別</td><td>AI / 半導體</td></tr>
+    <tr><td>分析日期</td><td>2026-05-16</td></tr>
+    <tr><th colspan="2">EPS 數據</th></tr>
+    <tr><td>TTM EPS（近四季）</td><td>66.26 元</td></tr>
+    <tr><td>2025 年 EPS</td><td>66.26 元（確認）</td></tr>
+    <tr><td>2024 年 EPS</td><td>45.25 元</td></tr>
+    <tr><td>2023 年 EPS</td><td>32.34 元</td></tr>
+    <tr><th colspan="2">PER 區間（歷史 2023–2026）</th></tr>
+    <tr><td>便宜 PER</td><td>17x</td></tr>
+    <tr><td>合理 PER</td><td>22x</td></tr>
+    <tr><td>昂貴 PER</td><td>28x</td></tr>
+    <tr class="highlight"><td>目前 PER（26M05）</td><td><span class="per-zone per-over">34.18x ⚠️ 超越昂貴區</span></td></tr>
+    <tr><th colspan="2">估值價位</th></tr>
+    <tr><td>便宜價（17x）</td><td>1,126 元</td></tr>
+    <tr><td>合理價（22x）</td><td>1,458 元</td></tr>
+    <tr><td>昂貴價（28x）</td><td>1,855 元</td></tr>
+    <tr class="highlight"><td>最新收盤（26M05）</td><td>2,265 元（高於昂貴價 22%）</td></tr>
+    <tr><th colspan="2">操作建議</th></tr>
+    <tr><td>現況評估</td><td>⚠️ 目前 PER 34x，顯著超越歷史昂貴區（28x）</td></tr>
+    <tr><td>短線</td><td>不建議追高；AI 溢價明顯</td></tr>
+    <tr><td>中線目標買點</td><td>1,800～2,000 元（PER 27～30x 區間）</td></tr>
+    <tr><td>長線便宜買點</td><td>1,450 元以下（回到合理 PER）</td></tr>
+  </table>
+</div>
+
+<script>
+// ── 即時股價 ──────────────────────────────────────────
+async function fetchPrice() {
+  try {
+    const r = await fetch('https://taiwan-stock-price.david870114.workers.dev/?id=2330');
+    const d = await r.json();
+    const price = d.price || d.close || d.currentPrice;
+    const change = d.change || d.priceChange || 0;
+    const changePct = d.changePercent || d.changeRate || 0;
+    if (price) {
+      document.getElementById('livePrice').textContent = Number(price).toLocaleString();
+      const sign = change >= 0 ? '+' : '';
+      const color = change >= 0 ? '#e74c3c' : '#2ecc71';
+      document.getElementById('priceChange').innerHTML = `<span style="color:${color}">${sign}${change} (${sign}${Number(changePct).toFixed(2)}%)</span>`;
+    }
+  } catch(e) { document.getElementById('livePrice').textContent = '2,265'; }
+}
+fetchPrice();
+setInterval(fetchPrice, 60000);
+
+// ── 資料 ──────────────────────────────────────────────
+const labels = [
+  '23M06','23M07','23M08','23M09','23M10','23M11','23M12',
+  '24M01','24M02','24M03','24M04','24M05','24M06','24M07','24M08','24M09','24M10','24M11',
+  '24M12','25M01','25M02','25M03','25M04','25M05','25M06','25M07','25M08','25M09','25M10','25M11','25M12',
+  '26M01','26M02','26M03','26M04','26M05'
+];
+
+const ttmEps = [
+  37.23,34.54,34.54,34.54,32.34,32.34,32.34,
+  33.07,33.07,33.07,35.59,35.59,35.59,40.01,40.01,40.01,45.25,45.25,
+  45.25,50.52,50.52,50.52,56.31,56.31,56.31,61.2,61.2,61.2,66.26,66.26,66.26,
+  66.26,66.26,66.26,66.26,66.26
+];
+
+const closePrices = [
+  576,565,549,523,529,577,593,
+  628,690,779,790,821,966,934,944,957,1030,996,
+  1075,1135,1040,910,908,967,1060,1160,1160,1305,1500,1440,1550,
+  1775,1995,1760,2135,2265
+];
+
+// PER 線
+const per10 = ttmEps.map(e => +(e * 10).toFixed(1));
+const per14 = ttmEps.map(e => +(e * 14).toFixed(1));
+const per18 = ttmEps.map(e => +(e * 18).toFixed(1));
+const per22 = ttmEps.map(e => +(e * 22).toFixed(1));
+const per28 = ttmEps.map(e => +(e * 28).toFixed(1));
+const per35 = ttmEps.map(e => +(e * 35).toFixed(1));
+
+// ── PER 河流圖 ────────────────────────────────────────
+const ctx = document.getElementById('perChart').getContext('2d');
+new Chart(ctx, {
+  type: 'line',
+  data: {
+    labels,
+    datasets: [
+      { label: 'PER 35x（極高）',  data: per35, borderColor: '#ff2244', borderWidth: 1.5, borderDash: [4,3], pointRadius: 0, fill: false },
+      { label: 'PER 28x（昂貴）',  data: per28, borderColor: '#e74c3c', borderWidth: 1.5, pointRadius: 0, fill: false },
+      { label: 'PER 22x（合理）',  data: per22, borderColor: '#f7dc6f', borderWidth: 1.5, pointRadius: 0, fill: false },
+      { label: 'PER 18x（偏低）',  data: per18, borderColor: '#4ecdc4', borderWidth: 1.5, pointRadius: 0, fill: false },
+      { label: 'PER 14x（便宜）',  data: per14, borderColor: '#27ae60', borderWidth: 1.5, pointRadius: 0, fill: false },
+      { label: 'PER 10x（底部）',  data: per10, borderColor: '#1abc9c', borderWidth: 1, borderDash: [2,3], pointRadius: 0, fill: false },
+      {
+        label: '收盤價',
+        data: closePrices,
+        borderColor: '#ffffff',
+        backgroundColor: 'rgba(255,255,255,0.08)',
+        borderWidth: 2.5,
+        pointRadius: 2,
+        pointBackgroundColor: '#ffffff',
+        fill: false,
+        spanGaps: true,
+        tension: 0.3,
+        z: 10
+      }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { labels: { color: '#aab', font: { size: 11 }, boxWidth: 20 }, position: 'bottom' },
+      tooltip: {
+        mode: 'index', intersect: false,
+        callbacks: {
+          label: ctx => `${ctx.dataset.label}: ${ctx.parsed.y?.toLocaleString()}`
+        }
+      }
+    },
+    scales: {
+      x: { ticks: { color: '#667', font: { size: 10 }, maxRotation: 45 }, grid: { color: '#1e2535' } },
+      y: { ticks: { color: '#889', callback: v => v.toLocaleString() }, grid: { color: '#1e2535' } }
+    }
+  }
+});
+
+// ── EPS 趨勢圖 ────────────────────────────────────────
+const epsCtx = document.getElementById('epsChart').getContext('2d');
+new Chart(epsCtx, {
+  type: 'bar',
+  data: {
+    labels: ['2021', '2022', '2023', '2024', '2025', '2026E'],
+    datasets: [{
+      label: '年度 EPS（元）',
+      data: [23.01, 39.20, 32.34, 45.25, 66.26, 80],
+      backgroundColor: ['#4ecdc4aa','#4ecdc4aa','#e74c3caa','#4ecdc4aa','#f7dc6faa','#667788aa'],
+      borderColor:      ['#4ecdc4',  '#4ecdc4',  '#e74c3c',  '#4ecdc4',  '#f7dc6f',  '#889ab0'],
+      borderWidth: 2, borderRadius: 6
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { labels: { color: '#aab' } },
+      tooltip: { callbacks: { label: ctx => `EPS: ${ctx.parsed.y} 元` } }
+    },
+    scales: {
+      x: { ticks: { color: '#889' }, grid: { color: '#1e2535' } },
+      y: { ticks: { color: '#889', callback: v => `${v} 元` }, grid: { color: '#1e2535' } }
+    }
+  }
+});
+
+// ── Tab 切換 ──────────────────────────────────────────
+function switchTab(i) {
+  document.querySelectorAll('.tab').forEach((t,j) => t.classList.toggle('active', i===j));
+  document.querySelectorAll('.tab-content').forEach((c,j) => c.classList.toggle('active', i===j));
+}
+</script>
+</body>
+</html>
