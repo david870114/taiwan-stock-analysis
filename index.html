@@ -169,8 +169,14 @@ const stocks = [
 async function fetchPrice(stockId) {
   try {
     const proxyUrl = `https://script.google.com/macros/s/AKfycbzt47dsu6KjTm-U-RDKooeQ3TVAzu2lw7G1csqd1_p81UJuPxD6S-9V_iZUPehwlLI66w/exec?id=${stockId}`;
-    const res = await fetch(proxyUrl, { redirect: 'follow' });
-    const data = await res.json();
+    const res = await fetch(proxyUrl, { 
+      redirect: 'follow',
+      mode: 'cors',
+      cache: 'no-cache',
+      credentials: 'omit'
+    });
+    const text = await res.text();
+    const data = JSON.parse(text);
     if (data.price && data.price !== '-' && data.price !== null) {
       return parseFloat(data.price);
     }
