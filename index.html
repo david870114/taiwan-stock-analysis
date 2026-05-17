@@ -36,6 +36,7 @@
   .badge-down { background: #450a0a; color: #fca5a5; }
   .divider { border: none; border-top: 1px solid #1e2535; margin: 0; }
   .footer { font-size: 10px; color: #334155; margin-top: 24px; text-align: center; }
+  .fwd-note { font-size: 10px; color: #64748b; font-style: italic; }
 </style>
 </head>
 <body>
@@ -210,7 +211,47 @@
   </table>
 </div>
 
-<p class="footer">⚠️ 本頁僅供參考，不構成投資建議。股市有風險，請自行判斷。數據來源：Yahoo Finance、公開財報。</p>
+<!-- 記憶體／利基型（新增 2337 旺宏） -->
+<div class="section">
+  <div class="section-title">記憶體／利基型</div>
+  <table>
+    <thead>
+      <tr>
+        <th>代號</th>
+        <th>名稱</th>
+        <th>2026E EPS</th>
+        <th>低本益比</th>
+        <th>均本益比</th>
+        <th>高本益比</th>
+        <th>便宜價</th>
+        <th>合理價</th>
+        <th>昂貴價</th>
+        <th>目前股價</th>
+        <th>vs合理價%</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="code">2337</td>
+        <td class="name">
+          <a href="2337_analysis.html" target="_blank">旺宏</a><br>
+          <span class="fwd-note">* 前瞻PER（歷史PER無效）</span>
+        </td>
+        <td>13.63*</td>
+        <td>8x</td>
+        <td>12x</td>
+        <td>16x</td>
+        <td>109</td>
+        <td>163</td>
+        <td>218</td>
+        <td class="price-cell loading" id="price-2337">載入...</td>
+        <td id="vs-2337" class="loading">—</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<p class="footer">⚠️ 本頁僅供參考，不構成投資建議。股市有風險，請自行判斷。數據來源：Yahoo Finance、公開財報。<br>* 旺宏（2337）因歷史虧損無 TTM PER，改用 FactSet 法人 2026E EPS 共識 13.63 元（前瞻 PER）。</p>
 
 <script>
 const stocks = [
@@ -220,6 +261,7 @@ const stocks = [
   { id: '3596', fairValue: 177,  expensiveValue: 278  },
   { id: '2382', fairValue: 350,  expensiveValue: 506  },
   { id: '3231', fairValue: 181,  expensiveValue: 302  },
+  { id: '2337', fairValue: 163,  expensiveValue: 218  },
 ];
 
 async function fetchPrice(stockId) {
