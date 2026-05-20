@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>威剛 3260 — 2026 股價推算分析</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #0f1117; color: #e2e8f0; padding: 16px; }
+  h1 { font-size: 18px; font-weight: 700; color: #f8fafc; margin-bottom: 4px; }
+  .subtitle { font-size: 12px; color: #94a3b8; margin-bottom: 16px; }
+  .tabs { display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; }
+  .tab { padding: 6px 14px; border-radius: 20px; font-size: 12px; cursor: pointer; border: 1px solid #334155; color: #94a3b8; background: transparent; transition: all 0.2s; }
+  .tab.active { background: #3b82f6; color: #fff; border-color: #3b82f6; }
+  .tab:hover:not(.active) { border-color: #64748b; color: #e2e8f0; }
+  .panel { display: none; }
+  .panel.active { display: block; }
+  canvas { width: 100% !important; border-radius: 10px; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+  .card { background: #1e2535; border: 1px solid #2d3748; border-radius: 10px; padding: 14px; }
+  .card h3 { font-size: 12px; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
+  .card .val { font-size: 22px; font-weight: 700; }
+  .card .note { font-size: 11px; color: #64748b; margin-top: 4px; }
+  .green { color: #22c55e; } .yellow { color: #eab308; } .red { color: #ef4444; } .blue { color: #3b82f6; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 12px; }
+  th { background: #1e2535; color: #64748b; padding: 8px 10px; text-align: left; font-weight: 600; font-size: 11px; text-transform: uppercase; }
+  td { padding: 8px 10px; border-bottom: 1px solid #1e2535; }
+  tr:hover td { background: #1a2030; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: 600; }
+  .badge-buy { background: #14532d; color: #86efac; }
+  .badge-watch { background: #713f12; color: #fde68a; }
+  .badge-avoid { background: #450a0a; color: #fca5a5; }
+  .scenario-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 12px; }
+  .scenario-card { border-radius: 10px; padding: 14px; text-align: center; }
+  .bear { background: linear-gradient(135deg, #1a0a0a, #2d1010); border: 1px solid #7f1d1d; }
+  .base { background: linear-gradient(135deg, #0a1a0a, #102d10); border: 1px solid #14532d; }
+  .bull { background: linear-gradient(135deg, #0a0f1a, #10182d); border: 1px solid #1d4ed8; }
+  .sc-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.7; margin-bottom: 6px; }
+  .sc-price { font-size: 22px; font-weight: 800; margin: 4px 0; }
+  .sc-detail { font-size: 10px; opacity: 0.65; line-height: 1.6; }
+  .section-title { font-size: 13px; font-weight: 600; color: #cbd5e1; margin: 16px 0 8px; }
+  .buy-signal { background: #0f2a1e; border: 1px solid #166534; border-radius: 10px; padding: 14px; margin-top: 12px; }
+  .buy-signal h3 { color: #86efac; font-size: 13px; margin-bottom: 8px; }
+  .buy-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid #1a3a2a; gap: 8px; }
+  .buy-row:last-child { border-bottom: none; }
+  .current-price-badge { background: #1e3a5f; border: 1px solid #3b82f6; border-radius: 8px; padding: 10px 14px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px; }
+  .dtable th { text-align: center; }
+  .dtable td { text-align: center; }
+  .dtable tr.qend td { background: #1a2f4a; font-weight: 600; }
+</style>
+</head>
+<body>
+
+<div style="margin-bottom:12px;">
+  <a href="index.html" style="color:#64748b;font-size:12px;text-decoration:none;display:inline-flex;align-items:center;gap:4px;padding:5px 10px;border:1px solid #334155;border-radius:8px;transition:all 0.2s;" onmouseover="this.style.color='#e2e8f0';this.style.borderColor='#64748b'" onmouseout="this.style.color='#64748b';this.style.borderColor='#334155'">← 返回總覽</a>
+</div>
+<h1>💾 威剛科技 (3260) — 2026 股價推算分析</h1>
+<p class="subtitle">本益比河流圖 ✦ 三情境估值 ✦ 分批買點建議 ✦ 更新時間：2026年5月20日</p>
+
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('river', this)">📈 PER 河流圖</button>
+  <button class="tab" onclick="switchTab('scenario', this)">🎯 三情境買點</button>
+  <button class="tab" onclick="switchTab('eps', this)">📊 EPS 趨勢</button>
+  <button class="tab" onclick="switchTab('summary', this)">📋 完整摘要</button>
+</div>
+
+<!-- TAB 1 -->
+<div id="tab-river" class="panel active">
+  <div class="current-price-badge">
+    <span style="color:#94a3b8;font-size:12px;">目前股價（2026/5/20）</span>
+    <span style="color:#3b82f6;font-size:20px;font-weight:800;">$ 405.5</span>
+    <span style="color:#22c55e;font-size:12px;">PER ≈ 7.89x（TTM EPS 51.38元）位於便宜帶以下</span>
+  </div>
+  <canvas id="riverChart" height="340"></canvas>
+  <p style="font-size:11px;color:#475569;margin-top:8px;text-align:center;">* 河流帶以逐月正確 EPS（10x欄÷10）計算，各倍數代表歷史 PER 估值區間</p>
+</div>
+
+<!-- TAB 2 -->
+<div id="tab-scenario" class="panel">
+  <div class="grid2">
+    <div class="card"><h3>最新 TTM EPS（26Q1）</h3><div class="val green">51.38 元</div><div class="note">EPS 歷史新高，YoY 大幅成長</div></div>
+    <div class="card"><h3>目前 PER（26M05）</h3><div class="val yellow">7.89x</div><div class="note">低於歷史便宜帶（10x），深度折價</div></div>
+  </div>
+  <div class="section-title">三情境估值（基於 TTM EPS 51.38 元）</div>
+  <div class="scenario-grid">
+    <div class="scenario-card bear">
+      <div class="sc-label">🐻 悲觀</div>
+      <div class="sc-price red">360–514</div>
+      <div class="sc-detail">EPS 下修至 35–45元<br>PER 8–10x<br>記憶體景氣反轉<br>EPS 持續性存疑</div>
+    </div>
+    <div class="scenario-card base">
+      <div class="sc-label">⚖️ 基本</div>
+      <div class="sc-price green">514–719</div>
+      <div class="sc-detail">EPS 維持 51 元<br>PER 10–14x<br>AI 儲存需求持續<br>DDR5/SSD 放量</div>
+    </div>
+    <div class="scenario-card bull">
+      <div class="sc-label">🚀 樂觀</div>
+      <div class="sc-price" style="color:#60a5fa;">719–925</div>
+      <div class="sc-detail">EPS 持續成長<br>PER 14–18x<br>HBM/AI SSD 爆量<br>市場重新定價</div>
+    </div>
+  </div>
+  <div class="buy-signal">
+    <h3>💰 分批建倉買點建議（基本～樂觀情境）</h3>
+    <div class="buy-row">
+      <span style="color:#86efac;font-size:13px;font-weight:600;">第一批（40%）</span>
+      <span style="color:#fde68a;font-size:14px;font-weight:700;">380–430 元</span>
+      <span class="badge badge-buy">現況區間 PER ~7-8x</span>
+    </div>
+    <div class="buy-row">
+      <span style="color:#86efac;font-size:13px;font-weight:600;">第二批（40%）</span>
+      <span style="color:#fde68a;font-size:14px;font-weight:700;">430–514 元</span>
+      <span class="badge badge-buy">主力倉位 PER ~8-10x</span>
+    </div>
+    <div class="buy-row">
+      <span style="color:#86efac;font-size:13px;font-weight:600;">第三批（20%）</span>
+      <span style="color:#fde68a;font-size:14px;font-weight:700;">514–620 元</span>
+      <span class="badge badge-watch">動能追加 PER ~10-12x</span>
+    </div>
+    <div class="buy-row" style="border-top:1px solid #166534;margin-top:8px;padding-top:10px;">
+      <span style="color:#fca5a5;font-size:12px;">觀望/分批減倉</span>
+      <span style="color:#fca5a5;font-size:13px;font-weight:700;">720 元以上</span>
+      <span class="badge badge-avoid">PER > 14x 偏貴</span>
+    </div>
+  </div>
+</div>
+
+<!-- TAB 3 -->
+<div id="tab-eps" class="panel">
+  <canvas id="epsChart" height="300"></canvas>
+  <div class="section-title" style="margin-top:16px;">📋 逐月明細表（10x欄÷10 = 河流圖EPS，供截圖驗證）</div>
+  <div style="overflow-x:auto;">
+    <table class="dtable">
+      <thead><tr><th>月份</th><th>收盤價</th><th>河流圖EPS</th><th>目前PER</th><th>10x</th><th>14x</th><th>18x</th><th>22x</th><th>26x</th><th>30x</th></tr></thead>
+      <tbody id="detailTbody"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- TAB 4 -->
+<div id="tab-summary" class="panel">
+  <div class="section-title">📌 關鍵基本面數據</div>
+  <table>
+    <thead><tr><th>指標</th><th>數值</th><th>評估</th></tr></thead>
+    <tbody>
+      <tr><td>目前股價（2026/5/20）</td><td style="color:#3b82f6;font-weight:700;">405.5 元</td><td><span class="badge badge-buy">深度折價</span></td></tr>
+      <tr><td>TTM EPS（26Q1）</td><td style="color:#22c55e;font-weight:700;">51.38 元</td><td><span class="badge badge-buy">歷史新高</span></td></tr>
+      <tr><td>目前 PER</td><td style="color:#22c55e;font-weight:700;">7.89x</td><td><span class="badge badge-buy">低於便宜帶</span></td></tr>
+      <tr><td>EPS 成長（vs 23Q2 低點）</td><td>2.34 → 51.38 元</td><td><span class="badge badge-buy">+2095%</span></td></tr>
+      <tr><td>便宜帶（10x）</td><td>514 元</td><td><span class="badge badge-buy">低估帶</span></td></tr>
+      <tr><td>合理帶（14x）</td><td>719 元</td><td><span class="badge badge-watch">合理帶</span></td></tr>
+      <tr><td>昂貴帶（18x）</td><td>925 元</td><td><span class="badge badge-avoid">高估帶</span></td></tr>
+      <tr><td>歷史 PER 正常區間</td><td>8x–14x（排除 EPS 低點期）</td><td><span class="badge badge-watch">景氣循環股</span></td></tr>
+    </tbody>
+  </table>
+  <div class="section-title" style="margin-top:20px;">📈 EPS 成長軌跡</div>
+  <div class="card" style="margin-top:0;">
+    <div style="font-size:12px;line-height:2;color:#cbd5e1;">
+      <span style="color:#64748b;">2023Q1–Q2</span>　EPS 2.34 元　記憶體景氣低谷<br>
+      <span style="color:#64748b;">2023Q3–Q4</span>　EPS 3.36 → 5.21 元　景氣底部回升<br>
+      <span style="color:#64748b;">2024Q1–Q3</span>　EPS 8.35 → 10.61 元　復甦確立<br>
+      <span style="color:#64748b;">2025Q1–Q2</span>　EPS 7.1 → 7.34 元　短暫整理<br>
+      <span style="color:#64748b;">2025Q3</span>　EPS 跳升至 11.05 元　AI 儲存需求啟動<br>
+      <span style="color:#64748b;">2025Q4</span>　EPS 爆增至 23.18 元　獲利大爆發<br>
+      <span style="color:#22c55e;font-weight:700;">2026Q1</span>　EPS 達到 51.38 元　歷史新高
+    </div>
+  </div>
+  <div class="section-title" style="margin-top:20px;">⚡ 催化劑 vs 風險</div>
+  <div class="grid2">
+    <div class="card">
+      <h3>🚀 利多</h3>
+      <div style="font-size:12px;line-height:1.9;color:#86efac;">✓ AI 伺服器 DDR5 需求爆發<br>✓ 企業級 SSD 高速成長<br>✓ 台灣最大 DRAM 模組廠<br>✓ 目前 PER 7.89x 極低<br>✓ EPS 歷史新高 51.38 元</div>
+    </div>
+    <div class="card">
+      <h3>⚠️ 風險</h3>
+      <div style="font-size:12px;line-height:1.9;color:#fca5a5;">✗ 記憶體景氣高度循環性<br>✗ EPS 持續性存有疑慮<br>✗ 若 EPS 下修，估值基礎改變<br>✗ 美中關稅影響供應鏈<br>✗ 殖利率保護相對低</div>
+    </div>
+  </div>
+  <p style="font-size:10px;color:#475569;margin-top:14px;line-height:1.6;">⚠️ 本分析僅供參考，不構成投資建議。股市有風險，投資前請自行判斷。</p>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<script>
+function switchTab(id, btn) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  btn.classList.add('active');
+  if (id === 'eps' && !window.epsDrawn) drawEPS();
+}
+
+const data = [
+  { m:'23M06', px:89,    eps:2.34,  per:38.03, x10:23.4,  x14:32.76, x18:42.12, x22:51.48,  x26:60.84, x30:70.2  },
+  { m:'23M07', px:81.9,  eps:2.68,  per:30.56, x10:26.8,  x14:37.52, x18:48.24, x22:58.96,  x26:69.68, x30:80.4  },
+  { m:'23M08', px:86.8,  eps:3.02,  per:28.74, x10:30.2,  x14:42.28, x18:54.36, x22:66.44,  x26:78.52, x30:90.6  },
+  { m:'23M09', px:84.5,  eps:3.36,  per:25.15, x10:33.6,  x14:47.04, x18:60.48, x22:73.92,  x26:87.36, x30:100.8 },
+  { m:'23M10', px:97.4,  eps:3.977, per:24.49, x10:39.77, x14:55.67, x18:71.58, x22:87.49,  x26:103.4, x30:119.3 },
+  { m:'23M11', px:100,   eps:4.593, per:21.77, x10:45.93, x14:64.31, x18:82.68, x22:101.1,  x26:119.4, x30:137.8 },
+  { m:'23M12', px:103,   eps:5.21,  per:19.77, x10:52.1,  x14:72.94, x18:93.78, x22:114.6,  x26:135.5, x30:156.3 },
+  { m:'24M01', px:95.9,  eps:6.257, per:15.33, x10:62.57, x14:87.59, x18:112.6, x22:137.6,  x26:162.7, x30:187.7 },
+  { m:'24M02', px:100,   eps:7.303, per:13.69, x10:73.03, x14:102.2, x18:131.5, x22:160.7,  x26:189.9, x30:219.1 },
+  { m:'24M03', px:98.7,  eps:8.35,  per:11.82, x10:83.5,  x14:116.9, x18:150.3, x22:183.7,  x26:217.1, x30:250.5 },
+  { m:'24M04', px:100,   eps:8.907, per:11.23, x10:89.07, x14:124.7, x18:160.3, x22:195.9,  x26:231.6, x30:267.2 },
+  { m:'24M05', px:114,   eps:9.463, per:12.05, x10:94.63, x14:132.5, x18:170.3, x22:208.2,  x26:246,   x30:283.9 },
+  { m:'24M06', px:108,   eps:10.02, per:10.78, x10:100.2, x14:140.3, x18:180.4, x22:220.4,  x26:260.5, x30:300.6 },
+  { m:'24M07', px:93.3,  eps:10.22, per:9.13,  x10:102.2, x14:143,   x18:183.9, x22:224.8,  x26:265.6, x30:306.5 },
+  { m:'24M08', px:94.6,  eps:10.41, per:9.08,  x10:104.1, x14:145.8, x18:187.4, x22:229.1,  x26:270.7, x30:312.4 },
+  { m:'24M09', px:88.7,  eps:10.61, per:8.36,  x10:106.1, x14:148.5, x18:191,   x22:233.4,  x26:275.9, x30:318.3 },
+  { m:'24M10', px:85.7,  eps:10.16, per:8.44,  x10:101.6, x14:142.2, x18:182.8, x22:223.4,  x26:264.1, x30:304.7 },
+  { m:'24M11', px:87.2,  eps:9.703, per:8.99,  x10:97.03, x14:135.8, x18:174.7, x22:213.5,  x26:252.3, x30:291.1 },
+  { m:'24M12', px:78.4,  eps:9.25,  per:8.48,  x10:92.5,  x14:129.5, x18:166.5, x22:203.5,  x26:240.5, x30:277.5 },
+  { m:'25M01', px:77,    eps:8.533, per:9.02,  x10:85.33, x14:119.5, x18:153.6, x22:187.7,  x26:221.9, x30:256   },
+  { m:'25M02', px:85.7,  eps:7.817, per:10.96, x10:78.17, x14:109.4, x18:140.7, x22:172,    x26:203.2, x30:234.5 },
+  { m:'25M03', px:85.1,  eps:7.1,   per:11.99, x10:71,    x14:99.4,  x18:127.8, x22:156.2,  x26:184.6, x30:213   },
+  { m:'25M04', px:83.7,  eps:7.18,  per:11.66, x10:71.8,  x14:100.5, x18:129.2, x22:158,    x26:186.7, x30:215.4 },
+  { m:'25M05', px:92.8,  eps:7.26,  per:12.78, x10:72.6,  x14:101.6, x18:130.7, x22:159.7,  x26:188.8, x30:217.8 },
+  { m:'25M06', px:93.6,  eps:7.34,  per:12.75, x10:73.4,  x14:102.8, x18:132.1, x22:161.5,  x26:190.8, x30:220.2 },
+  { m:'25M07', px:91.3,  eps:8.577, per:10.65, x10:85.77, x14:120.1, x18:154.4, x22:188.7,  x26:223,   x30:257.3 },
+  { m:'25M08', px:102.5, eps:9.813, per:10.44, x10:98.13, x14:137.4, x18:176.6, x22:215.9,  x26:255.1, x30:294.4 },
+  { m:'25M09', px:157,   eps:11.05, per:14.21, x10:110.5, x14:154.7, x18:198.9, x22:243.1,  x26:287.3, x30:331.5 },
+  { m:'25M10', px:198,   eps:15.09, per:13.12, x10:150.9, x14:211.3, x18:271.7, x22:332.1,  x26:392.4, x30:452.8 },
+  { m:'25M11', px:177.5, eps:19.14, per:9.28,  x10:191.4, x14:267.9, x18:344.5, x22:421,    x26:497.6, x30:574.1 },
+  { m:'25M12', px:279.5, eps:23.18, per:12.06, x10:231.8, x14:324.5, x18:417.2, x22:510,    x26:602.7, x30:695.4 },
+  { m:'26M01', px:363.5, eps:32.58, per:11.16, x10:325.8, x14:456.1, x18:586.4, x22:716.8,  x26:847.1, x30:977.4 },
+  { m:'26M02', px:285.5, eps:41.98, per:6.8,   x10:419.8, x14:587.7, x18:755.6, x22:923.6,  x26:1091,  x30:1259  },
+  { m:'26M03', px:335,   eps:51.38, per:6.52,  x10:513.8, x14:719.3, x18:924.8, x22:1130,   x26:1336,  x30:1541  },
+  { m:'26M04', px:436,   eps:51.38, per:8.49,  x10:513.8, x14:719.3, x18:924.8, x22:1130,   x26:1336,  x30:1541  },
+  { m:'26M05', px:405.5, eps:51.38, per:7.89,  x10:513.8, x14:719.3, x18:924.8, x22:1130,   x26:1336,  x30:1541  },
+];
+
+const labels = data.map(d => d.m);
+
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    const ctx = document.getElementById('riverChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [
+          { label: 'PER 30x', data: data.map(d=>d.x30), borderColor:'#ef4444', borderWidth:1, borderDash:[5,4], pointRadius:0, fill:false },
+          { label: 'PER 22x', data: data.map(d=>d.x22), borderColor:'#f97316', borderWidth:1, borderDash:[5,4], pointRadius:0, fill:false },
+          { label: 'PER 18x（昂貴）', data: data.map(d=>d.x18), borderColor:'#eab308', borderWidth:1.5, pointRadius:0, fill:false },
+          { label: 'PER 14x（合理）', data: data.map(d=>d.x14), borderColor:'#22c55e', borderWidth:1.5, pointRadius:0, fill:false },
+          { label: 'PER 10x（便宜）', data: data.map(d=>d.x10), borderColor:'#3b82f6', borderWidth:1.5, pointRadius:0, fill:false },
+          { label: '收盤價', data: data.map(d=>d.px), borderColor:'#ffffff', borderWidth:2.5, pointRadius:2, pointBackgroundColor:'#fff', fill:false, tension:0.3, spanGaps:true },
+        ]
+      },
+      options: {
+        responsive:true, interaction:{ mode:'index', intersect:false },
+        plugins: {
+          legend:{ labels:{ color:'#94a3b8', font:{size:11}, boxWidth:18 } },
+          tooltip:{ backgroundColor:'#1e2535', titleColor:'#f8fafc', bodyColor:'#94a3b8', borderColor:'#334155', borderWidth:1 }
+        },
+        scales: {
+          x:{ ticks:{ color:'#64748b', font:{size:10}, maxRotation:45 }, grid:{ color:'rgba(30,37,53,0.8)' } },
+          y:{ ticks:{ color:'#64748b', font:{size:10}, callback: v => v.toLocaleString() }, grid:{ color:'rgba(30,37,53,0.8)' } }
+        }
+      }
+    });
+
+    // detail table
+    const tbody = document.getElementById('detailTbody');
+    [...data].reverse().forEach(d => {
+      const isQE = ['M03','M06','M09','M12'].some(s => d.m.endsWith(s));
+      const tr = document.createElement('tr');
+      if (isQE) tr.className = 'qend';
+      tr.innerHTML = '<td>'+d.m+'</td><td>'+d.px+'</td><td>'+d.eps.toFixed(2)+'</td><td>'+d.per+'</td><td>'+d.x10+'</td><td>'+d.x14+'</td><td>'+d.x18+'</td><td>'+d.x22+'</td><td>'+d.x26+'</td><td>'+d.x30+'</td>';
+      tbody.appendChild(tr);
+    });
+  }, 200);
+});
+
+function drawEPS() {
+  window.epsDrawn = true;
+  const ctx2 = document.getElementById('epsChart').getContext('2d');
+  const q = data.filter(d => ['M03','M06','M09','M12'].some(s => d.m.endsWith(s)));
+  new Chart(ctx2, {
+    type: 'bar',
+    data: {
+      labels: q.map(d => d.m),
+      datasets: [{
+        label: '季末 TTM EPS（元）',
+        data: q.map(d => d.eps),
+        backgroundColor: q.map(d => d.m.startsWith('26') ? 'rgba(59,130,246,0.7)' : 'rgba(34,197,94,0.65)'),
+        borderColor: q.map(d => d.m.startsWith('26') ? '#3b82f6' : '#22c55e'),
+        borderWidth:1.5, borderRadius:5
+      }]
+    },
+    options: {
+      responsive:true,
+      plugins:{ legend:{ labels:{ color:'#94a3b8' } }, tooltip:{ backgroundColor:'#1e2535', bodyColor:'#94a3b8' } },
+      scales: {
+        x:{ ticks:{ color:'#64748b', maxRotation:45 }, grid:{ color:'rgba(30,37,53,0.8)' } },
+        y:{ ticks:{ color:'#64748b', callback: v => v+'元' }, grid:{ color:'rgba(30,37,53,0.8)' } }
+      }
+    }
+  });
+}
+</script>
+</body>
+</html>
