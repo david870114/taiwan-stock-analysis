@@ -211,6 +211,43 @@
   </table>
 </div>
 
+<!-- 散熱／機殼 -->
+<div class="section">
+  <div class="section-title">散熱／機殼</div>
+  <table>
+    <thead>
+      <tr>
+        <th>代號</th>
+        <th>名稱</th>
+        <th>TTM EPS</th>
+        <th>低本益比</th>
+        <th>均本益比</th>
+        <th>高本益比</th>
+        <th>便宜價</th>
+        <th>合理價</th>
+        <th>昂貴價</th>
+        <th>目前股價</th>
+        <th>vs合理價%</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="code">8210</td>
+        <td class="name"><a href="8210_analysis.html" target="_blank">勤誠</a></td>
+        <td>33.95</td>
+        <td>14x</td>
+        <td>22x</td>
+        <td>30x</td>
+        <td>475</td>
+        <td>747</td>
+        <td>1,019</td>
+        <td class="price-cell loading" id="price-8210">載入...</td>
+        <td id="vs-8210" class="loading">—</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
 <!-- 散熱／液冷 -->
 <div class="section">
   <div class="section-title">散熱／液冷</div>
@@ -369,6 +406,7 @@ const stocks = [
   { id: '3481', fairValue: 30,   expensiveValue: 50   },
   { id: '2337', fairValue: 163,  expensiveValue: 218  },
   { id: '3260', fairValue: 719,  expensiveValue: 925  },
+  { id: '8210', fairValue: 747,  expensiveValue: 1019 },
 ];
 
 async function fetchPrice(stockId) {
