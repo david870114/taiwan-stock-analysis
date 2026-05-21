@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>奇鋐 3017 — 2026 股價推算分析</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #0f1117; color: #e2e8f0; padding: 16px; }
+  h1 { font-size: 18px; font-weight: 700; color: #f8fafc; margin-bottom: 4px; }
+  .subtitle { font-size: 12px; color: #94a3b8; margin-bottom: 16px; }
+  .tabs { display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; }
+  .tab { padding: 6px 14px; border-radius: 20px; font-size: 12px; cursor: pointer; border: 1px solid #334155; color: #94a3b8; background: transparent; transition: all 0.2s; }
+  .tab.active { background: #3b82f6; color: #fff; border-color: #3b82f6; }
+  .tab:hover:not(.active) { border-color: #64748b; color: #e2e8f0; }
+  .panel { display: none; }
+  .panel.active { display: block; }
+  canvas { width: 100% !important; border-radius: 10px; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+  .card { background: #1e2535; border: 1px solid #2d3748; border-radius: 10px; padding: 14px; }
+  .card h3 { font-size: 12px; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
+  .card .val { font-size: 22px; font-weight: 700; }
+  .card .note { font-size: 11px; color: #64748b; margin-top: 4px; }
+  .green { color: #22c55e; } .yellow { color: #eab308; } .red { color: #ef4444; } .blue { color: #3b82f6; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 12px; }
+  th { background: #1e2535; color: #64748b; padding: 8px 10px; text-align: left; font-weight: 600; font-size: 11px; text-transform: uppercase; }
+  td { padding: 8px 10px; border-bottom: 1px solid #1e2535; }
+  tr:hover td { background: #1a2030; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: 600; }
+  .badge-buy { background: #14532d; color: #86efac; }
+  .badge-watch { background: #713f12; color: #fde68a; }
+  .badge-avoid { background: #450a0a; color: #fca5a5; }
+  .scenario-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 12px; }
+  .scenario-card { border-radius: 10px; padding: 14px; text-align: center; }
+  .bear { background: linear-gradient(135deg, #1a0a0a, #2d1010); border: 1px solid #7f1d1d; }
+  .base { background: linear-gradient(135deg, #0a1a0a, #102d10); border: 1px solid #14532d; }
+  .bull { background: linear-gradient(135deg, #0a0f1a, #10182d); border: 1px solid #1d4ed8; }
+  .sc-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.7; margin-bottom: 6px; }
+  .sc-price { font-size: 22px; font-weight: 800; margin: 4px 0; }
+  .sc-detail { font-size: 10px; opacity: 0.65; line-height: 1.6; }
+  .section-title { font-size: 13px; font-weight: 600; color: #cbd5e1; margin: 16px 0 8px; }
+  .buy-signal { background: #0f2a1e; border: 1px solid #166534; border-radius: 10px; padding: 14px; margin-top: 12px; }
+  .buy-signal h3 { color: #86efac; font-size: 13px; margin-bottom: 8px; }
+  .buy-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid #1a3a2a; gap: 8px; }
+  .buy-row:last-child { border-bottom: none; }
+  .current-price-badge { background: #1e3a5f; border: 1px solid #3b82f6; border-radius: 8px; padding: 10px 14px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px; }
+  .detail-table td:nth-child(n+3) { text-align: right; }
+  .detail-table th:nth-child(n+3) { text-align: right; }
+</style>
+</head>
+<body>
+<div style="margin-bottom:12px;">
+  <a href="index.html" style="color:#64748b;font-size:12px;text-decoration:none;display:inline-flex;align-items:center;gap:4px;padding:5px 10px;border:1px solid #334155;border-radius:8px;transition:all 0.2s;" onmouseover="this.style.color='#e2e8f0';this.style.borderColor='#64748b'" onmouseout="this.style.color='#64748b';this.style.borderColor='#334155'">← 返回總覽</a>
+</div>
+<h1>🌡️ 奇鋐科技 (3017) — 2026 股價推算分析</h1>
+<p class="subtitle">本益比河流圖 ✦ 三情境估值 ✦ 分批買點建議 ✦ 更新時間：2026年5月21日</p>
+
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('river', this)">📈 PER 河流圖</button>
+  <button class="tab" onclick="switchTab('scenario', this)">🎯 三情境買點</button>
+  <button class="tab" onclick="switchTab('eps', this)">📊 EPS 趨勢</button>
+  <button class="tab" onclick="switchTab('summary', this)">📋 完整摘要</button>
+</div>
+
+<!-- TAB 1: PER River -->
+<div id="tab-river" class="panel active">
+  <div class="current-price-badge">
+    <span style="color:#94a3b8;font-size:12px;">目前股價（2026/5月）</span>
+    <span style="color:#3b82f6;font-size:20px;font-weight:800;">$ 2,495</span>
+    <span style="color:#ef4444;font-size:12px;">PER ≈ 41x（TTM EPS 60.87元）高於昂貴價帶</span>
+  </div>
+  <canvas id="riverChart" height="340"></canvas>
+  <p style="font-size:11px;color:#475569;margin-top:8px;text-align:center;">* 2026Q2後為預估數值（EPS年化約70–85元），河流帶代表不同本益比倍數估值</p>
+</div>
+
+<!-- TAB 2: 三情境 -->
+<div id="tab-scenario" class="panel">
+  <div class="grid2">
+    <div class="card"><h3>2025 全年 EPS（實際）</h3><div class="val green">49.17 元</div><div class="note">YoY 大幅成長 ｜ 散熱需求爆發</div></div>
+    <div class="card"><h3>2026 Q1 EPS（最新 TTM）</h3><div class="val green">60.87 元</div><div class="note">近四季累計 ｜ 年化 ≈ 70–85元</div></div>
+  </div>
+  <div class="section-title">2026 全年三情境 EPS 與股價推算</div>
+  <div class="scenario-grid">
+    <div class="scenario-card bear">
+      <div class="sc-label">🐻 悲觀</div>
+      <div class="sc-price red">900–1,400</div>
+      <div class="sc-detail">EPS 55–65元<br>PER 15–22x<br>AI資本支出縮減<br>液冷競爭加劇</div>
+    </div>
+    <div class="scenario-card base">
+      <div class="sc-label">⚖️ 基本</div>
+      <div class="sc-price green">1,500–2,200</div>
+      <div class="sc-detail">EPS 68–78元<br>PER 22–28x<br>AI伺服器散熱持續放量<br>液冷滲透率提升</div>
+    </div>
+    <div class="scenario-card bull">
+      <div class="sc-label">🚀 樂觀</div>
+      <div class="sc-price" style="color:#60a5fa;">2,300–3,200</div>
+      <div class="sc-detail">EPS 80–90元<br>PER 28–36x<br>液冷大規模導入<br>GB200/GB300放量</div>
+    </div>
+  </div>
+  <div class="buy-signal">
+    <h3>💰 2026 分批建倉買點建議（基本～樂觀情境）</h3>
+    <div class="buy-row">
+      <span style="color:#86efac;font-size:13px;font-weight:600;">第一批（30%）</span>
+      <span style="color:#fde68a;font-size:14px;font-weight:700;">1,300–1,600 元</span>
+      <span class="badge badge-buy">積極進場 PER 19–24x</span>
+    </div>
+    <div class="buy-row">
+      <span style="color:#86efac;font-size:13px;font-weight:600;">第二批（40%）</span>
+      <span style="color:#fde68a;font-size:14px;font-weight:700;">1,600–2,000 元</span>
+      <span class="badge badge-buy">主力倉位 PER 24–29x</span>
+    </div>
+    <div class="buy-row">
+      <span style="color:#86efac;font-size:13px;font-weight:600;">第三批（30%）</span>
+      <span style="color:#fde68a;font-size:14px;font-weight:700;">2,000–2,400 元</span>
+      <span class="badge badge-watch">動能追加 PER 29–35x</span>
+    </div>
+    <div class="buy-row" style="border-top:1px solid #166534;margin-top:8px;padding-top:10px;">
+      <span style="color:#fca5a5;font-size:12px;">觀望/分批減倉</span>
+      <span style="color:#fca5a5;font-size:13px;font-weight:700;">2,500 元以上</span>
+      <span class="badge badge-avoid">PER > 37x 偏貴</span>
+    </div>
+  </div>
+</div>
+
+<!-- TAB 3: EPS -->
+<div id="tab-eps" class="panel">
+  <canvas id="epsChart" height="260"></canvas>
+  <div class="grid2" style="margin-top:16px;">
+    <div class="card"><h3>歷史PER區間（2023–2026）</h3>
+      <div style="font-size:13px;line-height:2;margin-top:4px;">
+        <span class="green">低：18x</span>　<span class="yellow">均：26x</span>　<span class="red">高：34x</span>
+      </div>
+      <div class="note">排除短暫題材炒作高點（24M05 46x、26M04 47x）</div>
+    </div>
+    <div class="card"><h3>三大估值錨</h3>
+      <div style="font-size:13px;line-height:2;margin-top:4px;">
+        <span class="green">便宜：1,096元</span><br>
+        <span class="yellow">合理：1,583元</span><br>
+        <span class="red">昂貴：2,070元</span>
+      </div>
+      <div class="note">基於 TTM EPS 60.87元 × PER</div>
+    </div>
+  </div>
+
+  <div class="section-title" style="margin-top:20px;">📋 逐月數據明細（供截圖對比驗證）</div>
+  <table class="detail-table">
+    <thead>
+      <tr>
+        <th>月份</th><th>收盤價</th><th>EPS(TTM)</th><th>PER</th>
+        <th>18x</th><th>22x</th><th>26x</th><th>30x</th><th>34x</th>
+      </tr>
+    </thead>
+    <tbody id="detailTableBody"></tbody>
+  </table>
+</div>
+
+<!-- TAB 4: Summary -->
+<div id="tab-summary" class="panel">
+  <div class="section-title">📌 關鍵基本面數據</div>
+  <table>
+    <thead><tr><th>指標</th><th>數值</th><th>評估</th></tr></thead>
+    <tbody>
+      <tr><td>目前股價（2026/5月）</td><td style="color:#3b82f6;font-weight:700;">2,495 元</td><td><span class="badge badge-avoid">偏貴區</span></td></tr>
+      <tr><td>TTM EPS（近四季，26Q1末）</td><td style="color:#22c55e;font-weight:700;">60.87 元</td><td><span class="badge badge-buy">高成長</span></td></tr>
+      <tr><td>2025 全年 EPS</td><td style="color:#22c55e;font-weight:700;">49.17 元</td><td><span class="badge badge-buy">創歷史新高</span></td></tr>
+      <tr><td>目前本益比（26M05）</td><td style="color:#ef4444;font-weight:700;">~41x</td><td><span class="badge badge-avoid">高估</span></td></tr>
+      <tr><td>歷史PER低/均/高</td><td>18x / 26x / 34x</td><td><span class="badge badge-watch">供參考</span></td></tr>
+      <tr><td>便宜價（18x）</td><td style="color:#22c55e;font-weight:700;">1,096 元</td><td><span class="badge badge-buy">低估帶</span></td></tr>
+      <tr><td>合理價（26x）</td><td style="color:#eab308;font-weight:700;">1,583 元</td><td><span class="badge badge-watch">合理帶</span></td></tr>
+      <tr><td>昂貴價（34x）</td><td style="color:#ef4444;font-weight:700;">2,070 元</td><td><span class="badge badge-avoid">偏貴帶</span></td></tr>
+      <tr><td>2026Q2+ EPS 年化預估</td><td>70–85 元</td><td><span class="badge badge-buy">持續上修</span></td></tr>
+    </tbody>
+  </table>
+  <div class="section-title" style="margin-top:20px;">⚡ 催化劑 vs 風險</div>
+  <div class="grid2">
+    <div class="card">
+      <h3>🚀 利多</h3>
+      <div style="font-size:12px;line-height:1.9;color:#86efac;">
+        ✓ AI伺服器散熱龍頭地位<br>
+        ✓ 液冷（CDU）滲透率快速提升<br>
+        ✓ NVIDIA GB200/GB300 供應鏈<br>
+        ✓ 客戶含 Meta、Microsoft、Google<br>
+        ✓ 台灣+越南分散產線抗關稅<br>
+        ✓ EPS 年增率持續高速成長
+      </div>
+    </div>
+    <div class="card">
+      <h3>⚠️ 風險</h3>
+      <div style="font-size:12px;line-height:1.9;color:#fca5a5;">
+        ✗ PER >40x，目前高估明顯<br>
+        ✗ 氣冷→液冷轉換若放緩<br>
+        ✗ AI CSP 資本支出若縮減<br>
+        ✗ 散熱競爭者追趕（健策等）<br>
+        ✗ 美中關稅不確定性<br>
+        ✗ 大盤系統性修正風險
+      </div>
+    </div>
+  </div>
+  <p style="font-size:10px;color:#475569;margin-top:14px;line-height:1.6;">⚠️ 本分析僅供參考，不構成投資建議。股市有風險，投資前請自行判斷。</p>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<script>
+function switchTab(id, btn) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  btn.classList.add('active');
+  if (id === 'eps' && !window.epsDrawn) { drawEPS(); buildDetailTable(); }
+}
+
+// 逐月數據（EPS = 10x欄÷10，來自goodinfo截圖）
+const data = [
+  { m:'23M06', px:271,   eps:12.37, per:21.91 },
+  { m:'23M07', px:322,   eps:12.46, per:25.84 },
+  { m:'23M08', px:334.5, eps:12.56, per:26.64 },
+  { m:'23M09', px:341,   eps:12.65, per:26.96 },
+  { m:'23M10', px:283.5, eps:13.14, per:21.58 },
+  { m:'23M11', px:308,   eps:13.62, per:22.61 },
+  { m:'23M12', px:336.5, eps:14.11, per:23.85 },
+  { m:'24M01', px:425.5, eps:14.50, per:29.34 },
+  { m:'24M02', px:532,   eps:14.90, per:35.71 },
+  { m:'24M03', px:546,   eps:15.29, per:35.71 },
+  { m:'24M04', px:654,   eps:15.94, per:41.03 },
+  { m:'24M05', px:769,   eps:16.59, per:46.35 },
+  { m:'24M06', px:765,   eps:17.24, per:44.37 },
+  { m:'24M07', px:636,   eps:18.00, per:35.33 },
+  { m:'24M08', px:606,   eps:18.77, per:32.29 },
+  { m:'24M09', px:590,   eps:19.53, per:30.21 },
+  { m:'24M10', px:638,   eps:20.09, per:31.76 },
+  { m:'24M11', px:643,   eps:20.65, per:31.14 },
+  { m:'24M12', px:623,   eps:21.21, per:29.37 },
+  { m:'25M01', px:579,   eps:22.58, per:25.65 },
+  { m:'25M02', px:537,   eps:23.94, per:22.43 },
+  { m:'25M03', px:454,   eps:25.31, per:17.94 },
+  { m:'25M04', px:464,   eps:27.07, per:17.14 },
+  { m:'25M05', px:620,   eps:28.83, per:21.51 },
+  { m:'25M06', px:743,   eps:30.59, per:24.29 },
+  { m:'25M07', px:923,   eps:33.15, per:27.85 },
+  { m:'25M08', px:1010,  eps:35.70, per:28.29 },
+  { m:'25M09', px:981,   eps:38.26, per:25.64 },
+  { m:'25M10', px:1425,  eps:41.90, per:34.01 },
+  { m:'25M11', px:1375,  eps:45.53, per:30.20 },
+  { m:'25M12', px:1510,  eps:49.17, per:30.71 },
+  { m:'26M01', px:1460,  eps:53.07, per:27.51 },
+  { m:'26M02', px:1765,  eps:56.97, per:30.98 },
+  { m:'26M03', px:1990,  eps:60.87, per:32.69 },
+  { m:'26M04', px:2835,  eps:60.87, per:46.57 },
+  { m:'26M05', px:2495,  eps:60.87, per:40.99 },
+];
+
+const labels = data.map(d => d.m);
+const prices = data.map(d => d.px);
+
+function band(mult) { return data.map(d => +(d.eps * mult).toFixed(0)); }
+
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    const ctx = document.getElementById('riverChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [
+          { label: 'PER 34x（昂貴）', data: band(34), borderColor:'#ef4444', backgroundColor:'rgba(239,68,68,0.04)', borderWidth:1, borderDash:[5,4], pointRadius:0, fill:false },
+          { label: 'PER 26x（合理）', data: band(26), borderColor:'#eab308', backgroundColor:'rgba(234,179,8,0.07)', borderWidth:1.5, pointRadius:0, fill:'-1' },
+          { label: 'PER 22x（偏低）', data: band(22), borderColor:'#f97316', backgroundColor:'rgba(249,115,22,0.06)', borderWidth:1.2, pointRadius:0, fill:'-1' },
+          { label: 'PER 18x（便宜）', data: band(18), borderColor:'#22c55e', backgroundColor:'rgba(34,197,94,0.07)', borderWidth:1.5, pointRadius:0, fill:'-1' },
+          { label: 'PER 12x（底部）', data: band(12), borderColor:'#3b82f6', backgroundColor:'rgba(59,130,246,0.04)', borderWidth:1, borderDash:[5,4], pointRadius:0, fill:'-1' },
+          { label: '實際股價', data: prices, borderColor:'#ffffff', borderWidth:2.5, pointRadius:2.5, pointBackgroundColor:'#fff', fill:false, tension:0.3, spanGaps:true },
+        ]
+      },
+      options: {
+        responsive:true, interaction:{ mode:'index', intersect:false },
+        plugins: {
+          legend:{ labels:{ color:'#94a3b8', font:{size:11}, boxWidth:18 } },
+          tooltip:{ backgroundColor:'#1e2535', titleColor:'#f8fafc', bodyColor:'#94a3b8', borderColor:'#334155', borderWidth:1,
+            callbacks:{ label: ctx => `${ctx.dataset.label}: ${ctx.parsed.y.toLocaleString()}` }
+          }
+        },
+        scales: {
+          x:{ ticks:{ color:'#64748b', font:{size:10}, maxRotation:45 }, grid:{ color:'rgba(30,37,53,0.8)' } },
+          y:{ ticks:{ color:'#64748b', font:{size:10}, callback: v => v.toLocaleString() }, grid:{ color:'rgba(30,37,53,0.8)' } }
+        }
+      }
+    });
+  }, 200);
+});
+
+function drawEPS() {
+  window.epsDrawn = true;
+  const ctx2 = document.getElementById('epsChart').getContext('2d');
+  // 年度EPS
+  const years = ['2021','2022','2023','2024','2025','2026E'];
+  const annualEps = [null, null, 14.11, 21.21, 49.17, 75];
+  // 使用逐月TTM EPS的數據
+  new Chart(ctx2, {
+    type: 'bar',
+    data: {
+      labels: years,
+      datasets: [{
+        label: '年度 EPS（元）',
+        data: annualEps,
+        backgroundColor: annualEps.map((v,i) => i===5?'rgba(59,130,246,0.7)':'rgba(34,197,94,0.7)'),
+        borderColor: annualEps.map((v,i) => i===5?'#3b82f6':'#22c55e'),
+        borderWidth:1.5, borderRadius:6
+      }]
+    },
+    options: {
+      responsive:true,
+      plugins:{ legend:{ labels:{ color:'#94a3b8' } }, tooltip:{ backgroundColor:'#1e2535', bodyColor:'#94a3b8' } },
+      scales: {
+        x:{ ticks:{ color:'#64748b' }, grid:{ color:'rgba(30,37,53,0.8)' } },
+        y:{ ticks:{ color:'#64748b', callback: v => v+'元' }, grid:{ color:'rgba(30,37,53,0.8)' } }
+      }
+    }
+  });
+}
+
+function buildDetailTable() {
+  const tbody = document.getElementById('detailTableBody');
+  data.forEach(d => {
+    const isQEnd = ['M03','M06','M09','M12'].some(s => d.m.endsWith(s));
+    const row = document.createElement('tr');
+    const perColor = d.per > 34 ? '#ef4444' : d.per > 26 ? '#eab308' : d.per < 18 ? '#22c55e' : '#e2e8f0';
+    row.innerHTML = `
+      <td style="font-weight:${isQEnd?'700':'400'};color:${isQEnd?'#f8fafc':'#e2e8f0'}">${d.m}${isQEnd?'*':''}</td>
+      <td style="color:#3b82f6;font-weight:600">${d.px.toLocaleString()}</td>
+      <td>${d.eps.toFixed(2)}</td>
+      <td style="color:${perColor};font-weight:600">${d.per.toFixed(2)}x</td>
+      <td>${(d.eps*18).toFixed(0)}</td>
+      <td>${(d.eps*22).toFixed(0)}</td>
+      <td>${(d.eps*26).toFixed(0)}</td>
+      <td>${(d.eps*30).toFixed(0)}</td>
+      <td>${(d.eps*34).toFixed(0)}</td>
+    `;
+    tbody.appendChild(row);
+  });
+}
+</script>
+</body>
+</html>
