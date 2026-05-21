@@ -211,6 +211,46 @@
   </table>
 </div>
 
+<!-- 面板／顯示器 -->
+<div class="section">
+  <div class="section-title">面板／顯示器</div>
+  <table>
+    <thead>
+      <tr>
+        <th>代號</th>
+        <th>名稱</th>
+        <th>TTM EPS</th>
+        <th>低本益比</th>
+        <th>均本益比</th>
+        <th>高本益比</th>
+        <th>便宜價</th>
+        <th>合理價</th>
+        <th>昂貴價</th>
+        <th>目前股價</th>
+        <th>vs合理價%</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="code">3481</td>
+        <td class="name">
+          <a href="3481_analysis.html" target="_blank">群創</a><br>
+          <span class="fwd-note">* 景氣循環股，PER失效，以EPS復原估值</span>
+        </td>
+        <td>0.11*</td>
+        <td>10x</td>
+        <td>20x</td>
+        <td>30x</td>
+        <td>15</td>
+        <td>30</td>
+        <td>50</td>
+        <td class="price-cell loading" id="price-3481">載入...</td>
+        <td id="vs-3481" class="loading">—</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
 <!-- 記憶體／利基型（新增 2337 旺宏） -->
 <div class="section">
   <div class="section-title">記憶體／利基型</div>
@@ -274,6 +314,7 @@ const stocks = [
   { id: '3596', fairValue: 177,  expensiveValue: 278  },
   { id: '2382', fairValue: 350,  expensiveValue: 506  },
   { id: '3231', fairValue: 181,  expensiveValue: 302  },
+  { id: '3481', fairValue: 30,   expensiveValue: 50   },
   { id: '2337', fairValue: 163,  expensiveValue: 218  },
   { id: '3260', fairValue: 719,  expensiveValue: 925  },
 ];
