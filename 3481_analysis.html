@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>群創 3481 — 2026 股價推算分析</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #0f1117; color: #e2e8f0; padding: 16px; }
+  h1 { font-size: 18px; font-weight: 700; color: #f8fafc; margin-bottom: 4px; }
+  .subtitle { font-size: 12px; color: #94a3b8; margin-bottom: 16px; }
+  .tabs { display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; }
+  .tab { padding: 6px 14px; border-radius: 20px; font-size: 12px; cursor: pointer; border: 1px solid #334155; color: #94a3b8; background: transparent; transition: all 0.2s; }
+  .tab.active { background: #3b82f6; color: #fff; border-color: #3b82f6; }
+  .tab:hover:not(.active) { border-color: #64748b; color: #e2e8f0; }
+  .panel { display: none; }
+  .panel.active { display: block; }
+  canvas { width: 100% !important; border-radius: 10px; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+  .card { background: #1e2535; border: 1px solid #2d3748; border-radius: 10px; padding: 14px; }
+  .card h3 { font-size: 12px; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
+  .card .val { font-size: 22px; font-weight: 700; }
+  .card .note { font-size: 11px; color: #64748b; margin-top: 4px; }
+  .green { color: #22c55e; } .yellow { color: #eab308; } .red { color: #ef4444; } .blue { color: #3b82f6; } .gray { color: #64748b; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 12px; }
+  th { background: #1e2535; color: #64748b; padding: 8px 10px; text-align: left; font-weight: 600; font-size: 11px; text-transform: uppercase; }
+  td { padding: 8px 10px; border-bottom: 1px solid #1e2535; }
+  tr:hover td { background: #1a2030; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: 600; }
+  .badge-buy { background: #14532d; color: #86efac; }
+  .badge-watch { background: #713f12; color: #fde68a; }
+  .badge-avoid { background: #450a0a; color: #fca5a5; }
+  .badge-neutral { background: #1e2535; color: #94a3b8; }
+  .scenario-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 12px; }
+  .scenario-card { border-radius: 10px; padding: 14px; text-align: center; }
+  .bear { background: linear-gradient(135deg, #1a0a0a, #2d1010); border: 1px solid #7f1d1d; }
+  .base { background: linear-gradient(135deg, #0a1a0a, #102d10); border: 1px solid #14532d; }
+  .bull { background: linear-gradient(135deg, #0a0f1a, #10182d); border: 1px solid #1d4ed8; }
+  .sc-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.7; margin-bottom: 6px; }
+  .sc-price { font-size: 22px; font-weight: 800; margin: 4px 0; }
+  .sc-detail { font-size: 10px; opacity: 0.65; line-height: 1.6; }
+  .section-title { font-size: 13px; font-weight: 600; color: #cbd5e1; margin: 16px 0 8px; }
+  .buy-signal { background: #0f2a1e; border: 1px solid #166534; border-radius: 10px; padding: 14px; margin-top: 12px; }
+  .buy-signal h3 { color: #86efac; font-size: 13px; margin-bottom: 8px; }
+  .buy-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid #1a3a2a; gap: 8px; }
+  .buy-row:last-child { border-bottom: none; }
+  .current-price-badge { background: #1e3a5f; border: 1px solid #3b82f6; border-radius: 8px; padding: 10px 14px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px; }
+  .warn-box { background: #2a1a0a; border: 1px solid #92400e; border-radius: 10px; padding: 12px 14px; margin-bottom: 12px; }
+  .warn-box h4 { color: #fbbf24; font-size: 12px; margin-bottom: 6px; }
+  .warn-box p { font-size: 11px; color: #d97706; line-height: 1.7; }
+</style>
+</head>
+<body>
+<div style="margin-bottom:12px;">
+  <a href="index.html" style="color:#64748b;font-size:12px;text-decoration:none;display:inline-flex;align-items:center;gap:4px;padding:5px 10px;border:1px solid #334155;border-radius:8px;transition:all 0.2s;" onmouseover="this.style.color='#e2e8f0';this.style.borderColor='#64748b'" onmouseout="this.style.color='#64748b';this.style.borderColor='#334155'">← 返回總覽</a>
+</div>
+<h1>🖥️ 群創光電 (3481) — 2026 股價推算分析</h1>
+<p class="subtitle">本益比河流圖 ✦ 三情境估值 ✦ 面板景氣分析 ✦ 更新時間：2026年5月20日</p>
+
+<div class="warn-box">
+  <h4>⚠️ 特別說明：景氣循環股，EPS 波動極大</h4>
+  <p>群創屬 TFT-LCD 面板景氣循環股。EPS 從 2025Q1 高峰（TTM 1.44元）急速滑落至 2026Q1 僅 0.11元，目前 PER 逾 200x，傳統 PER 估值失效。分析改用景氣循環「谷底股價」與「景氣回升EPS復原」邏輯。</p>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('river', this)">📈 PER 河流圖</button>
+  <button class="tab" onclick="switchTab('scenario', this)">🎯 三情境買點</button>
+  <button class="tab" onclick="switchTab('eps', this)">📊 EPS 趨勢</button>
+  <button class="tab" onclick="switchTab('summary', this)">📋 完整摘要</button>
+</div>
+
+<!-- TAB 1: PER River -->
+<div id="tab-river" class="panel active">
+  <div class="current-price-badge">
+    <span style="color:#94a3b8;font-size:12px;">目前股價（2026/5/20）</span>
+    <span style="color:#3b82f6;font-size:20px;font-weight:800;">$ 36.95</span>
+    <span style="color:#ef4444;font-size:12px;">TTM EPS 0.11元，PER ≈ 336x（估值失效，面板谷底）</span>
+  </div>
+  <canvas id="riverChart" height="340"></canvas>
+  <p style="font-size:11px;color:#475569;margin-top:8px;text-align:center;">* 河流帶以歷史有效 EPS 區間為基礎（2025Q1–2025Q2 峰值 TTM EPS 1.44元）繪製｜虛線代表估值參考，非當前有效價格帶</p>
+</div>
+
+<!-- TAB 2: 三情境 -->
+<div id="tab-scenario" class="panel">
+  <div class="grid2">
+    <div class="card"><h3>2025 景氣峰值 TTM EPS</h3><div class="val yellow">1.44 元</div><div class="note">25Q1 季末（3/6/9/12月）確認值</div></div>
+    <div class="card"><h3>2026 Q1 TTM EPS（最新）</h3><div class="val red">0.11 元</div><div class="note">YoY 急速衰退，面板景氣下行</div></div>
+  </div>
+  <div class="section-title">面板景氣情境分析（以 EPS 復原速度估算）</div>
+  <div class="scenario-grid">
+    <div class="scenario-card bear">
+      <div class="sc-label">🐻 悲觀（面板再探底）</div>
+      <div class="sc-price red">12–18</div>
+      <div class="sc-detail">TTM EPS 持續 < 0.5元<br>PER 失效，以淨值折扣估<br>景氣2027才回升<br>股價回前低 12–15元</div>
+    </div>
+    <div class="scenario-card base">
+      <div class="sc-label">⚖️ 基本（緩步復原）</div>
+      <div class="sc-price green">20–30</div>
+      <div class="sc-detail">EPS 2026 全年 0.8–1.2元<br>PER 20–25x（景氣回升初段）<br>面板價格企穩<br>股價 20–30元</div>
+    </div>
+    <div class="scenario-card bull">
+      <div class="sc-label">🚀 樂觀（快速反彈）</div>
+      <div class="sc-price" style="color:#60a5fa;">35–55</div>
+      <div class="sc-detail">EPS 復原至 1.5–2元<br>PER 20–30x（景氣確認上行）<br>AI 面板/車用題材<br>股價 35–55元</div>
+    </div>
+  </div>
+  <div class="buy-signal">
+    <h3>💰 分批建倉買點建議（以景氣復原邏輯）</h3>
+    <div class="buy-row">
+      <span style="color:#86efac;font-size:13px;font-weight:600;">第一批（30%）</span>
+      <span style="color:#fde68a;font-size:14px;font-weight:700;">14–18 元</span>
+      <span class="badge badge-buy">淨值保護區，谷底佈局</span>
+    </div>
+    <div class="buy-row">
+      <span style="color:#86efac;font-size:13px;font-weight:600;">第二批（40%）</span>
+      <span style="color:#fde68a;font-size:14px;font-weight:700;">18–25 元</span>
+      <span class="badge badge-buy">EPS 確認回升，主力倉</span>
+    </div>
+    <div class="buy-row">
+      <span style="color:#86efac;font-size:13px;font-weight:600;">第三批（30%）</span>
+      <span style="color:#fde68a;font-size:14px;font-weight:700;">25–35 元</span>
+      <span class="badge badge-watch">景氣確認上行追加</span>
+    </div>
+    <div class="buy-row" style="border-top:1px solid #166534;margin-top:8px;padding-top:10px;">
+      <span style="color:#fca5a5;font-size:12px;">目前股價 36.95 元</span>
+      <span style="color:#fca5a5;font-size:13px;font-weight:700;">EPS 未見回升前</span>
+      <span class="badge badge-avoid">估值過高，觀望</span>
+    </div>
+  </div>
+  <p style="font-size:11px;color:#475569;margin-top:12px;">* 群創為景氣循環股，PER 估值在谷底失效。建議等待 EPS 確認回升（連續2季成長）再建倉，或以淨值折扣（PBR）作為安全邊際參考。</p>
+</div>
+
+<!-- TAB 3: EPS -->
+<div id="tab-eps" class="panel">
+  <canvas id="epsChart" height="300"></canvas>
+  <div class="section-title">逐月明細表（供截圖驗證）</div>
+  <table>
+    <thead>
+      <tr>
+        <th>月份</th><th>收盤價</th><th>河流圖EPS<br>(10x÷10)</th><th>目前PER</th>
+        <th>10x</th><th>14x</th><th>18x</th><th>22x</th><th>26x</th><th>30x</th>
+      </tr>
+    </thead>
+    <tbody id="detailTable"></tbody>
+  </table>
+  <div class="grid2" style="margin-top:16px;">
+    <div class="card"><h3>景氣峰值 EPS（25Q1）</h3><div class="val yellow">1.44 元</div><div class="note">PER 8.12x @ 11.7元（2025M06）</div></div>
+    <div class="card"><h3>目前 EPS（26Q1）</h3><div class="val red">0.11 元</div><div class="note">26M05 收盤 36.95元，PER 336x</div></div>
+  </div>
+</div>
+
+<!-- TAB 4: Summary -->
+<div id="tab-summary" class="panel">
+  <div class="section-title">📌 關鍵基本面數據</div>
+  <table>
+    <thead><tr><th>指標</th><th>數值</th><th>評估</th></tr></thead>
+    <tbody>
+      <tr><td>目前股價（2026/5/20）</td><td style="color:#3b82f6;font-weight:700;">36.95 元</td><td><span class="badge badge-avoid">估值失效</span></td></tr>
+      <tr><td>目前 TTM EPS</td><td style="color:#ef4444;font-weight:700;">0.11 元</td><td><span class="badge badge-avoid">急速衰退</span></td></tr>
+      <tr><td>目前本益比</td><td style="color:#ef4444;font-weight:700;">336x（失效）</td><td><span class="badge badge-avoid">景氣谷底</span></td></tr>
+      <tr><td>景氣峰值 EPS（2025 Q1）</td><td style="color:#eab308;font-weight:700;">1.44 元</td><td><span class="badge badge-watch">已過峰值</span></td></tr>
+      <tr><td>峰值時 PER 區間</td><td>8x–19x（25M06–25M10）</td><td><span class="badge badge-neutral">景氣循環合理</span></td></tr>
+      <tr><td>便宜價（景氣回升EPS 1.0元×15x）</td><td style="color:#22c55e;font-weight:700;">15 元</td><td><span class="badge badge-buy">谷底參考</span></td></tr>
+      <tr><td>合理價（EPS 1.5元×20x）</td><td style="color:#eab308;font-weight:700;">30 元</td><td><span class="badge badge-watch">景氣回升後</span></td></tr>
+      <tr><td>昂貴價（EPS 2.0元×25x）</td><td style="color:#ef4444;font-weight:700;">50 元</td><td><span class="badge badge-avoid">景氣過熱</span></td></tr>
+      <tr><td>估值方法</td><td>景氣循環PBR/EPS復原估值</td><td><span class="badge badge-neutral">非傳統PER</span></td></tr>
+    </tbody>
+  </table>
+  <div class="section-title" style="margin-top:20px;">⚡ 催化劑 vs 風險</div>
+  <div class="grid2">
+    <div class="card">
+      <h3>🚀 利多</h3>
+      <div style="font-size:12px;line-height:1.9;color:#86efac;">✓ 面板報價若觸底回升<br>✓ AI 伺服器/車用面板需求<br>✓ 淡旺季傳統補庫存<br>✓ 中國面板廠若減產<br>✓ 股價已較高峰大幅回落<br>✓ 台幣貶值有利出口競爭</div>
+    </div>
+    <div class="card">
+      <h3>⚠️ 風險</h3>
+      <div style="font-size:12px;line-height:1.9;color:#fca5a5;">✗ EPS 大幅下滑，景氣不明<br>✗ 中國面板廠持續擴產壓價<br>✗ 目前股價仍在歷史高檔<br>✗ AI對傳統面板需求衝擊<br>✗ 美中貿易關稅影響下游<br>✗ 股價26M05暴漲54%（需確認）</div>
+    </div>
+  </div>
+  <div style="background:#1a1a0a;border:1px solid #713f12;border-radius:10px;padding:12px;margin-top:14px;">
+    <p style="font-size:11px;color:#d97706;line-height:1.8;">⚠️ 群創屬景氣循環股，傳統 PER 估值在 EPS 極低時（谷底）失效。目前股價 36.95 元但 EPS 僅 0.11 元，PER 336x 無參考意義。<br>建議策略：等待面板報價企穩回升的季度 EPS 確認訊號（連續 2 季 TTM EPS 回升），再以合理價範圍建倉，而非追高。<br>⚠️ 本分析僅供參考，不構成投資建議。</p>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<script>
+function switchTab(id, btn) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  btn.classList.add('active');
+  if (id === 'eps' && !window.epsDrawn) drawEPS();
+}
+
+// 逐月數據：10x欄÷10 = 河流圖EPS
+const monthData = [
+  { m:'24M12', px:14.35, eps:0.76,   per:18.88 },
+  { m:'25M01', px:14.05, eps:0.987,  per:14.24 },
+  { m:'25M02', px:14.9,  eps:1.213,  per:12.28 },
+  { m:'25M03', px:15.1,  eps:1.44,   per:10.49 },
+  { m:'25M04', px:13.7,  eps:1.44,   per:9.51  },
+  { m:'25M05', px:12.2,  eps:1.44,   per:8.47  },
+  { m:'25M06', px:11.7,  eps:1.44,   per:8.12  },
+  { m:'25M07', px:11.55, eps:1.307,  per:8.84  },
+  { m:'25M08', px:14.05, eps:1.173,  per:11.97 },
+  { m:'25M09', px:14.4,  eps:1.04,   per:13.85 },
+  { m:'25M10', px:13.3,  eps:0.703,  per:18.91 },
+  { m:'25M11', px:13.55, eps:0.367,  per:36.95 },
+  { m:'25M12', px:17.05, eps:0.03,   per:568.3 },
+  { m:'26M01', px:21.8,  eps:0.057,  per:384.7 },
+  { m:'26M02', px:26.8,  eps:0.083,  per:321.6 },
+  { m:'26M03', px:23.85, eps:0.11,   per:216.8 },
+  { m:'26M04', px:23.95, eps:0.11,   per:217.7 },
+  { m:'26M05', px:36.95, eps:0.11,   per:335.9 },
+];
+
+const labels = monthData.map(d => d.m);
+const closePx = monthData.map(d => d.px);
+
+// 河流帶：以EPS逐月數值 × PER倍數
+function band(mult) { return monthData.map(d => +(d.eps * mult).toFixed(2)); }
+
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    const ctx = document.getElementById('riverChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [
+          { label: 'PER 30x（偏貴）',  data: band(30), borderColor:'#ef4444', borderWidth:1, borderDash:[5,4], pointRadius:0, fill:false },
+          { label: 'PER 20x（合理）',  data: band(20), borderColor:'#f97316', borderWidth:1.5, pointRadius:0, fill:false },
+          { label: 'PER 15x（便宜）',  data: band(15), borderColor:'#eab308', borderWidth:1.5, pointRadius:0, fill:false },
+          { label: 'PER 10x（底部）',  data: band(10), borderColor:'#22c55e', borderWidth:1.5, pointRadius:0, fill:false },
+          { label: '實際/目前股價',    data: closePx,  borderColor:'#ffffff', borderWidth:2.5, pointRadius:3, pointBackgroundColor:'#fff', fill:false, tension:0.3, spanGaps:true },
+        ]
+      },
+      options: {
+        responsive: true,
+        interaction: { mode:'index', intersect:false },
+        plugins: {
+          legend: { labels:{ color:'#94a3b8', font:{size:11}, boxWidth:18 } },
+          tooltip: { backgroundColor:'#1e2535', titleColor:'#f8fafc', bodyColor:'#94a3b8', borderColor:'#334155', borderWidth:1 },
+        },
+        scales: {
+          x: { ticks:{ color:'#64748b', font:{size:10}, maxRotation:45 }, grid:{ color:'rgba(30,37,53,0.8)' } },
+          y: { ticks:{ color:'#64748b', font:{size:10}, callback: v => v.toFixed(1) }, grid:{ color:'rgba(30,37,53,0.8)' } }
+        }
+      }
+    });
+  }, 200);
+
+  // 填入逐月明細表
+  const tbody = document.getElementById('detailTable');
+  monthData.forEach(d => {
+    const e = d.eps;
+    const perDisplay = d.per > 200 ? `<span style="color:#ef4444">${d.per}x(失效)</span>` : `${d.per}x`;
+    tbody.innerHTML += `<tr>
+      <td>${d.m}</td>
+      <td>${d.px}</td>
+      <td style="color:#3b82f6;font-weight:600;">${e}</td>
+      <td>${perDisplay}</td>
+      <td>${(e*10).toFixed(2)}</td>
+      <td>${(e*14).toFixed(2)}</td>
+      <td>${(e*18).toFixed(2)}</td>
+      <td>${(e*22).toFixed(2)}</td>
+      <td>${(e*26).toFixed(2)}</td>
+      <td>${(e*30).toFixed(2)}</td>
+    </tr>`;
+  });
+});
+
+function drawEPS() {
+  window.epsDrawn = true;
+  const ctx2 = document.getElementById('epsChart').getContext('2d');
+  const labels2 = monthData.map(d => d.m);
+  const epsVals = monthData.map(d => d.eps);
+  new Chart(ctx2, {
+    type: 'bar',
+    data: {
+      labels: labels2,
+      datasets: [{
+        label: 'TTM EPS（元）',
+        data: epsVals,
+        backgroundColor: epsVals.map(v => v >= 1.2 ? 'rgba(34,197,94,0.7)' : v >= 0.5 ? 'rgba(234,179,8,0.7)' : 'rgba(239,68,68,0.7)'),
+        borderColor: epsVals.map(v => v >= 1.2 ? '#22c55e' : v >= 0.5 ? '#eab308' : '#ef4444'),
+        borderWidth:1.5, borderRadius:4
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend:{ labels:{ color:'#94a3b8' } }, tooltip:{ backgroundColor:'#1e2535', bodyColor:'#94a3b8' } },
+      scales: {
+        x: { ticks:{ color:'#64748b', maxRotation:45, font:{size:10} }, grid:{ color:'rgba(30,37,53,0.8)' } },
+        y: { ticks:{ color:'#64748b', callback: v => v+'元' }, grid:{ color:'rgba(30,37,53,0.8)' } }
+      }
+    }
+  });
+}
+</script>
+</body>
+</html>
