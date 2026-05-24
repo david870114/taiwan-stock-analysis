@@ -404,12 +404,15 @@
         <div class="node-tier">配套</div>
         <div class="node-type">電源供應<br>UPS</div>
         <div class="node-stocks">
-          <div class="mini-card no-data">
+          <div class="mini-card" id="mc-2308">
             <div class="mc-left">
               <span class="mc-code">2308</span>
               <span class="mc-name">台達電</span>
             </div>
-            <span class="mc-empty">未追蹤</span>
+            <div class="mc-right">
+              <span class="mc-price" id="cp-2308">…</span>
+              <span class="mc-vs-val" id="cv-2308">…</span>
+            </div>
           </div>
           <div class="mini-card no-data">
             <div class="mc-left">
@@ -585,6 +588,33 @@
   </table>
 </div>
 
+<!-- 電源 -->
+<div class="section">
+  <div class="section-title">電源／UPS</div>
+  <table>
+  <colgroup><col class="col-code"><col class="col-name"><col class="col-price"><col class="col-price"><col class="col-price"><col class="col-cur"><col class="col-vs"></colgroup>
+  
+    <thead>
+      <tr>
+        <th>代號</th><th>名稱</th>
+        <th>便宜價</th><th>合理價</th><th>昂貴價</th>
+        <th class="th-cur">目前股價</th><th>vs 合理價</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="code code-power">2308</td>
+        <td class="name"><a href="2308_analysis.html">台達電</a></td>
+        <td>596 <span class="per-sub">22x PER</span></td>
+        <td>732 <span class="per-sub">27x PER</span></td>
+        <td>867 <span class="per-sub">32x PER</span></td>
+        <td class="price-cell loading td-cur" id="price-2308">…</td>
+        <td id="vs-2308" class="loading">—</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
 <!-- 散熱 -->
 <div class="section">
   <div class="section-title">散熱</div>
@@ -718,9 +748,10 @@ const STOCKS = [
   { id: '3481',  fairValue: 30,   expValue: 50   },
   { id: '2337',  fairValue: 163,  expValue: 218  },
   { id: '3260',  fairValue: 719,  expValue: 925  },
+  { id: '2308',  fairValue: 732,  expValue: 867  },
 ];
 
-const CHAIN_STOCKS = ['2330','2382','3231','2345','3596','3017','3324','8210'];
+const CHAIN_STOCKS = ['2330','2382','3231','2345','3596','3017','3324','8210','2308'];
 
 async function fetchPrice(id) {
   try {
