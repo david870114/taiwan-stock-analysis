@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>緯穎 6669 — 2026 股價推算分析</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #0f1117; color: #e2e8f0; padding: 16px; }
+  h1 { font-size: 18px; font-weight: 700; color: #f8fafc; margin-bottom: 4px; }
+  .subtitle { font-size: 12px; color: #94a3b8; margin-bottom: 16px; }
+  .tabs { display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; }
+  .tab { padding: 6px 14px; border-radius: 20px; font-size: 12px; cursor: pointer; border: 1px solid #334155; color: #94a3b8; background: transparent; transition: all 0.2s; }
+  .tab.active { background: #3b82f6; color: #fff; border-color: #3b82f6; }
+  .tab:hover:not(.active) { border-color: #64748b; color: #e2e8f0; }
+  .panel { display: none; }
+  .panel.active { display: block; }
+  canvas { width: 100% !important; border-radius: 10px; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+  .card { background: #1e2535; border: 1px solid #2d3748; border-radius: 10px; padding: 14px; }
+  .card h3 { font-size: 12px; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
+  .card .val { font-size: 22px; font-weight: 700; }
+  .card .note { font-size: 11px; color: #64748b; margin-top: 4px; }
+  .green { color: #22c55e; } .yellow { color: #eab308; } .red { color: #ef4444; } .blue { color: #3b82f6; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 12px; }
+  th { background: #1e2535; color: #64748b; padding: 8px 10px; text-align: left; font-weight: 600; font-size: 11px; text-transform: uppercase; }
+  td { padding: 8px 10px; border-bottom: 1px solid #1e2535; }
+  tr:hover td { background: #1a2030; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: 600; }
+  .badge-buy { background: #14532d; color: #86efac; }
+  .badge-watch { background: #713f12; color: #fde68a; }
+  .badge-avoid { background: #450a0a; color: #fca5a5; }
+  .scenario-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 12px; }
+  .scenario-card { border-radius: 10px; padding: 14px; text-align: center; }
+  .bear { background: linear-gradient(135deg, #1a0a0a, #2d1010); border: 1px solid #7f1d1d; }
+  .base { background: linear-gradient(135deg, #0a1a0a, #102d10); border: 1px solid #14532d; }
+  .bull { background: linear-gradient(135deg, #0a0f1a, #10182d); border: 1px solid #1d4ed8; }
+  .sc-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.7; margin-bottom: 6px; }
+  .sc-price { font-size: 22px; font-weight: 800; margin: 4px 0; }
+  .sc-detail { font-size: 10px; opacity: 0.65; line-height: 1.6; }
+  .section-title { font-size: 13px; font-weight: 600; color: #cbd5e1; margin: 16px 0 8px; }
+  .buy-signal { background: #0f2a1e; border: 1px solid #166534; border-radius: 10px; padding: 14px; margin-top: 12px; }
+  .buy-signal h3 { color: #86efac; font-size: 13px; margin-bottom: 8px; }
+  .buy-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid #1a3a2a; gap: 8px; }
+  .buy-row:last-child { border-bottom: none; }
+  .current-price-badge { background: #1e3a5f; border: 1px solid #3b82f6; border-radius: 8px; padding: 10px 14px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px; }
+</style>
+</head>
+<body>
+<div style="margin-bottom:12px;">
+  <a href="index.html" style="color:#64748b;font-size:12px;text-decoration:none;display:inline-flex;align-items:center;gap:4px;padding:5px 10px;border:1px solid #334155;border-radius:8px;transition:all 0.2s;" onmouseover="this.style.color='#e2e8f0';this.style.borderColor='#64748b'" onmouseout="this.style.color='#64748b';this.style.borderColor='#334155'">← 返回總覽</a>
+</div>
+<h1>🖥️ 緯穎科技 (6669) — 2026 股價推算分析</h1>
+<p class="subtitle">本益比河流圖 ✦ 三情境估值 ✦ 分批買點建議 ✦ 更新時間：2026年5月24日</p>
+
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('river', this)">📈 PER 河流圖</button>
+  <button class="tab" onclick="switchTab('scenario', this)">🎯 三情境買點</button>
+  <button class="tab" onclick="switchTab('eps', this)">📊 EPS 趨勢</button>
+  <button class="tab" onclick="switchTab('fundamental', this)">🏢 基本面分析</button>
+  <button class="tab" onclick="switchTab('summary', this)">📋 完整摘要</button>
+</div>
+
+<!-- TAB 1: PER River -->
+<div id="tab-river" class="panel active">
+  <div class="current-price-badge">
+    <span style="color:#94a3b8;font-size:12px;">目前股價（2026/5/24）</span>
+    <span style="color:#3b82f6;font-size:20px;font-weight:800;" id="live-price">載入中…</span>
+    <span style="color:#eab308;font-size:12px;" id="live-per">TTM EPS 298.3元（26Q1）</span>
+  </div>
+  <canvas id="riverChart" height="340"></canvas>
+  <p style="font-size:11px;color:#475569;margin-top:8px;text-align:center;">* 河流帶代表不同本益比倍數估值；EPS 取自 goodinfo 10x換算欄÷10（逐月正確值）</p>
+</div>
+
+<!-- TAB 2: 三情境 -->
+<div id="tab-scenario" class="panel">
+  <div class="grid2">
+    <div class="card"><h3>2025 全年 EPS（實際）</h3><div class="val blue">275.1 元</div><div class="note">YoY 大幅成長 ｜ 2024年: 126.6元</div></div>
+    <div class="card"><h3>2026 Q1 TTM EPS（最新）</h3><div class="val green">298.3 元</div><div class="note">最新季末（26M03）｜ 持續上修</div></div>
+  </div>
+  <div class="section-title">2026 全年三情境 EPS 與股價推算</div>
+  <div class="scenario-grid">
+    <div class="scenario-card bear">
+      <div class="sc-label">🐻 悲觀</div>
+      <div class="sc-price red">2,800–3,600</div>
+      <div class="sc-detail">EPS 280–320元<br>PER 10–12x<br>AI CSP砍單<br>美中關稅衝擊</div>
+    </div>
+    <div class="scenario-card base">
+      <div class="sc-label">⚖️ 基本</div>
+      <div class="sc-price green">4,000–5,000</div>
+      <div class="sc-detail">EPS 300–360元<br>PER 13–16x<br>AI伺服器穩健出貨<br>CSP資本支出維持</div>
+    </div>
+    <div class="scenario-card bull">
+      <div class="sc-label">🚀 樂觀</div>
+      <div class="sc-price" style="color:#60a5fa;">5,500–7,000</div>
+      <div class="sc-detail">EPS 360–400元<br>PER 17–20x<br>GB200加速出貨<br>液冷需求爆發</div>
+    </div>
+  </div>
+  <div class="buy-signal">
+    <h3>💰 2026 分批建倉買點建議（以最新EPS 298.3元計算）</h3>
+    <div class="buy-row">
+      <span style="color:#86efac;font-size:13px;font-weight:600;">第一批（30%）</span>
+      <span style="color:#fde68a;font-size:14px;font-weight:700;">3,000–3,500 元</span>
+      <span class="badge badge-buy">積極進場 PER 10–12x</span>
+    </div>
+    <div class="buy-row">
+      <span style="color:#86efac;font-size:13px;font-weight:600;">第二批（40%）</span>
+      <span style="color:#fde68a;font-size:14px;font-weight:700;">3,500–4,500 元</span>
+      <span class="badge badge-buy">主力倉位 PER 12–15x</span>
+    </div>
+    <div class="buy-row">
+      <span style="color:#86efac;font-size:13px;font-weight:600;">第三批（30%）</span>
+      <span style="color:#fde68a;font-size:14px;font-weight:700;">4,500–5,000 元</span>
+      <span class="badge badge-watch">動能追加 PER 15–17x</span>
+    </div>
+    <div class="buy-row" style="border-top:1px solid #166534;margin-top:8px;padding-top:10px;">
+      <span style="color:#fca5a5;font-size:12px;">觀望/分批減倉</span>
+      <span style="color:#fca5a5;font-size:13px;font-weight:700;">5,966 元以上</span>
+      <span class="badge badge-avoid">PER > 20x</span>
+    </div>
+  </div>
+  <div style="background:#1e2535;border:1px solid #2d3748;border-radius:10px;padding:12px;margin-top:14px;">
+    <div style="font-size:12px;font-weight:700;color:#cbd5e1;margin-bottom:8px;">📐 估值錨點（EPS 298.3元）</div>
+    <table style="margin:0;">
+      <thead><tr><th>PER 倍數</th><th>股價</th><th>評估</th></tr></thead>
+      <tbody>
+        <tr><td>10x（底部）</td><td style="color:#3b82f6;font-weight:700;">2,983</td><td><span class="badge badge-buy">極度低估</span></td></tr>
+        <tr><td>11x（便宜）</td><td style="color:#22c55e;font-weight:700;">3,281</td><td><span class="badge badge-buy">便宜買點</span></td></tr>
+        <tr><td>15x（合理）</td><td style="color:#eab308;font-weight:700;">4,475</td><td><span class="badge badge-watch">合理價</span></td></tr>
+        <tr><td>18x（偏貴）</td><td style="color:#f97316;font-weight:700;">5,369</td><td><span class="badge badge-watch">偏貴觀察</span></td></tr>
+        <tr><td>20x（昂貴）</td><td style="color:#ef4444;font-weight:700;">5,966</td><td><span class="badge badge-avoid">昂貴減碼</span></td></tr>
+        <tr><td style="color:#64748b;">目前 26M05</td><td style="color:#fff;font-weight:700;">5,525</td><td><span class="badge badge-watch">PER 18.5x 偏貴區</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- TAB 3: EPS 趨勢 -->
+<div id="tab-eps" class="panel">
+  <canvas id="epsChart" height="300"></canvas>
+  <div class="grid2">
+    <div class="card"><h3>EPS 年增率（2025）</h3><div class="val green">+117%</div><div class="note">275.1元 vs 2024年 126.6元</div></div>
+    <div class="card"><h3>2026 Q1 TTM EPS</h3><div class="val blue">298.3 元</div><div class="note">季季上修，AI伺服器持續放量</div></div>
+  </div>
+  <div class="section-title">📋 逐月明細表（供截圖驗證）</div>
+  <div style="overflow-x:auto;">
+  <table style="font-size:11px;">
+    <thead>
+      <tr>
+        <th>月份</th><th>收盤價</th><th>河流圖EPS<br>(10x欄÷10)</th><th>目前PER</th>
+        <th>10x</th><th>14x</th><th>18x</th><th>22x</th><th>26x</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr style="background:#0f2a1e;"><td><strong>26M05</strong></td><td><strong>5,525</strong></td><td><strong>298.3</strong></td><td><strong>18.52</strong></td><td>2,983</td><td>4,176</td><td>5,370</td><td>6,563</td><td>7,756</td></tr>
+      <tr><td>26M04</td><td>4,675</td><td>298.3</td><td>15.67</td><td>2,983</td><td>4,176</td><td>5,370</td><td>6,563</td><td>7,756</td></tr>
+      <tr style="background:#0a1f14;"><td>26M03 ★</td><td>3,300</td><td>298.3</td><td>11.06</td><td>2,983</td><td>4,176</td><td>5,370</td><td>6,563</td><td>7,756</td></tr>
+      <tr><td>26M02</td><td>4,000</td><td>290.6</td><td>13.77</td><td>2,906</td><td>4,068</td><td>5,230</td><td>6,392</td><td>7,555</td></tr>
+      <tr><td>26M01</td><td>3,575</td><td>282.8</td><td>12.64</td><td>2,828</td><td>3,959</td><td>5,091</td><td>6,222</td><td>7,353</td></tr>
+      <tr style="background:#0a1f14;"><td>25M12 ★</td><td>4,485</td><td>275.1</td><td>16.31</td><td>2,751</td><td>3,851</td><td>4,951</td><td>6,051</td><td>7,152</td></tr>
+      <tr><td>25M11</td><td>4,570</td><td>263.0</td><td>17.38</td><td>2,630</td><td>3,681</td><td>4,733</td><td>5,785</td><td>6,837</td></tr>
+      <tr><td>25M10</td><td>4,365</td><td>250.9</td><td>17.40</td><td>2,509</td><td>3,512</td><td>4,516</td><td>5,519</td><td>6,523</td></tr>
+      <tr style="background:#0a1f14;"><td>25M09 ★</td><td>3,315</td><td>238.8</td><td>13.88</td><td>2,388</td><td>3,343</td><td>4,298</td><td>5,253</td><td>6,208</td></tr>
+      <tr><td>25M08</td><td>2,965</td><td>222.5</td><td>13.33</td><td>2,225</td><td>3,115</td><td>4,005</td><td>4,895</td><td>5,784</td></tr>
+      <tr><td>25M07</td><td>2,765</td><td>206.2</td><td>13.41</td><td>2,062</td><td>2,887</td><td>3,711</td><td>4,536</td><td>5,361</td></tr>
+      <tr style="background:#0a1f14;"><td>25M06 ★</td><td>2,530</td><td>189.9</td><td>13.32</td><td>1,899</td><td>2,659</td><td>3,418</td><td>4,178</td><td>4,937</td></tr>
+      <tr><td>25M05</td><td>2,420</td><td>176.6</td><td>13.71</td><td>1,766</td><td>2,472</td><td>3,178</td><td>3,885</td><td>4,591</td></tr>
+      <tr><td>25M04</td><td>1,910</td><td>163.3</td><td>11.70</td><td>1,633</td><td>2,286</td><td>2,939</td><td>3,592</td><td>4,245</td></tr>
+      <tr style="background:#0a1f14;"><td>25M03 ★</td><td>1,635</td><td>149.9</td><td>10.91</td><td>1,499</td><td>2,099</td><td>2,699</td><td>3,298</td><td>3,898</td></tr>
+      <tr><td>25M02</td><td>1,965</td><td>142.1</td><td>13.82</td><td>1,421</td><td>1,990</td><td>2,559</td><td>3,127</td><td>3,696</td></tr>
+      <tr><td>25M01</td><td>2,240</td><td>134.4</td><td>16.67</td><td>1,344</td><td>1,881</td><td>2,418</td><td>2,956</td><td>3,493</td></tr>
+      <tr style="background:#0a1f14;"><td>24M12 ★</td><td>2,620</td><td>126.6</td><td>20.70</td><td>1,266</td><td>1,772</td><td>2,278</td><td>2,785</td><td>3,291</td></tr>
+      <tr><td>24M11</td><td>1,935</td><td>120.4</td><td>16.07</td><td>1,204</td><td>1,686</td><td>2,168</td><td>2,649</td><td>3,131</td></tr>
+      <tr><td>24M10</td><td>1,905</td><td>114.3</td><td>16.67</td><td>1,143</td><td>1,600</td><td>2,057</td><td>2,514</td><td>2,971</td></tr>
+      <tr style="background:#0a1f14;"><td>24M09 ★</td><td>1,715</td><td>108.1</td><td>15.86</td><td>1,081</td><td>1,514</td><td>1,946</td><td>2,379</td><td>2,811</td></tr>
+      <tr><td>24M08</td><td>1,900</td><td>101.7</td><td>18.68</td><td>1,017</td><td>1,424</td><td>1,831</td><td>2,237</td><td>2,644</td></tr>
+      <tr><td>24M07</td><td>2,030</td><td>95.26</td><td>21.31</td><td>952.6</td><td>1,334</td><td>1,715</td><td>2,096</td><td>2,477</td></tr>
+      <tr style="background:#0a1f14;"><td>24M06 ★</td><td>2,645</td><td>88.83</td><td>29.78</td><td>888.3</td><td>1,244</td><td>1,599</td><td>1,954</td><td>2,310</td></tr>
+      <tr><td>24M05</td><td>2,470</td><td>84.86</td><td>29.11</td><td>848.6</td><td>1,188</td><td>1,528</td><td>1,867</td><td>2,206</td></tr>
+      <tr><td>24M04</td><td>2,360</td><td>80.90</td><td>29.17</td><td>809.0</td><td>1,133</td><td>1,456</td><td>1,780</td><td>2,103</td></tr>
+      <tr style="background:#0a1f14;"><td>24M03 ★</td><td>2,270</td><td>76.93</td><td>29.51</td><td>769.3</td><td>1,077</td><td>1,385</td><td>1,692</td><td>2,000</td></tr>
+      <tr><td>24M02</td><td>2,330</td><td>74.25</td><td>31.38</td><td>742.5</td><td>1,039</td><td>1,336</td><td>1,633</td><td>1,930</td></tr>
+      <tr><td>24M01</td><td>2,200</td><td>71.56</td><td>30.74</td><td>715.6</td><td>1,002</td><td>1,288</td><td>1,574</td><td>1,861</td></tr>
+      <tr style="background:#0a1f14;"><td>23M12 ★</td><td>1,825</td><td>68.88</td><td>26.50</td><td>688.8</td><td>964.3</td><td>1,240</td><td>1,515</td><td>1,791</td></tr>
+      <tr><td>23M11</td><td>1,760</td><td>69.71</td><td>25.25</td><td>697.1</td><td>975.9</td><td>1,255</td><td>1,534</td><td>1,812</td></tr>
+      <tr><td>23M10</td><td>1,520</td><td>70.54</td><td>21.55</td><td>705.4</td><td>987.6</td><td>1,270</td><td>1,552</td><td>1,834</td></tr>
+      <tr style="background:#0a1f14;"><td>23M09 ★</td><td>1,495</td><td>71.37</td><td>20.95</td><td>713.7</td><td>999.2</td><td>1,285</td><td>1,570</td><td>1,856</td></tr>
+      <tr><td>23M08</td><td>1,560</td><td>74.61</td><td>20.91</td><td>746.1</td><td>1,045</td><td>1,343</td><td>1,641</td><td>1,940</td></tr>
+      <tr><td>23M07</td><td>1,780</td><td>77.85</td><td>22.86</td><td>778.5</td><td>1,090</td><td>1,401</td><td>1,713</td><td>2,024</td></tr>
+      <tr style="background:#0a1f14;"><td>23M06 ★</td><td>1,420</td><td>81.09</td><td>17.51</td><td>810.9</td><td>1,135</td><td>1,460</td><td>1,784</td><td>2,108</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p style="font-size:10px;color:#475569;margin-top:8px;">★ 季末月（M03/M06/M09/M12）｜ 季末月可交叉驗證：10x欄÷10 應等於「近四季EPS」欄</p>
+</div>
+
+<!-- TAB 4: 基本面分析 -->
+<div id="tab-fundamental" class="panel">
+
+  <!-- 1. 營運數據 -->
+  <div class="section-title">📊 公司營運</div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;">
+    <div class="card">
+      <h3>2025 全年營收</h3>
+      <div class="val green">9,507 億</div>
+      <div class="note">YoY +163.7%（歷史新高）</div>
+    </div>
+    <div class="card">
+      <h3>2026 Q1 營收</h3>
+      <div class="val green">2,765 億</div>
+      <div class="note">YoY +62%（同期新高）</div>
+    </div>
+    <div class="card">
+      <h3>2026 Q1 毛利率</h3>
+      <div class="val yellow">7.6%</div>
+      <div class="note">營益率 6.3%｜高於法人預期</div>
+    </div>
+  </div>
+
+  <!-- 利潤率趨勢表 -->
+  <div style="background:#1e2535;border:1px solid #2d3748;border-radius:10px;padding:14px;margin-bottom:14px;">
+    <div style="font-size:12px;font-weight:700;color:#cbd5e1;margin-bottom:10px;">毛利率 / 營業利益率 趨勢</div>
+    <table style="margin:0;">
+      <thead>
+        <tr><th>期間</th><th>營收 YoY</th><th>毛利率</th><th>營益率</th><th>淨利率</th><th>EPS</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>2023 全年</td><td style="color:#64748b">—</td><td>~9.5%</td><td>~7.5%</td><td>—</td><td style="color:#e2e8f0">~68.9</td></tr>
+        <tr><td>2024 全年</td><td style="color:#22c55e">+52%</td><td>10.7%</td><td>8.5%</td><td>~7.5%</td><td style="color:#22c55e">126.6</td></tr>
+        <tr><td>2025 Q1</td><td style="color:#22c55e">+145%</td><td>8.6%</td><td>6.8%</td><td>5.7%</td><td style="color:#22c55e">52.7</td></tr>
+        <tr><td>2025 Q2</td><td style="color:#22c55e">+174%</td><td>7.5%</td><td>6.1%</td><td>5.4%</td><td style="color:#22c55e">60.7</td></tr>
+        <tr><td>2025 Q3</td><td style="color:#22c55e">+150%</td><td>8.6%</td><td>6.9%</td><td>5.5%</td><td style="color:#22c55e">67.0</td></tr>
+        <tr><td>2025 Q4</td><td style="color:#22c55e">+141%</td><td>7.23%</td><td>5.8%</td><td>4.72%</td><td style="color:#22c55e">74.6</td></tr>
+        <tr style="background:#0f2a1e;">
+          <td><strong>2026 Q1</strong></td>
+          <td style="color:#22c55e"><strong>+62%</strong></td>
+          <td style="color:#22c55e"><strong>7.6% ↑</strong></td>
+          <td style="color:#22c55e"><strong>6.3% ↑</strong></td>
+          <td style="color:#22c55e"><strong>5.1%</strong></td>
+          <td style="color:#22c55e"><strong>75.95</strong></td>
+        </tr>
+      </tbody>
+    </table>
+    <div style="font-size:10px;color:#475569;margin-top:8px;">⚠️ 毛利率受 GPU 高單價低毛利產品組合影響；AI ASIC 比重高時利潤率較佳。4月起記憶體改「代採購模式」，未來毛利率分母縮小，毛利率數字將自然提升，但獲利金額不變。</div>
+  </div>
+
+  <!-- 2. 商業模式 -->
+  <div class="section-title">🏗️ 商業模式</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
+    <div class="card">
+      <h3>怎麼賺錢</h3>
+      <div style="font-size:12px;line-height:1.9;color:#cbd5e1;margin-top:4px;">
+        <span style="color:#3b82f6;font-weight:700;">ODM-Direct 模式</span><br>
+        直接為超大規模雲端業者（Hyperscaler / CSP）定製 AI 伺服器、儲存設備及資料中心解決方案，以「白牌」出貨、不做自有品牌<br><br>
+        <span style="font-size:11px;color:#64748b;">產品組合（2025年）：<br>
+        AI 伺服器（ASIC 為主）~50% ｜ 通用型伺服器 ~50%<br>
+        AI 中 ASIC 專案佔約九成</span>
+      </div>
+    </div>
+    <div class="card">
+      <h3>護城河評估</h3>
+      <div style="font-size:12px;line-height:1.9;margin-top:4px;">
+        <div style="color:#22c55e;">✅ 客戶深度綁定</div>
+        <div style="color:#64748b;font-size:11px;margin-bottom:6px;">從產品概念階段即共同開發，客製化程度高，新供應商認證需 12–18 個月</div>
+        <div style="color:#22c55e;">✅ 液冷技術領先</div>
+        <div style="color:#64748b;font-size:11px;margin-bottom:6px;">冷板式＋浸沒式雙路徑，早於同業佈局 OCP 液冷標準，AI 伺服器功耗升，優勢擴大</div>
+        <div style="color:#22c55e;">✅ 產能全球化</div>
+        <div style="color:#64748b;font-size:11px;margin-bottom:6px;">台灣 + 美國德州新廠（~3億美元投資）就近供應北美，規避關稅風險</div>
+        <div style="color:#ef4444;">⚠️ 客戶過度集中</div>
+        <div style="color:#64748b;font-size:11px;">Meta + Microsoft 合計佔比逾八成，客戶議價力強</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 主要客戶 -->
+  <div style="background:#1e2535;border:1px solid #2d3748;border-radius:10px;padding:14px;margin-bottom:14px;">
+    <div style="font-size:12px;font-weight:700;color:#cbd5e1;margin-bottom:10px;">主要客戶 與 競爭對手</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+      <div>
+        <div style="font-size:11px;color:#64748b;margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em;">主要客戶（CSP 超大規模）</div>
+        <div style="display:flex;flex-direction:column;gap:5px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;background:#141b2d;border-radius:6px;padding:7px 10px;">
+            <span style="color:#f8fafc;font-size:12px;font-weight:600;">Meta (Facebook)</span>
+            <span class="badge badge-buy">核心，~52% 佔比</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;background:#141b2d;border-radius:6px;padding:7px 10px;">
+            <span style="color:#f8fafc;font-size:12px;font-weight:600;">Microsoft Azure</span>
+            <span class="badge badge-buy">次核心，~34% 佔比</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;background:#141b2d;border-radius:6px;padding:7px 10px;">
+            <span style="color:#f8fafc;font-size:12px;font-weight:600;">Amazon AWS</span>
+            <span class="badge badge-watch">拓展中，~14% 其他</span>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:11px;color:#64748b;margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em;">主要競爭對手</div>
+        <div style="display:flex;flex-direction:column;gap:5px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;background:#141b2d;border-radius:6px;padding:7px 10px;">
+            <span style="color:#94a3b8;font-size:12px;">廣達（2382）</span>
+            <span class="badge badge-watch">主要對手</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;background:#141b2d;border-radius:6px;padding:7px 10px;">
+            <span style="color:#94a3b8;font-size:12px;">鴻海（2317）</span>
+            <span class="badge badge-watch">跨足競爭</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;background:#141b2d;border-radius:6px;padding:7px 10px;">
+            <span style="color:#94a3b8;font-size:12px;">美超微（SMCI）</span>
+            <span class="badge badge-watch">品牌廠競爭</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="margin-top:12px;font-size:11px;color:#64748b;border-top:1px solid #2d3748;padding-top:10px;">
+      📌 緯穎在全球白牌 AI 伺服器出貨市佔率約三成，是台股中 AI 伺服器純度最高的標的。母公司緯創（3231）持股約四成，雙方在供應鏈上分工合作，緯穎專責白牌雲端客戶。
+    </div>
+  </div>
+
+  <!-- 3. 市場地位 -->
+  <div style="background:#1e2535;border:1px solid #2d3748;border-radius:10px;padding:14px;margin-bottom:14px;">
+    <div style="font-size:12px;font-weight:700;color:#cbd5e1;margin-bottom:12px;">市場地位</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;text-align:center;">
+      <div>
+        <div style="font-size:11px;color:#64748b;margin-bottom:4px;">全球 AI 伺服器代工排名</div>
+        <div style="font-size:20px;font-weight:800;color:#3b82f6;">前3大</div>
+        <div style="font-size:10px;color:#475569;margin-top:2px;">台股純度最高</div>
+      </div>
+      <div style="border-left:1px solid #2d3748;border-right:1px solid #2d3748;">
+        <div style="font-size:11px;color:#64748b;margin-bottom:4px;">白牌伺服器市佔率</div>
+        <div style="font-size:20px;font-weight:800;color:#eab308;">~30%</div>
+        <div style="font-size:10px;color:#475569;margin-top:2px;">全球白牌市場</div>
+      </div>
+      <div>
+        <div style="font-size:11px;color:#64748b;margin-bottom:4px;">2025 年股利</div>
+        <div style="font-size:20px;font-weight:800;color:#22c55e;">145元</div>
+        <div style="font-size:10px;color:#475569;margin-top:2px;">現金股利（+20元股票）</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. 估值指標 -->
+  <div class="section-title">💰 估值指標</div>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:10px;">
+    <div class="card" style="text-align:center;">
+      <h3>本益比 P/E</h3>
+      <div class="val" id="fund-pe" style="color:#f8fafc;">計算中…</div>
+      <div class="note" id="fund-pe-note">TTM EPS 298.3 元</div>
+    </div>
+    <div class="card" style="text-align:center;">
+      <h3>前瞻 P/E（2026E）</h3>
+      <div class="val yellow">~16x</div>
+      <div class="note">EPS 估 ~340元（法人共識）</div>
+    </div>
+    <div class="card" style="text-align:center;">
+      <h3>現金股利殖利率</h3>
+      <div class="val" style="color:#22c55e;">~2.6%</div>
+      <div class="note">145元現金股利 / ~5525</div>
+    </div>
+    <div class="card" style="text-align:center;">
+      <h3>2025 EPS 成長</h3>
+      <div class="val green">+117%</div>
+      <div class="note">275元 vs 2024年 126.6元</div>
+    </div>
+  </div>
+  <div style="background:#1e2535;border:1px solid #2d3748;border-radius:10px;padding:12px;font-size:11px;color:#64748b;line-height:1.8;">
+    📌 <strong style="color:#94a3b8;">估值解讀：</strong>
+    緯穎毛利率僅 7–8%，屬 ODM 代工水準，但因出貨規模龐大，EPS 仍能創歷史新高。<br>
+    4月起記憶體「代採購模式」將使名目營收縮水，但毛利率與利潤率數字將改善，獲利金額不受影響。<br>
+    2026 年下半年新 ASIC + GPU 平台出貨，是全年成長的最大動能。
+  </div>
+
+  <!-- 2026展望 -->
+  <div class="section-title" style="margin-top:16px;">🔭 2026 年展望（法說會重點）</div>
+  <div style="background:#1e2535;border:1px solid #2d3748;border-radius:10px;padding:14px;margin-bottom:14px;">
+    <div style="font-size:12px;line-height:2;color:#94a3b8;">
+      <div>• <strong style="color:#22c55e;">AI 佔比持續提升</strong>：2026年 AI 營收佔比超過五成，ASIC 仍是主力（佔 AI 約九成）</div>
+      <div>• <strong style="color:#22c55e;">下半年新平台出貨</strong>：新 ASIC 與 GPU 專案（Nvidia/AMD）集中於下半年，成長動能後重</div>
+      <div>• <strong style="color:#22c55e;">通用型伺服器穩健</strong>：受 AI 前後端應用帶動，2026 全年出貨量預計成長 20–30%</div>
+      <div>• <strong style="color:#eab308;">代採購模式轉型</strong>：4月起記憶體改代採購，名目營收縮水但獲利不減，財務結構優化</div>
+      <div>• <strong style="color:#eab308;">德州新廠全面開出</strong>：~3億美元投資，就近供應北美 CSP，強化交期與供應鏈韌性</div>
+      <div>• <strong style="color:#ef4444;">關鍵零組件漲價壓力</strong>：記憶體等成本可轉嫁，對 OPM 影響有限，但需持續關注</div>
+    </div>
+  </div>
+
+  <p style="font-size:10px;color:#334155;margin-top:14px;line-height:1.6;">⚠️ 本分析僅供參考，不構成投資建議。部分客戶佔比數字來自歷史法人報告，現況可能變動。</p>
+</div>
+
+<!-- TAB 5: Summary -->
+<div id="tab-summary" class="panel">
+  <div class="section-title">📌 關鍵估值數據</div>
+  <table>
+    <thead><tr><th>指標</th><th>數值</th><th>評估</th></tr></thead>
+    <tbody>
+      <tr><td>目前股價（2026/5/24）</td><td style="color:#3b82f6;font-weight:700;" id="sum-price">載入中…</td><td id="sum-badge">—</td></tr>
+      <tr><td>最新 TTM EPS（26Q1）</td><td style="color:#22c55e;font-weight:700;">298.3 元</td><td><span class="badge badge-buy">歷史新高</span></td></tr>
+      <tr><td>2025 全年 EPS</td><td style="color:#22c55e;font-weight:700;">275.1 元（YoY +117%）</td><td><span class="badge badge-buy">超強成長</span></td></tr>
+      <tr><td>目前本益比（26M05）</td><td>18.52x</td><td><span class="badge badge-watch">偏貴區間</span></td></tr>
+      <tr><td>便宜價（PER 11x）</td><td style="color:#22c55e;font-weight:700;">3,281 元</td><td><span class="badge badge-buy">積極買進</span></td></tr>
+      <tr><td>合理價（PER 15x）</td><td style="color:#eab308;font-weight:700;">4,475 元</td><td><span class="badge badge-watch">合理評估</span></td></tr>
+      <tr><td>昂貴價（PER 20x）</td><td style="color:#ef4444;font-weight:700;">5,966 元</td><td><span class="badge badge-avoid">偏貴減碼</span></td></tr>
+    </tbody>
+  </table>
+
+  <div class="section-title" style="margin-top:20px;">📊 歷史 PER 分析</div>
+  <div style="background:#1e2535;border:1px solid #2d3748;border-radius:10px;padding:14px;">
+    <div style="font-size:12px;line-height:2;color:#94a3b8;">
+      <div>• <strong style="color:#ef4444;">2024 Q1-Q2（AI泡沫高峰）</strong>：PER 29–31x，屬題材炒作，排除作為常態基準</div>
+      <div>• <strong style="color:#eab308;">2023 下半年</strong>：PER 17–27x，AI伺服器題材初期，偏高</div>
+      <div>• <strong style="color:#22c55e;">2024 下半年 ～ 2025</strong>：PER 11–20x，進入成熟估值區間，EPS快速追上股價</div>
+      <div>• <strong style="color:#3b82f6;">目前（26M05）</strong>：PER 18.52x，接近昂貴帶下緣（20x），股價位於 5,525</div>
+      <div style="margin-top:8px;color:#64748b;font-size:11px;">→ 建議以 PER 11–15x 為核心持有區間，> 20x 逐步減碼</div>
+    </div>
+  </div>
+
+  <div class="section-title" style="margin-top:20px;">⚡ 催化劑 vs 風險</div>
+  <div class="grid2">
+    <div class="card">
+      <h3>🚀 利多</h3>
+      <div style="font-size:12px;line-height:1.9;color:#86efac;">✓ AI 伺服器（GB200/GB300）主要供應商<br>✓ Meta / Microsoft 大客戶穩定<br>✓ 液冷散熱需求提升毛利<br>✓ EPS 持續季季上修<br>✓ AI Capex 循環持續強勁</div>
+    </div>
+    <div class="card">
+      <h3>⚠️ 風險</h3>
+      <div style="font-size:12px;line-height:1.9;color:#fca5a5;">✗ PER 18–19x，回調空間大<br>✗ 美中關稅不確定性<br>✗ AI CSP 若砍資本支出<br>✗ 股價已在5,525，距昂貴價不遠<br>✗ ODM 毛利率偏低（~10%上下）</div>
+    </div>
+  </div>
+  <p style="font-size:10px;color:#475569;margin-top:14px;line-height:1.6;">⚠️ 本分析僅供參考，不構成投資建議。股市有風險，投資前請自行判斷。</p>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<script>
+function switchTab(id, btn) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  btn.classList.add('active');
+  if (id === 'eps' && !window.epsDrawn) drawEPS();
+}
+
+// 逐月數據（EPS = 10x欄 ÷ 10）
+const data = [
+  { m:'23M06', px:1420,  eps:81.09, per:17.51 },
+  { m:'23M07', px:1780,  eps:77.85, per:22.86 },
+  { m:'23M08', px:1560,  eps:74.61, per:20.91 },
+  { m:'23M09', px:1495,  eps:71.37, per:20.95 },
+  { m:'23M10', px:1520,  eps:70.54, per:21.55 },
+  { m:'23M11', px:1760,  eps:69.71, per:25.25 },
+  { m:'23M12', px:1825,  eps:68.88, per:26.50 },
+  { m:'24M01', px:2200,  eps:71.56, per:30.74 },
+  { m:'24M02', px:2330,  eps:74.25, per:31.38 },
+  { m:'24M03', px:2270,  eps:76.93, per:29.51 },
+  { m:'24M04', px:2360,  eps:80.90, per:29.17 },
+  { m:'24M05', px:2470,  eps:84.86, per:29.11 },
+  { m:'24M06', px:2645,  eps:88.83, per:29.78 },
+  { m:'24M07', px:2030,  eps:95.26, per:21.31 },
+  { m:'24M08', px:1900,  eps:101.7, per:18.68 },
+  { m:'24M09', px:1715,  eps:108.1, per:15.86 },
+  { m:'24M10', px:1905,  eps:114.3, per:16.67 },
+  { m:'24M11', px:1935,  eps:120.4, per:16.07 },
+  { m:'24M12', px:2620,  eps:126.6, per:20.70 },
+  { m:'25M01', px:2240,  eps:134.4, per:16.67 },
+  { m:'25M02', px:1965,  eps:142.1, per:13.82 },
+  { m:'25M03', px:1635,  eps:149.9, per:10.91 },
+  { m:'25M04', px:1910,  eps:163.3, per:11.70 },
+  { m:'25M05', px:2420,  eps:176.6, per:13.71 },
+  { m:'25M06', px:2530,  eps:189.9, per:13.32 },
+  { m:'25M07', px:2765,  eps:206.2, per:13.41 },
+  { m:'25M08', px:2965,  eps:222.5, per:13.33 },
+  { m:'25M09', px:3315,  eps:238.8, per:13.88 },
+  { m:'25M10', px:4365,  eps:250.9, per:17.40 },
+  { m:'25M11', px:4570,  eps:263.0, per:17.38 },
+  { m:'25M12', px:4485,  eps:275.1, per:16.31 },
+  { m:'26M01', px:3575,  eps:282.8, per:12.64 },
+  { m:'26M02', px:4000,  eps:290.6, per:13.77 },
+  { m:'26M03', px:3300,  eps:298.3, per:11.06 },
+  { m:'26M04', px:4675,  eps:298.3, per:15.67 },
+  { m:'26M05', px:5525,  eps:298.3, per:18.52 },
+];
+
+const labels = data.map(d => d.m);
+const prices = data.map(d => d.px);
+const eps    = data.map(d => d.eps);
+
+function band(mult) { return eps.map(e => Math.round(e * mult)); }
+
+async function fetchLivePrice() {
+  try {
+    const res = await fetch('https://taiwan-stock-price.david870114.workers.dev/?id=6669', { cache: 'no-cache' });
+    const j = JSON.parse(await res.text());
+    const price = parseFloat(j.price);
+    if (price && !isNaN(price)) {
+      const ttm = 298.3;
+      const per = (price / ttm).toFixed(1);
+      document.getElementById('live-price').textContent = '$ ' + price.toLocaleString();
+      document.getElementById('live-per').textContent = `PER ${per}x（TTM EPS ${ttm}元）`;
+
+      // fundamental tab PE
+      const fundPe = document.getElementById('fund-pe');
+      const fundNote = document.getElementById('fund-pe-note');
+      if (fundPe) {
+        fundPe.textContent = per + 'x';
+        fundPe.style.color = per > 20 ? '#ef4444' : per > 15 ? '#eab308' : '#22c55e';
+      }
+      if (fundNote) fundNote.textContent = '股價 ' + price.toLocaleString() + ' ｜ TTM EPS 298.3';
+
+      const sumEl = document.getElementById('sum-price');
+      const badgeEl = document.getElementById('sum-badge');
+      if (sumEl) sumEl.textContent = price.toLocaleString() + ' 元';
+      if (badgeEl) {
+        if (price < 3281)      { badgeEl.innerHTML = '<span class="badge badge-buy">便宜買點</span>'; }
+        else if (price < 4475) { badgeEl.innerHTML = '<span class="badge badge-buy">合理偏低</span>'; }
+        else if (price < 5966) { badgeEl.innerHTML = '<span class="badge badge-watch">合理偏高</span>'; }
+        else                   { badgeEl.innerHTML = '<span class="badge badge-avoid">昂貴區</span>'; }
+      }
+    }
+  } catch(e) {
+    document.getElementById('live-price').textContent = '5,525（手動）';
+  }
+}
+
+window.addEventListener('load', () => {
+  fetchLivePrice();
+  setTimeout(() => {
+    const ctx = document.getElementById('riverChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [
+          { label: 'PER 25x（高估）',  data: band(25), borderColor:'#ef4444', backgroundColor:'rgba(239,68,68,0.04)', borderWidth:1, borderDash:[5,4], pointRadius:0, fill:false },
+          { label: 'PER 20x（昂貴）',  data: band(20), borderColor:'#f97316', backgroundColor:'rgba(249,115,22,0.06)', borderWidth:1.5, pointRadius:0, fill:'-1' },
+          { label: 'PER 15x（合理）',  data: band(15), borderColor:'#eab308', backgroundColor:'rgba(234,179,8,0.07)', borderWidth:1.5, pointRadius:0, fill:'-1' },
+          { label: 'PER 11x（便宜）',  data: band(11), borderColor:'#22c55e', backgroundColor:'rgba(34,197,94,0.07)', borderWidth:1.5, pointRadius:0, fill:'-1' },
+          { label: 'PER 10x（底部）',  data: band(10), borderColor:'#3b82f6', backgroundColor:'rgba(59,130,246,0.04)', borderWidth:1, borderDash:[5,4], pointRadius:0, fill:'-1' },
+          { label: '實際股價', data: prices, borderColor:'#ffffff', borderWidth:2.5, pointRadius:2, pointBackgroundColor:'#fff', fill:false, tension:0.3, spanGaps:true },
+        ]
+      },
+      options: {
+        responsive: true,
+        interaction: { mode:'index', intersect:false },
+        plugins: {
+          legend: { labels: { color:'#94a3b8', font:{size:11}, boxWidth:18 } },
+          tooltip: { backgroundColor:'#1e2535', titleColor:'#f8fafc', bodyColor:'#94a3b8', borderColor:'#334155', borderWidth:1,
+            callbacks: { label: ctx => `${ctx.dataset.label}: ${ctx.parsed.y?.toLocaleString() ?? '—'}` }
+          }
+        },
+        scales: {
+          x: { ticks:{ color:'#64748b', font:{size:10}, maxRotation:45 }, grid:{ color:'rgba(30,37,53,0.8)' } },
+          y: { ticks:{ color:'#64748b', font:{size:10}, callback: v => v.toLocaleString() }, grid:{ color:'rgba(30,37,53,0.8)' } }
+        }
+      }
+    });
+  }, 200);
+});
+
+function drawEPS() {
+  window.epsDrawn = true;
+  const ctx2 = document.getElementById('epsChart').getContext('2d');
+  const years = ['2021','2022','2023','2024','2025','2026E'];
+  const annualEPS = [null, null, 81.09, 126.6, 275.1, 330];
+  new Chart(ctx2, {
+    type: 'bar',
+    data: {
+      labels: years,
+      datasets: [{
+        label: '年度 EPS（元）',
+        data: annualEPS,
+        backgroundColor: annualEPS.map((v,i) => i===5?'rgba(59,130,246,0.7)':'rgba(34,197,94,0.7)'),
+        borderColor: annualEPS.map((v,i) => i===5?'#3b82f6':'#22c55e'),
+        borderWidth:1.5, borderRadius:6
+      }]
+    },
+    options: {
+      responsive:true,
+      plugins:{ legend:{ labels:{ color:'#94a3b8' } }, tooltip:{ backgroundColor:'#1e2535', bodyColor:'#94a3b8' } },
+      scales: {
+        x:{ ticks:{ color:'#64748b' }, grid:{ color:'rgba(30,37,53,0.8)' } },
+        y:{ ticks:{ color:'#64748b', callback: v => v+'元' }, grid:{ color:'rgba(30,37,53,0.8)' } }
+      }
+    }
+  });
+}
+</script>
+</body>
+</html>
