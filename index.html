@@ -300,13 +300,18 @@
               <div class="mc-vs-val" id="cv-3231">—</div>
             </div>
           </a>
-          <div class="mini-card no-data">
+          <a class="mini-card" href="6669_analysis.html">
             <div class="mc-left">
               <span class="mc-code">6669</span>
               <span class="mc-name">緯穎</span>
             </div>
-            <span class="mc-empty">未追蹤</span>
-          </div>
+            <div class="mc-right">
+              <div class="mc-price-label">目前股價</div>
+              <div class="mc-price-val" id="cp-6669">…</div>
+              <div class="mc-vs-label">vs 合理價</div>
+              <div class="mc-vs-val" id="cv-6669">—</div>
+            </div>
+          </a>
         </div>
       </div>
     </div>
@@ -555,6 +560,15 @@
         <td class="price-cell loading td-cur" id="price-3231">…</td>
         <td id="vs-3231" class="loading">—</td>
       </tr>
+      <tr>
+        <td class="code code-server">6669</td>
+        <td class="name"><a href="6669_analysis.html">緯穎</a></td>
+        <td>3,281 <span class="per-sub">11x PER</span></td>
+        <td>4,475 <span class="per-sub">15x PER</span></td>
+        <td>5,966 <span class="per-sub">20x PER</span></td>
+        <td class="price-cell loading td-cur" id="price-6669">…</td>
+        <td id="vs-6669" class="loading">—</td>
+      </tr>
     </tbody>
   </table>
 </div>
@@ -776,6 +790,7 @@ const STOCKS = [
   { id: '2330',  fairValue: 1458, expValue: 1855 },
   { id: '2382',  fairValue: 350,  expValue: 506  },
   { id: '3231',  fairValue: 181,  expValue: 302  },
+  { id: '6669',  fairValue: 4475, expValue: 5966 },
   { id: '2345',  fairValue: 1375, expValue: 1692 },
   { id: '3596',  fairValue: 177,  expValue: 278  },
   { id: '3017',  fairValue: 1583, expValue: 2070 },
@@ -788,7 +803,7 @@ const STOCKS = [
   { id: '3037',  fairValue: 141,  expValue: 211  },
 ];
 
-const CHAIN_STOCKS = ['2330','2382','3231','2345','3596','3017','3324','8210','2308','3037'];
+const CHAIN_STOCKS = ['2330','2382','3231','6669','2345','3596','3017','3324','8210','2308','3037'];
 
 async function fetchPrice(id) {
   try {
