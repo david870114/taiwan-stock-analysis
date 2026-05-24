@@ -57,6 +57,7 @@
   <button class="tab active" onclick="switchTab('river', this)">📈 PER 河流圖</button>
   <button class="tab" onclick="switchTab('scenario', this)">🎯 三情境買點</button>
   <button class="tab" onclick="switchTab('eps', this)">📊 EPS 趨勢</button>
+  <button class="tab" onclick="switchTab('fundamental', this)">🏢 基本面分析</button>
   <button class="tab" onclick="switchTab('summary', this)">📋 完整摘要</button>
 </div>
 
@@ -160,6 +161,187 @@
   <p style="font-size:10px;color:#475569;margin-top:14px;line-height:1.6;">⚠️ 本分析僅供參考，不構成投資建議。股市有風險，投資前請自行判斷。</p>
 </div>
 
+
+<!-- TAB: 基本面分析 -->
+<div id="tab-fundamental" class="panel">
+
+  <!-- ── 1. 公司營運 ── -->
+  <div class="section-title">📊 公司營運</div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;">
+    <div class="card">
+      <h3>2025 全年營收</h3>
+      <div class="val green">2,483 億</div>
+      <div class="note">YoY +124.9%</div>
+    </div>
+    <div class="card">
+      <h3>2026 Q1 營收</h3>
+      <div class="val green">701 億</div>
+      <div class="note">YoY +64.0%</div>
+    </div>
+    <div class="card">
+      <h3>2026 Q1 毛利率</h3>
+      <div class="val yellow">19.5%</div>
+      <div class="note">上季 17.9%，季增改善</div>
+    </div>
+  </div>
+
+  <!-- 毛利率趨勢 -->
+  <div style="background:#1e2535;border:1px solid #2d3748;border-radius:10px;padding:14px;margin-bottom:14px;">
+    <div style="font-size:12px;font-weight:700;color:#cbd5e1;margin-bottom:10px;">毛利率 / 營業利益率 趨勢</div>
+    <table style="margin:0;">
+      <thead>
+        <tr>
+          <th>期間</th><th>營收 YoY</th><th>毛利率</th><th>營業利益率</th><th>EPS</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>2023 全年</td><td style="color:#64748b">+5%</td><td>20.5%</td><td>13.2%</td><td style="color:#e2e8f0">15.99</td></tr>
+        <tr><td>2024 全年</td><td style="color:#22c55e">+52%</td><td>19.8%</td><td>13.7%</td><td style="color:#22c55e">21.49</td></tr>
+        <tr><td>2025 Q1</td><td style="color:#22c55e">+107%</td><td>18.4%</td><td>12.3%</td><td style="color:#22c55e">9.28</td></tr>
+        <tr><td>2025 Q2</td><td style="color:#22c55e">+131%</td><td>17.3%</td><td>11.8%</td><td style="color:#22c55e">10.98</td></tr>
+        <tr><td>2025 Q3</td><td style="color:#22c55e">+147%</td><td>18.4%</td><td>12.5%</td><td style="color:#22c55e">14.00</td></tr>
+        <tr><td>2025 Q4</td><td style="color:#22c55e">+85%</td><td>17.9%</td><td>12.7%</td><td style="color:#22c55e">14.95</td></tr>
+        <tr style="background:#0f2a1e;"><td><strong>2026 Q1</strong></td><td style="color:#22c55e"><strong>+64%</strong></td><td style="color:#22c55e"><strong>19.5% ↑</strong></td><td style="color:#22c55e"><strong>14.3% ↑</strong></td><td style="color:#22c55e"><strong>14.92</strong></td></tr>
+      </tbody>
+    </table>
+    <div style="font-size:10px;color:#475569;margin-top:8px;">⚠️ 毛利率在 AI 加速卡比重上升時承壓（AI卡毛利低於交換器），2026Q1 因高階800G交換器比重回升而改善</div>
+  </div>
+
+  <!-- ── 2. 商業模式 ── -->
+  <div class="section-title">🏗️ 商業模式</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
+    <div class="card">
+      <h3>怎麼賺錢</h3>
+      <div style="font-size:12px;line-height:1.9;color:#cbd5e1;margin-top:4px;">
+        <span style="color:#3b82f6;font-weight:700;">白牌 ODM 模式</span><br>
+        為 AWS、Meta 等超大規模雲端業者（Hyperscaler）定製設計、製造高速乙太網路交換器與 AI 加速卡，以「白牌」出貨，不貼自有品牌<br><br>
+        <span style="font-size:11px;color:#64748b;">產品組合（2025年）：<br>
+        交換器 ~59% ｜ AI加速卡+網路應用設備 ~37% ｜ 其他 ~4%</span>
+      </div>
+    </div>
+    <div class="card">
+      <h3>護城河評估</h3>
+      <div style="font-size:12px;line-height:1.9;margin-top:4px;">
+        <div style="color:#22c55e;">✅ 技術門檻高</div>
+        <div style="color:#64748b;font-size:11px;margin-bottom:6px;">800G→1.6T 高頻寬低延遲設計，研發投入大，非一般廠商可快速複製</div>
+        <div style="color:#22c55e;">✅ 客戶綁定深</div>
+        <div style="color:#64748b;font-size:11px;margin-bottom:6px;">AWS Trainium 獨家供應商；新客戶導入認證耗時 12–18 個月</div>
+        <div style="color:#22c55e;">✅ 產線佈局廣</div>
+        <div style="color:#64748b;font-size:11px;margin-bottom:6px;">台灣＋越南＋美國生產，規避關稅風險</div>
+        <div style="color:#ef4444;">⚠️ 單一客戶集中</div>
+        <div style="color:#64748b;font-size:11px;">AWS 佔比過高，客戶議價力強</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 客戶穩定度 -->
+  <div style="background:#1e2535;border:1px solid #2d3748;border-radius:10px;padding:14px;margin-bottom:14px;">
+    <div style="font-size:12px;font-weight:700;color:#cbd5e1;margin-bottom:10px;">主要客戶 與 競爭對手</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+      <div>
+        <div style="font-size:11px;color:#64748b;margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em;">主要客戶（超大規模資料中心）</div>
+        <div style="display:flex;flex-direction:column;gap:5px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;background:#141b2d;border-radius:6px;padding:7px 10px;">
+            <span style="color:#f8fafc;font-size:12px;font-weight:600;">Amazon AWS</span>
+            <span class="badge badge-buy">核心，獨家 Trainium</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;background:#141b2d;border-radius:6px;padding:7px 10px;">
+            <span style="color:#f8fafc;font-size:12px;font-weight:600;">Meta</span>
+            <span class="badge badge-buy">長期合作</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;background:#141b2d;border-radius:6px;padding:7px 10px;">
+            <span style="color:#f8fafc;font-size:12px;font-weight:600;">Microsoft Azure</span>
+            <span class="badge badge-watch">新客戶 2025 導入</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;background:#141b2d;border-radius:6px;padding:7px 10px;">
+            <span style="color:#f8fafc;font-size:12px;font-weight:600;">HPE / Dell</span>
+            <span class="badge" style="background:#1e2d3d;color:#94a3b8;">品牌代工</span>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:11px;color:#64748b;margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em;">競爭對手</div>
+        <div style="display:flex;flex-direction:column;gap:5px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;background:#141b2d;border-radius:6px;padding:7px 10px;">
+            <span style="color:#f8fafc;font-size:12px;font-weight:600;">Cisco Systems</span>
+            <span style="font-size:10px;color:#64748b;">企業市場霸主，品牌交換器</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;background:#141b2d;border-radius:6px;padding:7px 10px;">
+            <span style="color:#f8fafc;font-size:12px;font-weight:600;">Arista Networks</span>
+            <span style="font-size:10px;color:#64748b;">資料中心黑牌龍頭</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;background:#141b2d;border-radius:6px;padding:7px 10px;">
+            <span style="color:#f8fafc;font-size:12px;font-weight:600;">Celestica</span>
+            <span style="font-size:10px;color:#64748b;">白牌交換器直接對手</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;background:#141b2d;border-radius:6px;padding:7px 10px;">
+            <span style="color:#f8fafc;font-size:12px;font-weight:600;">是否容易被取代？</span>
+            <span class="badge badge-buy">難（認證壁壘高）</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 3. 產業地位 ── -->
+  <div class="section-title">🌐 產業地位</div>
+  <div style="background:#1e2535;border:1px solid #2d3748;border-radius:10px;padding:14px;margin-bottom:14px;">
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">
+      <div style="text-align:center;">
+        <div style="font-size:11px;color:#64748b;margin-bottom:4px;">在台股白牌交換器地位</div>
+        <div style="font-size:20px;font-weight:800;color:#3b82f6;">龍頭</div>
+        <div style="font-size:10px;color:#475569;margin-top:2px;">台股同類型唯一規模選擇</div>
+      </div>
+      <div style="text-align:center;border-left:1px solid #2d3748;border-right:1px solid #2d3748;">
+        <div style="font-size:11px;color:#64748b;margin-bottom:4px;">全球白牌交換器市占</div>
+        <div style="font-size:20px;font-weight:800;color:#eab308;">前 2 名</div>
+        <div style="font-size:10px;color:#475569;margin-top:2px;">與 Celestica 並列（無公開精確數字）</div>
+      </div>
+      <div style="text-align:center;">
+        <div style="font-size:11px;color:#64748b;margin-bottom:4px;">北美銷售佔比</div>
+        <div style="font-size:20px;font-weight:800;color:#22c55e;">72%</div>
+        <div style="font-size:10px;color:#475569;margin-top:2px;">高度集中北美 CSP</div>
+      </div>
+    </div>
+    <div style="margin-top:12px;font-size:11px;color:#64748b;border-top:1px solid #2d3748;padding-top:10px;">
+      📌 全球交換器市場前五為 Cisco (35.9%)、Arista、華為、HPE、新華三（含品牌廠）。智邦作為白牌 ODM，不直接與品牌廠競爭市場份額統計，而是服務 Hyperscaler 的客製化需求，為 AI 資料中心後端網路的關鍵供應商。
+    </div>
+  </div>
+
+  <!-- ── 4. 估值 ── -->
+  <div class="section-title">💰 估值指標</div>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:10px;">
+    <div class="card" style="text-align:center;">
+      <h3>本益比 P/E</h3>
+      <div class="val" id="fund-pe" style="color:#f8fafc;">計算中…</div>
+      <div class="note" id="fund-pe-note">TTM EPS 52.87 元</div>
+    </div>
+    <div class="card" style="text-align:center;">
+      <h3>前瞻 P/E（2026E）</h3>
+      <div class="val yellow">~35x</div>
+      <div class="note">法人EPS共識 ~70元</div>
+    </div>
+    <div class="card" style="text-align:center;">
+      <h3>股價淨值比 P/B</h3>
+      <div class="val" style="color:#f97316;">~14.5x</div>
+      <div class="note">高 P/B 反映高 ROE 溢價</div>
+    </div>
+    <div class="card" style="text-align:center;">
+      <h3>ROE</h3>
+      <div class="val green">48.8%</div>
+      <div class="note">2025全年，極優水準</div>
+    </div>
+  </div>
+  <div style="background:#1e2535;border:1px solid #2d3748;border-radius:10px;padding:12px;font-size:11px;color:#64748b;line-height:1.8;">
+    📌 <strong style="color:#94a3b8;">估值解讀：</strong>
+    目前 P/E 已高於歷史均值（26x），反映市場對 800G→1.6T 升級週期與新客戶拉貨的高度期待。
+    P/B 14.5x 偏高，但以 ROE 48.8% 支撐，合理性尚存（Gordon 法則：合理 P/B ≈ ROE / 要求報酬率）。
+    PEG ≈ 0.89（&lt;1），以成長速度來看仍具吸引力，但需留意 EPS 成長趨緩後的估值修正風險。
+  </div>
+
+  <p style="font-size:10px;color:#334155;margin-top:14px;line-height:1.6;">⚠️ 本分析僅供參考，不構成投資建議。部分數據來自公開財報與法人研究，市占率等數字無官方公開來源。</p>
+</div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <script>
 function switchTab(id, btn) {
@@ -175,6 +357,28 @@ const ttmEPS =   [9.5, 12.3, 14.6, 14.64, 15.2, 15.5, 16.2, 15.99, 16.8, 17.5, 1
 const closePx =  [250, 238, 247, 248, 279, 300, 345, 392, 505, 495, 505, 538, 703, 679, 768, 1185, 2505, null, null, null];
 
 function makeRiverBand(epsArr, mult) { return epsArr.map(e => +(e * mult).toFixed(0)); }
+
+
+// 基本面 Tab：即時計算 P/E
+async function updateFundamentalPE() {
+  try {
+    const res = await fetch('https://taiwan-stock-price.david870114.workers.dev/?id=2345', { cache: 'no-cache' });
+    const data = JSON.parse(await res.text());
+    const price = parseFloat(data.price);
+    if (price && !isNaN(price)) {
+      const ttmEPS = 52.87;
+      const pe = (price / ttmEPS).toFixed(1);
+      const el = document.getElementById('fund-pe');
+      const noteEl = document.getElementById('fund-pe-note');
+      if (el) {
+        el.textContent = pe + 'x';
+        el.style.color = pe > 40 ? '#ef4444' : pe > 30 ? '#eab308' : '#22c55e';
+      }
+      if (noteEl) noteEl.textContent = '股價 ' + price.toLocaleString() + ' ｜ TTM EPS 52.87';
+    }
+  } catch(e) {}
+}
+window.addEventListener('load', updateFundamentalPE);
 
 window.addEventListener('load', () => {
   setTimeout(() => {
