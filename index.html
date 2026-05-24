@@ -404,16 +404,18 @@
         <div class="node-tier">配套</div>
         <div class="node-type">電源供應<br>UPS</div>
         <div class="node-stocks">
-          <div class="mini-card" id="mc-2308">
+          <a class="mini-card" href="2308_analysis.html">
             <div class="mc-left">
               <span class="mc-code">2308</span>
               <span class="mc-name">台達電</span>
             </div>
             <div class="mc-right">
-              <span class="mc-price" id="cp-2308">…</span>
-              <span class="mc-vs-val" id="cv-2308">…</span>
+              <div class="mc-price-label">股價</div>
+              <div class="mc-price-val" id="cp-2308">…</div>
+              <div class="mc-vs-label">vs 合理</div>
+              <div class="mc-vs-val" id="cv-2308">…</div>
             </div>
-          </div>
+          </a>
           <div class="mini-card no-data">
             <div class="mc-left">
               <span class="mc-code">2301</span>
@@ -431,13 +433,18 @@
         <div class="node-tier">配套</div>
         <div class="node-type">ABF 載板<br>高階基板</div>
         <div class="node-stocks">
-          <div class="mini-card no-data">
+          <a class="mini-card" href="3037_analysis.html">
             <div class="mc-left">
               <span class="mc-code">3037</span>
               <span class="mc-name">欣興</span>
             </div>
-            <span class="mc-empty">未追蹤</span>
-          </div>
+            <div class="mc-right">
+              <div class="mc-price-label">目前股價</div>
+              <div class="mc-price-val" id="cp-3037">…</div>
+              <div class="mc-vs-label">vs 合理價</div>
+              <div class="mc-vs-val" id="cv-3037">—</div>
+            </div>
+          </a>
           <div class="mini-card no-data">
             <div class="mc-left">
               <span class="mc-code">8046</span>
@@ -583,6 +590,35 @@
         <td>278 <span class="per-sub">22x PER</span></td>
         <td class="price-cell loading td-cur" id="price-3596">…</td>
         <td id="vs-3596" class="loading">—</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ABF 載板 -->
+<div class="section">
+  <div class="section-title">ABF 載板／高階基板</div>
+  <table>
+  <colgroup><col class="col-code"><col class="col-name"><col class="col-price"><col class="col-price"><col class="col-price"><col class="col-cur"><col class="col-vs"></colgroup>
+    <thead>
+      <tr>
+        <th>代號</th><th>名稱</th>
+        <th>便宜價</th><th>合理價</th><th>昂貴價</th>
+        <th class="th-cur">目前股價</th><th>vs 合理價</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="code code-pcb">3037</td>
+        <td class="name">
+          <a href="3037_analysis.html">欣興</a><br>
+          <span class="fwd-note">* 景氣循環股，EPS 復甦中，PER 歷史 12–30x</span>
+        </td>
+        <td>84 <span class="per-sub">12x PER</span></td>
+        <td>141 <span class="per-sub">20x PER</span></td>
+        <td>211 <span class="per-sub">30x PER</span></td>
+        <td class="price-cell loading td-cur" id="price-3037">…</td>
+        <td id="vs-3037" class="loading">—</td>
       </tr>
     </tbody>
   </table>
@@ -749,9 +785,10 @@ const STOCKS = [
   { id: '2337',  fairValue: 163,  expValue: 218  },
   { id: '3260',  fairValue: 719,  expValue: 925  },
   { id: '2308',  fairValue: 732,  expValue: 867  },
+  { id: '3037',  fairValue: 141,  expValue: 211  },
 ];
 
-const CHAIN_STOCKS = ['2330','2382','3231','2345','3596','3017','3324','8210','2308'];
+const CHAIN_STOCKS = ['2330','2382','3231','2345','3596','3017','3324','8210','2308','3037'];
 
 async function fetchPrice(id) {
   try {
