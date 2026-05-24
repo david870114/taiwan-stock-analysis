@@ -60,6 +60,7 @@
   <button class="tab active" onclick="switchTab('river', this)">📈 PER 河流圖</button>
   <button class="tab" onclick="switchTab('scenario', this)">🎯 三情境買點</button>
   <button class="tab" onclick="switchTab('eps', this)">📊 EPS 趨勢</button>
+  <button class="tab" onclick="switchTab('fundamental', this)">🏢 基本面分析</button>
   <button class="tab" onclick="switchTab('summary', this)">📋 完整摘要</button>
 </div>
 
@@ -193,6 +194,147 @@
   <p style="font-size:10px;color:#475569;margin-top:14px;line-height:1.6;">⚠️ 本分析僅供參考，不構成投資建議。EPS河流圖採goodinfo.tw截圖數值（季末實際值+季中線性插值），股市有風險，請自行判斷。</p>
 </div>
 
+
+<!-- TAB: 基本面分析 -->
+<div id="tab-fundamental" class="panel">
+  
+  <!-- ── 公司營運 ── -->
+  <div class="section-title">📊 公司營運</div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;">
+    <div class="card"><h3>毛利率（最新季）</h3><div class="val yellow">~7.0%</div><div class="note">營業利益率 ~4.5%</div></div>
+    <div class="card"><h3>ROE（年化）</h3><div class="val green">~30%</div><div class="note">股東權益報酬率</div></div>
+    <div class="card"><h3>營收成長</h3><div class="val green" style="font-size:16px;">2026Q1 年增 ~50%</div><div class="note">年增率</div></div>
+  </div>
+  <div style="background:#1e2535;border:1px solid #2d3748;border-radius:10px;padding:14px;margin-bottom:14px;">
+    <div style="font-size:12px;font-weight:700;color:#cbd5e1;margin-bottom:10px;">毛利率 / 營業利益率 / EPS 趨勢</div>
+    <table style="margin:0;">
+      <thead><tr><th>期間</th><th>營收 YoY</th><th>毛利率</th><th>營業利益率</th><th>EPS</th></tr></thead>
+      <tbody>
+        <tr style=""><td>2023 全年</td>
+          <td style="color:#22c55e">+8%</td>
+          <td>6.5%</td>
+          <td>3.8%</td>
+          <td style="color:#22c55e">5.42</td>
+        </tr>
+        <tr style=""><td>2024 全年</td>
+          <td style="color:#22c55e">+45%</td>
+          <td>7.0%</td>
+          <td>4.2%</td>
+          <td style="color:#22c55e">7.04</td>
+        </tr>
+        <tr style=""><td>2025 Q3</td>
+          <td style="color:#22c55e">+80%</td>
+          <td>7.4%</td>
+          <td>4.5%</td>
+          <td style="color:#22c55e">2.57</td>
+        </tr>
+        <tr style=""><td>2025 Q4</td>
+          <td style="color:#22c55e">+90%</td>
+          <td>7.6%</td>
+          <td>4.8%</td>
+          <td style="color:#22c55e">2.57</td>
+        </tr>
+        <tr style="background:#0f2a1e;"><td><strong>2026 Q1★</strong></td>
+          <td style="color:#22c55e"><strong>+~50%</strong></td>
+          <td><strong>~7.0%</strong></td>
+          <td><strong>~4.5%</strong></td>
+          <td style="color:#22c55e"><strong>3.06</strong></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ── 商業模式 ── -->
+  <div class="section-title">🏗️ 商業模式</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
+    <div class="card">
+      <h3>怎麼賺錢 — ODM 伺服器整機代工</h3>
+      <div style="font-size:12px;line-height:1.9;color:#cbd5e1;margin-top:4px;">專注 AI 伺服器、雲端伺服器 ODM，同時保有傳統 PC/NB 業務。近年積極轉型為 AI 基礎建設供應商，透過出貨 AI 機架與整機系統擴大 AI 營收佔比。</div>
+    </div>
+    <div class="card">
+      <h3>護城河評估</h3>
+      <div style="font-size:12px;line-height:1.7;margin-top:4px;"><div style="color:#22c55e;">✅ AI 伺服器快速轉型</div><div style="color:#64748b;font-size:11px;margin-bottom:6px;">AI 伺服器佔比持續提升，從傳統 PC 成功轉型</div>
+<div style="color:#22c55e;">✅ Dell 供應鏈切入</div><div style="color:#64748b;font-size:11px;margin-bottom:6px;">收購 Dell 股權深化合作</div>
+<div style="color:#ef4444;">⚠️ 毛利率偏低</div><div style="color:#64748b;font-size:11px;margin-bottom:6px;">ODM 代工本質，毛利率 6–7%</div>
+<div style="color:#ef4444;">⚠️ 競爭激烈</div><div style="color:#64748b;font-size:11px;margin-bottom:6px;">與廣達、鴻海、緯穎競爭 CSP 訂單</div>
+</div>
+    </div>
+  </div>
+  <div style="background:#1e2535;border:1px solid #2d3748;border-radius:10px;padding:14px;margin-bottom:14px;">
+    <div style="font-size:12px;font-weight:700;color:#cbd5e1;margin-bottom:10px;">主要客戶 與 競爭對手</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+      <div>
+        <div style="font-size:11px;color:#64748b;margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em;">主要客戶</div>
+        <div style="display:flex;flex-direction:column;gap:5px;">          <div style="display:flex;justify-content:space-between;align-items:center;background:#141b2d;border-radius:6px;padding:7px 10px;">
+            <span style="color:#f8fafc;font-size:12px;font-weight:600;">Dell Technologies</span>
+            <span style="font-size:10px;color:#64748b;">重要戰略夥伴兼客戶</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;background:#141b2d;border-radius:6px;padding:7px 10px;">
+            <span style="color:#f8fafc;font-size:12px;font-weight:600;">Google Cloud</span>
+            <span style="font-size:10px;color:#64748b;">AI 伺服器出貨</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;background:#141b2d;border-radius:6px;padding:7px 10px;">
+            <span style="color:#f8fafc;font-size:12px;font-weight:600;">Amazon AWS</span>
+            <span style="font-size:10px;color:#64748b;">AI 推論伺服器</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;background:#141b2d;border-radius:6px;padding:7px 10px;">
+            <span style="color:#f8fafc;font-size:12px;font-weight:600;">Microsoft</span>
+            <span style="font-size:10px;color:#64748b;">雲端伺服器</span>
+          </div>
+</div>
+      </div>
+      <div>
+        <div style="font-size:11px;color:#64748b;margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em;">競爭對手 ｜ 是否容易被取代：中等</div>
+        <div style="display:flex;flex-direction:column;gap:5px;">          <div style="display:flex;justify-content:space-between;align-items:center;background:#141b2d;border-radius:6px;padding:7px 10px;">
+            <span style="color:#f8fafc;font-size:12px;font-weight:600;">廣達 2382</span>
+            <span style="font-size:10px;color:#64748b;">AI 伺服器最直接競爭</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;background:#141b2d;border-radius:6px;padding:7px 10px;">
+            <span style="color:#f8fafc;font-size:12px;font-weight:600;">鴻海 2317</span>
+            <span style="font-size:10px;color:#64748b;">機架整合</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;background:#141b2d;border-radius:6px;padding:7px 10px;">
+            <span style="color:#f8fafc;font-size:12px;font-weight:600;">緯穎 6669</span>
+            <span style="font-size:10px;color:#64748b;">高階 AI 伺服器</span>
+          </div>
+</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 產業地位 ── -->
+  <div class="section-title">🌐 產業地位</div>
+  <div style="background:#1e2535;border:1px solid #2d3748;border-radius:10px;padding:14px;margin-bottom:14px;">
+    <div style="font-size:12px;color:#94a3b8;line-height:1.8;">📌 台股 AI 伺服器 ODM 前三大，全球伺服器出貨前 5</div>
+  </div>
+
+  <!-- ── 估值 ── -->
+  <div class="section-title">💰 估值指標</div>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:10px;">
+    <div class="card" style="text-align:center;">
+      <h3>TTM P/E</h3>
+      <div class="val" id="fund-pe-3231" style="color:#f8fafc;">…</div>
+      <div class="note" id="fund-pe-note-3231">TTM EPS 10.07 元</div>
+    </div>
+    <div class="card" style="text-align:center;">
+      <h3>前瞻 P/E</h3>
+      <div class="val yellow">~14x</div>
+      <div class="note">12–15 元（法人共識）</div>
+    </div>
+    <div class="card" style="text-align:center;">
+      <h3>P/B（估算）</h3>
+      <div class="val" style="color:#f97316;">~3.6x</div>
+      <div class="note">每股淨值約 38.0 元</div>
+    </div>
+    <div class="card" style="text-align:center;">
+      <h3>ROE</h3>
+      <div class="val green">~30%</div>
+      <div class="note">股東權益報酬率</div>
+    </div>
+  </div>
+  <p style="font-size:10px;color:#334155;margin-top:10px;line-height:1.6;">⚠️ 本分析僅供參考，不構成投資建議。部分數據為估算值，請以公開財報為準。</p>
+</div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <script>
 function switchTab(id, btn) {
@@ -253,6 +395,27 @@ const p26    = data.map(d => +(d.eps * 26).toFixed(1));
 const p30    = data.map(d => +(d.eps * 30).toFixed(1));
 
 // ── PER River Chart ──
+
+async function updateFundamentalPE_3231() {
+  try {
+    const res = await fetch('https://taiwan-stock-price.david870114.workers.dev/?id=3231', { cache: 'no-cache' });
+    const data = JSON.parse(await res.text());
+    const price = parseFloat(data.price);
+    if (price && !isNaN(price)) {
+      const ttm = 10.07;
+      const pe = (price / ttm).toFixed(1);
+      const el = document.getElementById('fund-pe-3231');
+      const noteEl = document.getElementById('fund-pe-note-3231');
+      if (el) {
+        el.textContent = pe + 'x';
+        el.style.color = pe > 40 ? '#ef4444' : pe > 25 ? '#eab308' : '#22c55e';
+      }
+      if (noteEl) noteEl.textContent = '股價 ' + price.toLocaleString() + ' ｜ TTM EPS 10.07';
+    }
+  } catch(e) {}
+}
+window.addEventListener('load', updateFundamentalPE_3231);
+
 window.addEventListener('load', () => {
   setTimeout(() => {
     const ctx = document.getElementById('riverChart').getContext('2d');
