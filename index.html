@@ -55,7 +55,7 @@
   /* 改為 grid 排列，去掉箭頭 */
   .chain-flow {
     display: grid;
-    grid-template-columns: repeat(7, 1fr);
+    grid-template-columns: repeat(8, 1fr);
     gap: 10px;
     min-width: 900px;
   }
@@ -461,6 +461,35 @@
       </div>
     </div>
 
+    <!-- DRAM 記憶體 -->
+    <div class="chain-node">
+      <div class="node-box c-mem">
+        <div class="node-tier">配套</div>
+        <div class="node-type">DRAM<br>HBM 記憶體</div>
+        <div class="node-stocks">
+          <a class="mini-card" href="4790_analysis.html">
+            <div class="mc-left">
+              <span class="mc-code">4790</span>
+              <span class="mc-name">南亞科</span>
+            </div>
+            <div class="mc-right">
+              <div class="mc-price-label">目前股價</div>
+              <div class="mc-price-val" id="cp-4790">…</div>
+              <div class="mc-vs-label">vs 合理價</div>
+              <div class="mc-vs-val" id="cv-4790">—</div>
+            </div>
+          </a>
+          <div class="mini-card no-data">
+            <div class="mc-left">
+              <span class="mc-code">2337</span>
+              <span class="mc-name">旺宏</span>
+            </div>
+            <span class="mc-empty">Flash</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div><!-- end chain-flow -->
 </div><!-- end chain-wrap -->
 
@@ -634,18 +663,6 @@
         <td class="price-cell loading td-cur" id="price-3037">…</td>
         <td id="vs-3037" class="loading">—</td>
       </tr>
-      <tr>
-        <td class="code code-pcb">1303</td>
-        <td class="name">
-          <a href="1303_analysis.html">南亞</a><br>
-          <span class="fwd-note">* 景氣循環股（石化+ABF），PER 低谷失真，EPS 復甦中</span>
-        </td>
-        <td>58 <span class="per-sub">25x PER</span></td>
-        <td>81 <span class="per-sub">35x PER</span></td>
-        <td>116 <span class="per-sub">50x PER</span></td>
-        <td class="price-cell loading td-cur" id="price-1303">…</td>
-        <td id="vs-1303" class="loading">—</td>
-      </tr>
     </tbody>
   </table>
 </div>
@@ -754,7 +771,7 @@
 
 <!-- 記憶體 -->
 <div class="section">
-  <div class="section-title">記憶體／利基型</div>
+  <div class="section-title">記憶體／DRAM／利基型</div>
   <table>
   <colgroup><col class="col-code"><col class="col-name"><col class="col-price"><col class="col-price"><col class="col-price"><col class="col-cur"><col class="col-vs"></colgroup>
   
@@ -766,6 +783,18 @@
       </tr>
     </thead>
     <tbody>
+      <tr>
+        <td class="code code-mem">4790</td>
+        <td class="name">
+          <a href="4790_analysis.html">南亞科</a><br>
+          <span class="fwd-note">* 景氣循環股，25Q4轉盈，EPS 11.17元（26Q1）</span>
+        </td>
+        <td>167 <span class="per-sub">15x PER</span></td>
+        <td>279 <span class="per-sub">25x PER</span></td>
+        <td>391 <span class="per-sub">35x PER</span></td>
+        <td class="price-cell loading td-cur" id="price-4790">…</td>
+        <td id="vs-4790" class="loading">—</td>
+      </tr>
       <tr>
         <td class="code code-mem">2337</td>
         <td class="name">
@@ -794,7 +823,7 @@
 <p class="footer">
   ⚠️ 本頁僅供參考，不構成投資建議。股市有風險，請自行判斷。<br>
   * 旺宏（2337）歷史虧損無 TTM PER，改用 2026E EPS 前瞻本益比推算。<br>
-  * 南亞（1303）為景氣循環股，EPS 低谷期 PER 失真，估值以 TTM EPS 2.31元（26Q1）× 景氣復甦區間 PER 推算。
+  * 南亞科（4790）為景氣循環股，2023–25Q3 長期虧損，25Q4 轉盈，EPS 11.17元（26Q1）× 復甦區間 PER 15–35x 推算。
 </p>
 
 <script>
@@ -814,10 +843,10 @@ const STOCKS = [
   { id: '3260',  fairValue: 719,  expValue: 925  },
   { id: '2308',  fairValue: 732,  expValue: 867  },
   { id: '3037',  fairValue: 141,  expValue: 211  },
-  { id: '1303',  fairValue: 81,   expValue: 116  },
+  { id: '4790',  fairValue: 279,  expValue: 391  },
 ];
 
-const CHAIN_STOCKS = ['2330','2382','3231','6669','2345','3596','3017','3324','8210','2308','3037'];
+const CHAIN_STOCKS = ['2330','2382','3231','6669','2345','3596','3017','3324','8210','2308','3037','4790'];
 
 async function fetchPrice(id) {
   try {
