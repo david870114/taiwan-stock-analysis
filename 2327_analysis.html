@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>國巨 2327 — 2026 股價推算分析</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #0f1117; color: #e2e8f0; padding: 16px; }
+  h1 { font-size: 18px; font-weight: 700; color: #f8fafc; margin-bottom: 4px; }
+  .subtitle { font-size: 12px; color: #94a3b8; margin-bottom: 16px; }
+  .tabs { display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; }
+  .tab { padding: 6px 14px; border-radius: 20px; font-size: 12px; cursor: pointer; border: 1px solid #334155; color: #94a3b8; background: transparent; transition: all 0.2s; }
+  .tab.active { background: #3b82f6; color: #fff; border-color: #3b82f6; }
+  .tab:hover:not(.active) { border-color: #64748b; color: #e2e8f0; }
+  .panel { display: none; }
+  .panel.active { display: block; }
+  canvas { width: 100% !important; border-radius: 10px; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+  .card { background: #1e2535; border: 1px solid #2d3748; border-radius: 10px; padding: 14px; }
+  .card h3 { font-size: 12px; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
+  .card .val { font-size: 22px; font-weight: 700; }
+  .card .note { font-size: 11px; color: #64748b; margin-top: 4px; }
+  .green { color: #22c55e; } .yellow { color: #eab308; } .red { color: #ef4444; } .blue { color: #3b82f6; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 12px; }
+  th { background: #1e2535; color: #64748b; padding: 8px 10px; text-align: left; font-weight: 600; font-size: 11px; text-transform: uppercase; }
+  td { padding: 8px 10px; border-bottom: 1px solid #1e2535; }
+  tr:hover td { background: #1a2030; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: 600; }
+  .badge-buy { background: #14532d; color: #86efac; }
+  .badge-watch { background: #713f12; color: #fde68a; }
+  .badge-avoid { background: #450a0a; color: #fca5a5; }
+  .scenario-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 12px; }
+  .scenario-card { border-radius: 10px; padding: 14px; text-align: center; }
+  .bear { background: linear-gradient(135deg, #1a0a0a, #2d1010); border: 1px solid #7f1d1d; }
+  .base { background: linear-gradient(135deg, #0a1a0a, #102d10); border: 1px solid #14532d; }
+  .bull { background: linear-gradient(135deg, #0a0f1a, #10182d); border: 1px solid #1d4ed8; }
+  .sc-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.7; margin-bottom: 6px; }
+  .sc-price { font-size: 22px; font-weight: 800; margin: 4px 0; }
+  .sc-detail { font-size: 10px; opacity: 0.65; line-height: 1.6; }
+  .section-title { font-size: 13px; font-weight: 600; color: #cbd5e1; margin: 16px 0 8px; }
+  .buy-signal { background: #0f2a1e; border: 1px solid #166534; border-radius: 10px; padding: 14px; margin-top: 12px; }
+  .buy-signal h3 { color: #86efac; font-size: 13px; margin-bottom: 8px; }
+  .buy-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid #1a3a2a; gap: 8px; }
+  .buy-row:last-child { border-bottom: none; }
+  .current-price-badge { background: #1e3a5f; border: 1px solid #3b82f6; border-radius: 8px; padding: 10px 14px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px; }
+  .warning-box { background: #2d1010; border: 1px solid #7f1d1d; border-radius: 10px; padding: 12px; margin-bottom: 12px; font-size: 12px; color: #fca5a5; line-height: 1.7; }
+</style>
+</head>
+<body>
+<div style="margin-bottom:12px;">
+  <a href="index.html" style="color:#64748b;font-size:12px;text-decoration:none;display:inline-flex;align-items:center;gap:4px;padding:5px 10px;border:1px solid #334155;border-radius:8px;transition:all 0.2s;" onmouseover="this.style.color='#e2e8f0';this.style.borderColor='#64748b'" onmouseout="this.style.color='#64748b';this.style.borderColor='#334155'">← 返回總覽</a>
+</div>
+<h1>🔌 國巨科技 (2327) — 2026 股價推算分析</h1>
+<p class="subtitle">本益比河流圖 ✦ 三情境估值 ✦ 分批買點建議 ✦ 更新時間：2026年6月3日</p>
+
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('river', this)">📈 PER 河流圖</button>
+  <button class="tab" onclick="switchTab('scenario', this)">🎯 三情境買點</button>
+  <button class="tab" onclick="switchTab('eps', this)">📊 EPS 趨勢</button>
+  <button class="tab" onclick="switchTab('fundamental', this)">🏢 基本面分析</button>
+  <button class="tab" onclick="switchTab('summary', this)">📋 完整摘要</button>
+</div>
+
+<!-- TAB 1: PER River -->
+<div id="tab-river" class="panel active">
+  <div class="warning-box">
+    ⚠️ <strong>重要提醒：</strong>國巨於 2025年 進行大額減資／除息，導致股價從 530 元降至 139.5 元（-73.7%）、TTM EPS 從 ~39 元驟降至 ~10 元。圖表以新基期（EPS ~12.73 元）建立河流帶。26M05-06 股價 738→820 元（PER 58-64x）為主題行情，已遠超昂貴帶。
+  </div>
+  <div class="current-price-badge">
+    <span style="color:#94a3b8;font-size:12px;">目前股價（2026/6月）</span>
+    <span style="color:#3b82f6;font-size:20px;font-weight:800;" id="live-price">載入中…</span>
+    <span style="color:#ef4444;font-size:12px;">PER ≈ 64x（TTM EPS 12.73元）大幅高於昂貴價</span>
+  </div>
+  <canvas id="riverChart" height="360"></canvas>
+  <p style="font-size:11px;color:#475569;margin-top:8px;text-align:center;">* 25M07-08 因大額減資除息造成股價大幅調整，新基期 EPS ≈ 12.73 元（26Q1 TTM）。河流帶以新基期為準。</p>
+</div>
+
+<!-- TAB 2: 三情境 -->
+<div id="tab-scenario" class="panel">
+  <div class="grid2">
+    <div class="card"><h3>2025 全年 EPS（新基期後）</h3><div class="val blue">~10–11.5 元</div><div class="note">減資後新基期，EPS 逐季回升中</div></div>
+    <div class="card"><h3>2026 Q1 TTM EPS（最新）</h3><div class="val green">12.73 元</div><div class="note">YoY 穩定成長中 ｜ 年化 ≈ 13–15 元</div></div>
+  </div>
+  <div class="section-title">2026 全年三情境 EPS 與股價推算（新基期）</div>
+  <div class="scenario-grid">
+    <div class="scenario-card bear">
+      <div class="sc-label">🐻 悲觀</div>
+      <div class="sc-price red">160–220</div>
+      <div class="sc-detail">EPS 10–12元<br>PER 16–18x<br>獲利未見成長<br>資金撤出主題</div>
+    </div>
+    <div class="scenario-card base">
+      <div class="sc-label">⚖️ 基本</div>
+      <div class="sc-price green">230–320</div>
+      <div class="sc-detail">EPS 12–14元<br>PER 18–23x<br>穩健復甦<br>MLCC需求回溫</div>
+    </div>
+    <div class="scenario-card bull">
+      <div class="sc-label">🚀 樂觀</div>
+      <div class="sc-price" style="color:#60a5fa;">350–500</div>
+      <div class="sc-detail">EPS 15–18元<br>PER 23–28x<br>AI被動元件需求爆發<br>高頻高壓新品放量</div>
+    </div>
+  </div>
+  <div class="buy-signal">
+    <h3>💰 分批建倉買點建議（以新基期合理價254元為錨）</h3>
+    <div class="buy-row">
+      <span style="color:#86efac;font-size:13px;font-weight:600;">第一批（40%）</span>
+      <span style="color:#fde68a;font-size:14px;font-weight:700;">200–230 元</span>
+      <span class="badge badge-buy">積極進場 PER 16–18x</span>
+    </div>
+    <div class="buy-row">
+      <span style="color:#86efac;font-size:13px;font-weight:600;">第二批（40%）</span>
+      <span style="color:#fde68a;font-size:14px;font-weight:700;">230–280 元</span>
+      <span class="badge badge-buy">主力倉位 PER 18–22x</span>
+    </div>
+    <div class="buy-row">
+      <span style="color:#86efac;font-size:13px;font-weight:600;">第三批（20%）</span>
+      <span style="color:#fde68a;font-size:14px;font-weight:700;">280–320 元</span>
+      <span class="badge badge-watch">追蹤 PER 22–25x</span>
+    </div>
+    <div class="buy-row" style="border-top:1px solid #166534;margin-top:8px;padding-top:10px;">
+      <span style="color:#fca5a5;font-size:12px;">觀望/分批減倉</span>
+      <span style="color:#fca5a5;font-size:13px;font-weight:700;">350 元以上</span>
+      <span class="badge badge-avoid">PER > 27x 過熱</span>
+    </div>
+    <div class="buy-row">
+      <span style="color:#fca5a5;font-size:12px;">嚴重高估，避免追高</span>
+      <span style="color:#fca5a5;font-size:13px;font-weight:700;">目前 820 元（PER 64x）</span>
+      <span class="badge badge-avoid">⚠️ 嚴重泡沫風險</span>
+    </div>
+  </div>
+</div>
+
+<!-- TAB 3: EPS -->
+<div id="tab-eps" class="panel">
+  <canvas id="epsChart" height="300"></canvas>
+  <div class="grid2" style="margin-top:16px;">
+    <div class="card"><h3>舊基期 TTM EPS（23-25M06）</h3><div class="val yellow">38–47 元</div><div class="note">減資前高水準，歷史低 PER 10-12x</div></div>
+    <div class="card"><h3>新基期 TTM EPS（25M09後）</h3><div class="val green">10–12.73 元</div><div class="note">減資後新基準，正常 PER 16-25x</div></div>
+  </div>
+  <div class="section-title">📋 逐月數據明細表</div>
+  <table>
+    <thead><tr><th>月份</th><th>收盤價</th><th>河流圖EPS</th><th>目前PER</th><th>10x</th><th>16x</th><th>20x</th><th>25x</th></tr></thead>
+    <tbody>
+      <tr><td>23M07</td><td>459.5</td><td>42.84</td><td>10.73</td><td>428.4</td><td>685.4</td><td>856.8</td><td>1071</td></tr>
+      <tr><td>23M08</td><td>485</td><td>41.6</td><td>11.66</td><td>416</td><td>665.6</td><td>832</td><td>1040</td></tr>
+      <tr><td>23M09</td><td>525</td><td>40.35</td><td>13.01</td><td>403.5</td><td>645.6</td><td>807</td><td>1008.8</td></tr>
+      <tr><td>23M10</td><td>526</td><td>40.8</td><td>12.89</td><td>408</td><td>652.8</td><td>816</td><td>1020</td></tr>
+      <tr><td>23M11</td><td>601</td><td>41.25</td><td>14.57</td><td>412.5</td><td>660</td><td>825</td><td>1031.3</td></tr>
+      <tr><td>23M12</td><td>597</td><td>41.7</td><td>14.32</td><td>417</td><td>667.2</td><td>834</td><td>1042.5</td></tr>
+      <tr><td>24M01</td><td>552</td><td>42.05</td><td>13.13</td><td>420.5</td><td>672.8</td><td>841</td><td>1051.3</td></tr>
+      <tr><td>24M02</td><td>558</td><td>42.41</td><td>13.16</td><td>424.1</td><td>678.6</td><td>848.2</td><td>1060.3</td></tr>
+      <tr><td>24M03</td><td>591</td><td>42.76</td><td>13.82</td><td>427.6</td><td>684.2</td><td>855.2</td><td>1069</td></tr>
+      <tr><td>24M04</td><td>625</td><td>44.11</td><td>14.17</td><td>441.1</td><td>705.8</td><td>882.2</td><td>1102.8</td></tr>
+      <tr><td>24M05</td><td>662</td><td>45.47</td><td>14.56</td><td>454.7</td><td>727.5</td><td>909.4</td><td>1136.8</td></tr>
+      <tr><td>24M06</td><td>730</td><td>46.82</td><td>15.59</td><td>468.2</td><td>749.1</td><td>936.4</td><td>1170.5</td></tr>
+      <tr><td>24M07</td><td>792</td><td>44.65</td><td>17.74</td><td>446.5</td><td>714.4</td><td>893</td><td>1116.3</td></tr>
+      <tr><td>24M08</td><td>657</td><td>42.47</td><td>15.47</td><td>424.7</td><td>679.5</td><td>849.4</td><td>1061.8</td></tr>
+      <tr><td>24M09</td><td>623</td><td>40.3</td><td>15.46</td><td>403</td><td>644.8</td><td>806</td><td>1007.5</td></tr>
+      <tr><td>24M10</td><td>558</td><td>39.58</td><td>14.1</td><td>395.8</td><td>633.3</td><td>791.6</td><td>989.5</td></tr>
+      <tr><td>24M11</td><td>514</td><td>38.85</td><td>13.23</td><td>388.5</td><td>621.6</td><td>777</td><td>971.3</td></tr>
+      <tr><td>24M12</td><td>541</td><td>38.13</td><td>14.19</td><td>381.3</td><td>610.1</td><td>762.6</td><td>953.3</td></tr>
+      <tr><td>25M01</td><td>537</td><td>38.6</td><td>13.91</td><td>386</td><td>617.6</td><td>772</td><td>965</td></tr>
+      <tr><td>25M02</td><td>566</td><td>39.06</td><td>14.49</td><td>390.6</td><td>624.9</td><td>781.2</td><td>976.5</td></tr>
+      <tr><td>25M03</td><td>481</td><td>39.53</td><td>12.17</td><td>395.3</td><td>632.5</td><td>790.6</td><td>988.3</td></tr>
+      <tr><td>25M04</td><td>459</td><td>39.25</td><td>11.69</td><td>392.5</td><td>628</td><td>785</td><td>981.3</td></tr>
+      <tr><td>25M05</td><td>490</td><td>38.98</td><td>12.57</td><td>389.8</td><td>623.7</td><td>779.6</td><td>974.5</td></tr>
+      <tr><td>25M06</td><td>485</td><td>38.7</td><td>12.53</td><td>387</td><td>619.2</td><td>774</td><td>967.5</td></tr>
+      <tr style="background:#2d1010;"><td>25M07 ⚠️減資</td><td>530</td><td>29.14</td><td>18.19</td><td>291.4</td><td>466.2</td><td>582.8</td><td>728.5</td></tr>
+      <tr style="background:#2d1010;"><td>25M08 ⚠️除息</td><td>139.5</td><td>19.59</td><td>7.12</td><td>195.9</td><td>313.4</td><td>391.8</td><td>489.8</td></tr>
+      <tr><td>25M09</td><td>170</td><td>10.03</td><td>16.95</td><td>100.3</td><td>160.5</td><td>200.6</td><td>250.8</td></tr>
+      <tr><td>25M10</td><td>249</td><td>10.52</td><td>23.66</td><td>105.2</td><td>168.3</td><td>210.4</td><td>263</td></tr>
+      <tr><td>25M11</td><td>235</td><td>11.02</td><td>21.33</td><td>110.2</td><td>176.3</td><td>220.4</td><td>275.5</td></tr>
+      <tr><td>25M12</td><td>231</td><td>11.51</td><td>20.07</td><td>115.1</td><td>184.2</td><td>230.2</td><td>287.8</td></tr>
+      <tr><td>26M01</td><td>277.5</td><td>11.92</td><td>23.29</td><td>119.2</td><td>190.7</td><td>238.4</td><td>298</td></tr>
+      <tr><td>26M02</td><td>298</td><td>12.32</td><td>24.18</td><td>123.2</td><td>197.1</td><td>246.4</td><td>308</td></tr>
+      <tr><td>26M03</td><td>243.5</td><td>12.73</td><td>19.13</td><td>127.3</td><td>203.7</td><td>254.6</td><td>318.3</td></tr>
+      <tr><td>26M04</td><td>317</td><td>12.73</td><td>24.9</td><td>127.3</td><td>203.7</td><td>254.6</td><td>318.3</td></tr>
+      <tr style="background:#2d1010;"><td>26M05 ⚠️題材</td><td>738</td><td>12.73</td><td>57.97</td><td>127.3</td><td>203.7</td><td>254.6</td><td>318.3</td></tr>
+      <tr style="background:#2d1010;"><td>26M06 ⚠️題材</td><td>820</td><td>12.73</td><td>64.41</td><td>127.3</td><td>203.7</td><td>254.6</td><td>318.3</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- TAB 4: 基本面分析 -->
+<div id="tab-fundamental" class="panel">
+
+  <!-- 1. 公司營運 -->
+  <div class="section-title">🏭 公司營運</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px;">
+    <div class="card" style="text-align:center;">
+      <h3>2025 全年營收</h3>
+      <div class="val blue">~680 億</div>
+      <div class="note">YoY 依財報推估（减資前後合併）</div>
+    </div>
+    <div class="card" style="text-align:center;">
+      <h3>最新季度毛利率</h3>
+      <div class="val green">~33–35%</div>
+      <div class="note">25Q4 依公開法說推估</div>
+    </div>
+    <div class="card" style="text-align:center;">
+      <h3>新基期 TTM EPS</h3>
+      <div class="val yellow">12.73 元</div>
+      <div class="note">26Q1（截至 26M03）</div>
+    </div>
+  </div>
+
+  <div class="section-title">📊 近季財務趨勢</div>
+  <table>
+    <thead><tr><th>期間</th><th>TTM EPS</th><th>PER（月底）</th><th>股價</th><th>備註</th></tr></thead>
+    <tbody>
+      <tr><td>25M06</td><td>38.7 元</td><td>12.5x</td><td>485</td><td>減資前舊基期高點</td></tr>
+      <tr><td>25M09</td><td>10.03 元</td><td>16.9x</td><td>170</td><td>新基期確立</td></tr>
+      <tr><td>25M12</td><td>11.51 元</td><td>20.1x</td><td>231</td><td>EPS 逐季回升</td></tr>
+      <tr style="background:#0f2a1e;"><td>26M03 ★</td><td style="color:#22c55e;font-weight:700;">12.73 元</td><td>19.1x</td><td>243.5</td><td>最新季末，EPS 穩定向上</td></tr>
+      <tr style="background:#2d1010;"><td>26M06 ⚠️</td><td>12.73 元</td><td style="color:#ef4444;font-weight:700;">64.4x</td><td>820</td><td>主題炒作，PER嚴重泡沫</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:11px;color:#64748b;margin-top:8px;">* 毛利率趨勢及具體季度細節請參考最新公開財報。</p>
+
+  <!-- 2. 商業模式 -->
+  <div class="section-title">💡 商業模式</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+    <div class="card">
+      <h3>怎麼賺錢</h3>
+      <p style="font-size:12px;color:#94a3b8;line-height:1.8;">國巨為全球最大 MLCC（積層陶瓷電容）及電阻製造商之一。主要產品：MLCC（高頻、高壓、車用）、晶片電阻、電感、EMI抑制元件。汽車電子、AI 伺服器、5G 基站為三大成長驅動。OEM 客戶遍布全球電子大廠。</p>
+    </div>
+    <div class="card">
+      <h3>護城河評估</h3>
+      <p style="font-size:12px;color:#94a3b8;line-height:1.8;">
+        ✅ 全球市占前三（MLCC）<br>
+        ✅ 車用認證門檻高、黏性強<br>
+        ✅ 高壓/高頻利基品定價權<br>
+        ⚠️ 中國競爭者（風華高科）持續擴產<br>
+        ⚠️ 消費性電子景氣循環影響大<br>
+        ⚠️ 被動元件易受庫存週期波動
+      </p>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+    <div class="card">
+      <h3>主要客戶</h3>
+      <p style="font-size:12px;color:#94a3b8;line-height:1.8;">
+        Apple <span class="badge badge-buy">消費電子</span><br>
+        Samsung / Foxconn <span class="badge badge-watch">OEM 大廠</span><br>
+        主要 EV 廠商（Tesla等）<span class="badge badge-buy">車用成長</span><br>
+        AI 伺服器 ODM 廠 <span class="badge badge-buy">AI 需求</span>
+      </p>
+    </div>
+    <div class="card">
+      <h3>主要競爭對手</h3>
+      <p style="font-size:12px;color:#94a3b8;line-height:1.8;">
+        村田製作所（日）— 全球第一<br>
+        TDK（日）— 多元被動元件<br>
+        太陽誘電（日）— MLCC 競爭<br>
+        風華高科（中）— 低價競爭<br>
+        禾伸堂（台）— 電阻市場
+      </p>
+    </div>
+  </div>
+
+  <!-- 3. 市場地位 -->
+  <div class="section-title">🌍 市場地位</div>
+  <div style="display:flex;gap:16px;margin-bottom:12px;flex-wrap:wrap;">
+    <div style="text-align:center;flex:1;min-width:120px;">
+      <div style="font-size:11px;color:#64748b;margin-bottom:4px;">台灣被動元件</div>
+      <div style="font-size:20px;font-weight:800;color:#3b82f6;">龍頭</div>
+      <div style="font-size:10px;color:#475569;margin-top:2px;">市值最大被動元件廠</div>
+    </div>
+    <div style="text-align:center;flex:1;min-width:120px;">
+      <div style="font-size:11px;color:#64748b;margin-bottom:4px;">全球 MLCC 市占</div>
+      <div style="font-size:20px;font-weight:800;color:#22c55e;">前三大</div>
+      <div style="font-size:10px;color:#475569;margin-top:2px;">村田、TDK 之後</div>
+    </div>
+    <div style="text-align:center;flex:1;min-width:120px;">
+      <div style="font-size:11px;color:#64748b;margin-bottom:4px;">車用佔比（趨勢）</div>
+      <div style="font-size:20px;font-weight:800;color:#eab308;">持續提升</div>
+      <div style="font-size:10px;color:#475569;margin-top:2px;">從消費轉型車用/工業</div>
+    </div>
+  </div>
+  <div style="margin-top:12px;font-size:11px;color:#64748b;border-top:1px solid #2d3748;padding-top:10px;">
+    📌 國巨近年持續透過收購（奇力新、普思）強化產品線廣度，已從純 MLCC 廠升格為被動元件綜合大廠。AI 伺服器與 EV 車用是未來成長最重要驅動力。
+  </div>
+
+  <!-- 4. 估值指標 -->
+  <div class="section-title">💰 估值指標</div>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:10px;">
+    <div class="card" style="text-align:center;">
+      <h3>本益比 P/E</h3>
+      <div class="val" id="fund-pe" style="color:#f8fafc;">計算中…</div>
+      <div class="note" id="fund-pe-note">TTM EPS 12.73 元</div>
+    </div>
+    <div class="card" style="text-align:center;">
+      <h3>前瞻 P/E（2026E）</h3>
+      <div class="val red">~55–65x</div>
+      <div class="note">法人EPS共識 ~13–15元</div>
+    </div>
+    <div class="card" style="text-align:center;">
+      <h3>股價淨值比 P/B</h3>
+      <div class="val" style="color:#f97316;">高</div>
+      <div class="note">主題行情推高 P/B</div>
+    </div>
+    <div class="card" style="text-align:center;">
+      <h3>ROE</h3>
+      <div class="val yellow">~15–20%</div>
+      <div class="note">新基期，依財報推估</div>
+    </div>
+  </div>
+  <div style="background:#1e2535;border:1px solid #2d3748;border-radius:10px;padding:12px;font-size:11px;color:#64748b;line-height:1.8;">
+    📌 <strong style="color:#94a3b8;">估值解讀：</strong>
+    目前 PER 64x 已遠超任何歷史正常估值區間（新基期正常區間 16–25x）。2026年 5–6 月股價飆升主要由 AI 被動元件題材炒作驅動，非基本面支撐。EPS 12.73 元對應合理股價約 254 元，昂貴價約 318 元。目前 820 元相當於昂貴價的 2.6 倍，具有極高的估值回歸風險。
+  </div>
+
+  <p style="font-size:10px;color:#334155;margin-top:14px;line-height:1.6;">⚠️ 本分析僅供參考，不構成投資建議。國巨 2025年 曾進行大額減資，股本結構已改變，歷史舊基期 PER 不可與新基期直接比較。</p>
+</div>
+
+<!-- TAB 5: Summary -->
+<div id="tab-summary" class="panel">
+  <div class="warning-box">
+    ⚠️ <strong>特別提醒：國巨 2025年減資事件</strong><br>
+    2025年7-8月發生大額減資/除息，股價從 530 元崩至 139.5 元（-73.7%），EPS 從 ~39 元降至 ~10 元。此後進入「新基期」，舊有 PER 歷史區間（10–18x）已失效，應以新基期 EPS 12.73 元、新 PER 區間（16–25x）重新評估。
+  </div>
+  <div class="section-title">📌 關鍵數據摘要</div>
+  <table>
+    <thead><tr><th>指標</th><th>數值</th><th>評估</th></tr></thead>
+    <tbody>
+      <tr><td>目前股價（2026/6）</td><td style="color:#ef4444;font-weight:700;">820 元</td><td><span class="badge badge-avoid">嚴重高估</span></td></tr>
+      <tr><td>TTM EPS（26Q1）</td><td style="color:#22c55e;font-weight:700;">12.73 元</td><td><span class="badge badge-watch">新基期穩升中</span></td></tr>
+      <tr><td>目前 PER</td><td style="color:#ef4444;font-weight:700;">64.4x</td><td><span class="badge badge-avoid">遠超昂貴帶</span></td></tr>
+      <tr><td>便宜價（16x）</td><td>203.7 元</td><td><span class="badge badge-buy">合理進場區</span></td></tr>
+      <tr><td>合理價（20x）</td><td>254.6 元</td><td><span class="badge badge-watch">合理估值中線</span></td></tr>
+      <tr><td>昂貴價（25x）</td><td>318.3 元</td><td><span class="badge badge-avoid">估值上限</span></td></tr>
+      <tr><td>目前股價 vs 合理價</td><td style="color:#ef4444;font-weight:700;">+222%（高出 3.2 倍）</td><td><span class="badge badge-avoid">極度泡沫</span></td></tr>
+      <tr><td>舊基期 PER（減資前）</td><td>10–18x（EPS 38–47 元）</td><td><span class="badge badge-watch">已失效，不可套用</span></td></tr>
+      <tr><td>EPS 成長趨勢</td><td>25M09: 10.03 → 26M03: 12.73</td><td><span class="badge badge-buy">穩定向上</span></td></tr>
+      <tr><td>主要驅動力</td><td>AI 被動元件、EV 車用、高壓 MLCC</td><td><span class="badge badge-buy">長線正向</span></td></tr>
+    </tbody>
+  </table>
+  <div class="section-title" style="margin-top:20px;">📐 PER 河流帶參考（新基期 EPS 12.73 元）</div>
+  <table>
+    <thead><tr><th>估值帶</th><th>PER</th><th>對應股價</th><th>說明</th></tr></thead>
+    <tbody>
+      <tr><td style="color:#22c55e;font-weight:600;">便宜帶</td><td>16x</td><td style="color:#22c55e;font-weight:700;">203.7 元</td><td>新基期後歷史低點 PER</td></tr>
+      <tr><td style="color:#eab308;font-weight:600;">合理帶</td><td>20x</td><td style="color:#eab308;font-weight:700;">254.6 元</td><td>新基期正常均值</td></tr>
+      <tr><td style="color:#f97316;font-weight:600;">昂貴帶</td><td>25x</td><td style="color:#f97316;font-weight:700;">318.3 元</td><td>新基期高點 PER</td></tr>
+      <tr><td style="color:#ef4444;font-weight:600;">危險帶（題材）</td><td>35x+</td><td style="color:#ef4444;font-weight:700;">445+ 元</td><td>市場炒作，無基本面支撐</td></tr>
+      <tr style="background:#2d1010;"><td style="color:#ef4444;font-weight:600;">⚠️ 目前市場</td><td style="color:#ef4444;">64x</td><td style="color:#ef4444;font-weight:700;">820 元</td><td>嚴重泡沫，高估值回歸風險</td></tr>
+    </tbody>
+  </table>
+  <div style="background:#1e2535;border:1px solid #2d3748;border-radius:10px;padding:14px;margin-top:16px;font-size:12px;color:#94a3b8;line-height:1.9;">
+    <strong style="color:#f8fafc;">📌 投資結論（僅供參考）：</strong><br>
+    國巨長期基本面穩健，為全球被動元件龍頭，受惠 AI 伺服器與 EV 車用長線成長。<br>
+    然而 2026年5-6月股價飆升至 820 元（PER 64x），已脫離任何合理估值區間，屬純題材炒作。<br>
+    <span style="color:#ef4444;">目前不宜追高。待回調至 250–320 元區間（PER 20–25x）再評估進場機會。</span><br>
+    若 EPS 未來成長至 18–20 元，合理股價上看 360–500 元，可作為中期目標。
+  </div>
+  <p style="font-size:10px;color:#334155;margin-top:14px;line-height:1.6;">⚠️ 本分析僅供參考，不構成投資建議。股市有風險，請自行判斷。</p>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<script>
+function switchTab(id, btn) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  btn.classList.add('active');
+  if (id === 'eps' && !window.epsDrawn) drawEPS();
+}
+
+// 月份標籤 (23M07 ~ 26M06)
+const months = [
+  '23M07','23M08','23M09','23M10','23M11','23M12',
+  '24M01','24M02','24M03','24M04','24M05','24M06',
+  '24M07','24M08','24M09','24M10','24M11','24M12',
+  '25M01','25M02','25M03','25M04','25M05','25M06',
+  '25M07','25M08','25M09','25M10','25M11','25M12',
+  '26M01','26M02','26M03','26M04','26M05','26M06'
+];
+
+// EPS (10x欄÷10)
+const epsArr = [
+  42.84,41.6,40.35,40.8,41.25,41.7,
+  42.05,42.41,42.76,44.11,45.47,46.82,
+  44.65,42.47,40.3,39.58,38.85,38.13,
+  38.6,39.06,39.53,39.25,38.98,38.7,
+  29.14,19.59,10.03,10.52,11.02,11.51,
+  11.92,12.32,12.73,12.73,12.73,12.73
+];
+
+// 收盤價
+const closePx = [
+  459.5,485,525,526,601,597,
+  552,558,591,625,662,730,
+  792,657,623,558,514,541,
+  537,566,481,459,490,485,
+  530,139.5,170,249,235,231,
+  277.5,298,243.5,317,738,820
+];
+
+function band(mult) { return epsArr.map(e => +(e * mult).toFixed(1)); }
+
+async function updateLivePrice() {
+  try {
+    const res = await fetch('https://taiwan-stock-price.david870114.workers.dev/?id=2327', { cache: 'no-cache' });
+    const data = JSON.parse(await res.text());
+    const price = parseFloat(data.price);
+    const el = document.getElementById('live-price');
+    if (price && !isNaN(price)) {
+      el.textContent = '$ ' + price.toLocaleString();
+    }
+  } catch(e) {}
+}
+
+async function updateFundamentalPE() {
+  try {
+    const res = await fetch('https://taiwan-stock-price.david870114.workers.dev/?id=2327', { cache: 'no-cache' });
+    const data = JSON.parse(await res.text());
+    const price = parseFloat(data.price);
+    if (price && !isNaN(price)) {
+      const ttmEPS = 12.73;
+      const pe = (price / ttmEPS).toFixed(1);
+      const el = document.getElementById('fund-pe');
+      const noteEl = document.getElementById('fund-pe-note');
+      if (el) {
+        el.textContent = pe + 'x';
+        el.style.color = pe > 40 ? '#ef4444' : pe > 25 ? '#eab308' : '#22c55e';
+      }
+      if (noteEl) noteEl.textContent = '股價 ' + price.toLocaleString() + ' ｜ TTM EPS 12.73';
+    }
+  } catch(e) {}
+}
+
+window.addEventListener('load', () => {
+  updateLivePrice();
+  updateFundamentalPE();
+  setTimeout(() => {
+    const ctx = document.getElementById('riverChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: months,
+        datasets: [
+          { label: 'PER 30x（泡沫）', data: band(30), borderColor:'#dc2626', backgroundColor:'rgba(220,38,38,0.03)', borderWidth:1, borderDash:[4,4], pointRadius:0, fill:false },
+          { label: 'PER 25x（昂貴）', data: band(25), borderColor:'#ef4444', backgroundColor:'rgba(239,68,68,0.05)', borderWidth:1.5, pointRadius:0, fill:false },
+          { label: 'PER 20x（合理）', data: band(20), borderColor:'#eab308', backgroundColor:'rgba(234,179,8,0.07)', borderWidth:1.5, pointRadius:0, fill:false },
+          { label: 'PER 16x（便宜）', data: band(16), borderColor:'#22c55e', backgroundColor:'rgba(34,197,94,0.07)', borderWidth:1.5, pointRadius:0, fill:false },
+          { label: 'PER 10x（底部）', data: band(10), borderColor:'#3b82f6', backgroundColor:'rgba(59,130,246,0.04)', borderWidth:1, borderDash:[4,4], pointRadius:0, fill:false },
+          { label: '實際股價', data: closePx, borderColor:'#ffffff', borderWidth:2.5, pointRadius:2.5, pointBackgroundColor:'#fff', fill:false, tension:0.3, spanGaps:true },
+        ]
+      },
+      options: {
+        responsive: true,
+        interaction: { mode:'index', intersect:false },
+        plugins: {
+          legend: { labels:{ color:'#94a3b8', font:{size:11}, boxWidth:18 } },
+          tooltip: { backgroundColor:'#1e2535', titleColor:'#f8fafc', bodyColor:'#94a3b8', borderColor:'#334155', borderWidth:1 },
+        },
+        scales: {
+          x: { ticks:{ color:'#64748b', font:{size:10}, maxRotation:45 }, grid:{ color:'rgba(30,37,53,0.8)' } },
+          y: { ticks:{ color:'#64748b', font:{size:10}, callback: v => v.toLocaleString() }, grid:{ color:'rgba(30,37,53,0.8)' } }
+        }
+      }
+    });
+  }, 200);
+});
+
+function drawEPS() {
+  window.epsDrawn = true;
+  const ctx2 = document.getElementById('epsChart').getContext('2d');
+  const labels = ['22年','23年','24年(舊)','25H1(舊)','25M09後','26Q1'];
+  const eps =    [28,    41.7,  38.13,     38.7,       10.03,   12.73];
+  new Chart(ctx2, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{
+        label: 'TTM EPS（元）',
+        data: eps,
+        backgroundColor: ['rgba(59,130,246,0.7)','rgba(34,197,94,0.7)','rgba(34,197,94,0.7)','rgba(234,179,8,0.7)','rgba(239,68,68,0.7)','rgba(34,197,94,0.7)'],
+        borderColor:     ['#3b82f6','#22c55e','#22c55e','#eab308','#ef4444','#22c55e'],
+        borderWidth:1.5, borderRadius:6
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend:{ labels:{ color:'#94a3b8' } },
+        tooltip:{ backgroundColor:'#1e2535', bodyColor:'#94a3b8' }
+      },
+      scales: {
+        x:{ ticks:{ color:'#64748b' }, grid:{ color:'rgba(30,37,53,0.8)' } },
+        y:{ ticks:{ color:'#64748b', callback: v => v+'元' }, grid:{ color:'rgba(30,37,53,0.8)' } }
+      }
+    }
+  });
+}
+</script>
+</body>
+</html>
