@@ -427,13 +427,18 @@
               <div class="mc-vs-val" id="cv-2308">…</div>
             </div>
           </a>
-          <div class="mini-card no-data">
+          <a class="mini-card" href="2301_analysis.html">
             <div class="mc-left">
               <span class="mc-code">2301</span>
               <span class="mc-name">光寶科</span>
             </div>
-            <span class="mc-empty">未追蹤</span>
-          </div>
+            <div class="mc-right">
+              <div class="mc-price-label">股價</div>
+              <div class="mc-price-val" id="cp-2301">…</div>
+              <div class="mc-vs-label">vs 合理</div>
+              <div class="mc-vs-val" id="cv-2301">—</div>
+            </div>
+          </a>
         </div>
       </div>
     </div>
@@ -485,13 +490,18 @@
               <div class="mc-vs-val" id="cv-2408">—</div>
             </div>
           </a>
-          <div class="mini-card no-data">
+          <a class="mini-card" href="2337_analysis.html">
             <div class="mc-left">
               <span class="mc-code">2337</span>
               <span class="mc-name">旺宏</span>
             </div>
-            <span class="mc-empty">Flash</span>
-          </div>
+            <div class="mc-right">
+              <div class="mc-price-label">股價</div>
+              <div class="mc-price-val" id="cp-2337">…</div>
+              <div class="mc-vs-label">vs 合理</div>
+              <div class="mc-vs-val" id="cv-2337">—</div>
+            </div>
+          </a>
         </div>
       </div>
     </div>
@@ -931,7 +941,7 @@ const STOCKS = [
   { id: '2408',  fairValue: 279,  expValue: 391  },
 ];
 
-const CHAIN_STOCKS = ['2330','2382','3231','6669','2345','3596','3017','3324','8210','2308','3037','2408'];
+const CHAIN_STOCKS = ['2330','2382','3231','6669','2345','3596','3017','3324','8210','2301','2308','3037','2408','2337'];
 
 async function fetchPrice(id) {
   try {
