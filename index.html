@@ -1536,34 +1536,34 @@ function runAllocator() {
       tpReturnClass = r > 0 ? 'green' : 'red';
     }
 
-    return \`
+    return `
       <div class="scard">
         <div class="scard-top">
           <div>
-            <div class="scard-code">\${s.id}</div>
-            <div class="scard-name">\${s.name}</div>
+            <div class="scard-code">${s.id}</div>
+            <div class="scard-name">${s.name}</div>
           </div>
-          <span class="scard-vsbadge \${vs.cls}">\${vs.label}</span>
+          <span class="scard-vsbadge ${vs.cls}">${vs.label}</span>
         </div>
         <div class="scard-rows">
           <div class="scard-row">
             <span class="scard-label">vs 合理價</span>
-            <span class="scard-val \${vsClass}">\${vsDisplay}</span>
+            <span class="scard-val ${vsClass}">${vsDisplay}</span>
           </div>
           <div class="scard-row">
             <span class="scard-label">法人目標價</span>
-            <span class="scard-val purple">\${tpDisplay}</span>
+            <span class="scard-val purple">${tpDisplay}</span>
           </div>
           <div class="scard-row">
             <span class="scard-label">法人目標報酬</span>
-            <span class="scard-val \${tpReturnClass}">\${tpReturn}</span>
+            <span class="scard-val ${tpReturnClass}">${tpReturn}</span>
           </div>
           <div class="scard-row">
             <span class="scard-label">預估一年報酬率</span>
             <span class="scard-val muted">—</span>
           </div>
         </div>
-      </div>\`;
+      </div>`;
   }
 
   // 渲染三欄個股
