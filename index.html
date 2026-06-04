@@ -187,6 +187,20 @@
     background: #141b2d; border-radius: 10px; padding: 16px;
     margin-top: 16px; border: 1px solid #1e3050;
   }
+
+  /* ── 指標說明區 ── */
+  .metrics-explain {
+    background: #141b2d; border: 1px solid #1e3050;
+    border-radius: 10px; padding: 16px 18px; margin-bottom: 16px;
+  }
+  .me-title { font-size: 11px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 12px; }
+  .me-grid  { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  @media(max-width:600px){ .me-grid{ grid-template-columns:1fr; } }
+  .me-item  { display: flex; flex-direction: column; gap: 3px; }
+  .me-label { font-size: 11px; font-weight: 700; color: #7db8f7; }
+  .me-desc  { font-size: 11px; color: #475569; line-height: 1.6; }
+  .me-desc strong { color: #94a3b8; }
+  .scard-row-est { border-top: 1px solid #1e3050; margin-top: 4px; padding-top: 6px; }
   .ai-advice-title { font-size: 11px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px; }
   .ai-advice p { font-size: 13px; color: #94a3b8; line-height: 1.7; margin-bottom: 8px; }
   .ai-advice p:last-child { margin-bottom: 0; }
@@ -1184,6 +1198,29 @@
     </div>
   </div>
 
+  <!-- 說明區 -->
+  <div class="metrics-explain">
+    <div class="me-title">📖 指標說明</div>
+    <div class="me-grid">
+      <div class="me-item">
+        <div class="me-label">Beta (vs 0050)</div>
+        <div class="me-desc">股票相對大盤的波動倍數。<strong>1.0</strong> = 跟大盤同步；<strong>&gt;1.0</strong> = 比大盤更波動（如 1.4x = 大盤跌10%，它跌14%）；<strong>&lt;1.0</strong> = 比大盤穩定。核心資產建議選 Beta 較低的。</div>
+      </div>
+      <div class="me-item">
+        <div class="me-label">股息殖利率</div>
+        <div class="me-desc">近 4 季現金股利 ÷ 目前股價。代表持有一年光靠配息能拿回多少報酬，≥3% 為佳。</div>
+      </div>
+      <div class="me-item">
+        <div class="me-label">距法人目標價</div>
+        <div class="me-desc">外資券商（大摩、麥格理等）設定的 12 個月目標價，與目前股價的差距。正值代表法人認為還有上漲空間。</div>
+      </div>
+      <div class="me-item">
+        <div class="me-label">預估報酬率</div>
+        <div class="me-desc"><strong>= EPS成長率 + 股息殖利率 + PER回歸空間</strong>。若結果為負，通常代表目前估值過高，PER 若向合理值回歸會抵消獲利成長的收益——即使公司繼續成長，現在買可能也不划算。</div>
+      </div>
+    </div>
+  </div>
+
   <!-- 結果 -->
   <div class="result-wrap" id="result-wrap">
     <div class="result-title">
@@ -1365,24 +1402,29 @@ document.addEventListener('DOMContentLoaded', function() {
    資金配置試算 — 資料定義
 ══════════════════════════════════════ */
 var TRACKED = [
+  // ── 核心 ──────────────────────────────────────────────
   { id:'0050', name:'元大台灣50', tier:'core',   fairValue:50,   expValue:67,   fairPER:20, tp:null },
-  { id:'2330', name:'台積電',     tier:'core',   fairValue:1458, expValue:1855, fairPER:22, tp:2588 },
-  { id:'2308', name:'台達電',     tier:'core',   fairValue:732,  expValue:867,  fairPER:27, tp:null },
-  { id:'2301', name:'光寶科',     tier:'core',   fairValue:136,  expValue:177,  fairPER:20, tp:null },
-  { id:'2382', name:'廣達',       tier:'growth', fairValue:350,  expValue:506,  fairPER:18, tp:400  },
-  { id:'3231', name:'緯創',       tier:'growth', fairValue:181,  expValue:302,  fairPER:18, tp:null },
-  { id:'6669', name:'緯穎',       tier:'growth', fairValue:4475, expValue:5966, fairPER:15, tp:null },
-  { id:'2345', name:'智邦',       tier:'growth', fairValue:1375, expValue:1692, fairPER:26, tp:null, url:'2345_per_analysis_2026.html' },
-  { id:'3596', name:'智易',       tier:'growth', fairValue:177,  expValue:278,  fairPER:14, tp:null },
-  { id:'3017', name:'奇鋐',       tier:'growth', fairValue:1583, expValue:2070, fairPER:26, tp:3140 },
-  { id:'3324', name:'雙鴻',       tier:'growth', fairValue:978,  expValue:1258, fairPER:28, tp:1425 },
-  { id:'8210', name:'勤誠',       tier:'growth', fairValue:747,  expValue:1019, fairPER:22, tp:null },
-  { id:'3037', name:'欣興',       tier:'growth', fairValue:141,  expValue:211,  fairPER:20, tp:null },
-  { id:'2327', name:'國巨',       tier:'growth', fairValue:255,  expValue:318,  fairPER:20, tp:null },
-  { id:'3481', name:'群創',       tier:'spec',   fairValue:30,   expValue:50,   fairPER:20, tp:null },
-  { id:'2337', name:'旺宏',       tier:'spec',   fairValue:163,  expValue:218,  fairPER:12, tp:202  },
-  { id:'3260', name:'威剛',       tier:'spec',   fairValue:719,  expValue:925,  fairPER:14, tp:null },
-  { id:'2408', name:'南亞科',     tier:'spec',   fairValue:279,  expValue:391,  fairPER:25, tp:380  },
+
+  // ── 成長 ── 穩定獲利 + AI 受惠 + 護城河 ────────────────
+  { id:'2330', name:'台積電',     tier:'growth', fairValue:1458, expValue:1855, fairPER:22, tp:2588 },  // 全球晶圓龍頭，護城河極深
+  { id:'2308', name:'台達電',     tier:'growth', fairValue:732,  expValue:867,  fairPER:27, tp:null },  // 電源大廠，連續獲利，AI 電源受惠
+  { id:'2382', name:'廣達',       tier:'growth', fairValue:350,  expValue:506,  fairPER:18, tp:400  },  // AI 伺服器 ODM 龍頭，獲利穩定
+  { id:'3231', name:'緯創',       tier:'growth', fairValue:181,  expValue:302,  fairPER:18, tp:null },  // AI 伺服器，成長加速
+  { id:'2345', name:'智邦',       tier:'growth', fairValue:1375, expValue:1692, fairPER:26, tp:null, url:'2345_per_analysis_2026.html' }, // CPO 光通訊龍頭
+  { id:'3017', name:'奇鋐',       tier:'growth', fairValue:1583, expValue:2070, fairPER:26, tp:3140 },  // 液冷散熱龍頭，獲利高速成長
+  { id:'3324', name:'雙鴻',       tier:'growth', fairValue:978,  expValue:1258, fairPER:28, tp:1425 },  // 液冷散熱，AI 直接受惠
+  { id:'2327', name:'國巨',       tier:'growth', fairValue:255,  expValue:318,  fairPER:20, tp:null },  // 被動元件龍頭，獲利穩定
+
+  // ── 高風險 ── 高波動 / 景氣循環 / 小型 / 單季轉盈 ─────
+  { id:'6669', name:'緯穎',       tier:'spec',   fairValue:4475, expValue:5966, fairPER:15, tp:null },  // 超大型 AI 伺服器，客戶集中、波動大
+  { id:'2301', name:'光寶科',     tier:'spec',   fairValue:136,  expValue:177,  fairPER:20, tp:null },  // 電源中小型，獲利波動較大
+  { id:'3596', name:'智易',       tier:'spec',   fairValue:177,  expValue:278,  fairPER:14, tp:null },  // AI 網通小型股，流動性低
+  { id:'8210', name:'勤誠',       tier:'spec',   fairValue:747,  expValue:1019, fairPER:22, tp:null },  // 散熱小型股，波動大
+  { id:'3037', name:'欣興',       tier:'spec',   fairValue:141,  expValue:211,  fairPER:20, tp:null },  // ABF 載板，景氣循環
+  { id:'3481', name:'群創',       tier:'spec',   fairValue:30,   expValue:50,   fairPER:20, tp:null },  // 面板景氣循環，虧損體質
+  { id:'2337', name:'旺宏',       tier:'spec',   fairValue:163,  expValue:218,  fairPER:12, tp:202  },  // 記憶體，前瞻復甦但仍風險高
+  { id:'3260', name:'威剛',       tier:'spec',   fairValue:719,  expValue:925,  fairPER:14, tp:null },  // 記憶體模組，景氣循環
+  { id:'2408', name:'南亞科',     tier:'spec',   fairValue:279,  expValue:391,  fairPER:25, tp:380  },  // DRAM 復甦，景氣循環
 ];
 
 var PRESETS = {
@@ -1622,10 +1664,6 @@ function buildStockCardSkeleton(s) {
         '<span class="scard-val muted" id="sm-beta-' + s.id + '">計算中...</span></div>' +
       '<div class="scard-row"><span class="scard-label">股息殖利率</span>' +
         '<span class="scard-val muted" id="sm-div-' + s.id + '">載入中...</span></div>' +
-      '<div class="scard-row"><span class="scard-label">EPS 成長率(3Y)</span>' +
-        '<span class="scard-val muted" id="sm-eps-' + s.id + '">載入中...</span></div>' +
-      '<div class="scard-row"><span class="scard-label">PER 回歸空間</span>' +
-        '<span class="scard-val muted" id="sm-per-' + s.id + '">載入中...</span></div>' +
       '<div class="scard-row scard-row-est"><span class="scard-label"><strong>預估報酬率</strong></span>' +
         '<span class="scard-val muted" id="sm-est-' + s.id + '">計算中...</span></div>' +
     '</div>' +
