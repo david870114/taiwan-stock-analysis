@@ -389,8 +389,8 @@
 
 <!-- ── Tab Bar ── -->
 <div class="tab-bar">
-  <button class="tab-btn active" onclick="switchTab('watchlist',this)">📊 追蹤清單</button>
-  <button class="tab-btn" onclick="switchTab('allocator',this)">💰 資金配置試算</button>
+  <button class="tab-btn active" data-tab="watchlist">📊 追蹤清單</button>
+  <button class="tab-btn" data-tab="allocator">💰 資金配置試算</button>
 </div>
 
 <!-- ══ Tab: 追蹤清單 ══ -->
@@ -1267,13 +1267,34 @@ const STOCKS = [
 const CHAIN_STOCKS = ['2330','2382','3231','6669','2345','3596','3017','3324','8210','2301','2308','3037','2408','2337'];
 
 async function fetchPrice(id) {
+  // 嘗試主 API
+  const endpoints = [
+    `https://taiwan-stock-price.david870114.workers.dev/?id=${id}`,
+    `https://query1.finance.yahoo.com/v8/finance/chart/${id}.TW?interval=1d&range=1d`,
+  ];
+  // 先嘗試原本 API
   try {
-    const res = await fetch(`https://taiwan-stock-price.david870114.workers.dev/?id=${id}`, {
-      redirect: 'follow', mode: 'cors', cache: 'no-cache', credentials: 'omit'
+    const res = await fetch(endpoints[0], {
+      redirect: 'follow', mode: 'cors', cache: 'no-cache', credentials: 'omit',
+      signal: AbortSignal.timeout(8000)
     });
-    const data = JSON.parse(await res.text());
-    if (data.price && data.price !== '-' && data.price !== null) {
-      return parseFloat(data.price);
+    if (res.ok) {
+      const data = JSON.parse(await res.text());
+      if (data.price && data.price !== '-' && data.price !== null) {
+        return parseFloat(data.price);
+      }
+    }
+  } catch(e) { /* 繼續嘗試 fallback */ }
+  // fallback: Yahoo Finance
+  try {
+    const res = await fetch(endpoints[1], {
+      mode: 'cors', cache: 'no-cache', credentials: 'omit',
+      signal: AbortSignal.timeout(8000)
+    });
+    if (res.ok) {
+      const data = await res.json();
+      const price = data?.chart?.result?.[0]?.meta?.regularMarketPrice;
+      if (price) return parseFloat(price);
     }
   } catch(e) {}
   return null;
@@ -1333,17 +1354,33 @@ async function fetchAllPrices() {
   document.getElementById('lastUpdate').textContent =
     `${now.getFullYear()}/${String(now.getMonth()+1).padStart(2,'0')}/${String(now.getDate()).padStart(2,'0')} ` +
     `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
+  if (typeof refreshLivePrice === 'function') refreshLivePrice();
 }
 
 window.addEventListener('load', fetchAllPrices);
 setInterval(fetchAllPrices, 60000);
 
 // ══ Tab 切換 ══
+// Tab 切換 — 事件代理，避免 inline onclick 失效
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('.tab-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var name = this.getAttribute('data-tab');
+      document.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
+      document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+      var panel = document.getElementById('tab-' + name);
+      if (panel) panel.classList.add('active');
+      this.classList.add('active');
+    });
+  });
+});
+
 function switchTab(name, btn) {
-  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('tab-' + name).classList.add('active');
-  btn.classList.add('active');
+  document.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
+  document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+  var panel = document.getElementById('tab-' + name);
+  if (panel) panel.classList.add('active');
+  if (btn) btn.classList.add('active');
 }
 
 // ══ 資金配置試算 ══
@@ -1371,15 +1408,19 @@ const TRACKED = [
   { id:'2408', name:'南亞科',     tier:'spec',   fairValue:279,  expValue:391,  tp:380  },
 ];
 
-// 即時價格快取（由主頁股價更新時填入）
+// 即時價格快取 — 從 DOM 讀取（在 runAllocator 呼叫時刷新）
 const livePrice = {};
-STOCKS.forEach(s => {
-  const el = document.getElementById(`price-${s.id}`);
-  if (el && el.textContent && el.textContent !== '…') {
-    const v = parseFloat(el.textContent.replace(/,/g,''));
-    if (!isNaN(v)) livePrice[s.id] = v;
-  }
-});
+
+function refreshLivePrice() {
+  STOCKS.forEach(s => {
+    const el = document.getElementById('price-' + s.id);
+    if (el) {
+      const txt = el.textContent.replace(/,/g,'').trim();
+      const v = parseFloat(txt);
+      if (!isNaN(v) && v > 0) livePrice[s.id] = v;
+    }
+  });
+}
 
 // 預設風格
 const PRESETS = {
@@ -1438,6 +1479,7 @@ function valStatus(stock) {
 }
 
 function runAllocator() {
+  refreshLivePrice(); // 確保使用最新股價
   const raw   = parseFloat(document.getElementById('totalFund').value);
   const cur   = document.getElementById('currency').value;
   if (!raw || raw <= 0) { alert('請輸入正確的可動用資金！'); return; }
