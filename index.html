@@ -156,6 +156,12 @@
     border: 1px solid #1e3050;
     padding: 11px 12px;
   }
+  .scard-link {
+    display: block; text-decoration: none; color: inherit;
+    transition: border-color 0.15s, background 0.15s;
+    cursor: pointer;
+  }
+  .scard-link:hover { border-color: #3b82f6; background: #1e2d45; }
   .scard-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
   .scard-code { font-size: 14px; font-weight: 700; font-family: monospace; color: #93c5fd; }
   .scard-name { font-size: 12px; color: #94a3b8; margin-top: 1px; }
@@ -1246,7 +1252,7 @@
 /* ══════════════════════════════════════
    股價追蹤
 ══════════════════════════════════════ */
-const STOCKS = [
+var STOCKS = [
   { id:'0050',  fairValue:50,   expValue:67   },
   { id:'2330',  fairValue:1458, expValue:1855 },
   { id:'2382',  fairValue:350,  expValue:506  },
@@ -1267,14 +1273,14 @@ const STOCKS = [
   { id:'2408',  fairValue:279,  expValue:391  },
 ];
 
-const CHAIN_STOCKS = ['2330','2382','3231','6669','2345','3596','3017','3324','8210','2301','2308','3037','2408','2337'];
+var CHAIN_STOCKS = ['2330','2382','3231','6669','2345','3596','3017','3324','8210','2301','2308','3037','2408','2337'];
 
 async function fetchPrice(id) {
   try {
-    const res = await fetch('https://taiwan-stock-price.david870114.workers.dev/?id=' + id, {
+    var res = await fetch('https://taiwan-stock-price.david870114.workers.dev/?id=' + id, {
       redirect: 'follow', mode: 'cors', cache: 'no-cache', credentials: 'omit'
     });
-    const data = JSON.parse(await res.text());
+    var data = JSON.parse(await res.text());
     if (data.price && data.price !== '-' && data.price !== null) {
       return parseFloat(data.price);
     }
@@ -1319,9 +1325,9 @@ async function fetchAllPrices() {
           cvEl.textContent = v2.pct;
           cvEl.className   = 'mc-vs-val ' + v2.cls;
         } else {
-          cpEl.textContent    = '—';
-          cpEl.style.color    = '#334155';
-          cvEl.textContent    = '—';
+          cpEl.textContent = '—';
+          cpEl.style.color = '#334155';
+          cvEl.textContent = '—';
         }
       }
     }
@@ -1356,27 +1362,27 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 /* ══════════════════════════════════════
-   資金配置試算
+   資金配置試算 — 資料定義
 ══════════════════════════════════════ */
 var TRACKED = [
-  { id:'0050', name:'元大台灣50', tier:'core',   fairValue:50,   expValue:67,   tp:null },
-  { id:'2330', name:'台積電',     tier:'core',   fairValue:1458, expValue:1855, tp:2588 },
-  { id:'2308', name:'台達電',     tier:'core',   fairValue:732,  expValue:867,  tp:null },
-  { id:'2301', name:'光寶科',     tier:'core',   fairValue:136,  expValue:177,  tp:null },
-  { id:'2382', name:'廣達',       tier:'growth', fairValue:350,  expValue:506,  tp:400  },
-  { id:'3231', name:'緯創',       tier:'growth', fairValue:181,  expValue:302,  tp:null },
-  { id:'6669', name:'緯穎',       tier:'growth', fairValue:4475, expValue:5966, tp:null },
-  { id:'2345', name:'智邦',       tier:'growth', fairValue:1375, expValue:1692, tp:null },
-  { id:'3596', name:'智易',       tier:'growth', fairValue:177,  expValue:278,  tp:null },
-  { id:'3017', name:'奇鋐',       tier:'growth', fairValue:1583, expValue:2070, tp:3140 },
-  { id:'3324', name:'雙鴻',       tier:'growth', fairValue:978,  expValue:1258, tp:1425 },
-  { id:'8210', name:'勤誠',       tier:'growth', fairValue:747,  expValue:1019, tp:null },
-  { id:'3037', name:'欣興',       tier:'growth', fairValue:141,  expValue:211,  tp:null },
-  { id:'2327', name:'國巨',       tier:'growth', fairValue:255,  expValue:318,  tp:null },
-  { id:'3481', name:'群創',       tier:'spec',   fairValue:30,   expValue:50,   tp:null },
-  { id:'2337', name:'旺宏',       tier:'spec',   fairValue:163,  expValue:218,  tp:202  },
-  { id:'3260', name:'威剛',       tier:'spec',   fairValue:719,  expValue:925,  tp:null },
-  { id:'2408', name:'南亞科',     tier:'spec',   fairValue:279,  expValue:391,  tp:380  },
+  { id:'0050', name:'元大台灣50', tier:'core',   fairValue:50,   expValue:67,   fairPER:20, tp:null },
+  { id:'2330', name:'台積電',     tier:'core',   fairValue:1458, expValue:1855, fairPER:22, tp:2588 },
+  { id:'2308', name:'台達電',     tier:'core',   fairValue:732,  expValue:867,  fairPER:27, tp:null },
+  { id:'2301', name:'光寶科',     tier:'core',   fairValue:136,  expValue:177,  fairPER:20, tp:null },
+  { id:'2382', name:'廣達',       tier:'growth', fairValue:350,  expValue:506,  fairPER:18, tp:400  },
+  { id:'3231', name:'緯創',       tier:'growth', fairValue:181,  expValue:302,  fairPER:18, tp:null },
+  { id:'6669', name:'緯穎',       tier:'growth', fairValue:4475, expValue:5966, fairPER:15, tp:null },
+  { id:'2345', name:'智邦',       tier:'growth', fairValue:1375, expValue:1692, fairPER:26, tp:null, url:'2345_per_analysis_2026.html' },
+  { id:'3596', name:'智易',       tier:'growth', fairValue:177,  expValue:278,  fairPER:14, tp:null },
+  { id:'3017', name:'奇鋐',       tier:'growth', fairValue:1583, expValue:2070, fairPER:26, tp:3140 },
+  { id:'3324', name:'雙鴻',       tier:'growth', fairValue:978,  expValue:1258, fairPER:28, tp:1425 },
+  { id:'8210', name:'勤誠',       tier:'growth', fairValue:747,  expValue:1019, fairPER:22, tp:null },
+  { id:'3037', name:'欣興',       tier:'growth', fairValue:141,  expValue:211,  fairPER:20, tp:null },
+  { id:'2327', name:'國巨',       tier:'growth', fairValue:255,  expValue:318,  fairPER:20, tp:null },
+  { id:'3481', name:'群創',       tier:'spec',   fairValue:30,   expValue:50,   fairPER:20, tp:null },
+  { id:'2337', name:'旺宏',       tier:'spec',   fairValue:163,  expValue:218,  fairPER:12, tp:202  },
+  { id:'3260', name:'威剛',       tier:'spec',   fairValue:719,  expValue:925,  fairPER:14, tp:null },
+  { id:'2408', name:'南亞科',     tier:'spec',   fairValue:279,  expValue:391,  fairPER:25, tp:380  },
 ];
 
 var PRESETS = {
@@ -1384,18 +1390,142 @@ var PRESETS = {
   balanced:     { core:60, growth:30, spec:5,  cash:5  },
   growth:       { core:50, growth:35, spec:10, cash:5  }
 };
-
 var RATE = { TWD:1, USD:33, AUD:22 };
 
-function fmt(n) {
-  return Math.round(n).toLocaleString('zh-TW');
+/* FinMind API cache */
+var _fmCache = {};
+async function finmind(dataset, id, startDate) {
+  var key = dataset + '_' + id;
+  if (_fmCache[key]) return _fmCache[key];
+  try {
+    var url = 'https://api.finmindtrade.com/api/v4/data?dataset=' + dataset +
+              '&data_id=' + id + '&start_date=' + startDate;
+    var res = await fetch(url, { mode:'cors', cache:'no-cache' });
+    var data = await res.json();
+    _fmCache[key] = data.data || [];
+    return _fmCache[key];
+  } catch(e) { return []; }
 }
+
+/* 0050 quarterly returns cache */
+var _mktReturns = null;
+async function getMktReturns() {
+  if (_mktReturns) return _mktReturns;
+  var rows = await finmind('TaiwanStockPrice', '0050', '2022-09-01');
+  _mktReturns = calcQuarterlyReturns(rows);
+  return _mktReturns;
+}
+
+function calcQuarterlyReturns(rows) {
+  var quarters = {};
+  rows.forEach(function(p) {
+    var yr = p.date.slice(0,4), mo = parseInt(p.date.slice(5,7));
+    var qnum = Math.floor((mo-1)/3) + 1;
+    var qk = yr + 'Q' + qnum;
+    if (!quarters[qk]) quarters[qk] = [];
+    quarters[qk].push([p.date, p.close]);
+  });
+  var returns = {};
+  Object.keys(quarters).forEach(function(qk) {
+    var pts = quarters[qk].sort(function(a,b){ return a[0]<b[0]?-1:1; });
+    if (pts.length >= 5) {
+      var start = pts[0][1], end = pts[pts.length-1][1];
+      if (start > 0) returns[qk] = (end - start) / start;
+    }
+  });
+  return returns;
+}
+
+async function calcBeta(stockId) {
+  try {
+    var mkt = await getMktReturns();
+    var rows = await finmind('TaiwanStockPrice', stockId, '2022-09-01');
+    var stk = calcQuarterlyReturns(rows);
+    var x = [], y = [];
+    Object.keys(mkt).forEach(function(qk) {
+      if (stk[qk] === undefined) return;
+      var rm = mkt[qk], rs = stk[qk];
+      if (Math.abs(rm) > 0.5 || Math.abs(rs) > 0.5) return; // skip split quarters
+      x.push(rm);
+      y.push(rs);
+    });
+    if (x.length < 4) return null;
+    var n = x.length;
+    var mx = x.reduce(function(a,b){return a+b;},0)/n;
+    var my = y.reduce(function(a,b){return a+b;},0)/n;
+    var cov = 0, varx = 0;
+    for (var i=0;i<n;i++) { cov += (x[i]-mx)*(y[i]-my); varx += (x[i]-mx)*(x[i]-mx); }
+    return varx > 0 ? (cov/varx).toFixed(2) : null;
+  } catch(e) { return null; }
+}
+
+async function calcMetrics(stock) {
+  var price = getLivePrice(stock.id);
+  var result = { beta: null, divYield: null, epsGrowth: null, estReturn: null, perChange: null };
+  if (!price) return result;
+
+  // --- Beta ---
+  result.beta = await calcBeta(stock.id);
+
+  // --- Dividend yield ---
+  var divRows = await finmind('TaiwanStockDividend', stock.id, '2023-01-01');
+  if (divRows.length >= 4) {
+    var last4 = divRows.slice(-4);
+    var annualDiv = last4.reduce(function(sum, r) {
+      return sum + (r.CashEarningsDistribution || 0) + (r.CashStatutorySurplus || 0);
+    }, 0);
+    result.divYield = (annualDiv / price * 100);
+  }
+
+  // --- EPS growth (CAGR) ---
+  var epsRows = await finmind('TaiwanStockFinancialStatements', stock.id, '2020-01-01');
+  var epsQ = epsRows.filter(function(r){ return r.type === 'EPS'; });
+  // Group into annual EPS
+  var byYear = {};
+  epsQ.forEach(function(r) {
+    var yr = r.date.slice(0,4);
+    byYear[yr] = (byYear[yr] || 0) + r.value;
+  });
+  var yrs = Object.keys(byYear).filter(function(y){ return byYear[y] !== 0; }).sort();
+  // Use last 3 full years for CAGR
+  if (yrs.length >= 3) {
+    var y0 = yrs[yrs.length-3], yn = yrs[yrs.length-1];
+    var eps0 = byYear[y0], epsN = byYear[yn];
+    var n = parseInt(yn) - parseInt(y0);
+    if (eps0 > 0 && epsN > 0 && n > 0) {
+      result.epsGrowth = (Math.pow(epsN/eps0, 1/n) - 1) * 100;
+    }
+  }
+
+  // --- Current PER from FinMind ---
+  var perRows = await finmind('TaiwanStockPER', stock.id, '2026-01-01');
+  var currentPER = null;
+  if (perRows.length > 0) currentPER = perRows[perRows.length-1].PER;
+
+  // --- PER change ---
+  if (currentPER && stock.fairPER && currentPER > 0) {
+    result.perChange = (stock.fairPER / currentPER - 1) * 100;
+  }
+
+  // --- Estimated return ---
+  var eg = result.epsGrowth || 0;
+  var dy = result.divYield  || 0;
+  var pc = result.perChange || 0;
+  result.estReturn = eg + dy + pc;
+
+  return result;
+}
+
+/* ══════════════════════════════════════
+   UI helpers
+══════════════════════════════════════ */
+function fmt(n) { return Math.round(n).toLocaleString('zh-TW'); }
+function fmtPct(n, dec) { dec = dec||1; var s = n.toFixed(dec); return (n>0?'+':'')+s+'%'; }
 
 function getLivePrice(id) {
   var el = document.getElementById('price-' + id);
   if (!el) return null;
-  var txt = el.textContent.replace(/,/g, '').trim();
-  var v = parseFloat(txt);
+  var v = parseFloat(el.textContent.replace(/,/g,'').trim());
   return (!isNaN(v) && v > 0) ? v : null;
 }
 
@@ -1407,8 +1537,15 @@ function valStatus(stock) {
   return { label:'偏貴', cls:'tag-exp', score:1 };
 }
 
+function valScore(stock) {
+  var price = getLivePrice(stock.id);
+  if (!price) return 0;
+  // continuous score: higher = more undervalued
+  return (stock.fairValue - price) / stock.fairValue;
+}
+
 function applyPreset(name) {
-  document.querySelectorAll('.preset-btn').forEach(function(b) { b.classList.remove('sel'); });
+  document.querySelectorAll('.preset-btn').forEach(function(b){ b.classList.remove('sel'); });
   var btn = document.getElementById('preset-' + name);
   if (btn) btn.classList.add('sel');
   var p = PRESETS[name];
@@ -1421,9 +1558,9 @@ function applyPreset(name) {
 }
 
 function syncSliders() {
-  document.querySelectorAll('.preset-btn').forEach(function(b) { b.classList.remove('sel'); });
-  var customBtn = document.getElementById('preset-custom');
-  if (customBtn) customBtn.classList.add('sel');
+  document.querySelectorAll('.preset-btn').forEach(function(b){ b.classList.remove('sel'); });
+  var cb = document.getElementById('preset-custom');
+  if (cb) cb.classList.add('sel');
   updateLabels();
 }
 
@@ -1432,40 +1569,43 @@ function updateLabels() {
   var g = +document.getElementById('sl-growth').value;
   var s = +document.getElementById('sl-spec').value;
   var h = +document.getElementById('sl-cash').value;
-  var total = c + g + s + h || 1;
+  var tot = c + g + s + h || 1;
   document.getElementById('pct-core-label').textContent   = c + '%';
   document.getElementById('pct-growth-label').textContent = g + '%';
   document.getElementById('pct-spec-label').textContent   = s + '%';
   document.getElementById('pct-cash-label').textContent   = h + '%';
-  document.getElementById('pie-core').style.width   = (c/total*100).toFixed(1) + '%';
-  document.getElementById('pie-growth').style.width = (g/total*100).toFixed(1) + '%';
-  document.getElementById('pie-spec').style.width   = (s/total*100).toFixed(1) + '%';
-  document.getElementById('pie-cash').style.width   = (h/total*100).toFixed(1) + '%';
+  document.getElementById('pie-core').style.width   = (c/tot*100).toFixed(1) + '%';
+  document.getElementById('pie-growth').style.width = (g/tot*100).toFixed(1) + '%';
+  document.getElementById('pie-spec').style.width   = (s/tot*100).toFixed(1) + '%';
+  document.getElementById('pie-cash').style.width   = (h/tot*100).toFixed(1) + '%';
   document.getElementById('slider-warn').style.display = (c+g+s+h > 100) ? 'block' : 'none';
 }
 
-function buildStockCard(s) {
-  var vs    = valStatus(s);
-  var price = getLivePrice(s.id);
+/* ══════════════════════════════════════
+   卡片渲染（先顯示骨架，異步填入指標）
+══════════════════════════════════════ */
+function buildStockCardSkeleton(s) {
+  var vs  = valStatus(s);
+  var url = s.url ? s.url : s.id + '_analysis.html';
 
+  // vs 合理價
+  var price = getLivePrice(s.id);
   var vsDisplay = '—', vsClass = 'muted';
   if (price) {
     var pct  = ((price - s.fairValue) / s.fairValue * 100).toFixed(1);
-    var sign = pct > 0 ? '+' : '';
-    vsDisplay = sign + pct + '%';
-    vsClass   = vs.score === 3 ? 'green' : vs.score === 2 ? 'yellow' : 'red';
+    vsDisplay = (pct>0?'+':'') + pct + '%';
+    vsClass   = vs.score===3 ? 'green' : vs.score===2 ? 'yellow' : 'red';
   }
 
-  var tpDisplay = s.tp ? s.tp.toLocaleString() : '—';
-  var tpReturn  = '—', tpClass = 'muted';
+  // 距法人目標價
+  var tpReturn = '—', tpClass = 'muted';
   if (s.tp && price) {
-    var r     = ((s.tp - price) / price * 100).toFixed(1);
-    var rsign = r > 0 ? '+' : '';
-    tpReturn  = rsign + r + '%';
-    tpClass   = r > 0 ? 'green' : 'red';
+    var r = ((s.tp - price) / price * 100).toFixed(1);
+    tpReturn = (r>0?'+':'') + r + '% (目標 ' + s.tp.toLocaleString() + ')';
+    tpClass  = r > 0 ? 'green' : 'red';
   }
 
-  return '<div class="scard">' +
+  return '<a class="scard scard-link" href="' + url + '" id="scard-' + s.id + '">' +
     '<div class="scard-top">' +
       '<div>' +
         '<div class="scard-code">' + s.id + '</div>' +
@@ -1474,12 +1614,75 @@ function buildStockCard(s) {
       '<span class="scard-vsbadge ' + vs.cls + '">' + vs.label + '</span>' +
     '</div>' +
     '<div class="scard-rows">' +
-      '<div class="scard-row"><span class="scard-label">vs 合理價</span><span class="scard-val ' + vsClass + '">' + vsDisplay + '</span></div>' +
-      '<div class="scard-row"><span class="scard-label">法人目標價</span><span class="scard-val purple">' + tpDisplay + '</span></div>' +
-      '<div class="scard-row"><span class="scard-label">法人目標報酬</span><span class="scard-val ' + tpClass + '">' + tpReturn + '</span></div>' +
-      '<div class="scard-row"><span class="scard-label">預估一年報酬率</span><span class="scard-val muted">—</span></div>' +
+      '<div class="scard-row"><span class="scard-label">vs 合理價</span>' +
+        '<span class="scard-val ' + vsClass + '">' + vsDisplay + '</span></div>' +
+      '<div class="scard-row"><span class="scard-label">距法人目標價</span>' +
+        '<span class="scard-val ' + tpClass + '">' + tpReturn + '</span></div>' +
+      '<div class="scard-row"><span class="scard-label">Beta (vs 0050)</span>' +
+        '<span class="scard-val muted" id="sm-beta-' + s.id + '">計算中...</span></div>' +
+      '<div class="scard-row"><span class="scard-label">股息殖利率</span>' +
+        '<span class="scard-val muted" id="sm-div-' + s.id + '">載入中...</span></div>' +
+      '<div class="scard-row"><span class="scard-label">EPS 成長率(3Y)</span>' +
+        '<span class="scard-val muted" id="sm-eps-' + s.id + '">載入中...</span></div>' +
+      '<div class="scard-row"><span class="scard-label">PER 回歸空間</span>' +
+        '<span class="scard-val muted" id="sm-per-' + s.id + '">載入中...</span></div>' +
+      '<div class="scard-row scard-row-est"><span class="scard-label"><strong>預估報酬率</strong></span>' +
+        '<span class="scard-val muted" id="sm-est-' + s.id + '">計算中...</span></div>' +
     '</div>' +
-  '</div>';
+  '</a>';
+}
+
+async function fillCardMetrics(stock) {
+  var m = await calcMetrics(stock);
+
+  function setEl(id, text, cls) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.textContent = text;
+    el.className   = 'scard-val ' + (cls || 'muted');
+  }
+
+  // Beta
+  if (m.beta !== null) {
+    var bv = parseFloat(m.beta);
+    var bc = bv > 1.3 ? 'red' : bv < 0.8 ? 'green' : 'yellow';
+    setEl('sm-beta-' + stock.id, m.beta + 'x', bc);
+  } else {
+    setEl('sm-beta-' + stock.id, '—');
+  }
+
+  // Div yield
+  if (m.divYield !== null) {
+    var dc = m.divYield >= 3 ? 'green' : m.divYield >= 1.5 ? 'yellow' : 'muted';
+    setEl('sm-div-' + stock.id, fmtPct(m.divYield), dc);
+  } else {
+    setEl('sm-div-' + stock.id, '—');
+  }
+
+  // EPS growth
+  if (m.epsGrowth !== null) {
+    var ec = m.epsGrowth >= 15 ? 'green' : m.epsGrowth >= 5 ? 'yellow' : m.epsGrowth < 0 ? 'red' : 'muted';
+    setEl('sm-eps-' + stock.id, fmtPct(m.epsGrowth), ec);
+  } else {
+    setEl('sm-eps-' + stock.id, '—');
+  }
+
+  // PER change
+  if (m.perChange !== null) {
+    var pc = m.perChange >= 10 ? 'green' : m.perChange >= 0 ? 'yellow' : 'red';
+    setEl('sm-per-' + stock.id, fmtPct(m.perChange), pc);
+  } else {
+    setEl('sm-per-' + stock.id, '—');
+  }
+
+  // Estimated return
+  if (m.estReturn !== null) {
+    var er = m.estReturn;
+    var erc = er >= 15 ? 'green' : er >= 5 ? 'yellow' : er < 0 ? 'red' : 'muted';
+    setEl('sm-est-' + stock.id, fmtPct(er), erc);
+  } else {
+    setEl('sm-est-' + stock.id, '—');
+  }
 }
 
 function renderTierStocks(containerId, stocks, active) {
@@ -1489,22 +1692,22 @@ function renderTierStocks(containerId, stocks, active) {
     el.innerHTML = '<div class="tier-empty">此層級配置比例為 0%</div>';
     return;
   }
+  // Sort by valScore descending (most undervalued first)
+  stocks.sort(function(a,b){ return valScore(b) - valScore(a); });
   var html = '';
-  for (var i = 0; i < stocks.length; i++) {
-    html += buildStockCard(stocks[i]);
-  }
+  stocks.forEach(function(s) { html += buildStockCardSkeleton(s); });
   el.innerHTML = html;
+  // Fill metrics async (non-blocking)
+  stocks.forEach(function(s) { fillCardMetrics(s); });
 }
 
+/* ══════════════════════════════════════
+   runAllocator
+══════════════════════════════════════ */
 function runAllocator() {
-  var rawVal = document.getElementById('totalFund').value;
-  var raw    = parseFloat(rawVal);
-  var cur    = document.getElementById('currency').value;
-
-  if (!raw || raw <= 0) {
-    alert('請輸入正確的可動用資金！');
-    return;
-  }
+  var raw = parseFloat(document.getElementById('totalFund').value);
+  var cur = document.getElementById('currency').value;
+  if (!raw || raw <= 0) { alert('請輸入正確的可動用資金！'); return; }
 
   var total   = raw * (RATE[cur] || 1);
   var pCore   = +document.getElementById('sl-core').value   / 100;
@@ -1512,10 +1715,7 @@ function runAllocator() {
   var pSpec   = +document.getElementById('sl-spec').value   / 100;
   var pCash   = +document.getElementById('sl-cash').value   / 100;
 
-  if (pCore + pGrowth + pSpec + pCash > 1.01) {
-    alert('配置比例總和超過 100%，請調整！');
-    return;
-  }
+  if (pCore + pGrowth + pSpec + pCash > 1.01) { alert('配置比例總和超過 100%，請調整！'); return; }
 
   var aCore   = total * pCore;
   var aGrowth = total * pGrowth;
@@ -1529,39 +1729,37 @@ function runAllocator() {
   document.getElementById('r-growth-amt').textContent     = fmt(aGrowth);
   document.getElementById('r-spec-amt').textContent       = fmt(aSpec);
 
-  var coreStocks   = TRACKED.filter(function(s){ return s.tier==='core';   }).sort(function(a,b){ return valStatus(b).score - valStatus(a).score; });
-  var growthStocks = TRACKED.filter(function(s){ return s.tier==='growth'; }).sort(function(a,b){ return valStatus(b).score - valStatus(a).score; });
-  var specStocks   = TRACKED.filter(function(s){ return s.tier==='spec';   }).sort(function(a,b){ return valStatus(b).score - valStatus(a).score; });
+  var coreStocks   = TRACKED.filter(function(s){ return s.tier==='core';   });
+  var growthStocks = TRACKED.filter(function(s){ return s.tier==='growth'; });
+  var specStocks   = TRACKED.filter(function(s){ return s.tier==='spec';   });
 
   renderTierStocks('stocks-core',   coreStocks,   pCore   > 0);
   renderTierStocks('stocks-growth', growthStocks, pGrowth > 0);
   renderTierStocks('stocks-spec',   specStocks,   pSpec   > 0);
 
-  // 文字建議
-  var cheapCore   = coreStocks.filter(function(s){   return valStatus(s).score === 3; }).map(function(s){ return s.name; });
-  var cheapGrowth = growthStocks.filter(function(s){ return valStatus(s).score === 3; }).map(function(s){ return s.name; });
-  var expAll      = TRACKED.filter(function(s){      return valStatus(s).score === 1; }).map(function(s){ return s.name; });
-
-  var styleLabel = '';
+  // Text advice
+  var cheapCore   = coreStocks.filter(function(s){   return valStatus(s).score===3; }).map(function(s){ return s.name; });
+  var cheapGrowth = growthStocks.filter(function(s){ return valStatus(s).score===3; }).map(function(s){ return s.name; });
+  var expAll      = TRACKED.filter(function(s){      return valStatus(s).score===1; }).map(function(s){ return s.name; });
   var selBtn = document.querySelector('.preset-btn.sel');
-  if (selBtn) styleLabel = selBtn.textContent.trim();
+  var styleLabel = selBtn ? selBtn.textContent.trim() : '自訂';
 
   var advice = '<p>選擇了 <strong>' + styleLabel + '</strong> 配置，可動用資金 <strong>NT$ ' + fmt(total) + '</strong>，核心 ' + Math.round(pCore*100) + '% / 成長 ' + Math.round(pGrowth*100) + '% / 投機 ' + Math.round(pSpec*100) + '% / 現金 ' + Math.round(pCash*100) + '%。</p>';
-  if (cheapCore.length > 0)   advice += '<p>✅ 核心資產中，<strong>' + cheapCore.join('、') + '</strong> 目前低於合理價，建倉時機相對佳。</p>';
-  if (cheapGrowth.length > 0) advice += '<p>🟢 成長部位中，<strong>' + cheapGrowth.join('、') + '</strong> 估值偏低，風險報酬比較佳。</p>';
-  if (expAll.length > 0)      advice += '<p>⚠️ <strong>' + expAll.join('、') + '</strong> 目前高於昂貴價，建議謹慎或分批布局。</p>';
-  if (pSpec > 0.08)           advice += '<p>🔴 高風險部位佔 <strong>' + Math.round(pSpec*100) + '%</strong>，高於建議上限 10%，請注意風險。</p>';
-  if (pCash < 0.05)           advice += '<p>💡 現金預留低於 5%，建議保留 5~10% 作為機動備用。</p>';
-  advice += '<p>📌 實際買進請依個人判斷與最新估值調整。</p>';
+  if (cheapCore.length)   advice += '<p>✅ 核心資產中，<strong>' + cheapCore.join('、') + '</strong> 目前低於合理價，建倉時機相對佳。</p>';
+  if (cheapGrowth.length) advice += '<p>🟢 成長部位中，<strong>' + cheapGrowth.join('、') + '</strong> 估值偏低，風險報酬比較佳。</p>';
+  if (expAll.length)      advice += '<p>⚠️ <strong>' + expAll.join('、') + '</strong> 目前高於昂貴價，建議謹慎或分批布局。</p>';
+  if (pSpec > 0.08)       advice += '<p>🔴 高風險部位佔 <strong>' + Math.round(pSpec*100) + '%</strong>，高於建議上限 10%，請注意風險。</p>';
+  if (pCash < 0.05)       advice += '<p>💡 現金預留低於 5%，建議保留 5~10% 作為機動備用。</p>';
+  advice += '<p>📌 Beta / 股息 / EPS / 預估報酬率正從 FinMind 載入，請稍候卡片更新。</p>';
 
   document.getElementById('ai-advice-content').innerHTML = advice;
-
   var rw = document.getElementById('result-wrap');
   rw.classList.add('show');
   rw.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 updateLabels();
+
 </script>
 </body>
 </html>
