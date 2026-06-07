@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>緯創 3231 — 2026 股價推算分析</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #0f1117; color: #e2e8f0; padding: 16px; }
+  h1 { font-size: 18px; font-weight: 700; color: #f8fafc; margin-bottom: 4px; }
+  .subtitle { font-size: 12px; color: #94a3b8; margin-bottom: 16px; }
+  .tabs { display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; }
+  .tab { padding: 6px 14px; border-radius: 20px; font-size: 12px; cursor: pointer; border: 1px solid #334155; color: #94a3b8; background: transparent; transition: all 0.2s; }
+  .tab.active { background: #3b82f6; color: #fff; border-color: #3b82f6; }
+  .tab:hover:not(.active) { border-color: #64748b; color: #e2e8f0; }
+  .panel { display: none; }
+  .panel.active { display: block; }
+  canvas { width: 100% !important; border-radius: 10px; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+  .card { background: #1e2535; border: 1px solid #2d3748; border-radius: 10px; padding: 14px; }
+  .card h3 { font-size: 12px; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
+  .card .val { font-size: 22px; font-weight: 700; }
+  .card .note { font-size: 11px; color: #64748b; margin-top: 4px; }
+  .green { color: #22c55e; } .yellow { color: #eab308; } .red { color: #ef4444; } .blue { color: #3b82f6; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 12px; }
+  th { background: #1e2535; color: #64748b; padding: 8px 10px; text-align: left; font-weight: 600; font-size: 11px; text-transform: uppercase; }
+  td { padding: 8px 10px; border-bottom: 1px solid #1e2535; }
+  tr:hover td { background: #1a2030; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: 600; }
+  .badge-buy { background: #14532d; color: #86efac; }
+  .badge-watch { background: #713f12; color: #fde68a; }
+  .badge-avoid { background: #450a0a; color: #fca5a5; }
+  .scenario-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 12px; }
+  .scenario-card { border-radius: 10px; padding: 14px; text-align: center; }
+  .bear { background: linear-gradient(135deg, #1a0a0a, #2d1010); border: 1px solid #7f1d1d; }
+  .base { background: linear-gradient(135deg, #0a1a0a, #102d10); border: 1px solid #14532d; }
+  .bull { background: linear-gradient(135deg, #0a0f1a, #10182d); border: 1px solid #1d4ed8; }
+  .sc-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.7; margin-bottom: 6px; }
+  .sc-price { font-size: 22px; font-weight: 800; margin: 4px 0; }
+  .sc-detail { font-size: 10px; opacity: 0.65; line-height: 1.6; }
+  .section-title { font-size: 13px; font-weight: 600; color: #cbd5e1; margin: 16px 0 8px; }
+  .buy-signal { background: #0f2a1e; border: 1px solid #166534; border-radius: 10px; padding: 14px; margin-top: 12px; }
+  .buy-signal h3 { color: #86efac; font-size: 13px; margin-bottom: 8px; }
+  .buy-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid #1a3a2a; gap: 8px; }
+  .buy-row:last-child { border-bottom: none; }
+  .current-price-badge { background: #1e3a5f; border: 1px solid #3b82f6; border-radius: 8px; padding: 10px 14px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px; }
+  .note-box { background: #1a2030; border: 1px solid #334155; border-radius: 8px; padding: 10px 14px; margin-bottom: 12px; font-size: 11px; color: #64748b; line-height: 1.7; }
+</style>
+</head>
+<body>
+
+<div style="margin-bottom:12px;">
+  <a href="index.html" style="color:#64748b;font-size:12px;text-decoration:none;display:inline-flex;align-items:center;gap:4px;padding:5px 10px;border:1px solid #334155;border-radius:8px;transition:all 0.2s;" onmouseover="this.style.color='#e2e8f0';this.style.borderColor='#64748b'" onmouseout="this.style.color='#64748b';this.style.borderColor='#334155'">← 返回總覽</a>
+</div>
+
+<h1>🖥️ 緯創資通 (3231) — 2026 股價推算分析</h1>
+<p class="subtitle">本益比河流圖 ✦ 三情境估值 ✦ 分批買點建議 ✦ 更新時間：2026年5月16日</p>
+
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('river', this)">📈 PER 河流圖</button>
+  <button class="tab" onclick="switchTab('scenario', this)">🎯 三情境買點</button>
+  <button class="tab" onclick="switchTab('eps', this)">📊 EPS 趨勢</button>
+  <button class="tab" onclick="switchTab('fundamental', this)">🏢 基本面分析</button>
+  <button class="tab" onclick="switchTab('summary', this)">📋 完整摘要</button>
+</div>
+
+<!-- TAB 1: PER River -->
+<div id="tab-river" class="panel active">
+  <div class="current-price-badge">
+    <span style="color:#94a3b8;font-size:12px;">目前股價（即時）</span>
+    <span style="color:#3b82f6;font-size:20px;font-weight:800;" id="live-price">載入中…</span>
+    <span style="color:#22c55e;font-size:12px;">PER ≈ 13.5x（TTM EPS 10.07元）歷史最低區</span>
+  </div>
+  <div class="note-box">
+    📌 <strong>河流圖 EPS 說明</strong>：goodinfo.tw 的本益比換算價格，季末月（M03/M06/M09/M12）直接使用當季EPS；季中月（M01/M02等）採線性插值，與截圖換算欄數值完全對應。
+  </div>
+  <canvas id="riverChart" height="340"></canvas>
+  <p style="font-size:11px;color:#475569;margin-top:8px;text-align:center;">* 白線為實際月收盤價，河流帶為各PER倍數換算價格，數值與 goodinfo.tw 截圖一致</p>
+</div>
+
+<!-- TAB 2: 三情境 -->
+<div id="tab-scenario" class="panel">
+  <div class="grid2">
+    <div class="card"><h3>TTM EPS（最新）</h3><div class="val blue">10.07 元</div><div class="note">26M03–26M05 穩定，季末確認值</div></div>
+    <div class="card"><h3>目前本益比</h3><div class="val green">13.5x</div><div class="note">26M05 收盤135.5，歷史最低區</div></div>
+  </div>
+
+  <div class="section-title">歷史 PER 區間（2023M06–2026M05 實際數據）</div>
+  <div class="grid2">
+    <div class="card">
+      <h3>PER 低檔（便宜帶）</h3>
+      <div class="val green">14x</div>
+      <div class="note">25M03: 14.27x ／ 25M04: 14.73x ／ 25M08: 14.29x<br>目前13.5x已低於歷史便宜帶</div>
+    </div>
+    <div class="card">
+      <h3>PER 高檔（昂貴帶）</h3>
+      <div class="val red">26x</div>
+      <div class="note">23M07: 34.26x（異常，AI題材炒作，排除）<br>一般高點落在 22–26x</div>
+    </div>
+  </div>
+
+  <div class="section-title">2026 全年三情境 EPS 與股價推算</div>
+  <div class="scenario-grid">
+    <div class="scenario-card bear">
+      <div class="sc-label">🐻 悲觀</div>
+      <div class="sc-price red">110–140</div>
+      <div class="sc-detail">EPS 9–10元<br>PER 12–14x<br>AI訂單縮減<br>股價維持低谷</div>
+    </div>
+    <div class="scenario-card base">
+      <div class="sc-label">⚖️ 基本</div>
+      <div class="sc-price green">160–210</div>
+      <div class="sc-detail">EPS 10–12元<br>PER 16–18x<br>AI伺服器穩定放量<br>PER 均值回歸</div>
+    </div>
+    <div class="scenario-card bull">
+      <div class="sc-label">🚀 樂觀</div>
+      <div class="sc-price" style="color:#60a5fa;">240–310</div>
+      <div class="sc-detail">EPS 12–13元<br>PER 20–26x<br>GB300大量出貨<br>份額超預期提升</div>
+    </div>
+  </div>
+
+  <div class="buy-signal">
+    <h3>💰 2026 分批建倉買點建議</h3>
+    <div class="buy-row">
+      <span style="color:#86efac;font-size:13px;font-weight:600;">第一批（40%）</span>
+      <span style="color:#fde68a;font-size:14px;font-weight:700;">120–135 元</span>
+      <span class="badge badge-buy">積極進場 PER 12–13.5x（歷史最低）</span>
+    </div>
+    <div class="buy-row">
+      <span style="color:#86efac;font-size:13px;font-weight:600;">第二批（40%）</span>
+      <span style="color:#fde68a;font-size:14px;font-weight:700;">135–155 元</span>
+      <span class="badge badge-buy">主力倉位 PER 13.5–15.4x</span>
+    </div>
+    <div class="buy-row">
+      <span style="color:#86efac;font-size:13px;font-weight:600;">第三批（20%）</span>
+      <span style="color:#fde68a;font-size:14px;font-weight:700;">155–181 元</span>
+      <span class="badge badge-watch">動能追加 PER 15–18x</span>
+    </div>
+    <div class="buy-row" style="border-top:1px solid #166534;margin-top:8px;padding-top:10px;">
+      <span style="color:#fca5a5;font-size:12px;">觀望/分批減倉</span>
+      <span style="color:#fca5a5;font-size:13px;font-weight:700;">262 元以上</span>
+      <span class="badge badge-avoid">PER > 26x（歷史高點）</span>
+    </div>
+  </div>
+</div>
+
+<!-- TAB 3: EPS -->
+<div id="tab-eps" class="panel">
+  <canvas id="epsChart" height="300"></canvas>
+  <div class="grid2">
+    <div class="card"><h3>TTM EPS 成長（近3年）</h3><div class="val green">+150%</div><div class="note">4.02元（23M06）→ 10.07元（26M05）</div></div>
+    <div class="card"><h3>近一年 EPS 年增率</h3><div class="val blue">+64.8%</div><div class="note">TTM 10.07 vs 去年同期 6.11元</div></div>
+  </div>
+
+  <div class="section-title">逐月明細（EPS = goodinfo河流圖換算值，PER 綠色=低於14x）</div>
+  <table>
+    <thead>
+      <tr>
+        <th>月份</th><th>收盤價</th><th>河流圖EPS</th><th>實際 PER</th><th>14x</th><th>18x</th><th>22x</th><th>26x</th>
+      </tr>
+    </thead>
+    <tbody id="epsTableBody"></tbody>
+  </table>
+</div>
+
+<!-- TAB 4: Summary -->
+<div id="tab-summary" class="panel">
+  <div class="section-title">📌 關鍵基本面數據</div>
+  <table>
+    <thead><tr><th>指標</th><th>數值</th><th>評估</th></tr></thead>
+    <tbody>
+      <tr><td>目前股價（2026/5/16）</td><td style="color:#3b82f6;font-weight:700;">135.5 元</td><td><span class="badge badge-buy">低於便宜帶14x</span></td></tr>
+      <tr><td>TTM EPS（季末確認）</td><td style="color:#22c55e;font-weight:700;">10.07 元</td><td><span class="badge badge-buy">連三個月穩定</span></td></tr>
+      <tr><td>目前本益比</td><td>13.5x</td><td><span class="badge badge-buy">歷史最低區</span></td></tr>
+      <tr><td>歷史 PER 低檔</td><td>~14x（25M03/25M04/25M08）</td><td><span class="badge badge-watch">目前已跌破便宜帶</span></td></tr>
+      <tr><td>歷史 PER 均值</td><td>~18x（2024年主要區間）</td><td><span class="badge badge-watch">均值回歸空間 +33%</span></td></tr>
+      <tr><td>歷史 PER 高點</td><td>34.26x（23M07 異常排除）/ 一般 22–26x</td><td><span class="badge badge-avoid">泡沫區</span></td></tr>
+      <tr><td>便宜價（14x）</td><td style="color:#22c55e;font-weight:700;">141 元</td><td><span class="badge badge-buy">目前低於此價</span></td></tr>
+      <tr><td>合理價（18x）</td><td style="color:#3b82f6;font-weight:700;">181 元</td><td><span class="badge badge-watch">距今 +33%</span></td></tr>
+      <tr><td>昂貴價（26x）</td><td>262 元</td><td><span class="badge badge-avoid">距今 +93%</span></td></tr>
+    </tbody>
+  </table>
+
+  <div class="section-title" style="margin-top:20px;">⚡ 催化劑 vs 風險</div>
+  <div class="grid2">
+    <div class="card">
+      <h3>🚀 利多</h3>
+      <div style="font-size:12px;line-height:1.9;color:#86efac;">✓ AI 伺服器（GB200/GB300）出貨放量<br>✓ Meta、Google、AWS 大客戶<br>✓ 目前 PER 創歷史新低，安全邊際極高<br>✓ EPS 近3年成長 150%<br>✓ ODM 彈性產能，快速切換機種<br>✓ 台灣+東南亞產線抗關稅</div>
+    </div>
+    <div class="card">
+      <h3>⚠️ 風險</h3>
+      <div style="font-size:12px;line-height:1.9;color:#fca5a5;">✗ ODM 毛利率偏薄（~5%）<br>✗ 季中月 EPS 為插值，非實際財報<br>✗ 美中關稅升級不確定性<br>✗ AI CSP 資本支出若縮減<br>✗ 廣達、仁寶等競爭者搶單<br>✗ 殖利率低，股息護城河有限</div>
+    </div>
+  </div>
+  <p style="font-size:10px;color:#475569;margin-top:14px;line-height:1.6;">⚠️ 本分析僅供參考，不構成投資建議。EPS河流圖採goodinfo.tw截圖數值（季末實際值+季中線性插值），股市有風險，請自行判斷。</p>
+</div>
+
+
+<!-- TAB: 基本面分析 -->
+<div id="tab-fundamental" class="panel">
+  
+  <!-- ── 公司營運 ── -->
+  <div class="section-title">📊 公司營運</div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;">
+    <div class="card"><h3>毛利率（最新季）</h3><div class="val yellow">~7.0%</div><div class="note">營業利益率 ~4.5%</div></div>
+    <div class="card"><h3>ROE（年化）</h3><div class="val green">~30%</div><div class="note">股東權益報酬率</div></div>
+    <div class="card"><h3>營收成長</h3><div class="val green" style="font-size:16px;">2026Q1 年增 ~50%</div><div class="note">年增率</div></div>
+  </div>
+  <div style="background:#1e2535;border:1px solid #2d3748;border-radius:10px;padding:14px;margin-bottom:14px;">
+    <div style="font-size:12px;font-weight:700;color:#cbd5e1;margin-bottom:10px;">毛利率 / 營業利益率 / EPS 趨勢</div>
+    <table style="margin:0;">
+      <thead><tr><th>期間</th><th>營收 YoY</th><th>毛利率</th><th>營業利益率</th><th>EPS</th></tr></thead>
+      <tbody>
+        <tr style=""><td>2023 全年</td>
+          <td style="color:#22c55e">+8%</td>
+          <td>6.5%</td>
+          <td>3.8%</td>
+          <td style="color:#22c55e">5.42</td>
+        </tr>
+        <tr style=""><td>2024 全年</td>
+          <td style="color:#22c55e">+45%</td>
+          <td>7.0%</td>
+          <td>4.2%</td>
+          <td style="color:#22c55e">7.04</td>
+        </tr>
+        <tr style=""><td>2025 Q3</td>
+          <td style="color:#22c55e">+80%</td>
+          <td>7.4%</td>
+          <td>4.5%</td>
+          <td style="color:#22c55e">2.57</td>
+        </tr>
+        <tr style=""><td>2025 Q4</td>
+          <td style="color:#22c55e">+90%</td>
+          <td>7.6%</td>
+          <td>4.8%</td>
+          <td style="color:#22c55e">2.57</td>
+        </tr>
+        <tr style="background:#0f2a1e;"><td><strong>2026 Q1★</strong></td>
+          <td style="color:#22c55e"><strong>+~50%</strong></td>
+          <td><strong>~7.0%</strong></td>
+          <td><strong>~4.5%</strong></td>
+          <td style="color:#22c55e"><strong>3.06</strong></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ── 商業模式 ── -->
+  <div class="section-title">🏗️ 商業模式</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
+    <div class="card">
+      <h3>怎麼賺錢 — ODM 伺服器整機代工</h3>
+      <div style="font-size:12px;line-height:1.9;color:#cbd5e1;margin-top:4px;">專注 AI 伺服器、雲端伺服器 ODM，同時保有傳統 PC/NB 業務。近年積極轉型為 AI 基礎建設供應商，透過出貨 AI 機架與整機系統擴大 AI 營收佔比。</div>
+    </div>
+    <div class="card">
+      <h3>護城河評估</h3>
+      <div style="font-size:12px;line-height:1.7;margin-top:4px;"><div style="color:#22c55e;">✅ AI 伺服器快速轉型</div><div style="color:#64748b;font-size:11px;margin-bottom:6px;">AI 伺服器佔比持續提升，從傳統 PC 成功轉型</div>
+<div style="color:#22c55e;">✅ Dell 供應鏈切入</div><div style="color:#64748b;font-size:11px;margin-bottom:6px;">收購 Dell 股權深化合作</div>
+<div style="color:#ef4444;">⚠️ 毛利率偏低</div><div style="color:#64748b;font-size:11px;margin-bottom:6px;">ODM 代工本質，毛利率 6–7%</div>
+<div style="color:#ef4444;">⚠️ 競爭激烈</div><div style="color:#64748b;font-size:11px;margin-bottom:6px;">與廣達、鴻海、緯穎競爭 CSP 訂單</div>
+</div>
+    </div>
+  </div>
+  <div style="background:#1e2535;border:1px solid #2d3748;border-radius:10px;padding:14px;margin-bottom:14px;">
+    <div style="font-size:12px;font-weight:700;color:#cbd5e1;margin-bottom:10px;">主要客戶 與 競爭對手</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+      <div>
+        <div style="font-size:11px;color:#64748b;margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em;">主要客戶</div>
+        <div style="display:flex;flex-direction:column;gap:5px;">          <div style="display:flex;justify-content:space-between;align-items:center;background:#141b2d;border-radius:6px;padding:7px 10px;">
+            <span style="color:#f8fafc;font-size:12px;font-weight:600;">Dell Technologies</span>
+            <span style="font-size:10px;color:#64748b;">重要戰略夥伴兼客戶</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;background:#141b2d;border-radius:6px;padding:7px 10px;">
+            <span style="color:#f8fafc;font-size:12px;font-weight:600;">Google Cloud</span>
+            <span style="font-size:10px;color:#64748b;">AI 伺服器出貨</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;background:#141b2d;border-radius:6px;padding:7px 10px;">
+            <span style="color:#f8fafc;font-size:12px;font-weight:600;">Amazon AWS</span>
+            <span style="font-size:10px;color:#64748b;">AI 推論伺服器</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;background:#141b2d;border-radius:6px;padding:7px 10px;">
+            <span style="color:#f8fafc;font-size:12px;font-weight:600;">Microsoft</span>
+            <span style="font-size:10px;color:#64748b;">雲端伺服器</span>
+          </div>
+</div>
+      </div>
+      <div>
+        <div style="font-size:11px;color:#64748b;margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em;">競爭對手 ｜ 是否容易被取代：中等</div>
+        <div style="display:flex;flex-direction:column;gap:5px;">          <div style="display:flex;justify-content:space-between;align-items:center;background:#141b2d;border-radius:6px;padding:7px 10px;">
+            <span style="color:#f8fafc;font-size:12px;font-weight:600;">廣達 2382</span>
+            <span style="font-size:10px;color:#64748b;">AI 伺服器最直接競爭</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;background:#141b2d;border-radius:6px;padding:7px 10px;">
+            <span style="color:#f8fafc;font-size:12px;font-weight:600;">鴻海 2317</span>
+            <span style="font-size:10px;color:#64748b;">機架整合</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;background:#141b2d;border-radius:6px;padding:7px 10px;">
+            <span style="color:#f8fafc;font-size:12px;font-weight:600;">緯穎 6669</span>
+            <span style="font-size:10px;color:#64748b;">高階 AI 伺服器</span>
+          </div>
+</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 產業地位 ── -->
+  <div class="section-title">🌐 產業地位</div>
+  <div style="background:#1e2535;border:1px solid #2d3748;border-radius:10px;padding:14px;margin-bottom:14px;">
+    <div style="font-size:12px;color:#94a3b8;line-height:1.8;">📌 台股 AI 伺服器 ODM 前三大，全球伺服器出貨前 5</div>
+  </div>
+
+  <!-- ── 估值 ── -->
+  <div class="section-title">💰 估值指標</div>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:10px;">
+    <div class="card" style="text-align:center;">
+      <h3>TTM P/E</h3>
+      <div class="val" id="fund-pe-3231" style="color:#f8fafc;">…</div>
+      <div class="note" id="fund-pe-note-3231">TTM EPS 10.07 元</div>
+    </div>
+    <div class="card" style="text-align:center;">
+      <h3>前瞻 P/E</h3>
+      <div class="val yellow">~14x</div>
+      <div class="note">12–15 元（法人共識）</div>
+    </div>
+    <div class="card" style="text-align:center;">
+      <h3>P/B（估算）</h3>
+      <div class="val" style="color:#f97316;">~3.6x</div>
+      <div class="note">每股淨值約 38.0 元</div>
+    </div>
+    <div class="card" style="text-align:center;">
+      <h3>ROE</h3>
+      <div class="val green">~30%</div>
+      <div class="note">股東權益報酬率</div>
+    </div>
+  </div>
+  <p style="font-size:10px;color:#334155;margin-top:10px;line-height:1.6;">⚠️ 本分析僅供參考，不構成投資建議。部分數據為估算值，請以公開財報為準。</p>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<script>
+function switchTab(id, btn) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  btn.classList.add('active');
+  if (id === 'eps' && !window.epsDrawn) drawEPS();
+}
+
+// ── 完整數據（與 goodinfo 截圖 100% 對應）──
+// EPS：季末月用實際值，季中月用線性插值（反推自截圖10x欄）
+const data = [
+  { m:'23M06', px:90.8,  eps:4.02,  per:22.59 },
+  { m:'23M07', px:141.5, eps:4.13,  per:34.26 },
+  { m:'23M08', px:117,   eps:4.24,  per:27.59 },
+  { m:'23M09', px:101.5, eps:4.35,  per:23.33 },
+  { m:'23M10', px:89.4,  eps:4.26,  per:20.99 },
+  { m:'23M11', px:91.5,  eps:4.17,  per:21.94 },
+  { m:'23M12', px:98.6,  eps:4.08,  per:24.17 },
+  { m:'24M01', px:114.5, eps:4.46,  per:25.67 },
+  { m:'24M02', px:115.5, eps:4.84,  per:23.86 },
+  { m:'24M03', px:125,   eps:5.22,  per:23.95 },
+  { m:'24M04', px:113.5, eps:5.353, per:21.20 },
+  { m:'24M05', px:112,   eps:5.487, per:20.41 },
+  { m:'24M06', px:106,   eps:5.62,  per:18.86 },
+  { m:'24M07', px:96.8,  eps:5.557, per:17.42 },
+  { m:'24M08', px:101.5, eps:5.493, per:18.48 },
+  { m:'24M09', px:101,   eps:5.43,  per:18.60 },
+  { m:'24M10', px:111,   eps:5.657, per:19.62 },
+  { m:'24M11', px:113.5, eps:5.883, per:19.29 },
+  { m:'24M12', px:104,   eps:6.11,  per:17.02 },
+  { m:'25M01', px:110,   eps:6.30,  per:17.46 },
+  { m:'25M02', px:112,   eps:6.49,  per:17.26 },
+  { m:'25M03', px:95.3,  eps:6.68,  per:14.27 },
+  { m:'25M04', px:101.5, eps:6.893, per:14.73 },
+  { m:'25M05', px:116.5, eps:7.107, per:16.39 },
+  { m:'25M06', px:122.5, eps:7.32,  per:16.73 },
+  { m:'25M07', px:123,   eps:7.613, per:16.16 },
+  { m:'25M08', px:113,   eps:7.907, per:14.29 },
+  { m:'25M09', px:140.5, eps:8.20,  per:17.13 },
+  { m:'25M10', px:150.5, eps:8.48,  per:17.75 },
+  { m:'25M11', px:144.5, eps:8.76,  per:16.50 },
+  { m:'25M12', px:150.5, eps:9.04,  per:16.65 },
+  { m:'26M01', px:130.5, eps:9.383, per:13.91 },
+  { m:'26M02', px:136,   eps:9.727, per:13.98 },
+  { m:'26M03', px:122.5, eps:10.07, per:12.16 },
+  { m:'26M04', px:137,   eps:10.07, per:13.60 },
+  { m:'26M05', px:135.5, eps:10.07, per:13.46 },
+];
+
+const labels = data.map(d => d.m);
+const prices = data.map(d => d.px);
+const p14    = data.map(d => +(d.eps * 14).toFixed(1));
+const p18    = data.map(d => +(d.eps * 18).toFixed(1));
+const p22    = data.map(d => +(d.eps * 22).toFixed(1));
+const p26    = data.map(d => +(d.eps * 26).toFixed(1));
+const p30    = data.map(d => +(d.eps * 30).toFixed(1));
+
+// ── PER River Chart ──
+
+async function updateFundamentalPE_3231() {
+  try {
+    const res = await fetch('https://taiwan-stock-price.david870114.workers.dev/?id=3231', { cache: 'no-cache' });
+    const data = JSON.parse(await res.text());
+    const price = parseFloat(data.price);
+    if (price && !isNaN(price)) {
+      const ttm = 10.07;
+      const pe = (price / ttm).toFixed(1);
+      const el = document.getElementById('fund-pe-3231');
+      const noteEl = document.getElementById('fund-pe-note-3231');
+      if (el) {
+        el.textContent = pe + 'x';
+        el.style.color = pe > 40 ? '#ef4444' : pe > 25 ? '#eab308' : '#22c55e';
+      }
+      if (noteEl) noteEl.textContent = '股價 ' + price.toLocaleString() + ' ｜ TTM EPS 10.07';
+    }
+  } catch(e) {}
+}
+window.addEventListener('load', updateFundamentalPE_3231);
+
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    const ctx = document.getElementById('riverChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [
+          { label:'PER 30x（極貴）', data: p30, borderColor:'#ef4444', backgroundColor:'rgba(239,68,68,0.04)', borderWidth:1, borderDash:[5,4], pointRadius:0, fill:false },
+          { label:'PER 26x（昂貴）', data: p26, borderColor:'#f97316', backgroundColor:'rgba(249,115,22,0.06)', borderWidth:1.5, pointRadius:0, fill:'-1' },
+          { label:'PER 22x（偏貴）', data: p22, borderColor:'#eab308', backgroundColor:'rgba(234,179,8,0.07)',  borderWidth:1.5, pointRadius:0, fill:'-1' },
+          { label:'PER 18x（合理）', data: p18, borderColor:'#22c55e', backgroundColor:'rgba(34,197,94,0.07)',  borderWidth:1.5, pointRadius:0, fill:'-1' },
+          { label:'PER 14x（便宜）', data: p14, borderColor:'#3b82f6', backgroundColor:'rgba(59,130,246,0.04)', borderWidth:1, borderDash:[5,4], pointRadius:0, fill:'-1' },
+          { label:'實際月收盤價',    data: prices, borderColor:'#ffffff', borderWidth:2.5, pointRadius:3, pointBackgroundColor:'#fff', fill:false, tension:0.3, spanGaps:true },
+        ]
+      },
+      options: {
+        responsive: true,
+        interaction: { mode:'index', intersect:false },
+        plugins: {
+          legend: { labels:{ color:'#94a3b8', font:{size:11}, boxWidth:18 } },
+          tooltip: {
+            backgroundColor:'#1e2535', titleColor:'#f8fafc', bodyColor:'#94a3b8',
+            borderColor:'#334155', borderWidth:1,
+            callbacks: { label: ctx => ` ${ctx.dataset.label}: ${ctx.raw}` }
+          }
+        },
+        scales: {
+          x: { ticks:{ color:'#64748b', font:{size:10}, maxRotation:45 }, grid:{ color:'rgba(30,37,53,0.8)' } },
+          y: { ticks:{ color:'#64748b', font:{size:10}, callback: v => v.toLocaleString() }, grid:{ color:'rgba(30,37,53,0.8)' } }
+        }
+      }
+    });
+  }, 200);
+
+  // ── EPS Table ──
+  const tbody = document.getElementById('epsTableBody');
+  [...data].reverse().forEach(d => {
+    const isLow = d.per < 14;
+    const isHigh = d.per > 26;
+    const perColor = isLow ? '#22c55e' : isHigh ? '#ef4444' : '#e2e8f0';
+    const r = document.createElement('tr');
+    r.innerHTML = `
+      <td>${d.m}</td>
+      <td>${d.px}</td>
+      <td>${d.eps}</td>
+      <td style="color:${perColor};font-weight:${isLow||isHigh?700:400}">${d.per}x</td>
+      <td>${(d.eps*14).toFixed(1)}</td>
+      <td>${(d.eps*18).toFixed(1)}</td>
+      <td>${(d.eps*22).toFixed(1)}</td>
+      <td>${(d.eps*26).toFixed(1)}</td>`;
+    tbody.appendChild(r);
+  });
+});
+
+function drawEPS() {
+  window.epsDrawn = true;
+  const ctx2 = document.getElementById('epsChart').getContext('2d');
+  new Chart(ctx2, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [{
+        label: '河流圖 EPS（元）',
+        data: data.map(d => d.eps),
+        borderColor: '#3b82f6',
+        backgroundColor: 'rgba(59,130,246,0.1)',
+        borderWidth: 2, pointRadius: 2, fill: true, tension: 0.3, spanGaps: true,
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { labels:{ color:'#94a3b8' } },
+        tooltip: { backgroundColor:'#1e2535', bodyColor:'#94a3b8', callbacks:{ label: c => ` EPS ${c.raw}元` } }
+      },
+      scales: {
+        x: { ticks:{ color:'#64748b', font:{size:10}, maxRotation:45 }, grid:{ color:'rgba(30,37,53,0.8)' } },
+        y: { ticks:{ color:'#64748b', callback: v => v+'元' }, grid:{ color:'rgba(30,37,53,0.8)' } }
+      }
+    }
+  });
+}
+
+async function updateLivePrice_3231() {
+  try {
+    const res = await fetch('https://taiwan-stock-price.david870114.workers.dev/?id=3231', { cache: 'no-cache' });
+    const data = JSON.parse(await res.text());
+    const price = parseFloat(data.price);
+    if (price && !isNaN(price)) {
+      const el = document.getElementById('live-price');
+      if (el) el.textContent = price.toLocaleString();
+      const pe = (price / 10.07).toFixed(1);
+      const perEl = document.getElementById('live-per');
+      if (perEl) {
+        perEl.textContent = 'PER ≈ ' + pe + 'x（TTM EPS 10.07元）';
+        perEl.style.color = pe > 40 ? '#ef4444' : pe > 25 ? '#eab308' : '#22c55e';
+      }
+    }
+  } catch(e) {}
+}
+
+window.addEventListener('load', updateLivePrice_3231);
+</script>
+</body>
+</html>

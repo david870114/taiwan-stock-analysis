@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>台積電 2330 — 2026 股價推算分析</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #0f1117; color: #e2e8f0; padding: 16px; }
+  h1 { font-size: 18px; font-weight: 700; color: #f8fafc; margin-bottom: 4px; }
+  .subtitle { font-size: 12px; color: #94a3b8; margin-bottom: 16px; }
+  .tabs { display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; }
+  .tab { padding: 6px 14px; border-radius: 20px; font-size: 12px; cursor: pointer; border: 1px solid #334155; color: #94a3b8; background: transparent; transition: all 0.2s; }
+  .tab.active { background: #3b82f6; color: #fff; border-color: #3b82f6; }
+  .tab:hover:not(.active) { border-color: #64748b; color: #e2e8f0; }
+  .panel { display: none; }
+  .panel.active { display: block; }
+  canvas { width: 100% !important; border-radius: 10px; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+  .card { background: #1e2535; border: 1px solid #2d3748; border-radius: 10px; padding: 14px; }
+  .card h3 { font-size: 12px; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
+  .card .val { font-size: 22px; font-weight: 700; }
+  .card .note { font-size: 11px; color: #64748b; margin-top: 4px; }
+  .green { color: #22c55e; } .yellow { color: #eab308; } .red { color: #ef4444; } .blue { color: #3b82f6; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 12px; }
+  th { background: #1e2535; color: #64748b; padding: 8px 10px; text-align: left; font-weight: 600; font-size: 11px; text-transform: uppercase; }
+  td { padding: 8px 10px; border-bottom: 1px solid #1e2535; }
+  tr:hover td { background: #1a2030; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: 600; }
+  .badge-buy { background: #14532d; color: #86efac; }
+  .badge-watch { background: #713f12; color: #fde68a; }
+  .badge-avoid { background: #450a0a; color: #fca5a5; }
+  .scenario-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 12px; }
+  .scenario-card { border-radius: 10px; padding: 14px; text-align: center; }
+  .bear { background: linear-gradient(135deg, #1a0a0a, #2d1010); border: 1px solid #7f1d1d; }
+  .base { background: linear-gradient(135deg, #0a1a0a, #102d10); border: 1px solid #14532d; }
+  .bull { background: linear-gradient(135deg, #0a0f1a, #10182d); border: 1px solid #1d4ed8; }
+  .sc-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.7; margin-bottom: 6px; }
+  .sc-price { font-size: 22px; font-weight: 800; margin: 4px 0; }
+  .sc-detail { font-size: 10px; opacity: 0.65; line-height: 1.6; }
+  .section-title { font-size: 13px; font-weight: 600; color: #cbd5e1; margin: 16px 0 8px; }
+  .buy-signal { background: #0f2a1e; border: 1px solid #166534; border-radius: 10px; padding: 14px; margin-top: 12px; }
+  .buy-signal h3 { color: #86efac; font-size: 13px; margin-bottom: 8px; }
+  .buy-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid #1a3a2a; gap: 8px; }
+  .buy-row:last-child { border-bottom: none; }
+  .current-price-badge { background: #1e3a5f; border: 1px solid #3b82f6; border-radius: 8px; padding: 10px 14px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px; }
+  .back-btn { color: #64748b; font-size: 12px; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; padding: 5px 10px; border: 1px solid #334155; border-radius: 8px; margin-bottom: 12px; transition: all 0.2s; }
+  .back-btn:hover { color: #e2e8f0; border-color: #64748b; }
+</style>
+</head>
+<body>
+
+<a href="index.html" class="back-btn">← 返回總覽</a>
+
+<h1>🔬 台積電 (2330) — 2026 股價推算分析</h1>
+<p class="subtitle">本益比河流圖 ✦ 三情境估值 ✦ 分批買點建議 ✦ 更新時間：2026年5月16日</p>
+
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('river', this)">📈 PER 河流圖</button>
+  <button class="tab" onclick="switchTab('scenario', this)">🎯 三情境買點</button>
+  <button class="tab" onclick="switchTab('eps', this)">📊 EPS 趨勢</button>
+  <button class="tab" onclick="switchTab('fundamental', this)">🏢 基本面分析</button>
+  <button class="tab" onclick="switchTab('summary', this)">📋 完整摘要</button>
+</div>
+
+<!-- TAB 1: PER River -->
+<div id="tab-river" class="panel active">
+  <div class="current-price-badge">
+    <span style="color:#94a3b8;font-size:12px;">目前股價（即時）</span>
+    <span style="color:#3b82f6;font-size:20px;font-weight:800;" id="live-price">載入中…</span>
+    <span style="color:#ef4444;font-size:12px;">PER ≈ 34.2x（TTM EPS 66.26元）超越昂貴區</span>
+  </div>
+  <canvas id="riverChart" height="340"></canvas>
+  <p style="font-size:11px;color:#475569;margin-top:8px;text-align:center;">* 2026Q2後為預估數值（EPS年化約80–90元），河流帶代表不同本益比倍數估值</p>
+</div>
+
+<!-- TAB 2: 三情境 -->
+<div id="tab-scenario" class="panel">
+  <div class="grid2">
+    <div class="card"><h3>2025 全年 EPS（實際）</h3><div class="val blue">66.26 元</div><div class="note">YoY +46% ｜ 2024年: 45.25元</div></div>
+    <div class="card"><h3>2026 Q1 EPS（最新）</h3><div class="val green">22.08 元</div><div class="note">YoY +58% ｜ 毛利率 66.2%</div></div>
+  </div>
+  <div class="section-title">2026 全年三情境 EPS 與股價推算</div>
+  <div class="scenario-grid">
+    <div class="scenario-card bear">
+      <div class="sc-label">🐻 悲觀</div>
+      <div class="sc-price red">1,190–1,650</div>
+      <div class="sc-detail">EPS 70元<br>PER 17–22x<br>AI需求趨緩<br>地緣政治衝擊</div>
+    </div>
+    <div class="scenario-card base">
+      <div class="sc-label">⚖️ 基本</div>
+      <div class="sc-price green">1,750–2,200</div>
+      <div class="sc-detail">EPS 75–80元<br>PER 22–28x<br>AI持續擴產<br>CoWoS維持高利用率</div>
+    </div>
+    <div class="scenario-card bull">
+      <div class="sc-label">🚀 樂觀</div>
+      <div class="sc-price" style="color:#60a5fa;">2,400–3,000</div>
+      <div class="sc-detail">EPS 85–100元<br>PER 28–35x<br>2nm超預期良率<br>海外廠提前貢獻</div>
+    </div>
+  </div>
+  <div class="buy-signal">
+    <h3>💰 2026 分批建倉買點建議</h3>
+    <div class="buy-row">
+      <span style="color:#86efac;font-size:13px;font-weight:600;">第一批（40%）</span>
+      <span style="color:#fde68a;font-size:14px;font-weight:700;">1,450–1,700 元</span>
+      <span class="badge badge-buy">積極進場 PER 19–23x</span>
+    </div>
+    <div class="buy-row">
+      <span style="color:#86efac;font-size:13px;font-weight:600;">第二批（40%）</span>
+      <span style="color:#fde68a;font-size:14px;font-weight:700;">1,700–2,000 元</span>
+      <span class="badge badge-buy">主力倉位 PER 23–27x</span>
+    </div>
+    <div class="buy-row">
+      <span style="color:#86efac;font-size:13px;font-weight:600;">第三批（20%）</span>
+      <span style="color:#fde68a;font-size:14px;font-weight:700;">2,000–2,300 元</span>
+      <span class="badge badge-watch">動能追加 PER 27–31x</span>
+    </div>
+    <div class="buy-row" style="border-top:1px solid #166534;margin-top:8px;padding-top:10px;">
+      <span style="color:#fca5a5;font-size:12px;">觀望/分批減倉</span>
+      <span style="color:#fca5a5;font-size:13px;font-weight:700;">2,500 元以上</span>
+      <span class="badge badge-avoid">PER > 33x</span>
+    </div>
+  </div>
+</div>
+
+<!-- TAB 3: EPS -->
+<div id="tab-eps" class="panel">
+  <canvas id="epsChart" height="300"></canvas>
+  <div class="grid2">
+    <div class="card"><h3>5年EPS CAGR（2020–2025）</h3><div class="val green">+22%</div><div class="note">從 19.97元 → 66.26元</div></div>
+    <div class="card"><h3>2026Q1 毛利率</h3><div class="val yellow">66.2%</div><div class="note">歷史新高，AI 溢價持續</div></div>
+  </div>
+</div>
+
+<!-- TAB 4: 基本面分析 -->
+<div id="tab-fundamental" class="panel">
+
+  <div class="section-title">📊 公司營運</div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;">
+    <div class="card"><h3>毛利率（2026Q1）</h3><div class="val yellow">66.2%</div><div class="note">營業利益率 58.1%</div></div>
+    <div class="card"><h3>ROE（年化）</h3><div class="val green">~35%</div><div class="note">股東權益報酬率</div></div>
+    <div class="card"><h3>營收成長</h3><div class="val green">+35.1%</div><div class="note">2026Q1 年增率</div></div>
+  </div>
+  <div style="background:#1e2535;border:1px solid #2d3748;border-radius:10px;padding:14px;margin-bottom:14px;">
+    <div style="font-size:12px;font-weight:700;color:#cbd5e1;margin-bottom:10px;">毛利率 / 營業利益率 / EPS 趨勢</div>
+    <table style="margin:0;">
+      <thead>
+        <tr><th>期間</th><th style="text-align:right;">營收 YoY</th><th style="text-align:right;">毛利率</th><th style="text-align:right;">營業利益率</th><th style="text-align:right;">EPS</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>2023 全年</td><td style="text-align:right;color:#22c55e;">+9%</td><td style="text-align:right;">54.4%</td><td style="text-align:right;">42.6%</td><td style="text-align:right;color:#22c55e;">32.0</td></tr>
+        <tr><td>2024 全年</td><td style="text-align:right;color:#22c55e;">+34%</td><td style="text-align:right;">56.1%</td><td style="text-align:right;">45.7%</td><td style="text-align:right;color:#22c55e;">45.25</td></tr>
+        <tr><td>2025 Q3</td><td style="text-align:right;color:#22c55e;">+39%</td><td style="text-align:right;">57.8%</td><td style="text-align:right;">47.5%</td><td style="text-align:right;color:#22c55e;">15.72</td></tr>
+        <tr><td>2025 Q4</td><td style="text-align:right;color:#22c55e;">+38%</td><td style="text-align:right;">59.0%</td><td style="text-align:right;">49.0%</td><td style="text-align:right;color:#22c55e;">14.45</td></tr>
+        <tr style="background:#0f2a1e;"><td><strong>2026 Q1★</strong></td><td style="text-align:right;color:#22c55e;"><strong>+35%</strong></td><td style="text-align:right;color:#22c55e;"><strong>66.2% ↑</strong></td><td style="text-align:right;color:#22c55e;"><strong>58.1% ↑</strong></td><td style="text-align:right;color:#22c55e;"><strong>22.08</strong></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section-title">🏗️ 商業模式</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
+    <div class="card">
+      <h3>怎麼賺錢 — 晶圓代工（Foundry）模式</h3>
+      <div style="font-size:12px;line-height:1.9;color:#cbd5e1;margin-top:4px;">為客戶代工製造半導體晶片，不設計自有品牌產品。以先進製程（3nm/2nm）與 CoWoS 先進封裝為核心競爭力，向 NVIDIA、Apple、AMD 等客戶收取製造服務費，毛利率全球最高。</div>
+    </div>
+    <div class="card">
+      <h3>護城河評估</h3>
+      <div style="font-size:12px;line-height:1.7;margin-top:4px;">
+        <div style="color:#22c55e;">✅ 技術領先 2–3 年</div>
+        <div style="color:#64748b;font-size:11px;margin-bottom:6px;">先進製程無可取代，Intel/Samsung 良率仍落後</div>
+        <div style="color:#22c55e;">✅ 規模護城河</div>
+        <div style="color:#64748b;font-size:11px;margin-bottom:6px;">資本支出門檻極高，一座 2nm 廠需 400 億美元</div>
+        <div style="color:#22c55e;">✅ 客戶黏著度高</div>
+        <div style="color:#64748b;font-size:11px;margin-bottom:6px;">Apple/NVIDIA 深度綁定，換廠成本極高</div>
+        <div style="color:#22c55e;">✅ CoWoS 產能稀缺</div>
+        <div style="color:#64748b;font-size:11px;">AI 先進封裝瓶頸，2026 年仍供不應求</div>
+      </div>
+    </div>
+  </div>
+  <div style="background:#1e2535;border:1px solid #2d3748;border-radius:10px;padding:14px;margin-bottom:14px;">
+    <div style="font-size:12px;font-weight:700;color:#cbd5e1;margin-bottom:10px;">主要客戶 與 競爭對手</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+      <div>
+        <div style="font-size:11px;color:#64748b;margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em;">主要客戶</div>
+        <div style="display:flex;flex-direction:column;gap:5px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;background:#141b2d;border-radius:6px;padding:7px 10px;"><span style="color:#f8fafc;font-size:12px;font-weight:600;">Apple</span><span style="font-size:10px;color:#64748b;">A/M 系列晶片，最大客戶</span></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;background:#141b2d;border-radius:6px;padding:7px 10px;"><span style="color:#f8fafc;font-size:12px;font-weight:600;">NVIDIA</span><span style="font-size:10px;color:#64748b;">H100/B100/B200 全委代工</span></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;background:#141b2d;border-radius:6px;padding:7px 10px;"><span style="color:#f8fafc;font-size:12px;font-weight:600;">AMD</span><span style="font-size:10px;color:#64748b;">EPYC、Radeon 系列</span></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;background:#141b2d;border-radius:6px;padding:7px 10px;"><span style="color:#f8fafc;font-size:12px;font-weight:600;">高通 / 聯發科</span><span style="font-size:10px;color:#64748b;">行動 SoC 晶片</span></div>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:11px;color:#64748b;margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em;">競爭對手 ｜ 極難被取代（2–3 年技術代差）</div>
+        <div style="display:flex;flex-direction:column;gap:5px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;background:#141b2d;border-radius:6px;padding:7px 10px;"><span style="color:#f8fafc;font-size:12px;font-weight:600;">Samsung Foundry</span><span style="font-size:10px;color:#64748b;">技術相近但良率落後</span></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;background:#141b2d;border-radius:6px;padding:7px 10px;"><span style="color:#f8fafc;font-size:12px;font-weight:600;">Intel Foundry</span><span style="font-size:10px;color:#64748b;">積極追趕，仍有差距</span></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;background:#141b2d;border-radius:6px;padding:7px 10px;"><span style="color:#f8fafc;font-size:12px;font-weight:600;">中芯 SMIC</span><span style="font-size:10px;color:#64748b;">中國最大，受限出口管制</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title">🌐 產業地位</div>
+  <div style="background:#1e2535;border:1px solid #2d3748;border-radius:10px;padding:14px;margin-bottom:14px;">
+    <div style="font-size:12px;color:#94a3b8;line-height:1.8;">📌 全球晶圓代工市占率 &gt;60%，先進製程（7nm 以下）市占 &gt;90%。HPC（AI 晶片）佔 2026Q1 營收 61%，是最核心的成長動能。</div>
+  </div>
+
+  <div class="section-title">💰 估值指標</div>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:10px;">
+    <div class="card" style="text-align:center;">
+      <h3>TTM P/E</h3>
+      <div class="val" id="fund-pe-2330" style="color:#f8fafc;">…</div>
+      <div class="note" id="fund-pe-note-2330">TTM EPS 66.26 元</div>
+    </div>
+    <div class="card" style="text-align:center;">
+      <h3>前瞻 P/E</h3>
+      <div class="val yellow">~22x</div>
+      <div class="note">法人 EPS ~100 元</div>
+    </div>
+    <div class="card" style="text-align:center;">
+      <h3>P/B（估算）</h3>
+      <div class="val" style="color:#f97316;">~13x</div>
+      <div class="note">每股淨值約 175 元</div>
+    </div>
+    <div class="card" style="text-align:center;">
+      <h3>ROE</h3>
+      <div class="val green">~35%</div>
+      <div class="note">股東權益報酬率</div>
+    </div>
+  </div>
+  <p style="font-size:10px;color:#475569;margin-top:10px;line-height:1.6;">⚠️ 本分析僅供參考，不構成投資建議。部分數據為估算值，請以公開財報為準。</p>
+</div>
+
+<!-- TAB 5: Summary -->
+<div id="tab-summary" class="panel">
+  <div class="section-title">📌 關鍵基本面數據</div>
+  <table>
+    <thead><tr><th>指標</th><th>數值</th><th>評估</th></tr></thead>
+    <tbody>
+      <tr><td>目前股價（2026/5/16）</td><td style="color:#ef4444;font-weight:700;">2,265 元</td><td><span class="badge badge-avoid">超越昂貴區</span></td></tr>
+      <tr><td>2025 全年 EPS</td><td style="color:#3b82f6;font-weight:700;">66.26 元（YoY+46%）</td><td><span class="badge badge-buy">歷史新高</span></td></tr>
+      <tr><td>2026 Q1 EPS</td><td style="color:#22c55e;font-weight:700;">22.08 元（YoY+58%）</td><td><span class="badge badge-buy">強勁</span></td></tr>
+      <tr><td>2026F EPS 法人預估</td><td>~80–100 元</td><td><span class="badge badge-buy">持續上修</span></td></tr>
+      <tr><td>目前本益比</td><td style="color:#ef4444;font-weight:700;">~34.2x（超越昂貴區 28x）</td><td><span class="badge badge-avoid">偏貴</span></td></tr>
+      <tr><td>2026Q1 毛利率</td><td style="color:#22c55e;font-weight:700;">66.2%（歷史新高）</td><td><span class="badge badge-buy">極優</span></td></tr>
+      <tr><td>便宜價（17x）</td><td>1,126 元</td><td><span class="badge badge-buy">目前距便宜價 -50%</span></td></tr>
+      <tr><td>合理價（22x）</td><td>1,458 元</td><td><span class="badge badge-watch">目前距合理價 -36%</span></td></tr>
+      <tr><td>昂貴價（28x）</td><td>1,855 元</td><td><span class="badge badge-avoid">目前高於昂貴價 +22%</span></td></tr>
+      <tr><td>HPC 佔比（2026Q1）</td><td style="color:#22c55e;font-weight:700;">61%</td><td><span class="badge badge-buy">AI 需求主導</span></td></tr>
+    </tbody>
+  </table>
+  <div class="section-title" style="margin-top:20px;">⚡ 催化劑 vs 風險</div>
+  <div class="grid2">
+    <div class="card">
+      <h3>🚀 利多</h3>
+      <div style="font-size:12px;line-height:1.9;color:#86efac;">
+        ✓ 2026Q1 毛利率 66.2% 歷史新高<br>
+        ✓ 2nm 製程如期量產，良率超預期<br>
+        ✓ CoWoS 先進封裝持續供不應求<br>
+        ✓ HPC 佔比提升至 61%<br>
+        ✓ 美國/日本廠商逐步貢獻<br>
+        ✓ AI 資本支出 2026 仍高成長
+      </div>
+    </div>
+    <div class="card">
+      <h3>⚠️ 風險</h3>
+      <div style="font-size:12px;line-height:1.9;color:#fca5a5;">
+        ✗ PER 34x 顯著超過昂貴區（28x）<br>
+        ✗ 地緣政治：美中關係與台海風險<br>
+        ✗ 美國廠建置成本高，壓縮整體毛利<br>
+        ✗ 三星/Intel 追趕進展<br>
+        ✗ 智慧型手機需求疲弱（佔比降至 26%）<br>
+        ✗ 匯率波動（美元兌台幣）
+      </div>
+    </div>
+  </div>
+  <p style="font-size:10px;color:#475569;margin-top:14px;line-height:1.6;">⚠️ 本分析僅供參考，不構成投資建議。股市有風險，投資前請自行判斷。</p>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<script>
+function switchTab(id, btn) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  btn.classList.add('active');
+  if (id === 'eps' && !window.epsDrawn) drawEPS();
+}
+
+const quarters = ['23M06','23M09','23M12','24M03','24M06','24M09','24M12','25M03','25M06','25M09','25M12','26M03','26M06E','26M09E','26M12E'];
+const ttmEPS =   [34.54,  34.54,  32.34,  33.07,  35.59,  40.01,  45.25,  50.52,  56.31,  61.2,   66.26,  66.26,  75,     82,     88];
+const closePx =  [549,    523,    593,    779,    966,    957,    1075,   910,    1060,   1305,   1550,   2265,   null,   null,   null];
+
+function makeRiverBand(epsArr, mult) { return epsArr.map(e => +(e * mult).toFixed(0)); }
+
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    const ctx = document.getElementById('riverChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: quarters,
+        datasets: [
+          { label: 'PER 35x（極高）', data: makeRiverBand(ttmEPS,35), borderColor:'#ef4444', backgroundColor:'rgba(239,68,68,0.04)', borderWidth:1, borderDash:[5,4], pointRadius:0, fill:false },
+          { label: 'PER 28x（昂貴）', data: makeRiverBand(ttmEPS,28), borderColor:'#f97316', backgroundColor:'rgba(249,115,22,0.06)', borderWidth:1.5, pointRadius:0, fill:'-1' },
+          { label: 'PER 22x（合理）', data: makeRiverBand(ttmEPS,22), borderColor:'#eab308', backgroundColor:'rgba(234,179,8,0.07)', borderWidth:1.5, pointRadius:0, fill:'-1' },
+          { label: 'PER 17x（便宜）', data: makeRiverBand(ttmEPS,17), borderColor:'#22c55e', backgroundColor:'rgba(34,197,94,0.07)', borderWidth:1.5, pointRadius:0, fill:'-1' },
+          { label: 'PER 10x（底部）', data: makeRiverBand(ttmEPS,10), borderColor:'#3b82f6', backgroundColor:'rgba(59,130,246,0.04)', borderWidth:1, borderDash:[5,4], pointRadius:0, fill:'-1' },
+          { label: '實際/目前股價', data: closePx, borderColor:'#ffffff', borderWidth:2.5, pointRadius:3, pointBackgroundColor:'#fff', fill:false, tension:0.3, spanGaps:true },
+        ]
+      },
+      options: {
+        responsive:true, interaction:{ mode:'index', intersect:false },
+        plugins: {
+          legend:{ labels:{ color:'#94a3b8', font:{size:11}, boxWidth:18 } },
+          tooltip:{ backgroundColor:'#1e2535', titleColor:'#f8fafc', bodyColor:'#94a3b8', borderColor:'#334155', borderWidth:1 }
+        },
+        scales: {
+          x:{ ticks:{ color:'#64748b', font:{size:10}, maxRotation:45 }, grid:{ color:'rgba(30,37,53,0.8)' } },
+          y:{ ticks:{ color:'#64748b', font:{size:10}, callback: v => v.toLocaleString() }, grid:{ color:'rgba(30,37,53,0.8)' } }
+        }
+      }
+    });
+  }, 200);
+});
+
+function drawEPS() {
+  window.epsDrawn = true;
+  const ctx2 = document.getElementById('epsChart').getContext('2d');
+  const years = ['2020','2021','2022','2023','2024','2025','2026E'];
+  const eps   = [19.97, 23.01, 39.20, 32.34, 45.25, 66.26, 85];
+  new Chart(ctx2, {
+    type: 'bar',
+    data: {
+      labels: years,
+      datasets: [{
+        label: '年度 EPS（元）',
+        data: eps,
+        backgroundColor: eps.map((v,i) => i===6?'rgba(59,130,246,0.7)':'rgba(34,197,94,0.7)'),
+        borderColor: eps.map((v,i) => i===6?'#3b82f6':'#22c55e'),
+        borderWidth:1.5, borderRadius:6
+      }]
+    },
+    options: {
+      responsive:true,
+      plugins:{ legend:{ labels:{ color:'#94a3b8' } }, tooltip:{ backgroundColor:'#1e2535', bodyColor:'#94a3b8' } },
+      scales: {
+        x:{ ticks:{ color:'#64748b' }, grid:{ color:'rgba(30,37,53,0.8)' } },
+        y:{ ticks:{ color:'#64748b', callback: v => v+'元' }, grid:{ color:'rgba(30,37,53,0.8)' } }
+      }
+    }
+  });
+}
+
+async function updateFundamentalPE_2330() {
+  try {
+    const res = await fetch('https://taiwan-stock-price.david870114.workers.dev/?id=2330', { cache: 'no-cache' });
+    const data = JSON.parse(await res.text());
+    const price = parseFloat(data.price);
+    if (price && !isNaN(price)) {
+      document.getElementById('live-price').textContent = price.toLocaleString();
+      const pe = (price / 66.26).toFixed(1);
+      const el = document.getElementById('fund-pe-2330');
+      const noteEl = document.getElementById('fund-pe-note-2330');
+      if (el) { el.textContent = pe + 'x'; el.style.color = pe > 40 ? '#ef4444' : pe > 25 ? '#eab308' : '#22c55e'; }
+      if (noteEl) noteEl.textContent = '股價 ' + price.toLocaleString() + ' ｜ TTM EPS 66.26';
+    }
+  } catch(e) {}
+}
+window.addEventListener('load', updateFundamentalPE_2330);
+
+async function updateLivePrice_2330() {
+  try {
+    const res = await fetch('https://taiwan-stock-price.david870114.workers.dev/?id=2330', { cache: 'no-cache' });
+    const data = JSON.parse(await res.text());
+    const price = parseFloat(data.price);
+    if (price && !isNaN(price)) {
+      const el = document.getElementById('live-price');
+      if (el) el.textContent = price.toLocaleString();
+      const pe = (price / 66.26).toFixed(1);
+      const perEl = document.getElementById('live-per');
+      if (perEl) {
+        perEl.textContent = 'PER ≈ ' + pe + 'x（TTM EPS 66.26元）';
+        perEl.style.color = pe > 40 ? '#ef4444' : pe > 25 ? '#eab308' : '#22c55e';
+      }
+    }
+  } catch(e) {}
+}
+
+window.addEventListener('load', updateLivePrice_2330);
+</script>
+</body>
+</html>
