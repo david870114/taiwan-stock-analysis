@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>南亞 1303 — 2026 股價推算分析</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #0f1117; color: #e2e8f0; padding: 16px; }
+  h1 { font-size: 18px; font-weight: 700; color: #f8fafc; margin-bottom: 4px; }
+  .subtitle { font-size: 12px; color: #94a3b8; margin-bottom: 16px; }
+  .tabs { display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; }
+  .tab { padding: 6px 14px; border-radius: 20px; font-size: 12px; cursor: pointer; border: 1px solid #334155; color: #94a3b8; background: transparent; transition: all 0.2s; }
+  .tab.active { background: #3b82f6; color: #fff; border-color: #3b82f6; }
+  .tab:hover:not(.active) { border-color: #64748b; color: #e2e8f0; }
+  .panel { display: none; }
+  .panel.active { display: block; }
+  canvas { width: 100% !important; border-radius: 10px; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+  .card { background: #1e2535; border: 1px solid #2d3748; border-radius: 10px; padding: 14px; }
+  .card h3 { font-size: 12px; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
+  .card .val { font-size: 22px; font-weight: 700; }
+  .card .note { font-size: 11px; color: #64748b; margin-top: 4px; }
+  .green { color: #22c55e; } .yellow { color: #eab308; } .red { color: #ef4444; } .blue { color: #3b82f6; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 12px; }
+  th { background: #1e2535; color: #64748b; padding: 8px 10px; text-align: left; font-weight: 600; font-size: 11px; text-transform: uppercase; }
+  td { padding: 8px 10px; border-bottom: 1px solid #1e2535; }
+  tr:hover td { background: #1a2030; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: 600; }
+  .badge-buy { background: #14532d; color: #86efac; }
+  .badge-watch { background: #713f12; color: #fde68a; }
+  .badge-avoid { background: #450a0a; color: #fca5a5; }
+  .scenario-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 12px; }
+  .scenario-card { border-radius: 10px; padding: 14px; text-align: center; }
+  .bear { background: linear-gradient(135deg, #1a0a0a, #2d1010); border: 1px solid #7f1d1d; }
+  .base { background: linear-gradient(135deg, #0a1a0a, #102d10); border: 1px solid #14532d; }
+  .bull { background: linear-gradient(135deg, #0a0f1a, #10182d); border: 1px solid #1d4ed8; }
+  .sc-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.7; margin-bottom: 6px; }
+  .sc-price { font-size: 22px; font-weight: 800; margin: 4px 0; }
+  .sc-detail { font-size: 10px; opacity: 0.65; line-height: 1.6; }
+  .section-title { font-size: 13px; font-weight: 600; color: #cbd5e1; margin: 16px 0 8px; }
+  .buy-signal { background: #0f2a1e; border: 1px solid #166534; border-radius: 10px; padding: 14px; margin-top: 12px; }
+  .buy-signal h3 { color: #86efac; font-size: 13px; margin-bottom: 8px; }
+  .buy-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid #1a3a2a; gap: 8px; }
+  .buy-row:last-child { border-bottom: none; }
+  .current-price-badge { background: #1e3a5f; border: 1px solid #3b82f6; border-radius: 8px; padding: 10px 14px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px; }
+  .warn-box { background: #2d1a08; border: 1px solid #92400e; border-radius: 8px; padding: 10px 14px; margin-bottom: 12px; font-size: 11px; color: #fbbf24; line-height: 1.7; }
+</style>
+</head>
+<body>
+<div style="margin-bottom:12px;">
+  <a href="index.html" style="color:#64748b;font-size:12px;text-decoration:none;display:inline-flex;align-items:center;gap:4px;padding:5px 10px;border:1px solid #334155;border-radius:8px;transition:all 0.2s;" onmouseover="this.style.color='#e2e8f0';this.style.borderColor='#64748b'" onmouseout="this.style.color='#64748b';this.style.borderColor='#334155'">← 返回總覽</a>
+</div>
+<h1>🏭 南亞塑膠 (1303) — 2026 股價推算分析</h1>
+<p class="subtitle">本益比河流圖 ✦ 三情境估值 ✦ 分批買點建議 ✦ 更新時間：2026年5月24日</p>
+
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('river', this)">📈 PER 河流圖</button>
+  <button class="tab" onclick="switchTab('scenario', this)">🎯 三情境買點</button>
+  <button class="tab" onclick="switchTab('eps', this)">📊 EPS 趨勢</button>
+  <button class="tab" onclick="switchTab('fundamental', this)">🏢 基本面分析</button>
+  <button class="tab" onclick="switchTab('summary', this)">📋 完整摘要</button>
+</div>
+
+<!-- TAB 1: PER River -->
+<div id="tab-river" class="panel active">
+  <div class="warn-box">
+    ⚠️ <strong>景氣循環股注意事項：</strong>南亞為石化與電子材料景氣循環股，EPS 與 PER 波動極大（EPS 低谷時 PER 可達 200x 以上，失去參考意義）。目前 EPS 自 25Q3 谷底（-0.41元 TTM）快速回升，26Q1 TTM EPS 已達 2.31元，顯示景氣復甦。河流圖僅在 EPS 為正時有意義。
+  </div>
+  <div class="current-price-badge">
+    <span style="color:#94a3b8;font-size:12px;">目前股價（即時）</span>
+    <span style="color:#3b82f6;font-size:20px;font-weight:800;" id="live-price">載入中…</span>
+    <span style="color:#eab308;font-size:12px;" id="live-per-note">TTM EPS 2.31元（26Q1）</span>
+  </div>
+  <canvas id="riverChart" height="340"></canvas>
+  <p style="font-size:11px;color:#475569;margin-top:8px;text-align:center;">* EPS 為負期間（25Q1–25Q3）河流帶無意義，以虛線標示。PER 倍數依景氣循環歷史峰谷設定：底部25x／合理35x／昂貴50x</p>
+</div>
+
+<!-- TAB 2: 三情境 -->
+<div id="tab-scenario" class="panel">
+  <div class="grid2">
+    <div class="card"><h3>2025 全年 EPS（實際）</h3><div class="val red">-0.03 元</div><div class="note">谷底年，ABF 載板需求低迷</div></div>
+    <div class="card"><h3>2026 Q1 TTM EPS（最新）</h3><div class="val green">2.31 元</div><div class="note">YoY 大幅轉正，26Q1 單季估 ≈1.54元</div></div>
+  </div>
+  <div class="section-title">2026 全年三情境 EPS 與股價推算</div>
+  <div class="scenario-grid">
+    <div class="scenario-card bear">
+      <div class="sc-label">🐻 悲觀</div>
+      <div class="sc-price red">35–55</div>
+      <div class="sc-detail">EPS 1.5–2.0元<br>PER 25x<br>石化低迷持續<br>ABF 載板復甦緩慢</div>
+    </div>
+    <div class="scenario-card base">
+      <div class="sc-label">⚖️ 基本</div>
+      <div class="sc-price green">60–90</div>
+      <div class="sc-detail">EPS 2.0–3.0元<br>PER 30–35x<br>景氣持續回升<br>AI PCB 需求帶動</div>
+    </div>
+    <div class="scenario-card bull">
+      <div class="sc-label">🚀 樂觀</div>
+      <div class="sc-price" style="color:#60a5fa;">100–130</div>
+      <div class="sc-detail">EPS 3.5–5.0元<br>PER 35–40x<br>ABF 超級週期啟動<br>石化景氣大幅回升</div>
+    </div>
+  </div>
+  <div class="buy-signal">
+    <h3>💰 2026 分批建倉買點建議（基本～樂觀情境）</h3>
+    <div class="buy-row">
+      <span style="color:#86efac;font-size:13px;font-weight:600;">第一批（30%）</span>
+      <span style="color:#fde68a;font-size:14px;font-weight:700;">55–70 元</span>
+      <span class="badge badge-buy">便宜帶 EPS × 25–30x</span>
+    </div>
+    <div class="buy-row">
+      <span style="color:#86efac;font-size:13px;font-weight:600;">第二批（40%）</span>
+      <span style="color:#fde68a;font-size:14px;font-weight:700;">70–85 元</span>
+      <span class="badge badge-buy">合理帶 EPS × 30–35x</span>
+    </div>
+    <div class="buy-row">
+      <span style="color:#86efac;font-size:13px;font-weight:600;">第三批（30%）</span>
+      <span style="color:#fde68a;font-size:14px;font-weight:700;">85–100 元</span>
+      <span class="badge badge-watch">動能追加 EPS × 35–40x</span>
+    </div>
+    <div class="buy-row" style="border-top:1px solid #166534;margin-top:8px;padding-top:10px;">
+      <span style="color:#fca5a5;font-size:12px;">觀望/分批減倉</span>
+      <span style="color:#fca5a5;font-size:13px;font-weight:700;">115 元以上</span>
+      <span class="badge badge-avoid">PER > 50x，昂貴區</span>
+    </div>
+  </div>
+  <p style="font-size:10px;color:#475569;margin-top:12px;">⚠️ 景氣循環股估值難以精確，買點以「EPS 確認回升趨勢」為前提，若 EPS 再度轉負應重新評估。</p>
+</div>
+
+<!-- TAB 3: EPS 趨勢 -->
+<div id="tab-eps" class="panel">
+  <canvas id="epsChart" height="300"></canvas>
+  <div class="grid2">
+    <div class="card"><h3>EPS 谷底（2025 全年）</h3><div class="val red">-0.03 元</div><div class="note">ABF 載板+石化同步低迷</div></div>
+    <div class="card"><h3>EPS 復甦（26Q1 TTM）</h3><div class="val green">2.31 元</div><div class="note">較谷底大幅轉正，趨勢向上</div></div>
+  </div>
+
+  <div class="section-title" style="margin-top:20px;">📋 逐月明細（供驗證）</div>
+  <div style="overflow-x:auto;">
+  <table style="min-width:600px;">
+    <thead>
+      <tr>
+        <th>月份</th><th>收盤價</th><th>河流圖EPS<br>(10x欄÷10)</th><th>目前PER</th>
+        <th>10x</th><th>18x</th><th>25x</th><th>35x</th><th>50x</th>
+      </tr>
+    </thead>
+    <tbody id="eps-table-body"></tbody>
+  </table>
+  </div>
+  <p style="font-size:10px;color:#475569;margin-top:8px;">* 「-」代表 EPS 為負，本益比換算無意義。河流圖EPS = 10x換算欄 ÷ 10（季中月為插值，非近四季EPS欄）</p>
+</div>
+
+<!-- TAB 4: 基本面分析 -->
+<div id="tab-fundamental" class="panel">
+
+  <!-- 1. 公司營運 -->
+  <div class="section-title">📊 公司營運</div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;">
+    <div class="card">
+      <h3>2025 全年營收（估）</h3>
+      <div class="val yellow">約 3,300 億</div>
+      <div class="note">依公開財報推估，YoY 約持平</div>
+    </div>
+    <div class="card">
+      <h3>2026 Q1 EPS（TTM）</h3>
+      <div class="val green">2.31 元</div>
+      <div class="note">顯著回升，景氣復甦確認</div>
+    </div>
+    <div class="card">
+      <h3>毛利率趨勢</h3>
+      <div class="val yellow">回升中</div>
+      <div class="note">石化+ABF 雙復甦帶動改善</div>
+    </div>
+  </div>
+
+  <!-- 毛利率趨勢 -->
+  <div style="background:#1e2535;border:1px solid #2d3748;border-radius:10px;padding:14px;margin-bottom:14px;">
+    <div style="font-size:12px;font-weight:700;color:#cbd5e1;margin-bottom:10px;">EPS / 景氣循環趨勢</div>
+    <table style="margin:0;">
+      <thead>
+        <tr><th>期間</th><th>TTM EPS</th><th>狀況</th><th>說明</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>2023 全年</td><td style="color:#eab308;">0.58–0.80元</td><td><span class="badge badge-watch">低迷</span></td><td style="font-size:10px;color:#64748b;">石化景氣下行，ABF需求疲弱</td></tr>
+        <tr><td>2024 上半</td><td style="color:#eab308;">0.86–0.95元</td><td><span class="badge badge-watch">築底</span></td><td style="font-size:10px;color:#64748b;">景氣略有回溫但仍低迷</td></tr>
+        <tr><td>2024 下半</td><td style="color:#ef4444;">0.40–0.42元</td><td><span class="badge badge-avoid">走弱</span></td><td style="font-size:10px;color:#64748b;">EPS 再度下滑，載板訂單不足</td></tr>
+        <tr><td>2025 上半</td><td style="color:#ef4444;">-0.41元</td><td><span class="badge badge-avoid">虧損</span></td><td style="font-size:10px;color:#64748b;">TTM 轉負，景氣循環谷底</td></tr>
+        <tr><td>2025 Q4</td><td style="color:#eab308;">0.57元</td><td><span class="badge badge-watch">轉正</span></td><td style="font-size:10px;color:#64748b;">開始回升，25Q4 單季貢獻</td></tr>
+        <tr style="background:#0f2a1e;"><td><strong>2026 Q1（最新）</strong></td><td style="color:#22c55e;font-weight:700;">2.31元</td><td><span class="badge badge-buy">大幅回升</span></td><td style="font-size:10px;color:#86efac;">ABF+石化景氣同步復甦，EPS 顯著改善</td></tr>
+      </tbody>
+    </table>
+    <div style="font-size:10px;color:#475569;margin-top:8px;">⚠️ 南亞為景氣循環股，EPS 高低受石化原料價差與 ABF 載板供需主導，與總體景氣高度相關。PER 於 EPS 低谷時失真（可達 200x 以上），建議搭配 EPS 絕對值與趨勢判斷。</div>
+  </div>
+
+  <!-- 2. 商業模式 -->
+  <div class="section-title">🏗️ 商業模式</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
+    <div class="card">
+      <h3>怎麼賺錢</h3>
+      <div style="font-size:12px;line-height:1.9;color:#cbd5e1;margin-top:4px;">
+        <span style="color:#3b82f6;font-weight:700;">石化 + 電子材料 雙引擎</span><br>
+        南亞為台塑集團旗下核心企業，業務橫跨石化（PVC、環氧樹脂、異氰酸酯等）與電子材料（ABF 載板、銅箔基板、PCB 用材）<br><br>
+        <span style="font-size:11px;color:#64748b;">業務結構（概估）：<br>
+        石化原料 ~55% ｜ 電子材料（ABF/CCL）~30% ｜ 其他 ~15%<br>
+        ABF 載板為 AI 時代最受矚目的關鍵材料</span>
+      </div>
+    </div>
+    <div class="card">
+      <h3>護城河評估</h3>
+      <div style="font-size:12px;line-height:1.9;margin-top:4px;">
+        <div style="color:#22c55e;">✅ ABF 載板技術壁壘高</div>
+        <div style="color:#64748b;font-size:11px;margin-bottom:6px;">全球 ABF 載板寡占，技術難度高，新進者門檻大</div>
+        <div style="color:#22c55e;">✅ 台塑集團垂直整合</div>
+        <div style="color:#64748b;font-size:11px;margin-bottom:6px;">上中下游整合，原料成本具優勢</div>
+        <div style="color:#22c55e;">✅ 規模效應</div>
+        <div style="color:#64748b;font-size:11px;margin-bottom:6px;">石化廠規模龐大，產能難以快速複製</div>
+        <div style="color:#ef4444;">⚠️ 高度景氣循環</div>
+        <div style="color:#64748b;font-size:11px;">石化價差與 ABF 供需同步波動，EPS 不穩定</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 客戶/競對 -->
+  <div style="background:#1e2535;border:1px solid #2d3748;border-radius:10px;padding:14px;margin-bottom:14px;">
+    <div style="font-size:12px;font-weight:700;color:#cbd5e1;margin-bottom:10px;">主要客戶 與 競爭對手</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+      <div>
+        <div style="font-size:11px;color:#64748b;margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em;">ABF 載板主要客戶</div>
+        <div style="display:flex;flex-direction:column;gap:5px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;background:#141b2d;border-radius:6px;padding:7px 10px;">
+            <span style="color:#f8fafc;font-size:12px;font-weight:600;">Intel / AMD</span>
+            <span class="badge badge-buy">CPU/GPU 封裝載板</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;background:#141b2d;border-radius:6px;padding:7px 10px;">
+            <span style="color:#f8fafc;font-size:12px;font-weight:600;">Nvidia</span>
+            <span class="badge badge-buy">AI GPU 間接需求</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;background:#141b2d;border-radius:6px;padding:7px 10px;">
+            <span style="color:#f8fafc;font-size:12px;font-weight:600;">Qualcomm / Broadcom</span>
+            <span class="badge badge-watch">SoC/ASIC 需求</span>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:11px;color:#64748b;margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em;">主要競爭對手（ABF）</div>
+        <div style="display:flex;flex-direction:column;gap:5px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;background:#141b2d;border-radius:6px;padding:7px 10px;">
+            <span style="color:#f8fafc;font-size:12px;font-weight:600;">欣興電子 (3037)</span>
+            <span class="badge badge-watch">台灣最大 ABF</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;background:#141b2d;border-radius:6px;padding:7px 10px;">
+            <span style="color:#f8fafc;font-size:12px;font-weight:600;">Ibiden（日）</span>
+            <span class="badge badge-watch">全球龍頭</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;background:#141b2d;border-radius:6px;padding:7px 10px;">
+            <span style="color:#f8fafc;font-size:12px;font-weight:600;">Shinko（日）</span>
+            <span class="badge badge-watch">全球前三</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. 市場地位 -->
+  <div class="section-title">🌏 市場地位</div>
+  <div style="background:#1e2535;border:1px solid #2d3748;border-radius:10px;padding:16px;margin-bottom:14px;">
+    <div style="display:flex;gap:0;text-align:center;">
+      <div style="flex:1;padding:0 12px;">
+        <div style="font-size:11px;color:#64748b;margin-bottom:4px;">台股石化地位</div>
+        <div style="font-size:20px;font-weight:800;color:#3b82f6;">台塑四寶</div>
+        <div style="font-size:10px;color:#475569;margin-top:2px;">台塑集團核心成員之一</div>
+      </div>
+      <div style="flex:1;padding:0 12px;border-left:1px solid #2d3748;border-right:1px solid #2d3748;">
+        <div style="font-size:11px;color:#64748b;margin-bottom:4px;">ABF 載板全球排名</div>
+        <div style="font-size:20px;font-weight:800;color:#eab308;">前 5 名</div>
+        <div style="font-size:10px;color:#475569;margin-top:2px;">Ibiden、Shinko、欣興、南亞、景碩</div>
+      </div>
+      <div style="flex:1;padding:0 12px;">
+        <div style="font-size:11px;color:#64748b;margin-bottom:4px;">主要銷售區域</div>
+        <div style="font-size:20px;font-weight:800;color:#22c55e;">亞洲+北美</div>
+        <div style="font-size:10px;color:#475569;margin-top:2px;">台灣/亞洲為主，北美電子材料成長</div>
+      </div>
+    </div>
+    <div style="margin-top:12px;font-size:11px;color:#64748b;border-top:1px solid #2d3748;padding-top:10px;">
+      📌 南亞 ABF 載板業務是 AI 晶片封裝的關鍵材料，隨 AI 伺服器需求增加而受益。石化業務佔比較大，仍與全球能源與化工景氣高度連動。台塑集團垂直整合帶來原料成本優勢，但也使業績受大宗商品價格波動。
+    </div>
+  </div>
+
+  <!-- 4. 估值 -->
+  <div class="section-title">💰 估值指標</div>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:10px;">
+    <div class="card" style="text-align:center;">
+      <h3>本益比 P/E</h3>
+      <div class="val" id="fund-pe" style="color:#f8fafc;">計算中…</div>
+      <div class="note" id="fund-pe-note">TTM EPS 2.31 元</div>
+    </div>
+    <div class="card" style="text-align:center;">
+      <h3>前瞻 P/E（2026E）</h3>
+      <div class="val yellow">~30x</div>
+      <div class="note">EPS 估 2.5–3.5元（依公開推估）</div>
+    </div>
+    <div class="card" style="text-align:center;">
+      <h3>股價淨值比 P/B</h3>
+      <div class="val" style="color:#f97316;">~1.2x</div>
+      <div class="note">景氣低谷期 P/B 偏低（依財報推估）</div>
+    </div>
+    <div class="card" style="text-align:center;">
+      <h3>ROE</h3>
+      <div class="val yellow">~3–5%</div>
+      <div class="note">景氣低谷期 ROE 偏低，復甦中</div>
+    </div>
+  </div>
+  <div style="background:#1e2535;border:1px solid #2d3748;border-radius:10px;padding:12px;font-size:11px;color:#64748b;line-height:1.8;">
+    📌 <strong style="color:#94a3b8;">估值解讀：</strong>
+    目前 PER（約 37x）反映市場對 EPS 持續回升的期待，但仍屬合理偏貴區間。南亞歷史 PER 變化極大，景氣高峰時 PER 可壓縮至 20–30x（EPS 高），谷底時失真達 200x 以上。
+    目前 EPS 從谷底 (-0.41元) 快速回升至 2.31元，若 ABF 超級週期與石化復甦同步發酵，EPS 有望挑戰 3–5元，估值吸引力將顯著提升。
+    P/B ~1.2x 偏低，反映景氣低迷期資產被低估，若景氣大幅回升，P/B 有修復空間。
+  </div>
+
+  <p style="font-size:10px;color:#334155;margin-top:14px;line-height:1.6;">⚠️ 本分析僅供參考，不構成投資建議。毛利率、市占率等部分數據為公開財報推估，無官方精確公開數字。</p>
+</div>
+
+<!-- TAB 5: Summary -->
+<div id="tab-summary" class="panel">
+  <div class="warn-box">
+    ⚠️ <strong>景氣循環股特別提醒：</strong>南亞 PER 在 EPS 低谷時失真，本分析以「EPS 是否持續回升」為核心判斷依據，而非單純 PER 高低。
+  </div>
+  <div class="section-title">📌 關鍵基本面數據</div>
+  <table>
+    <thead><tr><th>指標</th><th>數值</th><th>評估</th></tr></thead>
+    <tbody>
+      <tr><td>目前股價（即時）</td><td style="color:#3b82f6;font-weight:700;" id="summary-price">載入中…</td><td><span class="badge badge-watch" id="summary-badge">—</span></td></tr>
+      <tr><td>2026 Q1 TTM EPS</td><td style="color:#22c55e;font-weight:700;">2.31 元</td><td><span class="badge badge-buy">強勁回升</span></td></tr>
+      <tr><td>EPS 谷底（25Q2 TTM）</td><td style="color:#ef4444;font-weight:700;">-0.41 元</td><td><span class="badge badge-avoid">景氣低谷</span></td></tr>
+      <tr><td>2026F EPS 估算</td><td>2.5–4.0 元（依ABF復甦速度）</td><td><span class="badge badge-watch">觀察中</span></td></tr>
+      <tr><td>目前本益比（TTM）</td><td id="summary-per">—</td><td><span class="badge badge-watch">合理偏貴區</span></td></tr>
+      <tr><td>PER 合理區間（景氣復甦）</td><td>25–40x（依歷史景氣峰谷）</td><td><span class="badge badge-watch">參考用</span></td></tr>
+      <tr><td>便宜價（25x PER）</td><td style="color:#22c55e;font-weight:700;">約 58 元</td><td><span class="badge badge-buy">低估帶</span></td></tr>
+      <tr><td>合理價（35x PER）</td><td style="color:#eab308;font-weight:700;">約 81 元</td><td><span class="badge badge-watch">合理帶</span></td></tr>
+      <tr><td>昂貴價（50x PER）</td><td style="color:#ef4444;font-weight:700;">約 116 元</td><td><span class="badge badge-avoid">昂貴帶</span></td></tr>
+    </tbody>
+  </table>
+  <div class="section-title" style="margin-top:20px;">⚡ 催化劑 vs 風險</div>
+  <div class="grid2">
+    <div class="card">
+      <h3>🚀 利多</h3>
+      <div style="font-size:12px;line-height:1.9;color:#86efac;">✓ ABF 載板 AI 需求長期受益<br>✓ 石化景氣底部反轉<br>✓ EPS 從谷底大幅回升<br>✓ 台塑集團垂直整合優勢<br>✓ P/B 偏低，資產低估<br>✓ 高股息潛力（景氣高峰）</div>
+    </div>
+    <div class="card">
+      <h3>⚠️ 風險</h3>
+      <div style="font-size:12px;line-height:1.9;color:#fca5a5;">✗ 景氣循環，EPS 波動大<br>✗ 石化業全球供過於求<br>✗ ABF 載板若再度鬆弛<br>✗ 能源/原料成本上升<br>✗ 中國石化競爭加劇<br>✗ 環保法規與碳稅壓力</div>
+    </div>
+  </div>
+  <p style="font-size:10px;color:#475569;margin-top:14px;line-height:1.6;">⚠️ 本分析僅供參考，不構成投資建議。股市有風險，投資前請自行判斷。</p>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<script>
+function switchTab(id, btn) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  btn.classList.add('active');
+  if (id === 'eps' && !window.epsDrawn) drawEPS();
+}
+
+// 逐月數據：{ m, px, eps(=10x欄÷10), per }
+// EPS為負或 "-" 的月份 eps=null
+const DATA = [
+  { m:'23M06', px:72.5,  eps:0.58,  per:125    },
+  { m:'23M07', px:70,    eps:0.62,  per:112.9  },
+  { m:'23M08', px:66.1,  eps:0.66,  per:100.2  },
+  { m:'23M09', px:66.6,  eps:0.70,  per:95.14  },
+  { m:'23M10', px:61.9,  eps:0.733, per:84.41  },
+  { m:'23M11', px:68.1,  eps:0.767, per:88.83  },
+  { m:'23M12', px:66.5,  eps:0.80,  per:83.12  },
+  { m:'24M01', px:60.9,  eps:0.82,  per:74.27  },
+  { m:'24M02', px:59.7,  eps:0.84,  per:71.07  },
+  { m:'24M03', px:56,    eps:0.86,  per:65.12  },
+  { m:'24M04', px:56.7,  eps:0.89,  per:63.71  },
+  { m:'24M05', px:53.2,  eps:0.92,  per:57.83  },
+  { m:'24M06', px:49.3,  eps:0.95,  per:51.89  },
+  { m:'24M07', px:50,    eps:0.767, per:65.22  },
+  { m:'24M08', px:45.3,  eps:0.583, per:77.66  },
+  { m:'24M09', px:46,    eps:0.40,  per:115    },
+  { m:'24M10', px:41.7,  eps:0.407, per:102.5  },
+  { m:'24M11', px:38.7,  eps:0.413, per:93.63  },
+  { m:'24M12', px:29.9,  eps:0.42,  per:71.19  },
+  { m:'25M01', px:32.35, eps:0.393, per:82.25  },
+  { m:'25M02', px:33.75, eps:0.367, per:92.05  },
+  { m:'25M03', px:30,    eps:0.34,  per:88.24  },
+  { m:'25M04', px:30.6,  eps:0.09,  per:340    },
+  { m:'25M05', px:28.65, eps:null,  per:null   },
+  { m:'25M06', px:27.3,  eps:null,  per:null   },
+  { m:'25M07', px:40.95, eps:null,  per:null   },
+  { m:'25M08', px:43.2,  eps:null,  per:null   },
+  { m:'25M09', px:39.45, eps:null,  per:null   },
+  { m:'25M10', px:41.5,  eps:0.183, per:226.4  },
+  { m:'25M11', px:59,    eps:0.377, per:156.6  },
+  { m:'25M12', px:60.2,  eps:0.57,  per:105.6  },
+  { m:'26M01', px:75.9,  eps:1.15,  per:66     },
+  { m:'26M02', px:91.8,  eps:1.73,  per:53.06  },
+  { m:'26M03', px:73.9,  eps:2.31,  per:31.99  },
+  { m:'26M04', px:89.6,  eps:2.31,  per:38.79  },
+  { m:'26M05', px:86.7,  eps:2.31,  per:37.53  },
+];
+
+const TTM_EPS = 2.31; // 最新季末
+
+// Build EPS table
+window.addEventListener('DOMContentLoaded', () => {
+  const tbody = document.getElementById('eps-table-body');
+  [...DATA].reverse().forEach(d => {
+    const epsStr = d.eps !== null ? d.eps.toFixed(3) : '—';
+    const perStr = d.per !== null ? d.per.toFixed(1) : '—';
+    const e = d.eps;
+    const highlight = d.m === '26M03' || d.m === '26M04' || d.m === '26M05' ? 'background:#0f2a1e;' : '';
+    tbody.innerHTML += `<tr style="${highlight}">
+      <td>${d.m}</td>
+      <td>${d.px}</td>
+      <td style="color:${e===null?'#475569':e<0?'#ef4444':'#22c55e'}">${epsStr}</td>
+      <td style="color:#64748b">${perStr}</td>
+      <td>${e!==null?(e*10).toFixed(1):'—'}</td>
+      <td>${e!==null?(e*18).toFixed(1):'—'}</td>
+      <td>${e!==null?(e*25).toFixed(1):'—'}</td>
+      <td>${e!==null?(e*35).toFixed(1):'—'}</td>
+      <td>${e!==null?(e*50).toFixed(1):'—'}</td>
+    </tr>`;
+  });
+});
+
+// 即時股價
+async function fetchLivePrice() {
+  try {
+    const res = await fetch('https://taiwan-stock-price.david870114.workers.dev/?id=1303', { cache: 'no-cache' });
+    const data = JSON.parse(await res.text());
+    const price = parseFloat(data.price);
+    if (price && !isNaN(price)) {
+      document.getElementById('live-price').textContent = '$ ' + price.toLocaleString();
+      const per = (price / TTM_EPS).toFixed(1);
+      document.getElementById('live-per-note').textContent = `PER ≈ ${per}x（TTM EPS ${TTM_EPS}元）`;
+
+      // 基本面 P/E
+      const el = document.getElementById('fund-pe');
+      if (el) {
+        el.textContent = per + 'x';
+        el.style.color = per > 50 ? '#ef4444' : per > 35 ? '#eab308' : '#22c55e';
+      }
+      const noteEl = document.getElementById('fund-pe-note');
+      if (noteEl) noteEl.textContent = '股價 ' + price.toLocaleString() + ' ｜ TTM EPS 2.31';
+
+      // Summary
+      const sp = document.getElementById('summary-price');
+      if (sp) sp.textContent = price.toLocaleString() + ' 元';
+      const perEl = document.getElementById('summary-per');
+      if (perEl) perEl.textContent = per + 'x';
+      const sb = document.getElementById('summary-badge');
+      if (sb) {
+        if (price < 81)       { sb.textContent='低估/合理'; sb.className='badge badge-buy'; }
+        else if (price < 116) { sb.textContent='合理偏貴'; sb.className='badge badge-watch'; }
+        else                  { sb.textContent='昂貴區'; sb.className='badge badge-avoid'; }
+      }
+    }
+  } catch(e) {}
+}
+window.addEventListener('load', fetchLivePrice);
+
+// River Chart
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    const labels = DATA.map(d => d.m);
+    const closePx = DATA.map(d => d.px);
+    const makeband = mult => DATA.map(d => d.eps !== null ? +(d.eps * mult).toFixed(2) : null);
+
+    const ctx = document.getElementById('riverChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [
+          { label: 'PER 50x（昂貴）', data: makeband(50), borderColor:'#ef4444', backgroundColor:'rgba(239,68,68,0.04)', borderWidth:1, borderDash:[5,4], pointRadius:0, fill:false, spanGaps:true },
+          { label: 'PER 35x（合理）', data: makeband(35), borderColor:'#eab308', backgroundColor:'rgba(234,179,8,0.07)', borderWidth:1.5, pointRadius:0, fill:'-1', spanGaps:true },
+          { label: 'PER 25x（便宜）', data: makeband(25), borderColor:'#22c55e', backgroundColor:'rgba(34,197,94,0.07)', borderWidth:1.5, pointRadius:0, fill:'-1', spanGaps:true },
+          { label: 'PER 10x（底部）', data: makeband(10), borderColor:'#3b82f6', backgroundColor:'rgba(59,130,246,0.04)', borderWidth:1, borderDash:[5,4], pointRadius:0, fill:'-1', spanGaps:true },
+          { label: '實際股價', data: closePx, borderColor:'#ffffff', borderWidth:2.5, pointRadius:2, pointBackgroundColor:'#fff', fill:false, tension:0.3, spanGaps:true },
+        ]
+      },
+      options: {
+        responsive: true,
+        interaction: { mode:'index', intersect:false },
+        plugins: {
+          legend: { labels: { color:'#94a3b8', font:{size:11}, boxWidth:18 } },
+          tooltip: { backgroundColor:'#1e2535', titleColor:'#f8fafc', bodyColor:'#94a3b8', borderColor:'#334155', borderWidth:1 }
+        },
+        scales: {
+          x: { ticks: { color:'#64748b', font:{size:10}, maxRotation:45, autoSkip:true, maxTicksLimit:18 }, grid: { color:'rgba(30,37,53,0.8)' } },
+          y: { ticks: { color:'#64748b', font:{size:10}, callback: v => v }, grid: { color:'rgba(30,37,53,0.8)' } }
+        }
+      }
+    });
+  }, 200);
+});
+
+// EPS Trend Chart
+function drawEPS() {
+  window.epsDrawn = true;
+  const ctx2 = document.getElementById('epsChart').getContext('2d');
+  const years = ['2019','2020','2021','2022','2023','2024','2025','2026Q1(TTM)'];
+  const eps   = [4.2, 2.1, 6.8, 5.3, 0.75, 0.42, -0.03, 2.31];
+  new Chart(ctx2, {
+    type: 'bar',
+    data: {
+      labels: years,
+      datasets: [{
+        label: '年度/TTM EPS（元）',
+        data: eps,
+        backgroundColor: eps.map((v,i) => i===7?'rgba(59,130,246,0.7)': v<0?'rgba(239,68,68,0.7)':v<1?'rgba(234,179,8,0.5)':'rgba(34,197,94,0.7)'),
+        borderColor: eps.map((v,i) => i===7?'#3b82f6': v<0?'#ef4444':v<1?'#eab308':'#22c55e'),
+        borderWidth:1.5, borderRadius:6
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { labels: { color:'#94a3b8' } },
+        tooltip: { backgroundColor:'#1e2535', bodyColor:'#94a3b8' }
+      },
+      scales: {
+        x: { ticks: { color:'#64748b' }, grid: { color:'rgba(30,37,53,0.8)' } },
+        y: { ticks: { color:'#64748b', callback: v => v+'元' }, grid: { color:'rgba(30,37,53,0.8)' } }
+      }
+    }
+  });
+}
+</script>
+</body>
+</html>
