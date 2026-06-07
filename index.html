@@ -738,6 +738,18 @@
               <div class="mc-vs-val" id="cv-2337">—</div>
             </div>
           </a>
+          <a class="mini-card" href="2344_analysis.html">
+            <div class="mc-left">
+              <span class="mc-code">2344</span>
+              <span class="mc-name">華邦電</span>
+            </div>
+            <div class="mc-right">
+              <div class="mc-price-label">股價</div>
+              <div class="mc-price-val" id="cp-2344">…</div>
+              <div class="mc-vs-label">vs 合理</div>
+              <div class="mc-vs-val" id="cv-2344">—</div>
+            </div>
+          </a>
         </div>
       </div>
     </div>
@@ -1135,6 +1147,19 @@
         <td class="td-tp">202 <span class="per-sub">大摩</span></td>
       </tr>
       <tr>
+        <td class="code code-mem">2344</td>
+        <td class="name">
+          <a href="2344_analysis.html">華邦電</a><br>
+          <span class="fwd-note">* 景氣循環，26Q1 TTM EPS 3.37元轉正，26M05-06 題材炒作</span>
+        </td>
+        <td>67 <span class="per-sub">20x PER</span></td>
+        <td>88 <span class="per-sub">26x PER</span></td>
+        <td>115 <span class="per-sub">34x PER</span></td>
+        <td class="price-cell loading td-cur" id="price-2344">…</td>
+        <td id="vs-2344" class="loading">—</td>
+        <td class="td-tp">— <span class="per-sub">無</span></td>
+      </tr>
+      <tr>
         <td class="code code-mem">3260</td>
         <td class="name"><a href="3260_analysis.html">威剛</a></td>
         <td>514 <span class="per-sub">10x PER</span></td>
@@ -1152,6 +1177,7 @@
   ⚠️ 本頁僅供參考，不構成投資建議。股市有風險，請自行判斷。<br>
   * 旺宏（2337）歷史虧損無 TTM PER，改用 2026E EPS 前瞻本益比推算。<br>
   * 南亞科（2408）為景氣循環股，2023–25Q3 長期虧損，25Q4 轉盈，EPS 11.17元（26Q1）× 復甦區間 PER 15–35x 推算。<br>
+  * 華邦電（2344）景氣循環股，2023–25Q3 虧損，26Q1 TTM EPS 3.37元轉正，PER 20–34x 推算。26M05-06 漲至 46-48x 屬題材溢價。<br>
   * 外資目標價來源：大摩（Morgan Stanley）為優先，如無則取其他主要外資最新報告（麥格理 / 花旗 / 高盛等）。數據僅供參考，請以各券商最新報告為準。
 </p>
 
@@ -1336,13 +1362,14 @@ var STOCKS = [
   { id:'2327',  fairValue:255,  expValue:318 },
   { id:'3481',  fairValue:30,   expValue:50 },
   { id:'2337',  fairValue:163,  expValue:218 },
+  { id:'2344',  fairValue:88,   expValue:115 },
   { id:'3260',  fairValue:719,  expValue:925 },
   { id:'2308',  fairValue:732,  expValue:867 },
   { id:'3037',  fairValue:141,  expValue:211 },
   { id:'2408',  fairValue:279,  expValue:391 },
 ];
 
-var CHAIN_STOCKS = ['2330','2382','3231','6669','2345','3596','3017','3324','8210','2301','2308','3037','2408','2337'];
+var CHAIN_STOCKS = ['2330','2382','3231','6669','2345','3596','3017','3324','8210','2301','2308','3037','2408','2337','2344'];
 
 async function fetchPrice(id) {
   try {
@@ -1455,6 +1482,7 @@ var TRACKED = [
   { id:'3037', name:'欣興',       tier:'spec',   fairValue:141,  expValue:211,  fairPER:20, tp:null, cheapValue:84 },  // ABF 載板，景氣循環
   { id:'3481', name:'群創',       tier:'spec',   fairValue:30,   expValue:50,   fairPER:20, tp:null, cheapValue:15 },  // 面板景氣循環，虧損體質
   { id:'2337', name:'旺宏',       tier:'spec',   fairValue:163,  expValue:218,  fairPER:12, tp:202, cheapValue:109 },  // 記憶體，前瞻復甦但仍風險高
+  { id:'2344', name:'華邦電',     tier:'spec',   fairValue:88,   expValue:115,  fairPER:26, tp:null, cheapValue:67 },  // NOR Flash，景氣循環，26Q1轉正
   { id:'3260', name:'威剛',       tier:'spec',   fairValue:719,  expValue:925,  fairPER:14, tp:null, cheapValue:514 },  // 記憶體模組，景氣循環
   { id:'2408', name:'南亞科',     tier:'spec',   fairValue:279,  expValue:391,  fairPER:25, tp:380, cheapValue:167 },  // DRAM 復甦，景氣循環
 ];
