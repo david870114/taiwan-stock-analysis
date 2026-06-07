@@ -68,22 +68,22 @@
 <!-- ══ TAB 1: PER River ══ -->
 <div id="tab-river" class="panel active">
   <div class="warn-box">
-    ⚠️ <strong>目前股價嚴重偏離歷史 PER 區間</strong>：股價 845 元 / TTM EPS 4.72 元 → PER ≈ 179x。
+    ⚠️ <strong>目前股價嚴重偏離歷史 PER 區間</strong>：股價 845 元 / TTM EPS 4.73 元 → PER ≈ 179x。
     歷史正常 PER 區間為 8–16x（EPS 高峰期 2022–2023）。市場已超前反映 AI/ABF 復甦預期（2026E EPS 法人共識 ~9.88 元），目前對應前瞻 PER ≈ 85x，估值泡沫風險極高。
   </div>
   <div class="current-price-badge">
     <span style="color:#94a3b8;font-size:12px;">目前股價（即時）</span>
     <span style="color:#3b82f6;font-size:20px;font-weight:800;" id="live-price">載入中…</span>
-    <span style="color:#ef4444;font-size:12px;" id="curPer">PER ≈ 179x（TTM EPS 4.72元）遠高於昂貴價 142 元</span>
+    <span style="color:#ef4444;font-size:12px;" id="curPer">PER ≈ 179x（TTM EPS 4.73元）遠高於昂貴價 142 元</span>
   </div>
   <canvas id="riverChart" height="360"></canvas>
-  <p style="font-size:11px;color:#475569;margin-top:8px;text-align:center;">* 22M01–25M09 收盤價為估算值（依 PER 區間、法人報告及歷史報酬率反推）；25M10 後為市場實際紀錄。河流帶以當月 TTM EPS 計算。</p>
+  <p style="font-size:11px;color:#475569;margin-top:8px;text-align:center;">資料來源：goodinfo 月線真實收盤價。河流帶以當月 TTM EPS（= goodinfo 10x換算欄÷10）計算。</p>
 </div>
 
 <!-- ══ TAB 2: 三情境 ══ -->
 <div id="tab-scenario" class="panel">
   <div class="grid2">
-    <div class="card"><h3>最新 TTM EPS（26Q1）</h3><div class="val blue">4.72 元</div><div class="note">Q2'25+Q3'25+Q4'25+Q1'26：-0.29+1.12+1.86+2.03</div></div>
+    <div class="card"><h3>最新 TTM EPS（26Q1）</h3><div class="val blue">4.73 元</div><div class="note">Q2'25+Q3'25+Q4'25+Q1'26：-0.29+1.12+1.86+2.03</div></div>
     <div class="card"><h3>EPS 高峰（2022 全年）</h3><div class="val yellow">30.05 元</div><div class="note">ABF 載板超級循環頂點</div></div>
   </div>
 
@@ -156,19 +156,19 @@
     <div class="card"><h3>EPS 高峰（2022 全年）</h3><div class="val red">30.05 元</div><div class="note">ABF 載板超級循環，供不應求</div></div>
     <div class="card"><h3>EPS 谷底（2024 全年）</h3><div class="val yellow">0.32 元</div><div class="note">AI/PC 庫存調整，载板需求崩潰</div></div>
   </div>
-  <div class="section-title">逐月明細表（估算值供參考）</div>
+  <div class="section-title">逐月明細表（goodinfo 真實數據）</div>
   <div style="overflow-x:auto;">
   <table>
     <thead>
       <tr>
-        <th>月份</th><th>收盤價<br><span style="font-weight:400;text-transform:none;font-style:italic;">*估算</span></th><th>TTM EPS</th><th>目前PER</th>
+        <th>月份</th><th>收盤價</th><th>TTM EPS</th><th>目前PER</th>
         <th>8x</th><th>12x</th><th>16x</th><th>20x</th><th>25x</th><th>30x</th>
       </tr>
     </thead>
     <tbody id="detailTbody"></tbody>
   </table>
   </div>
-  <p style="font-size:10px;color:#475569;margin-top:8px;">★ 25M10 起收盤價有交易記錄；22M01–25M09 為依 PER 資料、法人報告及市場報酬率反推之估算值，非精確實際收盤價。TTM EPS 依季報公告時間點更新。</p>
+  <p style="font-size:10px;color:#475569;margin-top:8px;">資料來源：goodinfo 月線真實收盤價（2020M07 起）。EPS = 10x換算欄÷10。</p>
 </div>
 
 <!-- ══ TAB 4: 基本面分析 ══ -->
@@ -189,7 +189,7 @@
     <div class="card">
       <h3>2026 Q1 EPS</h3>
       <div class="val green">2.03 元</div>
-      <div class="note">YoY +534%，TTM 4.72 元</div>
+      <div class="note">YoY +534%，TTM 4.73 元</div>
     </div>
   </div>
 
@@ -208,7 +208,7 @@
           <td><strong>2026 Q1</strong></td>
           <td style="color:#22c55e"><strong>+35%↑</strong></td>
           <td style="color:#22c55e"><strong>2.03</strong></td>
-          <td style="color:#22c55e"><strong>4.72</strong></td>
+          <td style="color:#22c55e"><strong>4.73</strong></td>
           <td><span class="badge badge-buy">加速復甦</span></td>
         </tr>
         <tr style="background:#0a1020;">
@@ -316,7 +316,7 @@
     <div class="card" style="text-align:center;">
       <h3>本益比 P/E</h3>
       <div class="val" id="fund-pe" style="color:#ef4444;">計算中…</div>
-      <div class="note" id="fund-pe-note">TTM EPS 4.72 元</div>
+      <div class="note" id="fund-pe-note">TTM EPS 4.73 元</div>
     </div>
     <div class="card" style="text-align:center;">
       <h3>前瞻 P/E（2026E）</h3>
@@ -350,7 +350,7 @@
     <thead><tr><th>指標</th><th>數值</th><th>評估</th></tr></thead>
     <tbody>
       <tr><td>目前股價（2026/06/07）</td><td style="color:#ef4444;font-weight:700;" id="sum-price">845 元</td><td><span class="badge badge-avoid">嚴重高估（基本面角度）</span></td></tr>
-      <tr><td>TTM EPS（26Q1）</td><td style="color:#eab308;font-weight:700;">4.72 元</td><td><span class="badge badge-watch">復甦加速中</span></td></tr>
+      <tr><td>TTM EPS（26Q1）</td><td style="color:#eab308;font-weight:700;">4.73 元</td><td><span class="badge badge-watch">復甦加速中</span></td></tr>
       <tr><td>目前 TTM 本益比</td><td style="color:#ef4444;font-weight:700;">~179x</td><td><span class="badge badge-avoid">題材炒作</span></td></tr>
       <tr><td>前瞻 P/E（2026E 中位）</td><td style="color:#ef4444;font-weight:700;">~85x（845元/9.88元）</td><td><span class="badge badge-avoid">仍嚴重高估</span></td></tr>
       <tr><td>歷史 PER 低端（8x）</td><td>8x</td><td><span class="badge badge-buy">對應 2026E 合理股價 79 元</span></td></tr>
@@ -407,62 +407,80 @@ function switchTab(id, btn) {
   if (id === 'eps' && !window.epsDrawn) drawEPS();
 }
 
-// TTM EPS 說明：各月依季報公告時間點更新；22M01–25M09 股價為估算值
+// 全部使用 goodinfo 真實月收盤價，EPS = 10x換算欄 ÷ 10
 const rawData = [
-  { m:'22M01', px:820,  eps:12.92 },
-  { m:'22M02', px:770,  eps:12.92 },
-  { m:'22M03', px:700,  eps:16.38 },
-  { m:'22M04', px:660,  eps:16.38 },
-  { m:'22M05', px:620,  eps:19.94 },
-  { m:'22M06', px:580,  eps:19.94 },
-  { m:'22M07', px:540,  eps:19.94 },
-  { m:'22M08', px:500,  eps:23.86 },
-  { m:'22M09', px:455,  eps:23.86 },
-  { m:'22M10', px:410,  eps:23.86 },
-  { m:'22M11', px:355,  eps:27.58 },
-  { m:'22M12', px:310,  eps:27.58 },
-  { m:'23M01', px:255,  eps:27.58 },
-  { m:'23M02', px:215,  eps:27.58 },
-  { m:'23M03', px:258,  eps:30.05 },
-  { m:'23M04', px:248,  eps:30.05 },
-  { m:'23M05', px:235,  eps:27.64 },
-  { m:'23M06', px:240,  eps:27.64 },
-  { m:'23M07', px:248,  eps:27.64 },
-  { m:'23M08', px:253,  eps:22.54 },
-  { m:'23M09', px:245,  eps:22.54 },
-  { m:'23M10', px:252,  eps:22.54 },
-  { m:'23M11', px:256,  eps:15.66 },
-  { m:'23M12', px:251,  eps:15.66 },
-  { m:'24M01', px:227,  eps:15.66 },
-  { m:'24M02', px:220,  eps:15.66 },
-  { m:'24M03', px:212,  eps:9.00  },
-  { m:'24M04', px:205,  eps:9.00  },
-  { m:'24M05', px:197,  eps:5.15  },
-  { m:'24M06', px:191,  eps:5.15  },
-  { m:'24M07', px:182,  eps:5.15  },
-  { m:'24M08', px:171,  eps:2.90  },
-  { m:'24M09', px:162,  eps:2.90  },
-  { m:'24M10', px:149,  eps:2.90  },
-  { m:'24M11', px:137,  eps:1.33  },
-  { m:'24M12', px:129,  eps:1.33  },
-  { m:'25M01', px:135,  eps:1.33  },
-  { m:'25M02', px:118,  eps:1.33  },
-  { m:'25M03', px:107,  eps:0.32  },
-  { m:'25M04', px:102,  eps:0.32  },
-  { m:'25M05', px:110,  eps:0.87  },
-  { m:'25M06', px:106,  eps:0.87  },
-  { m:'25M07', px:116,  eps:0.87  },
-  { m:'25M08', px:120,  eps:0.40  },
-  { m:'25M09', px:147,  eps:0.40  },
-  { m:'25M10', px:291,  eps:0.40  },
-  { m:'25M11', px:420,  eps:1.43  },
-  { m:'25M12', px:478,  eps:1.43  },
-  { m:'26M01', px:492,  eps:1.43  },
-  { m:'26M02', px:508,  eps:1.43  },
-  { m:'26M03', px:522,  eps:3.01  },
-  { m:'26M04', px:1005, eps:3.01  },
-  { m:'26M05', px:848,  eps:4.72  },
-  { m:'26M06', px:845,  eps:4.72  },
+  { m:'20M07', px:100,   eps:3.347, per:29.88 },
+  { m:'20M08', px:120.5, eps:3.703, per:32.54 },
+  { m:'20M09', px:118,   eps:4.06,  per:29.06 },
+  { m:'20M10', px:115.5, eps:4.597, per:25.13 },
+  { m:'20M11', px:181,   eps:5.133, per:35.26 },
+  { m:'20M12', px:182,   eps:5.67,  per:32.10 },
+  { m:'21M01', px:226,   eps:6.247, per:36.18 },
+  { m:'21M02', px:299,   eps:6.823, per:43.82 },
+  { m:'21M03', px:354,   eps:7.4,   per:47.84 },
+  { m:'21M04', px:318.5, eps:8.173, per:38.97 },
+  { m:'21M05', px:330.5, eps:8.947, per:36.94 },
+  { m:'21M06', px:389.5, eps:9.72,  per:40.07 },
+  { m:'21M07', px:397,   eps:10.79, per:36.79 },
+  { m:'21M08', px:421.5, eps:11.86, per:35.54 },
+  { m:'21M09', px:435,   eps:12.93, per:33.64 },
+  { m:'21M10', px:490.5, eps:14.08, per:34.84 },
+  { m:'21M11', px:626,   eps:15.23, per:41.10 },
+  { m:'21M12', px:572,   eps:16.38, per:34.92 },
+  { m:'22M01', px:472,   eps:17.56, per:26.87 },
+  { m:'22M02', px:524,   eps:18.75, per:27.95 },
+  { m:'22M03', px:524,   eps:19.93, per:26.29 },
+  { m:'22M04', px:404,   eps:21.24, per:19.02 },
+  { m:'22M05', px:394.5, eps:22.55, per:17.49 },
+  { m:'22M06', px:260.5, eps:23.86, per:10.92 },
+  { m:'22M07', px:240.5, eps:25.10, per:9.58  },
+  { m:'22M08', px:270.5, eps:26.34, per:10.27 },
+  { m:'22M09', px:189,   eps:27.58, per:6.85  },
+  { m:'22M10', px:211.5, eps:28.40, per:7.45  },
+  { m:'22M11', px:269.5, eps:29.23, per:9.22  },
+  { m:'22M12', px:227,   eps:30.05, per:7.55  },
+  { m:'23M01', px:243,   eps:29.25, per:8.31  },
+  { m:'23M02', px:235,   eps:28.45, per:8.26  },
+  { m:'23M03', px:283,   eps:27.65, per:10.24 },
+  { m:'23M04', px:274.5, eps:25.94, per:10.58 },
+  { m:'23M05', px:303,   eps:24.24, per:12.50 },
+  { m:'23M06', px:264,   eps:22.53, per:11.72 },
+  { m:'23M07', px:248,   eps:20.24, per:12.25 },
+  { m:'23M08', px:241.5, eps:17.96, per:13.45 },
+  { m:'23M09', px:266.5, eps:15.67, per:17.01 },
+  { m:'23M10', px:236,   eps:13.45, per:17.55 },
+  { m:'23M11', px:248,   eps:11.22, per:22.10 },
+  { m:'23M12', px:251.5, eps:9.00,  per:27.94 },
+  { m:'24M01', px:227,   eps:7.753, per:29.28 },
+  { m:'24M02', px:211.5, eps:6.507, per:32.51 },
+  { m:'24M03', px:200.5, eps:5.26,  per:38.12 },
+  { m:'24M04', px:187,   eps:4.437, per:42.15 },
+  { m:'24M05', px:195.5, eps:3.613, per:54.11 },
+  { m:'24M06', px:186,   eps:2.79,  per:66.67 },
+  { m:'24M07', px:166,   eps:2.323, per:71.45 },
+  { m:'24M08', px:147,   eps:1.857, per:79.17 },
+  { m:'24M09', px:142.5, eps:1.39,  per:102.5 },
+  { m:'24M10', px:133,   eps:1.033, per:128.7 },
+  { m:'24M11', px:116.5, eps:0.677, per:172.2 },
+  { m:'24M12', px:130.5, eps:0.32,  per:407.8 },
+  { m:'25M01', px:136,   eps:0.503, per:270.2 },
+  { m:'25M02', px:136,   eps:0.687, per:198.1 },
+  { m:'25M03', px:101,   eps:0.87,  per:116.1 },
+  { m:'25M04', px:98.8,  eps:0.710, per:139.2 },
+  { m:'25M05', px:105,   eps:0.550, per:190.9 },
+  { m:'25M06', px:112,   eps:0.39,  per:287.2 },
+  { m:'25M07', px:177.5, eps:0.737, per:241.0 },
+  { m:'25M08', px:220,   eps:1.083, per:203.1 },
+  { m:'25M09', px:226,   eps:1.43,  per:158.0 },
+  { m:'25M10', px:290.5, eps:1.957, per:148.5 },
+  { m:'25M11', px:262.5, eps:2.483, per:105.7 },
+  { m:'25M12', px:241,   eps:3.01,  per:80.07 },
+  { m:'26M01', px:388.5, eps:3.583, per:108.4 },
+  { m:'26M02', px:555,   eps:4.157, per:133.5 },
+  { m:'26M03', px:522,   eps:4.73,  per:110.4 },
+  { m:'26M04', px:1005,  eps:4.73,  per:212.5 },
+  { m:'26M05', px:848,   eps:4.73,  per:179.3 },
+  { m:'26M06', px:845,   eps:4.73,  per:178.6 },
 ];
 
 const labels = rawData.map(d => d.m);
@@ -477,7 +495,7 @@ async function fetchLivePrice() {
     const j = JSON.parse(await res.text());
     const price = parseFloat(j.price);
     if (price && !isNaN(price)) {
-      const ttm = 4.72;
+      const ttm = 4.73;
       const per = (price / ttm).toFixed(1);
       document.getElementById('live-price').textContent = '$ ' + price.toLocaleString();
       document.getElementById('curPer').textContent = `PER ≈ ${per}x（TTM EPS ${ttm}元）遠高於昂貴價 142 元`;
@@ -489,7 +507,7 @@ async function fetchLivePrice() {
         fundPe.style.color = '#ef4444';
       }
       const fundNote = document.getElementById('fund-pe-note');
-      if (fundNote) fundNote.textContent = '股價 ' + price.toLocaleString() + ' ｜ TTM EPS 4.72';
+      if (fundNote) fundNote.textContent = '股價 ' + price.toLocaleString() + ' ｜ TTM EPS 4.73';
     }
   } catch(e) {}
 }
@@ -510,11 +528,11 @@ window.addEventListener('load', () => {
           { label: 'PER 12x（便宜）',  data: band(12), borderColor:'#22c55e', backgroundColor:'rgba(34,197,94,0.07)',   borderWidth:1.5, pointRadius:0, fill:'-1' },
           { label: 'PER 8x（底部）',   data: band(8),  borderColor:'#3b82f6', backgroundColor:'rgba(59,130,246,0.04)', borderWidth:1,   borderDash:[5,4], pointRadius:0, fill:'-1' },
           {
-            label: '實際股價（22M01–25M09 為估算值）',
+            label: '實際收盤價（goodinfo 月線）',
             data: px,
             borderColor: '#ffffff',
             borderWidth: 2.5,
-            pointRadius: (ctx) => ['25M10','26M03','26M04','26M05','26M06'].includes(rawData[ctx.dataIndex]?.m) ? 4 : 1.5,
+            pointRadius: 1.5,
             pointBackgroundColor: '#fff',
             fill: false,
             tension: 0.3,
@@ -538,7 +556,7 @@ window.addEventListener('load', () => {
                 const idx = items[0]?.dataIndex;
                 if (idx !== undefined) {
                   const d = rawData[idx];
-                  return [`TTM EPS: ${d.eps} 元`, `PER: ${(d.px/d.eps).toFixed(1)}x`];
+                  return [`TTM EPS: ${d.eps} 元`, `PER: ${d.per != null ? d.per : (d.px/d.eps).toFixed(1)}x`];
                 }
               }
             }
@@ -549,7 +567,7 @@ window.addEventListener('load', () => {
           y: {
             ticks: { color: '#64748b', font: { size: 10 }, callback: v => v.toLocaleString() },
             grid: { color: 'rgba(30,37,53,0.8)' },
-            max: 700,
+            max: 1100,
             title: { display: true, text: '股價（元）', color: '#64748b', font: { size: 10 } }
           }
         }
@@ -560,13 +578,12 @@ window.addEventListener('load', () => {
   // EPS detail table
   const tbody = document.getElementById('detailTbody');
   rawData.slice().reverse().forEach(d => {
-    const per = (d.px / d.eps).toFixed(1);
+    const per = d.per != null ? d.per.toFixed(1) : (d.px / d.eps).toFixed(1);
     const perColor = parseFloat(per) > 50 ? '#ef4444' : parseFloat(per) > 20 ? '#eab308' : '#22c55e';
-    const isExact = ['25M10','26M03','26M04','26M05','26M06'].includes(d.m);
     const tr = document.createElement('tr');
     if (d.m === '26M06') tr.style.background = '#0f2a1e';
     tr.innerHTML = `
-      <td style="font-weight:600;color:${isExact?'#93c5fd':'#64748b'};">${d.m}${isExact?'':' *'}</td>
+      <td style="font-weight:600;color:#93c5fd;">${d.m}</td>
       <td style="font-weight:700;">${d.px.toLocaleString()}</td>
       <td style="color:#22c55e;">${d.eps.toFixed(2)}</td>
       <td style="color:${perColor};">${per}x</td>
