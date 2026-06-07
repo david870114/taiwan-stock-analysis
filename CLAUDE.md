@@ -14,13 +14,15 @@
 
 
 
-1\. 用 Playwright 開啟瀏覽器，前往以下網址截圖：
+1\. 用 Chrome MCP 前往以下網址，用 get_page_text 直接取得文字數據（不需截圖）：
 
-&#x20;  - https://goodinfo.tw/tw/StockBenefitConsistency.asp?STOCK\_ID={代號}
+&#x20;  - https://goodinfo.tw/tw/ShowK_ChartFlow.asp?RPT_CAT=PER&STOCK\_ID={代號}
 
-&#x20;  - https://goodinfo.tw/tw/StockDetail.asp?STOCK\_ID={代號}
+&#x20;  （此頁含完整月度 PER 表格：收盤、近四季EPS、目前PER、10x/14x/.../30x換算價格）
 
-2\. 讀取截圖，依照 taiwan-stock-analysis-SKILL.md 的規則產出 HTML
+&#x20;  注意：StockBenefitConsistency.asp 和 StockPER.asp 已 404，不要使用
+
+2\. 從文字數據逐月讀取，依照 taiwan-stock-analysis-SKILL.md 的規則產出 HTML
 
 3\. 更新 index.html 加入新股票連結
 
@@ -44,7 +46,9 @@ Repo：https://github.com/david870114/taiwan-stock-analysis
 
 \## 注意事項
 
-\- goodinfo.tw 載入較慢，截圖前請等待 5 秒
+\- goodinfo.tw 載入較慢，get_page_text 前等待 6 秒
 
 \- 股票代號請補零至 4 碼
+
+\- 數據讀取：月度 EPS 一律用「10x換算欄 ÷ 10」，季末月（M03/M06/M09/M12）可與「近四季EPS」欄交叉驗證
 
