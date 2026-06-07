@@ -1394,9 +1394,10 @@ var STOCKS = [
   { id:'3037',  fairValue:141,  expValue:211 },
   { id:'2408',  fairValue:279,  expValue:391 },
   { id:'6770',  fairValue:44,   expValue:62  },
+  { id:'8046',  fairValue:119,  expValue:198 },
 ];
 
-var CHAIN_STOCKS = ['2330','2382','3231','6669','2345','3596','3017','3324','8210','2301','2308','3037','2408','2337','2344','6770'];
+var CHAIN_STOCKS = ['2330','2382','3231','6669','2345','3596','3017','3324','8210','2301','2308','3037','2408','2337','2344','6770','8046'];
 
 async function fetchPrice(id) {
   try {
@@ -1507,6 +1508,7 @@ var TRACKED = [
   { id:'3596', name:'智易',       tier:'spec',   fairValue:177,  expValue:278,  fairPER:14, tp:null, cheapValue:126 },  // AI 網通小型股，流動性低
   { id:'8210', name:'勤誠',       tier:'spec',   fairValue:747,  expValue:1019, fairPER:22, tp:null, cheapValue:475 },  // 散熱小型股，波動大
   { id:'3037', name:'欣興',       tier:'spec',   fairValue:141,  expValue:211,  fairPER:20, tp:null, cheapValue:84 },  // ABF 載板，景氣循環
+  { id:'8046', name:'南電',       tier:'spec',   fairValue:119,  expValue:198,  fairPER:12, tp:null, cheapValue:79 },  // ABF 載板，景氣循環，高階網通市占 70%+
   { id:'3481', name:'群創',       tier:'spec',   fairValue:30,   expValue:50,   fairPER:20, tp:null, cheapValue:15 },  // 面板景氣循環，虧損體質
   { id:'2337', name:'旺宏',       tier:'spec',   fairValue:163,  expValue:218,  fairPER:12, tp:202, cheapValue:109 },  // 記憶體，前瞻復甦但仍風險高
   { id:'2344', name:'華邦電',     tier:'spec',   fairValue:88,   expValue:115,  fairPER:26, tp:null, cheapValue:67 },  // NOR Flash，景氣循環，26Q1轉正
