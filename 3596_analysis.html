@@ -66,8 +66,8 @@
 <!-- TAB 1: PER River -->
 <div id="tab-river" class="panel active">
   <div class="current-price-badge">
-    <span style="color:#94a3b8;font-size:12px;">目前股價（2026/5/16）</span>
-    <span style="color:#3b82f6;font-size:20px;font-weight:800;">$ 183.5</span>
+    <span style="color:#94a3b8;font-size:12px;">目前股價（即時）</span>
+    <span style="color:#3b82f6;font-size:20px;font-weight:800;" id="live-price">載入中…</span>
     <span style="color:#22c55e;font-size:12px;">PER ≈ 14.53x（TTM EPS 12.63元）合理偏低區</span>
   </div>
   <canvas id="riverChart" height="340"></canvas>
@@ -414,6 +414,26 @@ function drawEPS() {
     }
   });
 }
+
+async function updateLivePrice_3596() {
+  try {
+    const res = await fetch('https://taiwan-stock-price.david870114.workers.dev/?id=3596', { cache: 'no-cache' });
+    const data = JSON.parse(await res.text());
+    const price = parseFloat(data.price);
+    if (price && !isNaN(price)) {
+      const el = document.getElementById('live-price');
+      if (el) el.textContent = price.toLocaleString();
+      const pe = (price / 12.63).toFixed(1);
+      const perEl = document.getElementById('live-per');
+      if (perEl) {
+        perEl.textContent = 'PER ≈ ' + pe + 'x（TTM EPS 12.63元）';
+        perEl.style.color = pe > 40 ? '#ef4444' : pe > 25 ? '#eab308' : '#22c55e';
+      }
+    }
+  } catch(e) {}
+}
+
+window.addEventListener('load', updateLivePrice_3596);
 </script>
 </body>
 </html>

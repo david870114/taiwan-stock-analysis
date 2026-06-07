@@ -64,7 +64,7 @@
 <!-- TAB 1: PER River -->
 <div id="tab-river" class="panel active">
   <div class="current-price-badge">
-    <span style="color:#94a3b8;font-size:12px;">目前股價（2026/5/24）</span>
+    <span style="color:#94a3b8;font-size:12px;">目前股價（即時）</span>
     <span style="color:#3b82f6;font-size:20px;font-weight:800;" id="live-price">載入中…</span>
     <span style="color:#eab308;font-size:12px;" id="live-per">TTM EPS 298.3元（26Q1）</span>
   </div>
@@ -579,6 +579,20 @@ function drawEPS() {
     }
   });
 }
+
+async function updateLivePrice_6669() {
+  try {
+    const res = await fetch('https://taiwan-stock-price.david870114.workers.dev/?id=6669', { cache: 'no-cache' });
+    const data = JSON.parse(await res.text());
+    const price = parseFloat(data.price);
+    if (price && !isNaN(price)) {
+      const el = document.getElementById('live-price');
+      if (el) el.textContent = price.toLocaleString();
+    }
+  } catch(e) {}
+}
+
+window.addEventListener('load', updateLivePrice_6669);
 </script>
 </body>
 </html>

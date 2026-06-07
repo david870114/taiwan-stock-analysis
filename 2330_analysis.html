@@ -66,8 +66,8 @@
 <!-- TAB 1: PER River -->
 <div id="tab-river" class="panel active">
   <div class="current-price-badge">
-    <span style="color:#94a3b8;font-size:12px;">目前股價（2026/5/16）</span>
-    <span style="color:#3b82f6;font-size:20px;font-weight:800;" id="livePrice">2,265</span>
+    <span style="color:#94a3b8;font-size:12px;">目前股價（即時）</span>
+    <span style="color:#3b82f6;font-size:20px;font-weight:800;" id="live-price">載入中…</span>
     <span style="color:#ef4444;font-size:12px;">PER ≈ 34.2x（TTM EPS 66.26元）超越昂貴區</span>
   </div>
   <canvas id="riverChart" height="340"></canvas>
@@ -358,7 +358,7 @@ async function updateFundamentalPE_2330() {
     const data = JSON.parse(await res.text());
     const price = parseFloat(data.price);
     if (price && !isNaN(price)) {
-      document.getElementById('livePrice').textContent = price.toLocaleString();
+      document.getElementById('live-price').textContent = price.toLocaleString();
       const pe = (price / 66.26).toFixed(1);
       const el = document.getElementById('fund-pe-2330');
       const noteEl = document.getElementById('fund-pe-note-2330');
@@ -368,6 +368,26 @@ async function updateFundamentalPE_2330() {
   } catch(e) {}
 }
 window.addEventListener('load', updateFundamentalPE_2330);
+
+async function updateLivePrice_2330() {
+  try {
+    const res = await fetch('https://taiwan-stock-price.david870114.workers.dev/?id=2330', { cache: 'no-cache' });
+    const data = JSON.parse(await res.text());
+    const price = parseFloat(data.price);
+    if (price && !isNaN(price)) {
+      const el = document.getElementById('live-price');
+      if (el) el.textContent = price.toLocaleString();
+      const pe = (price / 66.26).toFixed(1);
+      const perEl = document.getElementById('live-per');
+      if (perEl) {
+        perEl.textContent = 'PER ≈ ' + pe + 'x（TTM EPS 66.26元）';
+        perEl.style.color = pe > 40 ? '#ef4444' : pe > 25 ? '#eab308' : '#22c55e';
+      }
+    }
+  } catch(e) {}
+}
+
+window.addEventListener('load', updateLivePrice_2330);
 </script>
 </body>
 </html>

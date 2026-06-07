@@ -69,8 +69,8 @@
     歷史正常 PER 區間為 12–30x（EPS 高峰期 2023–2024）。市場已充分反映 AI/ABF 復甦預期，估值泡沫風險極高。
   </div>
   <div class="current-price-badge">
-    <span style="color:#94a3b8;font-size:12px;">目前股價（2026/5/24）</span>
-    <span style="color:#ef4444;font-size:20px;font-weight:800;" id="curPrice">970</span>
+    <span style="color:#94a3b8;font-size:12px;">目前股價（即時）</span>
+    <span style="color:#3b82f6;font-size:20px;font-weight:800;" id="live-price">載入中…</span>
     <span style="color:#ef4444;font-size:12px;" id="curPer">PER ≈ 138x（TTM EPS 7.03元）遠高於昂貴價 211 元</span>
   </div>
   <canvas id="riverChart" height="360"></canvas>
@@ -558,6 +558,26 @@ function drawEPS() {
     }
   });
 }
+
+async function updateLivePrice_3037() {
+  try {
+    const res = await fetch('https://taiwan-stock-price.david870114.workers.dev/?id=3037', { cache: 'no-cache' });
+    const data = JSON.parse(await res.text());
+    const price = parseFloat(data.price);
+    if (price && !isNaN(price)) {
+      const el = document.getElementById('live-price');
+      if (el) el.textContent = price.toLocaleString();
+      const pe = (price / 7.03).toFixed(1);
+      const perEl = document.getElementById('live-per');
+      if (perEl) {
+        perEl.textContent = 'PER ≈ ' + pe + 'x（TTM EPS 7.03元）';
+        perEl.style.color = pe > 40 ? '#ef4444' : pe > 25 ? '#eab308' : '#22c55e';
+      }
+    }
+  } catch(e) {}
+}
+
+window.addEventListener('load', updateLivePrice_3037);
 </script>
 </body>
 </html>
