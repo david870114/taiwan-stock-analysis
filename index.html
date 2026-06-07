@@ -1471,14 +1471,27 @@ var _fmCache = {};
 async function finmind(dataset, id, startDate) {
   var key = dataset + '_' + id;
   if (_fmCache[key]) return _fmCache[key];
-  try {
-    var url = 'https://api.finmindtrade.com/api/v4/data?dataset=' + dataset +
-              '&data_id=' + id + '&start_date=' + startDate;
-    var res = await fetch(url, { mode:'cors', cache:'no-cache' });
-    var data = await res.json();
-    _fmCache[key] = data.data || [];
-    return _fmCache[key];
-  } catch(e) { return []; }
+  var url = 'https://api.finmindtrade.com/api/v4/data?dataset=' + dataset +
+            '&data_id=' + id + '&start_date=' + startDate;
+  // retry up to 3 times with 2s delay
+  for (var attempt = 0; attempt < 3; attempt++) {
+    try {
+      var ctrl = new AbortController();
+      var timer = setTimeout(function(){ ctrl.abort(); }, 12000);
+      var res = await fetch(url, { mode:'cors', cache:'no-cache', signal: ctrl.signal });
+      clearTimeout(timer);
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      var data = await res.json();
+      if (data && data.data) {
+        _fmCache[key] = data.data;
+        return _fmCache[key];
+      }
+    } catch(e) {
+      if (attempt < 2) await new Promise(function(r){ setTimeout(r, 2000); });
+    }
+  }
+  _fmCache[key] = [];
+  return [];
 }
 
 /* 0050 quarterly returns cache */
@@ -1681,9 +1694,16 @@ function buildStockCardSkeleton(s) {
     vsClass   = vs.score===3 ? 'green' : vs.score===2 ? 'yellow' : 'red';
   }
 
-  // 建議買點
-  var cheapDisplay = s.cheapValue ? ('≤ NT$ ' + s.cheapValue.toLocaleString()) : '—';
-  var cheapClass   = (price && s.cheapValue && price <= s.cheapValue) ? 'green' : 'muted';
+  // 合理區間 cheap ~ fair
+  var rangeDisplay = '—', rangeClass = 'muted';
+  if (s.cheapValue && s.fairValue) {
+    rangeDisplay = 'NT$ ' + s.cheapValue.toLocaleString() + ' ～ ' + s.fairValue.toLocaleString();
+    if (price) {
+      if (price <= s.cheapValue)      rangeClass = 'green';   // 低於便宜價，超值
+      else if (price <= s.fairValue)  rangeClass = 'yellow';  // 在合理區間內
+      else                            rangeClass = 'muted';   // 超過合理價
+    }
+  }
 
   // 距法人目標價
   var tpReturn = '—', tpClass = 'muted';
@@ -1707,8 +1727,8 @@ function buildStockCardSkeleton(s) {
     '<div class="scard-rows">' +
       '<div class="scard-row"><span class="scard-label">即時股價</span>' +
         '<span class="scard-val ' + priceClass + '">' + priceDisplay + '</span></div>' +
-      '<div class="scard-row"><span class="scard-label">建議買點</span>' +
-        '<span class="scard-val ' + cheapClass + '">' + cheapDisplay + '</span></div>' +
+      '<div class="scard-row"><span class="scard-label">合理進場區間</span>' +
+        '<span class="scard-val ' + rangeClass + '">' + rangeDisplay + '</span></div>' +
       '<div class="scard-row"><span class="scard-label">vs 合理價</span>' +
         '<span class="scard-val ' + vsClass + '">' + vsDisplay + '</span></div>' +
       '<div class="scard-row"><span class="scard-label">距法人目標價</span>' +
@@ -1732,11 +1752,13 @@ async function fillCardMetrics(stock) {
   }
 
   // Div yield
-  if (m.divYield !== null) {
+  if (m.divYield !== null && m.divYield > 0) {
     var dc = m.divYield >= 3 ? 'green' : m.divYield >= 1.5 ? 'yellow' : 'muted';
     setEl('sm-div-' + stock.id, fmtPct(m.divYield), dc);
+  } else if (m.divYield === 0) {
+    setEl('sm-div-' + stock.id, '無現金配息', 'muted');
   } else {
-    setEl('sm-div-' + stock.id, '—');
+    setEl('sm-div-' + stock.id, '—', 'muted');
   }
 
   // EPS growth
