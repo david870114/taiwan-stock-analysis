@@ -188,6 +188,28 @@
     margin-top: 16px; border: 1px solid #1e3050;
   }
 
+  /* ── Filter Bar ── */
+  .filter-bar {
+    display: flex; align-items: center; gap: 8px;
+    flex-wrap: wrap; margin-bottom: 12px;
+    background: #141b2d; border-radius: 10px;
+    padding: 10px 14px; border: 1px solid #1e3050;
+  }
+  .filter-label { font-size: 11px; color: #475569; font-weight: 700; white-space: nowrap; }
+  .filter-btn {
+    background: #192033; border: 1px solid #1e3050;
+    color: #64748b; font-size: 11px; font-weight: 600;
+    padding: 5px 11px; border-radius: 20px; cursor: pointer;
+    transition: all 0.15s; white-space: nowrap;
+  }
+  .filter-btn:hover { border-color: #3b82f6; color: #7db8f7; }
+  .filter-btn.active { background: #1e3050; border-color: #3b82f6; color: #93c5fd; }
+
+  /* ── 即時股價大顯示 ── */
+  .scard-price-big {
+    font-size: 16px; font-weight: 800; font-family: monospace;
+  }
+
   /* ── 指標說明區 ── */
   .metrics-explain {
     background: #141b2d; border: 1px solid #1e3050;
@@ -1221,6 +1243,16 @@
     </div>
   </div>
 
+  <!-- Filter Bar -->
+  <div class="filter-bar" id="filter-bar" style="display:none">
+    <span class="filter-label">排序：</span>
+    <button class="filter-btn active" data-sort="vs" onclick="sortCards(this)">vs 合理價 ↑</button>
+    <button class="filter-btn" data-sort="price" onclick="sortCards(this)">即時股價 ↑</button>
+    <button class="filter-btn" data-sort="div" onclick="sortCards(this)">股息殖利率 ↓</button>
+    <button class="filter-btn" data-sort="est" onclick="sortCards(this)">預估報酬率 ↓</button>
+    <button class="filter-btn" data-sort="tp" onclick="sortCards(this)">距法人目標 ↓</button>
+  </div>
+
   <!-- 結果 -->
   <div class="result-wrap" id="result-wrap">
     <div class="result-title">
@@ -1290,24 +1322,24 @@
    股價追蹤
 ══════════════════════════════════════ */
 var STOCKS = [
-  { id:'0050',  fairValue:50,   expValue:67   },
+  { id:'0050',  fairValue:50,   expValue:67 },
   { id:'2330',  fairValue:1458, expValue:1855 },
-  { id:'2382',  fairValue:350,  expValue:506  },
-  { id:'3231',  fairValue:181,  expValue:302  },
+  { id:'2382',  fairValue:350,  expValue:506 },
+  { id:'3231',  fairValue:181,  expValue:302 },
   { id:'6669',  fairValue:4475, expValue:5966 },
   { id:'2345',  fairValue:1375, expValue:1692 },
-  { id:'3596',  fairValue:177,  expValue:278  },
+  { id:'3596',  fairValue:177,  expValue:278 },
   { id:'3017',  fairValue:1583, expValue:2070 },
   { id:'3324',  fairValue:978,  expValue:1258 },
   { id:'8210',  fairValue:747,  expValue:1019 },
-  { id:'2301',  fairValue:136,  expValue:177  },
-  { id:'2327',  fairValue:255,  expValue:318  },
-  { id:'3481',  fairValue:30,   expValue:50   },
-  { id:'2337',  fairValue:163,  expValue:218  },
-  { id:'3260',  fairValue:719,  expValue:925  },
-  { id:'2308',  fairValue:732,  expValue:867  },
-  { id:'3037',  fairValue:141,  expValue:211  },
-  { id:'2408',  fairValue:279,  expValue:391  },
+  { id:'2301',  fairValue:136,  expValue:177 },
+  { id:'2327',  fairValue:255,  expValue:318 },
+  { id:'3481',  fairValue:30,   expValue:50 },
+  { id:'2337',  fairValue:163,  expValue:218 },
+  { id:'3260',  fairValue:719,  expValue:925 },
+  { id:'2308',  fairValue:732,  expValue:867 },
+  { id:'3037',  fairValue:141,  expValue:211 },
+  { id:'2408',  fairValue:279,  expValue:391 },
 ];
 
 var CHAIN_STOCKS = ['2330','2382','3231','6669','2345','3596','3017','3324','8210','2301','2308','3037','2408','2337'];
@@ -1403,28 +1435,28 @@ document.addEventListener('DOMContentLoaded', function() {
 ══════════════════════════════════════ */
 var TRACKED = [
   // ── 核心 ──────────────────────────────────────────────
-  { id:'0050', name:'元大台灣50', tier:'core',   fairValue:50,   expValue:67,   fairPER:20, tp:null },
+  { id:'0050', name:'元大台灣50', tier:'core',   fairValue:50,   expValue:67,   fairPER:20, tp:null, cheapValue:40 },
 
   // ── 成長 ── 穩定獲利 + AI 受惠 + 護城河 ────────────────
-  { id:'2330', name:'台積電',     tier:'growth', fairValue:1458, expValue:1855, fairPER:22, tp:2588 },  // 全球晶圓龍頭，護城河極深
-  { id:'2308', name:'台達電',     tier:'growth', fairValue:732,  expValue:867,  fairPER:27, tp:null },  // 電源大廠，連續獲利，AI 電源受惠
-  { id:'2382', name:'廣達',       tier:'growth', fairValue:350,  expValue:506,  fairPER:18, tp:400  },  // AI 伺服器 ODM 龍頭，獲利穩定
-  { id:'3231', name:'緯創',       tier:'growth', fairValue:181,  expValue:302,  fairPER:18, tp:null },  // AI 伺服器，成長加速
-  { id:'2345', name:'智邦',       tier:'growth', fairValue:1375, expValue:1692, fairPER:26, tp:null, url:'2345_per_analysis_2026.html' }, // CPO 光通訊龍頭
-  { id:'3017', name:'奇鋐',       tier:'growth', fairValue:1583, expValue:2070, fairPER:26, tp:3140 },  // 液冷散熱龍頭，獲利高速成長
-  { id:'3324', name:'雙鴻',       tier:'growth', fairValue:978,  expValue:1258, fairPER:28, tp:1425 },  // 液冷散熱，AI 直接受惠
-  { id:'2327', name:'國巨',       tier:'growth', fairValue:255,  expValue:318,  fairPER:20, tp:null },  // 被動元件龍頭，獲利穩定
+  { id:'2330', name:'台積電',     tier:'growth', fairValue:1458, expValue:1855, fairPER:22, tp:2588, cheapValue:1126 },  // 全球晶圓龍頭，護城河極深
+  { id:'2308', name:'台達電',     tier:'growth', fairValue:732,  expValue:867,  fairPER:27, tp:null, cheapValue:596 },  // 電源大廠，連續獲利，AI 電源受惠
+  { id:'2382', name:'廣達',       tier:'growth', fairValue:350,  expValue:506,  fairPER:18, tp:400, cheapValue:253 },  // AI 伺服器 ODM 龍頭，獲利穩定
+  { id:'3231', name:'緯創',       tier:'growth', fairValue:181,  expValue:302,  fairPER:18, tp:null, cheapValue:101 },  // AI 伺服器，成長加速
+  { id:'2345', name:'智邦',       tier:'growth', fairValue:1375, expValue:1692, fairPER:26, tp:null, url:'2345_per_analysis_2026.html', cheapValue:1110 }, // CPO 光通訊龍頭
+  { id:'3017', name:'奇鋐',       tier:'growth', fairValue:1583, expValue:2070, fairPER:26, tp:3140, cheapValue:1096 },  // 液冷散熱龍頭，獲利高速成長
+  { id:'3324', name:'雙鴻',       tier:'growth', fairValue:978,  expValue:1258, fairPER:28, tp:1425, cheapValue:699 },  // 液冷散熱，AI 直接受惠
+  { id:'2327', name:'國巨',       tier:'growth', fairValue:255,  expValue:318,  fairPER:20, tp:null, cheapValue:204 },  // 被動元件龍頭，獲利穩定
 
   // ── 高風險 ── 高波動 / 景氣循環 / 小型 / 單季轉盈 ─────
-  { id:'6669', name:'緯穎',       tier:'spec',   fairValue:4475, expValue:5966, fairPER:15, tp:null },  // 超大型 AI 伺服器，客戶集中、波動大
-  { id:'2301', name:'光寶科',     tier:'spec',   fairValue:136,  expValue:177,  fairPER:20, tp:null },  // 電源中小型，獲利波動較大
-  { id:'3596', name:'智易',       tier:'spec',   fairValue:177,  expValue:278,  fairPER:14, tp:null },  // AI 網通小型股，流動性低
-  { id:'8210', name:'勤誠',       tier:'spec',   fairValue:747,  expValue:1019, fairPER:22, tp:null },  // 散熱小型股，波動大
-  { id:'3037', name:'欣興',       tier:'spec',   fairValue:141,  expValue:211,  fairPER:20, tp:null },  // ABF 載板，景氣循環
-  { id:'3481', name:'群創',       tier:'spec',   fairValue:30,   expValue:50,   fairPER:20, tp:null },  // 面板景氣循環，虧損體質
-  { id:'2337', name:'旺宏',       tier:'spec',   fairValue:163,  expValue:218,  fairPER:12, tp:202  },  // 記憶體，前瞻復甦但仍風險高
-  { id:'3260', name:'威剛',       tier:'spec',   fairValue:719,  expValue:925,  fairPER:14, tp:null },  // 記憶體模組，景氣循環
-  { id:'2408', name:'南亞科',     tier:'spec',   fairValue:279,  expValue:391,  fairPER:25, tp:380  },  // DRAM 復甦，景氣循環
+  { id:'6669', name:'緯穎',       tier:'spec',   fairValue:4475, expValue:5966, fairPER:15, tp:null, cheapValue:3281 },  // 超大型 AI 伺服器，客戶集中、波動大
+  { id:'2301', name:'光寶科',     tier:'spec',   fairValue:136,  expValue:177,  fairPER:20, tp:null, cheapValue:102 },  // 電源中小型，獲利波動較大
+  { id:'3596', name:'智易',       tier:'spec',   fairValue:177,  expValue:278,  fairPER:14, tp:null, cheapValue:126 },  // AI 網通小型股，流動性低
+  { id:'8210', name:'勤誠',       tier:'spec',   fairValue:747,  expValue:1019, fairPER:22, tp:null, cheapValue:475 },  // 散熱小型股，波動大
+  { id:'3037', name:'欣興',       tier:'spec',   fairValue:141,  expValue:211,  fairPER:20, tp:null, cheapValue:84 },  // ABF 載板，景氣循環
+  { id:'3481', name:'群創',       tier:'spec',   fairValue:30,   expValue:50,   fairPER:20, tp:null, cheapValue:15 },  // 面板景氣循環，虧損體質
+  { id:'2337', name:'旺宏',       tier:'spec',   fairValue:163,  expValue:218,  fairPER:12, tp:202, cheapValue:109 },  // 記憶體，前瞻復甦但仍風險高
+  { id:'3260', name:'威剛',       tier:'spec',   fairValue:719,  expValue:925,  fairPER:14, tp:null, cheapValue:514 },  // 記憶體模組，景氣循環
+  { id:'2408', name:'南亞科',     tier:'spec',   fairValue:279,  expValue:391,  fairPER:25, tp:380, cheapValue:167 },  // DRAM 復甦，景氣循環
 ];
 
 var PRESETS = {
@@ -1627,17 +1659,31 @@ function updateLabels() {
    卡片渲染（先顯示骨架，異步填入指標）
 ══════════════════════════════════════ */
 function buildStockCardSkeleton(s) {
-  var vs  = valStatus(s);
-  var url = s.url ? s.url : s.id + '_analysis.html';
-
-  // vs 合理價
+  var vs    = valStatus(s);
+  var url   = s.url ? s.url : s.id + '_analysis.html';
   var price = getLivePrice(s.id);
+
+  // 即時股價 & vs 合理價
+  var priceDisplay = price ? ('NT$ ' + price.toLocaleString()) : '—';
+  var priceClass   = 'muted';
+  if (price) {
+    if (price < s.cheapValue)      priceClass = 'green';
+    else if (price < s.fairValue)  priceClass = 'yellow';
+    else if (price > s.expValue)   priceClass = 'red';
+    else                           priceClass = 'yellow';
+  }
+
+  // vs 合理價 %
   var vsDisplay = '—', vsClass = 'muted';
   if (price) {
     var pct  = ((price - s.fairValue) / s.fairValue * 100).toFixed(1);
     vsDisplay = (pct>0?'+':'') + pct + '%';
     vsClass   = vs.score===3 ? 'green' : vs.score===2 ? 'yellow' : 'red';
   }
+
+  // 建議買點
+  var cheapDisplay = s.cheapValue ? ('≤ NT$ ' + s.cheapValue.toLocaleString()) : '—';
+  var cheapClass   = (price && s.cheapValue && price <= s.cheapValue) ? 'green' : 'muted';
 
   // 距法人目標價
   var tpReturn = '—', tpClass = 'muted';
@@ -1647,7 +1693,10 @@ function buildStockCardSkeleton(s) {
     tpClass  = r > 0 ? 'green' : 'red';
   }
 
-  return '<a class="scard scard-link" href="' + url + '" id="scard-' + s.id + '">' +
+  return '<a class="scard scard-link" href="' + url + '" id="scard-' + s.id + '" ' +
+    'data-price="' + (price||9999999) + '" ' +
+    'data-vs="' + (price ? ((price-s.fairValue)/s.fairValue*100).toFixed(1) : 999) + '" ' +
+    'data-div="999" data-est="999">' +
     '<div class="scard-top">' +
       '<div>' +
         '<div class="scard-code">' + s.id + '</div>' +
@@ -1656,12 +1705,14 @@ function buildStockCardSkeleton(s) {
       '<span class="scard-vsbadge ' + vs.cls + '">' + vs.label + '</span>' +
     '</div>' +
     '<div class="scard-rows">' +
+      '<div class="scard-row"><span class="scard-label">即時股價</span>' +
+        '<span class="scard-val ' + priceClass + '">' + priceDisplay + '</span></div>' +
+      '<div class="scard-row"><span class="scard-label">建議買點</span>' +
+        '<span class="scard-val ' + cheapClass + '">' + cheapDisplay + '</span></div>' +
       '<div class="scard-row"><span class="scard-label">vs 合理價</span>' +
         '<span class="scard-val ' + vsClass + '">' + vsDisplay + '</span></div>' +
       '<div class="scard-row"><span class="scard-label">距法人目標價</span>' +
         '<span class="scard-val ' + tpClass + '">' + tpReturn + '</span></div>' +
-      '<div class="scard-row"><span class="scard-label">Beta (vs 0050)</span>' +
-        '<span class="scard-val muted" id="sm-beta-' + s.id + '">計算中...</span></div>' +
       '<div class="scard-row"><span class="scard-label">股息殖利率</span>' +
         '<span class="scard-val muted" id="sm-div-' + s.id + '">載入中...</span></div>' +
       '<div class="scard-row scard-row-est"><span class="scard-label"><strong>預估報酬率</strong></span>' +
@@ -1678,15 +1729,6 @@ async function fillCardMetrics(stock) {
     if (!el) return;
     el.textContent = text;
     el.className   = 'scard-val ' + (cls || 'muted');
-  }
-
-  // Beta
-  if (m.beta !== null) {
-    var bv = parseFloat(m.beta);
-    var bc = bv > 1.3 ? 'red' : bv < 0.8 ? 'green' : 'yellow';
-    setEl('sm-beta-' + stock.id, m.beta + 'x', bc);
-  } else {
-    setEl('sm-beta-' + stock.id, '—');
   }
 
   // Div yield
@@ -1718,8 +1760,17 @@ async function fillCardMetrics(stock) {
     var er = m.estReturn;
     var erc = er >= 15 ? 'green' : er >= 5 ? 'yellow' : er < 0 ? 'red' : 'muted';
     setEl('sm-est-' + stock.id, fmtPct(er), erc);
+    // Update data attr for sort
+    var card = document.getElementById('scard-' + stock.id);
+    if (card) card.setAttribute('data-est', er.toFixed(1));
   } else {
     setEl('sm-est-' + stock.id, '—');
+  }
+
+  // Update div data attr
+  if (m.divYield !== null) {
+    var card2 = document.getElementById('scard-' + stock.id);
+    if (card2) card2.setAttribute('data-div', m.divYield.toFixed(2));
   }
 }
 
@@ -1793,7 +1844,34 @@ function runAllocator() {
   document.getElementById('ai-advice-content').innerHTML = advice;
   var rw = document.getElementById('result-wrap');
   rw.classList.add('show');
+  var fb = document.getElementById('filter-bar');
+  if (fb) fb.style.display = 'flex';
   rw.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// ── 排序功能 ──
+function sortCards(btn) {
+  document.querySelectorAll('.filter-btn').forEach(function(b){ b.classList.remove('active'); });
+  btn.classList.add('active');
+  var sortKey = btn.getAttribute('data-sort');
+  var containers = ['stocks-core', 'stocks-growth', 'stocks-spec'];
+  containers.forEach(function(cid) {
+    var el = document.getElementById(cid);
+    if (!el) return;
+    var cards = Array.from(el.querySelectorAll('.scard-link'));
+    if (cards.length === 0) return;
+    cards.sort(function(a, b) {
+      var av = parseFloat(a.getAttribute('data-' + sortKey)) || 999;
+      var bv = parseFloat(b.getAttribute('data-' + sortKey)) || 999;
+      // vs, price: ascending (most undervalued / cheapest first)
+      // div, est, tp: descending (highest yield/return first)
+      if (sortKey === 'div' || sortKey === 'est' || sortKey === 'tp') {
+        return bv - av;
+      }
+      return av - bv;
+    });
+    cards.forEach(function(card) { el.appendChild(card); });
+  });
 }
 
 updateLabels();
