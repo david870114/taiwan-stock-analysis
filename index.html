@@ -708,7 +708,7 @@
       </div>
     </div>
 
-    <!-- DRAM 記憶體 -->
+    <!-- DRAM 記憶體 / 晶圓代工 -->
     <div class="chain-node">
       <div class="node-box c-mem">
         <div class="node-tier">配套</div>
@@ -748,6 +748,18 @@
               <div class="mc-price-val" id="cp-2344">…</div>
               <div class="mc-vs-label">vs 合理</div>
               <div class="mc-vs-val" id="cv-2344">—</div>
+            </div>
+          </a>
+          <a class="mini-card" href="6770_analysis.html" id="cp-6770-card">
+            <div class="mc-left">
+              <span class="mc-code">6770</span>
+              <span class="mc-name">力積電</span>
+            </div>
+            <div class="mc-right">
+              <div class="mc-price-label">股價</div>
+              <div class="mc-price-val" id="cp-6770">…</div>
+              <div class="mc-vs-label">vs 合理</div>
+              <div class="mc-vs-val" id="cv-6770">—</div>
             </div>
           </a>
         </div>
@@ -1169,6 +1181,19 @@
         <td id="vs-3260" class="loading">—</td>
         <td class="td-tp">—</td>
       </tr>
+      <tr>
+        <td class="code code-mem">6770</td>
+        <td class="name">
+          <a href="6770_analysis.html">力積電</a><br>
+          <span class="fwd-note">* 景氣循環股，23M11–26M01 EPS虧損，26Q1 TTM EPS 1.77元轉正。前瞻PER法</span>
+        </td>
+        <td>27 <span class="per-sub">15x PER</span></td>
+        <td>44 <span class="per-sub">25x PER</span></td>
+        <td>62 <span class="per-sub">35x PER</span></td>
+        <td class="price-cell loading td-cur" id="price-6770">…</td>
+        <td id="vs-6770" class="loading">—</td>
+        <td class="td-tp">— <span class="per-sub">無</span></td>
+      </tr>
     </tbody>
   </table>
 </div>
@@ -1178,6 +1203,7 @@
   * 旺宏（2337）歷史虧損無 TTM PER，改用 2026E EPS 前瞻本益比推算。<br>
   * 南亞科（2408）為景氣循環股，2023–25Q3 長期虧損，25Q4 轉盈，EPS 11.17元（26Q1）× 復甦區間 PER 15–35x 推算。<br>
   * 華邦電（2344）景氣循環股，2023–25Q3 虧損，26Q1 TTM EPS 3.37元轉正，PER 20–34x 推算。26M05-06 漲至 46-48x 屬題材溢價。<br>
+  * 力積電（6770）景氣循環股，23M11–26M01 連續虧損，26Q1 TTM EPS 1.77元轉正。前瞻PER法估算，便宜 27 / 合理 44 / 昂貴 62 元。<br>
   * 外資目標價來源：大摩（Morgan Stanley）為優先，如無則取其他主要外資最新報告（麥格理 / 花旗 / 高盛等）。數據僅供參考，請以各券商最新報告為準。
 </p>
 
@@ -1367,9 +1393,10 @@ var STOCKS = [
   { id:'2308',  fairValue:732,  expValue:867 },
   { id:'3037',  fairValue:141,  expValue:211 },
   { id:'2408',  fairValue:279,  expValue:391 },
+  { id:'6770',  fairValue:44,   expValue:62  },
 ];
 
-var CHAIN_STOCKS = ['2330','2382','3231','6669','2345','3596','3017','3324','8210','2301','2308','3037','2408','2337','2344'];
+var CHAIN_STOCKS = ['2330','2382','3231','6669','2345','3596','3017','3324','8210','2301','2308','3037','2408','2337','2344','6770'];
 
 async function fetchPrice(id) {
   try {

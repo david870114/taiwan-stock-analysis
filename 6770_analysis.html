@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>力積電 6770 — 2026 股價推算分析</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #0f1117; color: #e2e8f0; padding: 16px; }
+  h1 { font-size: 18px; font-weight: 700; color: #f8fafc; margin-bottom: 4px; }
+  .subtitle { font-size: 12px; color: #94a3b8; margin-bottom: 16px; }
+  .tabs { display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; }
+  .tab { padding: 6px 14px; border-radius: 20px; font-size: 12px; cursor: pointer; border: 1px solid #334155; color: #94a3b8; background: transparent; transition: all 0.2s; }
+  .tab.active { background: #3b82f6; color: #fff; border-color: #3b82f6; }
+  .tab:hover:not(.active) { border-color: #64748b; color: #e2e8f0; }
+  .panel { display: none; }
+  .panel.active { display: block; }
+  canvas { width: 100% !important; border-radius: 10px; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+  .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-top: 16px; }
+  .grid4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 12px; margin-top: 16px; }
+  @media(max-width:640px){ .grid2,.grid3,.grid4{ grid-template-columns:1fr 1fr; } }
+  @media(max-width:400px){ .grid2,.grid3,.grid4{ grid-template-columns:1fr; } }
+  .card { background: #1e2535; border: 1px solid #2d3748; border-radius: 10px; padding: 14px; }
+  .card h3 { font-size: 12px; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
+  .card .val { font-size: 22px; font-weight: 700; }
+  .card .note { font-size: 11px; color: #64748b; margin-top: 4px; }
+  .green { color: #22c55e; } .yellow { color: #eab308; } .red { color: #ef4444; } .blue { color: #3b82f6; } .purple { color: #a855f7; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 12px; }
+  th { background: #1e2535; color: #64748b; padding: 8px 10px; text-align: left; font-weight: 600; font-size: 11px; text-transform: uppercase; }
+  td { padding: 8px 10px; border-bottom: 1px solid #1e2535; }
+  tr:hover td { background: #1a2030; }
+  tr.highlight td { background: #0f2a1e; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: 600; }
+  .badge-buy { background: #14532d; color: #86efac; }
+  .badge-watch { background: #713f12; color: #fde68a; }
+  .badge-avoid { background: #450a0a; color: #fca5a5; }
+  .badge-neutral { background: #1e293b; color: #94a3b8; }
+  .scenario-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 12px; }
+  @media(max-width:500px){ .scenario-grid{ grid-template-columns:1fr; } }
+  .scenario-card { border-radius: 10px; padding: 14px; text-align: center; }
+  .bear { background: linear-gradient(135deg, #1a0a0a, #2d1010); border: 1px solid #7f1d1d; }
+  .base { background: linear-gradient(135deg, #0a1a0a, #102d10); border: 1px solid #14532d; }
+  .bull { background: linear-gradient(135deg, #0a0f1a, #10182d); border: 1px solid #1d4ed8; }
+  .sc-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.7; margin-bottom: 6px; }
+  .sc-price { font-size: 22px; font-weight: 800; margin: 4px 0; }
+  .sc-detail { font-size: 10px; opacity: 0.65; line-height: 1.6; }
+  .section-title { font-size: 13px; font-weight: 600; color: #cbd5e1; margin: 16px 0 8px; }
+  .buy-signal { background: #0f2a1e; border: 1px solid #166534; border-radius: 10px; padding: 14px; margin-top: 12px; }
+  .buy-signal h3 { color: #86efac; font-size: 13px; margin-bottom: 8px; }
+  .buy-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid #1a3a2a; gap: 8px; }
+  .buy-row:last-child { border-bottom: none; }
+  .current-price-badge { background: #1e3a5f; border: 1px solid #3b82f6; border-radius: 8px; padding: 10px 14px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px; }
+  .warn-box { background: #2d1010; border: 1px solid #7f1d1d; border-radius: 10px; padding: 14px; margin-top: 12px; }
+  .warn-box h3 { color: #fca5a5; font-size: 13px; margin-bottom: 8px; }
+  .info-box { background: #1e2535; border: 1px solid #2d3748; border-radius: 10px; padding: 14px; margin-top: 12px; font-size: 12px; color: #94a3b8; line-height: 1.8; }
+  .info-box strong { color: #e2e8f0; }
+  .stat-bar { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 12px; }
+  .stat-item { background: #1e2535; border-radius: 10px; padding: 12px 16px; flex: 1; min-width: 120px; }
+  .stat-label { font-size: 10px; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+  .stat-val { font-size: 18px; font-weight: 700; color: #e2e8f0; }
+  .stat-sub { font-size: 10px; color: #64748b; margin-top: 2px; }
+  .client-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; }
+  .client-block { background: #1e2535; border-radius: 10px; padding: 14px; }
+  .client-block h4 { font-size: 11px; color: #64748b; text-transform: uppercase; margin-bottom: 10px; }
+  .client-item { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid #1a2030; font-size: 12px; }
+  .client-item:last-child { border-bottom: none; }
+  .moat-row { display: flex; align-items: flex-start; gap: 8px; padding: 5px 0; border-bottom: 1px solid #1a2030; font-size: 12px; }
+  .moat-row:last-child { border-bottom: none; }
+  .moat-icon { flex-shrink: 0; }
+</style>
+</head>
+<body>
+
+<div style="margin-bottom:12px;">
+  <a href="index.html" style="color:#64748b;font-size:12px;text-decoration:none;display:inline-flex;align-items:center;gap:4px;padding:5px 10px;border:1px solid #334155;border-radius:8px;transition:all 0.2s;" onmouseover="this.style.color='#e2e8f0';this.style.borderColor='#64748b'" onmouseout="this.style.color='#64748b';this.style.borderColor='#334155'">← 返回總覽</a>
+</div>
+<h1>💾 力積電 (6770) — 2026 股價推算分析</h1>
+<p class="subtitle">前瞻PER估值 ✦ 三情境試算 ✦ 景氣循環股 ✦ 更新時間：2026年6月7日</p>
+
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('river', this)">📈 PER 河流圖</button>
+  <button class="tab" onclick="switchTab('scenario', this)">🎯 三情境買點</button>
+  <button class="tab" onclick="switchTab('eps', this)">📊 EPS 趨勢</button>
+  <button class="tab" onclick="switchTab('fundamental', this)">🏢 基本面分析</button>
+  <button class="tab" onclick="switchTab('summary', this)">📋 完整摘要</button>
+</div>
+
+<!-- ══ TAB 1: PER River ══ -->
+<div id="tab-river" class="panel active">
+  <div class="current-price-badge">
+    <span style="color:#94a3b8;font-size:12px;">目前股價（即時）</span>
+    <span style="color:#3b82f6;font-size:20px;font-weight:800;" id="live-price">載入中…</span>
+    <span style="color:#ef4444;font-size:12px;" id="live-per-note">⚠️ 景氣循環股，EPS 剛轉正，PER 暫無歷史基準</span>
+  </div>
+  <canvas id="riverChart" height="340"></canvas>
+  <p style="font-size:11px;color:#475569;margin-top:8px;text-align:center;">* 灰色區域 = EPS 為負期間（23M11–26M01），PER 無效；圖中河流帶以 26Q1 TTM EPS 1.77元為基礎繪製。僅供參考，景氣循環股估值請謹慎對待。</p>
+
+  <div class="warn-box" style="margin-top:14px;">
+    <h3>⚠️ 景氣循環股特別說明</h3>
+    <p style="font-size:12px;color:#fca5a5;line-height:1.8;">力積電為晶圓代工廠，EPS 隨半導體景氣大幅波動。2023M11 至 2026M01 共 <strong>15 個月 EPS 為負</strong>，傳統 PER 法在此期間完全失效。26Q1 TTM EPS 剛剛轉正為 1.77 元，但仍屬低基期，需觀察後續季度能否持續回升。</p>
+  </div>
+</div>
+
+<!-- ══ TAB 2: 三情境 ══ -->
+<div id="tab-scenario" class="panel">
+  <div class="grid2">
+    <div class="card"><h3>26Q1 TTM EPS（最新季末）</h3><div class="val green">1.77 元</div><div class="note">季末月 26M03，10x欄=17.7 ÷ 10 確認</div></div>
+    <div class="card"><h3>虧損期間</h3><div class="val red">23M11 ~ 26M01</div><div class="note">連續 15 個月 EPS 為負，歷史 PER 無法建立</div></div>
+  </div>
+
+  <div class="section-title">三情境估值試算（基於 26Q1 TTM EPS = 1.77 元）</div>
+  <div class="scenario-grid">
+    <div class="scenario-card bear">
+      <div class="sc-label">🐻 悲觀情境</div>
+      <div class="sc-price" style="color:#fca5a5;">NT$ 18~27</div>
+      <div class="sc-detail">
+        PER 10x~15x<br>
+        EPS: 1.77元 × 10~15<br>
+        景氣回落或獲利未持續改善<br>
+        回到 2024 年底股價區間
+      </div>
+    </div>
+    <div class="scenario-card base">
+      <div class="sc-label">📊 基本情境</div>
+      <div class="sc-price" style="color:#86efac;">NT$ 27~44</div>
+      <div class="sc-detail">
+        PER 15x~25x<br>
+        EPS: 1.77元 × 15~25<br>
+        EPS 穩定在正值區間<br>
+        市場給予復甦期合理評價
+      </div>
+    </div>
+    <div class="scenario-card bull">
+      <div class="sc-label">🚀 樂觀情境</div>
+      <div class="sc-price" style="color:#93c5fd;">NT$ 44~62</div>
+      <div class="sc-detail">
+        PER 25x~35x<br>
+        EPS: 1.77元 × 25~35<br>
+        DRAM/晶圓代工景氣大幅改善<br>
+        EPS 加速回升帶動估值擴張
+      </div>
+    </div>
+  </div>
+
+  <div class="warn-box" style="margin-top:14px;">
+    <h3>⚠️ 目前股價 74.6 元（26M06）已超過昂貴價</h3>
+    <p style="font-size:12px;color:#fca5a5;line-height:1.8;">
+      以目前 TTM EPS 1.77 元計算，74.6 元對應 PER <strong>42.1x</strong>，超過樂觀情境上限（35x = 61.95 元）。<br>
+      這代表市場已對未來景氣大復甦給予<strong>前瞻性溢價</strong>，若 EPS 未能持續回升，股價面臨修正風險。<br>
+      26M05 甚至飆至 88.7 元（PER 50x），屬明顯題材炒作。
+    </p>
+  </div>
+
+  <div class="buy-signal">
+    <h3>✅ 合理進場參考區間</h3>
+    <div class="buy-row"><span style="font-size:12px;color:#86efac;">🟢 便宜價（PER 15x）</span><span style="font-weight:700;color:#86efac;">NT$ 26.55</span></div>
+    <div class="buy-row"><span style="font-size:12px;color:#fde68a;">🟡 合理價（PER 25x）</span><span style="font-weight:700;color:#fde68a;">NT$ 44.25</span></div>
+    <div class="buy-row"><span style="font-size:12px;color:#fca5a5;">🔴 昂貴價（PER 35x）</span><span style="font-weight:700;color:#fca5a5;">NT$ 61.95</span></div>
+    <div class="buy-row"><span style="font-size:12px;color:#ef4444;">⚠️ 目前股價（26M06）</span><span style="font-weight:700;color:#ef4444;">NT$ 74.6（PER ≈ 42x，高估）</span></div>
+  </div>
+
+  <div class="info-box" style="margin-top:12px;">
+    <strong>⚡ 注意：景氣循環股的正確評估方式</strong><br>
+    景氣循環股（力積電為晶圓代工，類似旺宏、南亞科）在 EPS 剛轉正時，PER 看似「高」是正常的，因為市場在展望未來 EPS 改善。
+    評估重點應放在：<br>
+    ① 未來 2~4 季 EPS 是否能持續回升（目前 26Q1 TTM EPS=1.77，需觀察）<br>
+    ② 半導體景氣週期是否已在底部回升<br>
+    ③ 若 EPS 能回到 3~5 元，股價 60~100 元才算合理。目前 74.6 元是在「預先定價」未來的 EPS 改善。
+  </div>
+</div>
+
+<!-- ══ TAB 3: EPS 趨勢 ══ -->
+<div id="tab-eps" class="panel">
+  <canvas id="epsChart" height="260"></canvas>
+  <div class="section-title">📋 逐月明細表格（供驗證）</div>
+  <table>
+    <thead>
+      <tr>
+        <th>月份</th><th>收盤價</th><th>10x換算欄</th><th>河流圖EPS</th><th>目前PER</th><th>14x換算</th><th>18x換算</th><th>25x換算</th><th>35x換算</th>
+      </tr>
+    </thead>
+    <tbody id="eps-table-body">
+    </tbody>
+  </table>
+  <p style="font-size:10px;color:#475569;margin-top:8px;">* 河流圖 EPS = 10x換算欄 ÷ 10。"-" 表示 EPS 為負，PER 無效。灰色列為虧損月份。</p>
+</div>
+
+<!-- ══ TAB 4: 基本面分析 ══ -->
+<div id="tab-fundamental" class="panel">
+
+  <!-- 1. 公司營運 -->
+  <div class="section-title">🏭 公司營運</div>
+  <div class="grid3">
+    <div class="card">
+      <h3>2025 全年營收</h3>
+      <div class="val blue" style="font-size:18px;">約 410 億元</div>
+      <div class="note">YoY約 +8%（依財報推估）</div>
+    </div>
+    <div class="card">
+      <h3>26Q1 季度營收</h3>
+      <div class="val green" style="font-size:18px;">約 110 億元</div>
+      <div class="note">YoY顯著改善，季季回升</div>
+    </div>
+    <div class="card">
+      <h3>26Q1 毛利率</h3>
+      <div class="val yellow" style="font-size:18px;">約 12~18%</div>
+      <div class="note">從虧損谷底緩步回升</div>
+    </div>
+  </div>
+
+  <div class="section-title">📊 近期財報趨勢</div>
+  <table>
+    <thead>
+      <tr><th>期間</th><th>營收YoY</th><th>毛利率</th><th>營業利益率</th><th>EPS</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>2023Q3</td><td style="color:#fca5a5;">大幅衰退</td><td style="color:#fca5a5;">負值</td><td style="color:#fca5a5;">負值</td><td style="color:#fca5a5;">-0.39元</td></tr>
+      <tr><td>2023Q4</td><td style="color:#fca5a5;">衰退</td><td style="color:#fca5a5;">負值</td><td style="color:#fca5a5;">負值</td><td style="color:#fca5a5;">-0.37元</td></tr>
+      <tr><td>2024Q1</td><td style="color:#fca5a5;">持續衰退</td><td style="color:#fca5a5;">負值</td><td style="color:#fca5a5;">負值</td><td style="color:#fca5a5;">虧損</td></tr>
+      <tr><td>2024Q2</td><td style="color:#eab308;">持平</td><td style="color:#eab308;">接近0%</td><td style="color:#fca5a5;">負值</td><td style="color:#fca5a5;">微虧</td></tr>
+      <tr><td>2024Q3</td><td style="color:#eab308;">持平</td><td style="color:#eab308;">低個位數</td><td style="color:#eab308;">微負</td><td style="color:#fca5a5;">微虧</td></tr>
+      <tr><td>2024Q4</td><td style="color:#eab308;">回溫跡象</td><td style="color:#eab308;">低個位數</td><td style="color:#eab308;">持平</td><td style="color:#fca5a5;">微虧</td></tr>
+      <tr class="highlight"><td>2026Q1 ✅</td><td style="color:#22c55e;">明顯回升</td><td style="color:#22c55e;">轉正回升</td><td style="color:#22c55e;">轉正</td><td style="color:#22c55e;font-weight:700;">TTM 1.77元</td></tr>
+    </tbody>
+  </table>
+  <div class="info-box" style="margin-top:10px;">
+    <strong>毛利率趨勢說明：</strong>力積電毛利率在2023~2025年受到半導體景氣下行、40nm以下舊製程需求萎縮、客戶庫存去化影響而大幅下滑至負值。26Q1開始受惠於利基型DRAM（利基型記憶體晶圓代工）需求回升、客戶庫存健康化，毛利率逐步轉正。<br>後續關鍵：12吋廠擴產利用率是否能提升至70%以上，才能讓毛利率回到15%以上區間。
+  </div>
+
+  <!-- 2. 商業模式 -->
+  <div class="section-title">💡 商業模式</div>
+  <div class="grid2">
+    <div class="card">
+      <h3>怎麼賺錢</h3>
+      <div style="font-size:12px;color:#94a3b8;line-height:1.8;margin-top:6px;">
+        力積電（PSMC）為台灣第三大晶圓代工廠，主要提供 <strong>40~350nm 成熟製程</strong> 晶圓代工服務：<br>
+        • <strong>利基型 DRAM</strong>（DDR3/DDR4）：約 40~50% 營收<br>
+        • <strong>邏輯 IC 代工</strong>（電源管理、顯示驅動）：約 30~40%<br>
+        • <strong>Flash / 其他記憶體</strong>：約 10~20%<br>
+        商業模式純粹 OEM，無自有品牌，隨客戶需求與景氣波動大。
+      </div>
+    </div>
+    <div class="card">
+      <h3>護城河評估</h3>
+      <div style="font-size:12px;line-height:1.9;margin-top:6px;">
+        <div class="moat-row"><span class="moat-icon">✅</span><span><strong>成熟製程客戶黏性：</strong>客戶換廠成本高（重新驗證），轉換意願低</span></div>
+        <div class="moat-row"><span class="moat-icon">✅</span><span><strong>銅鑼廠資產：</strong>12吋廠與銅鑼擴廠計畫，提升未來產能彈性</span></div>
+        <div class="moat-row"><span class="moat-icon">⚠️</span><span><strong>製程競爭力：</strong>40nm以上成熟製程中國廠（SMIC、華虹）積極擴產，定價壓力大</span></div>
+        <div class="moat-row"><span class="moat-icon">⚠️</span><span><strong>高資本密集：</strong>折舊壓力重，景氣下行時毛利率急速惡化</span></div>
+        <div class="moat-row"><span class="moat-icon">⚠️</span><span><strong>景氣敏感：</strong>下游 DRAM / 消費電子需求波動大，EPS 波動劇烈</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="client-row">
+    <div class="client-block">
+      <h4>主要客戶</h4>
+      <div class="client-item"><span>旺宏電子</span><span class="badge badge-watch">Flash 代工</span></div>
+      <div class="client-item"><span>海外 DRAM 品牌</span><span class="badge badge-neutral">利基型記憶體</span></div>
+      <div class="client-item"><span>顯示驅動 IC 設計商</span><span class="badge badge-neutral">邏輯製程</span></div>
+      <div class="client-item"><span>電源管理 IC 客戶</span><span class="badge badge-neutral">成熟製程</span></div>
+    </div>
+    <div class="client-block">
+      <h4>主要競爭對手</h4>
+      <div class="client-item"><span>台積電（2330）</span><span class="badge badge-avoid">高端製程競爭</span></div>
+      <div class="client-item"><span>聯電（2303）</span><span class="badge badge-watch">成熟製程直接對手</span></div>
+      <div class="client-item"><span>SMIC（中芯國際）</span><span class="badge badge-avoid">中國低價競爭</span></div>
+      <div class="client-item"><span>華虹半導體</span><span class="badge badge-avoid">中國成熟製程</span></div>
+    </div>
+  </div>
+
+  <!-- 3. 市場地位 -->
+  <div class="section-title">🌏 市場地位</div>
+  <div class="stat-bar">
+    <div class="stat-item"><div class="stat-label">台灣排名</div><div class="stat-val yellow">第 3 大</div><div class="stat-sub">台積電、聯電之後</div></div>
+    <div class="stat-item"><div class="stat-label">主力製程</div><div class="stat-val blue">40~350nm</div><div class="stat-sub">成熟製程</div></div>
+    <div class="stat-item"><div class="stat-label">12吋晶圓產能</div><div class="stat-val green">~7萬片/月</div><div class="stat-sub">含銅鑼擴產計畫</div></div>
+    <div class="stat-item"><div class="stat-label">主要市場</div><div class="stat-val purple">台灣 + 亞洲</div><div class="stat-sub">中美日韓客戶</div></div>
+  </div>
+  <div class="info-box" style="margin-top:10px;">
+    力積電在成熟製程市場與聯電直接競爭，同時面臨中國廠商（SMIC、華虹）以<strong>政府補貼</strong>進行的低價競爭。在先進封裝（CoWoS）、先進製程方面並非重點，競爭優勢集中於利基型 DRAM 代工與特定邏輯 IC 客戶的長期關係。
+  </div>
+
+  <!-- 4. 估值指標 -->
+  <div class="section-title">💰 估值指標（即時）</div>
+  <div class="grid4">
+    <div class="card">
+      <h3>本益比 P/E</h3>
+      <div class="val red" id="fund-pe">計算中…</div>
+      <div class="note" id="fund-pe-note">TTM EPS = 1.77元</div>
+    </div>
+    <div class="card">
+      <h3>前瞻 P/E（2026E）</h3>
+      <div class="val yellow">25~35x</div>
+      <div class="note">若全年 EPS 能達 2~3元<br>則合理股價 50~105元</div>
+    </div>
+    <div class="card">
+      <h3>股價淨值比 P/B</h3>
+      <div class="val blue">約 1.3~1.5x</div>
+      <div class="note">依財報推估，淨值約 50 元</div>
+    </div>
+    <div class="card">
+      <h3>ROE</h3>
+      <div class="val yellow">轉正回升中</div>
+      <div class="note">26Q1 轉正，需觀察後續</div>
+    </div>
+  </div>
+
+  <div class="info-box" style="margin-top:12px;">
+    <strong>估值解讀：</strong>目前股價 74.6 元（26M06），TTM PER ≈ 42x，遠超過基本情境合理價（44.25 元，PER 25x）和樂觀情境昂貴價（61.95 元，PER 35x）。市場已在<strong>預先定價未來 2~4 季的 EPS 大幅改善</strong>（若 EPS 回升至 3~4 元，則 74.6 元對應 PER 約 18~25x，才屬合理）。這屬於景氣復甦預期炒作，投資人需自行評估 EPS 改善的確定性與速度。
+  </div>
+
+  <p style="font-size:10px;color:#475569;margin-top:16px;text-align:center;">⚠️ 本分析僅供參考，不構成投資建議</p>
+</div>
+
+<!-- ══ TAB 5: 完整摘要 ══ -->
+<div id="tab-summary" class="panel">
+  <div class="card" style="margin-bottom:12px;">
+    <h3>📌 力積電（6770）投資摘要</h3>
+    <div style="font-size:13px;line-height:2.0;margin-top:10px;color:#94a3b8;">
+      <strong style="color:#e2e8f0;">公司性質：</strong>台灣第三大晶圓代工廠，主攻 40~350nm 成熟製程，利基型 DRAM 代工為主力。<br>
+      <strong style="color:#e2e8f0;">景氣循環：</strong>EPS 從 2023M11 至 2026M01 連續 15 個月虧損，26Q1 TTM EPS 轉正為 1.77 元。<br>
+      <strong style="color:#e2e8f0;">估值基準：</strong>以 26Q1 TTM EPS 1.77 元計算，便宜價 27 元（15x）/ 合理價 44 元（25x）/ 昂貴價 62 元（35x）。<br>
+      <strong style="color:#ef4444;">目前股價：</strong>74.6 元（26M06），對應 PER 42x，超過昂貴價，屬景氣復甦<strong>前瞻溢價</strong>。<br>
+      <strong style="color:#e2e8f0;">關鍵觀察：</strong>① 26Q2~Q3 EPS 能否持續回升 ② 利基型 DRAM 報價走勢 ③ 銅鑼廠產能利用率 ④ 中國競爭廠商定價壓力。<br>
+      <strong style="color:#e2e8f0;">主要風險：</strong>中國成熟製程廠（SMIC/華虹）低價競爭、全球 DRAM 景氣再轉弱、高折舊壓力、美中貿易摩擦。<br>
+      <strong style="color:#e2e8f0;">類股比較：</strong>類似南亞科（2408）、旺宏（2337）—景氣循環股，EPS 轉正初期 PER 常偏高，市場定價前瞻復甦預期。
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <h3>✅ 投資亮點</h3>
+      <div style="font-size:12px;color:#86efac;line-height:2.0;margin-top:8px;">
+        ✅ 26Q1 EPS 正式轉正，景氣復甦訊號<br>
+        ✅ 台灣第三大晶圓代工，產業地位穩固<br>
+        ✅ 成熟製程客戶黏性高（重新驗證成本高）<br>
+        ✅ 銅鑼廠新產能，長期支撐成長<br>
+        ✅ 半導體景氣週期有望持續好轉
+      </div>
+    </div>
+    <div class="card">
+      <h3>⚠️ 主要風險</h3>
+      <div style="font-size:12px;color:#fca5a5;line-height:2.0;margin-top:8px;">
+        🔴 中國廠成熟製程低價競爭激烈<br>
+        🔴 目前股價 74.6 元高於昂貴價（62 元）<br>
+        🔴 EPS 轉正初期，僅 1.77 元，基期低<br>
+        🔴 高折舊壓力，景氣下行時毛利快速惡化<br>
+        🔴 前瞻溢價高，若 EPS 未達預期修正風險大
+      </div>
+    </div>
+  </div>
+
+  <div class="buy-signal" style="margin-top:12px;">
+    <h3>📊 各情境目標股價區間</h3>
+    <div class="buy-row"><span style="font-size:12px;color:#86efac;">🟢 EPS 若回升至 3 元 × 15x~25x</span><span style="font-weight:700;color:#86efac;">NT$ 45~75</span></div>
+    <div class="buy-row"><span style="font-size:12px;color:#fde68a;">🟡 EPS 若回升至 5 元 × 15x~25x</span><span style="font-weight:700;color:#fde68a;">NT$ 75~125</span></div>
+    <div class="buy-row"><span style="font-size:12px;color:#fca5a5;">🔴 目前 1.77元 × 42x（現況）</span><span style="font-weight:700;color:#fca5a5;">NT$ 74.6（前瞻溢價）</span></div>
+  </div>
+
+  <div class="info-box" style="margin-top:12px;">
+    <strong>💡 操作建議：</strong><br>
+    景氣循環股的最佳買點通常在「EPS 尚未轉正、股價已提前反映」或「EPS 轉正後第一季確認回升」。目前 74.6 元已屬後者的高點，市場已充分（甚至過度）定價復甦。<br>
+    若相信 EPS 能在 2026~2027 年回升至 4~5 元，目前股價才算相對合理；若 EPS 改善不如預期，回測合理價（44 元）的修正幅度達 40%。
+  </div>
+
+  <p style="font-size:10px;color:#475569;margin-top:16px;text-align:center;">⚠️ 本分析僅供參考，不構成投資建議。股市有風險，請自行判斷。</p>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<script>
+
+// ══ 切 Tab ══
+function switchTab(id, btn) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ══ 數據定義（10x欄÷10） ══
+// EPS為負的月份 eps=null，收盤正常記錄
+const data = [
+  { m:'23M07', px:29.95, eps:1.663, per:18.01 },
+  { m:'23M08', px:27.85, eps:1.137, per:24.5  },
+  { m:'23M09', px:26.55, eps:0.61,  per:43.52 },
+  { m:'23M10', px:26.55, eps:0.273, per:97.13 },
+  { m:'23M11', px:30.1,  eps:null,  per:null  },
+  { m:'23M12', px:29.45, eps:null,  per:null  },
+  { m:'24M01', px:27,    eps:null,  per:null  },
+  { m:'24M02', px:27.6,  eps:null,  per:null  },
+  { m:'24M03', px:25.8,  eps:null,  per:null  },
+  { m:'24M04', px:22.85, eps:null,  per:null  },
+  { m:'24M05', px:24.9,  eps:null,  per:null  },
+  { m:'24M06', px:26.8,  eps:null,  per:null  },
+  { m:'24M07', px:23,    eps:null,  per:null  },
+  { m:'24M08', px:21.6,  eps:null,  per:null  },
+  { m:'24M09', px:21.6,  eps:null,  per:null  },
+  { m:'24M10', px:18,    eps:null,  per:null  },
+  { m:'24M11', px:16.95, eps:null,  per:null  },
+  { m:'24M12', px:15.9,  eps:null,  per:null  },
+  { m:'25M01', px:19.95, eps:null,  per:null  },
+  { m:'25M02', px:18.35, eps:null,  per:null  },
+  { m:'25M03', px:15.2,  eps:null,  per:null  },
+  { m:'25M04', px:14.15, eps:null,  per:null  },
+  { m:'25M05', px:15.5,  eps:null,  per:null  },
+  { m:'25M06', px:15.4,  eps:null,  per:null  },
+  { m:'25M07', px:15,    eps:null,  per:null  },
+  { m:'25M08', px:15.9,  eps:null,  per:null  },
+  { m:'25M09', px:25.4,  eps:null,  per:null  },
+  { m:'25M10', px:31.5,  eps:null,  per:null  },
+  { m:'25M11', px:34.1,  eps:null,  per:null  },
+  { m:'25M12', px:39.55, eps:null,  per:null  },
+  { m:'26M01', px:69.5,  eps:null,  per:null  },
+  { m:'26M02', px:76.7,  eps:0.56,  per:137   },
+  { m:'26M03', px:53.1,  eps:1.77,  per:30    },
+  { m:'26M04', px:51.9,  eps:1.77,  per:29.32 },
+  { m:'26M05', px:88.7,  eps:1.77,  per:50.11 },
+  { m:'26M06', px:74.6,  eps:1.77,  per:42.15 },
+];
+
+const labels = data.map(d => d.m);
+const prices = data.map(d => d.px);
+
+// PER 河流帶：只在 EPS 非 null 時繪製
+const r10 = data.map(d => d.eps !== null ? +(d.eps * 10).toFixed(2) : null);
+const r15 = data.map(d => d.eps !== null ? +(d.eps * 15).toFixed(2) : null);
+const r25 = data.map(d => d.eps !== null ? +(d.eps * 25).toFixed(2) : null);
+const r35 = data.map(d => d.eps !== null ? +(d.eps * 35).toFixed(2) : null);
+
+// ══ PER 河流圖 ══
+const ctx1 = document.getElementById('riverChart').getContext('2d');
+new Chart(ctx1, {
+  type: 'line',
+  data: {
+    labels,
+    datasets: [
+      {
+        label: '35x（昂貴）',
+        data: r35,
+        borderColor: '#ef4444',
+        backgroundColor: 'rgba(239,68,68,0.08)',
+        borderWidth: 1.5,
+        borderDash: [4,3],
+        pointRadius: 0,
+        fill: false,
+        spanGaps: false,
+        tension: 0.3,
+      },
+      {
+        label: '25x（合理上限）',
+        data: r25,
+        borderColor: '#eab308',
+        backgroundColor: 'rgba(234,179,8,0.08)',
+        borderWidth: 1.5,
+        borderDash: [4,3],
+        pointRadius: 0,
+        fill: false,
+        spanGaps: false,
+        tension: 0.3,
+      },
+      {
+        label: '15x（合理下限）',
+        data: r15,
+        borderColor: '#22c55e',
+        backgroundColor: 'rgba(34,197,94,0.08)',
+        borderWidth: 1.5,
+        borderDash: [4,3],
+        pointRadius: 0,
+        fill: false,
+        spanGaps: false,
+        tension: 0.3,
+      },
+      {
+        label: '10x（便宜）',
+        data: r10,
+        borderColor: '#3b82f6',
+        backgroundColor: 'rgba(59,130,246,0.08)',
+        borderWidth: 1.5,
+        borderDash: [4,3],
+        pointRadius: 0,
+        fill: false,
+        spanGaps: false,
+        tension: 0.3,
+      },
+      {
+        label: '月收盤價',
+        data: prices,
+        borderColor: '#ffffff',
+        backgroundColor: 'rgba(255,255,255,0.05)',
+        borderWidth: 2.5,
+        pointRadius: 2.5,
+        pointBackgroundColor: '#ffffff',
+        fill: false,
+        spanGaps: true,
+        tension: 0.3,
+        z: 10,
+      },
+    ]
+  },
+  options: {
+    responsive: true,
+    interaction: { mode: 'index', intersect: false },
+    plugins: {
+      legend: { labels: { color: '#94a3b8', font: { size: 11 } } },
+      tooltip: {
+        callbacks: {
+          label: ctx => {
+            if (ctx.dataset.label === '月收盤價') return `收盤：${ctx.parsed.y}`;
+            return `${ctx.dataset.label}：${ctx.parsed.y ?? '—'}`;
+          }
+        }
+      }
+    },
+    scales: {
+      x: { ticks: { color: '#64748b', maxRotation: 45, font: { size: 10 } }, grid: { color: '#1e2535' } },
+      y: { ticks: { color: '#64748b', font: { size: 10 } }, grid: { color: '#1e2535' } }
+    }
+  }
+});
+
+// ══ EPS 趨勢圖 ══
+const ctx2 = document.getElementById('epsChart').getContext('2d');
+new Chart(ctx2, {
+  type: 'bar',
+  data: {
+    labels,
+    datasets: [
+      {
+        label: 'TTM EPS（元）',
+        data: data.map(d => d.eps),
+        backgroundColor: data.map(d => d.eps === null ? '#1e2535' : d.eps < 0 ? '#ef444499' : '#22c55e99'),
+        borderColor: data.map(d => d.eps === null ? '#1e2535' : d.eps < 0 ? '#ef4444' : '#22c55e'),
+        borderWidth: 1,
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      legend: { labels: { color: '#94a3b8', font: { size: 11 } } },
+    },
+    scales: {
+      x: { ticks: { color: '#64748b', maxRotation: 45, font: { size: 10 } }, grid: { color: '#1e2535' } },
+      y: {
+        ticks: { color: '#64748b', font: { size: 10 } },
+        grid: { color: '#1e2535' },
+        title: { display: true, text: 'EPS（元）', color: '#64748b', font: { size: 11 } }
+      }
+    }
+  }
+});
+
+// ══ EPS 表格 ══
+const tbody = document.getElementById('eps-table-body');
+data.forEach(d => {
+  const isLoss = d.eps === null;
+  const isHighlight = d.m >= '26M03';
+  const rowClass = isHighlight ? ' class="highlight"' : '';
+  const epsStr = d.eps !== null ? d.eps.toFixed(3) : '<span style="color:#334155">—（虧損）</span>';
+  const perStr = d.per !== null ? d.per.toFixed(2) : '<span style="color:#334155">—</span>';
+  const tenxStr = d.eps !== null ? (d.eps * 10).toFixed(1) : '—';
+  const r14 = d.eps !== null ? (d.eps * 14).toFixed(1) : '—';
+  const r18 = d.eps !== null ? (d.eps * 18).toFixed(1) : '—';
+  const r25 = d.eps !== null ? (d.eps * 25).toFixed(1) : '—';
+  const r35 = d.eps !== null ? (d.eps * 35).toFixed(1) : '—';
+  const priceColor = d.eps !== null && d.px > d.eps * 35 ? 'color:#ef4444' : d.eps !== null && d.px < d.eps * 15 ? 'color:#22c55e' : 'color:#e2e8f0';
+  tbody.innerHTML += `<tr${rowClass}><td>${d.m}</td><td style="${priceColor}">${d.px}</td><td>${tenxStr}</td><td>${epsStr}</td><td>${perStr}</td><td>${r14}</td><td>${r18}</td><td>${r25}</td><td>${r35}</td></tr>`;
+});
+
+// ══ 即時股價 ══
+async function updateLivePrice() {
+  try {
+    const res = await fetch('https://taiwan-stock-price.david870114.workers.dev/?id=6770', { cache: 'no-cache' });
+    const d = JSON.parse(await res.text());
+    const price = parseFloat(d.price);
+    if (price && !isNaN(price)) {
+      document.getElementById('live-price').textContent = 'NT$ ' + price.toLocaleString();
+      const ttmEPS = 1.77;
+      const pe = (price / ttmEPS).toFixed(1);
+      document.getElementById('live-per-note').textContent = `TTM PER ≈ ${pe}x（EPS 1.77元）${price > 61.95 ? '｜⚠️ 超過昂貴價，前瞻溢價' : price > 44.25 ? '｜🟡 合理~偏高' : '｜✅ 合理區間'}`;
+      document.getElementById('live-per-note').style.color = price > 61.95 ? '#ef4444' : price > 44.25 ? '#eab308' : '#22c55e';
+    }
+  } catch(e) {}
+}
+
+async function updateFundamentalPE() {
+  try {
+    const res = await fetch('https://taiwan-stock-price.david870114.workers.dev/?id=6770', { cache: 'no-cache' });
+    const d = JSON.parse(await res.text());
+    const price = parseFloat(d.price);
+    if (price && !isNaN(price)) {
+      const ttmEPS = 1.77;
+      const pe = (price / ttmEPS).toFixed(1);
+      const el = document.getElementById('fund-pe');
+      if (el) {
+        el.textContent = pe + 'x';
+        el.style.color = pe > 40 ? '#ef4444' : pe > 30 ? '#eab308' : '#22c55e';
+      }
+      const note = document.getElementById('fund-pe-note');
+      if (note) note.textContent = `TTM EPS = 1.77元 ｜ 股價 ${price}`;
+    }
+  } catch(e) {}
+}
+
+window.addEventListener('load', () => {
+  updateLivePrice();
+  updateFundamentalPE();
+});
+
+</script>
+</body>
+</html>
