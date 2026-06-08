@@ -23,6 +23,7 @@ Repo：https://github.com/david870114/taiwan-stock-analysis
 |------|------|------|---------|
 | 0050 | 元大台灣50 | ETF | 殖利率法 |
 | 2330 | 台積電 | AI/半導體 | PER法 |
+| 2303 | 聯電 | AI/半導體 | PER法 |
 | 2345 | 智邦 | AI/網通 | PER法 |
 
 ---

@@ -501,6 +501,18 @@
               <div class="mc-vs-val" id="cv-2330">—</div>
             </div>
           </a>
+          <a class="mini-card" href="2303_analysis.html">
+            <div class="mc-left">
+              <span class="mc-code">2303</span>
+              <span class="mc-name">聯電</span>
+            </div>
+            <div class="mc-right">
+              <div class="mc-price-label">目前股價</div>
+              <div class="mc-price-val" id="cp-2303">…</div>
+              <div class="mc-vs-label">vs 合理價</div>
+              <div class="mc-vs-val" id="cv-2303">—</div>
+            </div>
+          </a>
           <div class="mini-card no-data">
             <div class="mc-left">
               <span class="mc-code">3711</span>
@@ -1394,6 +1406,7 @@
 var STOCKS = [
   { id:'0050',  fairValue:50,   expValue:67 },
   { id:'2330',  fairValue:1637, expValue:2083 },
+  { id:'2303',  fairValue:72,   expValue:128  },
   { id:'2382',  fairValue:350,  expValue:506 },
   { id:'3231',  fairValue:181,  expValue:302 },
   { id:'6669',  fairValue:4475, expValue:5966 },
@@ -1512,6 +1525,7 @@ var TRACKED = [
 
   // ── 成長 ── 穩定獲利 + AI 受惠 + 護城河 ────────────────
   { id:'2330', name:'台積電',     tier:'growth', fairValue:1637, expValue:2083, fairPER:22, tp:2588, cheapValue:1265 },  // 全球晶圓龍頭，護城河極深
+  { id:'2303', name:'聯電',       tier:'spec',   fairValue:72,   expValue:128,  fairPER:18, tp:null, cheapValue:48  },  // 全球第二代工廠，22nm成熟製程復甦
   { id:'2308', name:'台達電',     tier:'growth', fairValue:732,  expValue:867,  fairPER:27, tp:null, cheapValue:596 },  // 電源大廠，連續獲利，AI 電源受惠
   { id:'2382', name:'廣達',       tier:'growth', fairValue:350,  expValue:506,  fairPER:18, tp:400, cheapValue:253 },  // AI 伺服器 ODM 龍頭，獲利穩定
   { id:'3231', name:'緯創',       tier:'growth', fairValue:181,  expValue:302,  fairPER:18, tp:null, cheapValue:101 },  // AI 伺服器，成長加速
