@@ -162,6 +162,10 @@
     cursor: pointer;
   }
   .scard-link:hover { border-color: #3b82f6; background: #1e2d45; }
+  .scard-link.top3-highlight {
+    box-shadow: 0 0 0 2px rgba(255,255,255,0.55), 0 0 14px rgba(255,255,255,0.15);
+    border-color: rgba(255,255,255,0.35) !important;
+  }
   .scard-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
   .scard-code { font-size: 14px; font-weight: 700; font-family: monospace; color: #93c5fd; }
   .scard-name { font-size: 12px; color: #94a3b8; margin-top: 1px; }
@@ -1879,14 +1883,24 @@ async function fillCardMetrics(stock) {
     setEl('sm-per-' + stock.id, '—');
   }
 
-  // Estimated return
+  // Estimated return — color by price vs valuation bands
   if (m.estReturn !== null) {
     var er = m.estReturn;
-    var erc = er >= 15 ? 'green' : er >= 5 ? 'yellow' : er < 0 ? 'red' : 'muted';
+    var liveP = getLivePrice(stock.id);
+    var erc;
+    if (!liveP) {
+      erc = 'muted';
+    } else if (stock.expValue && liveP >= stock.expValue) {
+      erc = 'red';    // 超過昂貴價
+    } else if (stock.fairValue && liveP >= stock.fairValue) {
+      erc = 'yellow'; // 合理價～昂貴價之間
+    } else {
+      erc = 'green';  // 低於合理價（便宜區）
+    }
     setEl('sm-est-' + stock.id, fmtPct(er), erc);
-    // Update data attr for sort
     var card = document.getElementById('scard-' + stock.id);
     if (card) card.setAttribute('data-est', er.toFixed(1));
+    highlightTop3();
   } else {
     setEl('sm-est-' + stock.id, '—');
   }
@@ -1896,6 +1910,24 @@ async function fillCardMetrics(stock) {
     var card2 = document.getElementById('scard-' + stock.id);
     if (card2) card2.setAttribute('data-div', m.divYield.toFixed(2));
   }
+}
+
+function highlightTop3() {
+  ['stocks-core', 'stocks-growth', 'stocks-spec'].forEach(function(cid) {
+    var container = document.getElementById(cid);
+    if (!container) return;
+    var cards = Array.from(container.querySelectorAll('.scard-link[data-est]'));
+    cards.sort(function(a, b) {
+      return parseFloat(b.getAttribute('data-est')) - parseFloat(a.getAttribute('data-est'));
+    });
+    // Reset all, then highlight top 3
+    container.querySelectorAll('.scard-link').forEach(function(c) {
+      c.classList.remove('top3-highlight');
+    });
+    cards.slice(0, 3).forEach(function(c) {
+      c.classList.add('top3-highlight');
+    });
+  });
 }
 
 function renderTierStocks(containerId, stocks, active) {
