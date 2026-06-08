@@ -28,13 +28,35 @@ Repo：https://github.com/david870114/taiwan-stock-analysis
 
 ---
 
-## 工具選擇（抓取 goodinfo 數據）
+## 抓取 GoodInfo 數據（已確認可用方法）
 
-依以下順序判斷可用工具：
+### 主要方法：直接呼叫 Node.js Scraper（每次都有效）
 
-1. **Chrome MCP**（`mcp__Claude_in_Chrome__get_page_text`）可用 → 優先使用
-2. **Puppeteer MCP**（`mcp__puppeteer__puppeteer_navigate` + `mcp__puppeteer__puppeteer_content`）可用 → 次選
-3. 兩者都不可用 → 告知使用者無法自動抓取
+```powershell
+node C:\Users\USER\goodinfo_scraper.mjs <股票代號> per     # PER 河流圖資料
+node C:\Users\USER\goodinfo_scraper.mjs <股票代號> detail  # 股票基本資訊
+```
+
+**用 PowerShell 工具執行**，例如：
+```
+PowerShell: node C:\Users\USER\goodinfo_scraper.mjs 2330 per
+```
+
+輸出為 JSON，成功時 `success: true`，內含頁面文字和表格資料。
+
+### 技術細節（2026-06-08 測試確認）
+
+- `waitUntil: 'domcontentloaded'`（不用 networkidle2，否則會 JS 跳轉錯誤）
+- 等待 6 秒讓 JS 執行完成
+- 隱藏 `navigator.webdriver`，設定真實 User-Agent
+- 使用 Chrome 路徑：`C:\Program Files\Google\Chrome\Application\chrome.exe`
+- Puppeteer 位置：`C:\Users\USER\AppData\Roaming\npm\node_modules\@modelcontextprotocol\server-puppeteer\node_modules\puppeteer`
+
+### Puppeteer MCP 說明
+
+`settings.json` 已設定 Puppeteer MCP，`/mcp` 顯示 connected，但**工具不會出現在 Claude 的 context**（Windows 上 Claude Code 的已知問題：MCP server 啟動成功但 tools 不載入）。
+
+**請勿等待 MCP 工具，直接用上方 PowerShell 方法**。
 
 ---
 
