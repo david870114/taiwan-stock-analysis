@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
@@ -15,7 +15,7 @@
   .tab-btn {
     background: transparent;
     border: none;
-    color: #64748b;
+    color: #94a3b8;
     font-size: 13px; font-weight: 600;
     padding: 10px 18px 11px;
     cursor: pointer;
@@ -46,7 +46,7 @@
   }
   .alloc-card h3 {
     font-size: 13px; font-weight: 700;
-    color: #64748b; text-transform: uppercase;
+    color: #94a3b8; text-transform: uppercase;
     letter-spacing: 0.08em; margin-bottom: 16px;
     border-left: 3px solid #3b82f6; padding-left: 8px;
   }
@@ -104,7 +104,7 @@
   }
   .result-wrap.show { display: block; }
   .result-title {
-    font-size: 13px; font-weight: 700; color: #64748b;
+    font-size: 13px; font-weight: 700; color: #94a3b8;
     text-transform: uppercase; letter-spacing: 0.08em;
     margin-bottom: 16px; border-left: 3px solid #3b82f6; padding-left: 8px;
     display: flex; justify-content: space-between; align-items: center;
@@ -142,14 +142,14 @@
   }
   .tier-name { font-size: 12px; font-weight: 700; color: #94a3b8; margin-bottom: 3px; }
   .tier-pct  { font-size: 22px; font-weight: 800; color: #f8fafc; line-height: 1; }
-  .tier-amt  { font-size: 11px; color: #64748b; margin-top: 2px; }
+  .tier-amt  { font-size: 11px; color: #94a3b8; margin-top: 2px; }
   .tier-amt strong { font-size: 13px; color: #7db8f7; }
-  .tier-sub  { font-size: 10px; color: #334155; margin-top: 4px; }
+  .tier-sub  { font-size: 10px; color: #475569; margin-top: 4px; }
 
   /* 個股卡片 — 在欄內堆疊 */
   .stock-suggest { display: none; } /* 隱藏舊的橫向清單 */
   .tier-stocks { padding: 10px 10px 12px; display: flex; flex-direction: column; gap: 8px; }
-  .tier-empty { padding: 16px; font-size: 12px; color: #334155; text-align: center; }
+  .tier-empty { padding: 16px; font-size: 12px; color: #475569; text-align: center; }
 
   .scard {
     background: #192033; border-radius: 8px;
@@ -169,18 +169,18 @@
 
   .scard-rows { display: flex; flex-direction: column; gap: 4px; }
   .scard-row { display: flex; justify-content: space-between; align-items: center; }
-  .scard-label { font-size: 10px; color: #475569; }
+  .scard-label { font-size: 10px; color: #64748b; }
   .scard-val   { font-size: 12px; font-weight: 700; color: #e2e8f0; font-family: monospace; }
   .scard-val.green  { color: #22c55e; }
   .scard-val.yellow { color: #eab308; }
   .scard-val.red    { color: #ef4444; }
-  .scard-val.muted  { color: #334155; }
+  .scard-val.muted  { color: #475569; }
   .scard-val.purple { color: #c4b5fd; }
 
   .tag-cheap { background: #14532d; color: #86efac; }
   .tag-fair  { background: #713f12; color: #fde68a; }
   .tag-exp   { background: #450a0a; color: #fca5a5; }
-  .tag-nodata{ background: #1e293b; color: #475569; }
+  .tag-nodata{ background: #1e293b; color: #64748b; }
 
   /* AI 建議文字 */
   .ai-advice {
@@ -195,10 +195,10 @@
     background: #141b2d; border-radius: 10px;
     padding: 10px 14px; border: 1px solid #1e3050;
   }
-  .filter-label { font-size: 11px; color: #475569; font-weight: 700; white-space: nowrap; }
+  .filter-label { font-size: 11px; color: #64748b; font-weight: 700; white-space: nowrap; }
   .filter-btn {
     background: #192033; border: 1px solid #1e3050;
-    color: #64748b; font-size: 11px; font-weight: 600;
+    color: #94a3b8; font-size: 11px; font-weight: 600;
     padding: 5px 11px; border-radius: 20px; cursor: pointer;
     transition: all 0.15s; white-space: nowrap;
   }
@@ -215,15 +215,15 @@
     background: #141b2d; border: 1px solid #1e3050;
     border-radius: 10px; padding: 16px 18px; margin-bottom: 16px;
   }
-  .me-title { font-size: 11px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 12px; }
+  .me-title { font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 12px; }
   .me-grid  { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
   @media(max-width:600px){ .me-grid{ grid-template-columns:1fr; } }
   .me-item  { display: flex; flex-direction: column; gap: 3px; }
   .me-label { font-size: 11px; font-weight: 700; color: #7db8f7; }
-  .me-desc  { font-size: 11px; color: #475569; line-height: 1.6; }
+  .me-desc  { font-size: 11px; color: #64748b; line-height: 1.6; }
   .me-desc strong { color: #94a3b8; }
   .scard-row-est { border-top: 1px solid #1e3050; margin-top: 4px; padding-top: 6px; }
-  .ai-advice-title { font-size: 11px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px; }
+  .ai-advice-title { font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px; }
   .ai-advice p { font-size: 13px; color: #94a3b8; line-height: 1.7; margin-bottom: 8px; }
   .ai-advice p:last-child { margin-bottom: 0; }
   .ai-advice strong { color: #7db8f7; }
@@ -251,7 +251,7 @@
     gap: 12px;
   }
   .page-header h1 { font-size: 20px; font-weight: 700; color: #f8fafc; margin-bottom: 4px; }
-  .meta { font-size: 12px; color: #64748b; }
+  .meta { font-size: 12px; color: #94a3b8; }
   .update-btn {
     background: #3b82f6; color: #fff; border: none;
     padding: 7px 16px; border-radius: 8px; font-size: 12px;
@@ -268,7 +268,7 @@
     overflow-x: auto;
   }
   .chain-title {
-    font-size: 12px; font-weight: 700; color: #64748b;
+    font-size: 12px; font-weight: 700; color: #94a3b8;
     text-transform: uppercase; letter-spacing: 0.1em;
     margin-bottom: 18px;
     display: flex; align-items: center; gap: 8px;
@@ -347,7 +347,7 @@
   /* ── 追蹤清單表格 ── */
   .section { margin-bottom: 28px; }
   .section-title {
-    font-size: 12px; font-weight: 700; color: #64748b;
+    font-size: 12px; font-weight: 700; color: #94a3b8;
     text-transform: uppercase; letter-spacing: 0.08em;
     margin-bottom: 10px;
     border-left: 3px solid #3b82f6; padding-left: 8px;
@@ -363,7 +363,7 @@
   col.col-tp    { width: 130px; }
   th {
     padding: 9px 12px; text-align: right;
-    color: #475569; font-size: 11px; font-weight: 600;
+    color: #64748b; font-size: 11px; font-weight: 600;
     text-transform: uppercase; white-space: nowrap;
   }
   th:first-child, th:nth-child(2) { text-align: left; }
@@ -389,13 +389,13 @@
   .code { font-weight: 700; font-size: 13px; font-family: monospace; }
   .name a { text-decoration: none; font-weight: 600; color: #e2e8f0; }
   .name a:hover { text-decoration: underline; color: #3b82f6; }
-  .fwd-note { font-size: 10px; color: #475569; font-style: italic; }
+  .fwd-note { font-size: 10px; color: #64748b; font-style: italic; }
 
   /* PER 標註小字 */
-  .per-sub { display: inline; font-size: 10px; color: #475569; font-weight: 400; margin-left: 4px; }
+  .per-sub { display: inline; font-size: 10px; color: #64748b; font-weight: 400; margin-left: 4px; }
 
   .price-cell { font-size: 14px; font-weight: 700; color: #f8fafc; font-family: monospace; }
-  .gray { color: #334155; }
+  .gray { color: #475569; }
 
   .vs-cell { font-weight: 700; font-size: 13px; }
   .badge {
@@ -406,7 +406,7 @@
   .badge-up   { background: #14532d; color: #86efac; }
   .badge-fair { background: #713f12; color: #fde68a; }
   .badge-down { background: #450a0a; color: #fca5a5; }
-  .loading { color: #334155; font-size: 12px; }
+  .loading { color: #475569; font-size: 12px; }
 
   /* 顏色配 section */
   .code-chip, .code-pkg, .code-server, .code-cool,
@@ -414,7 +414,7 @@
   .code-mem,  .code-panel { color: #93c5fd; }
 
   .footer {
-    font-size: 10px; color: #334155;
+    font-size: 10px; color: #475569;
     margin-top: 24px; text-align: center; line-height: 1.8;
   }
 
@@ -423,7 +423,7 @@
     display: flex; gap: 16px; flex-wrap: wrap;
     margin-bottom: 20px; align-items: center;
   }
-  .legend-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: #64748b; }
+  .legend-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: #94a3b8; }
   .legend-dot  { width: 8px; height: 8px; border-radius: 50%; }
 </style>
 </head>
@@ -2000,3 +2000,4 @@ updateLabels();
 </script>
 </body>
 </html>
+
