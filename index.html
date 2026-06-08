@@ -1537,31 +1537,31 @@ document.addEventListener('DOMContentLoaded', function() {
 // annualDiv = 年化現金股利（元/股），每年股利宣告後（約6-8月）更新一次
 var TRACKED = [
   // ── 核心 ──────────────────────────────────────────────
-  { id:'0050', name:'元大台灣50', tier:'core',   fairValue:50,   expValue:67,   fairPER:20, tp:null, cheapValue:40,  annualDiv:4.0  },  // 季配，FY2024合計
+  { id:'0050', name:'元大台灣50', tier:'core',   fairValue:50,   expValue:67,   fairPER:20, tp:null, cheapValue:40,  annualDiv:4.0  },  // 季配，FY2024合計約4元
 
   // ── 成長 ── 穩定獲利 + AI 受惠 + 護城河 ────────────────
-  { id:'2330', name:'台積電',     tier:'growth', fairValue:1637, expValue:2083, fairPER:22, tp:2588, cheapValue:1265, annualDiv:14.0 },  // 季配 NT$3.5/q
-  { id:'2303', name:'聯電',       tier:'spec',   fairValue:72,   expValue:128,  fairPER:18, tp:null, cheapValue:48,  annualDiv:2.0  },
-  { id:'2308', name:'台達電',     tier:'growth', fairValue:732,  expValue:867,  fairPER:27, tp:null, cheapValue:596, annualDiv:12.0 },
-  { id:'2382', name:'廣達',       tier:'growth', fairValue:350,  expValue:506,  fairPER:18, tp:400,  cheapValue:253, annualDiv:7.0  },
-  { id:'3231', name:'緯創',       tier:'growth', fairValue:181,  expValue:302,  fairPER:18, tp:null, cheapValue:101, annualDiv:5.0  },
-  { id:'2345', name:'智邦',       tier:'growth', fairValue:1375, expValue:1692, fairPER:26, tp:null, url:'2345_per_analysis_2026.html', cheapValue:1110, annualDiv:50.0 },
-  { id:'3017', name:'奇鋐',       tier:'growth', fairValue:1583, expValue:2070, fairPER:26, tp:3140, cheapValue:1096, annualDiv:10.0 },
-  { id:'3324', name:'雙鴻',       tier:'growth', fairValue:978,  expValue:1258, fairPER:28, tp:1425, cheapValue:699, annualDiv:12.0 },
-  { id:'2327', name:'國巨',       tier:'growth', fairValue:255,  expValue:318,  fairPER:20, tp:null, cheapValue:204, annualDiv:15.0 },
+  { id:'2330', name:'台積電',     tier:'growth', fairValue:1637, expValue:2083, fairPER:22, tp:2588, cheapValue:1265, annualDiv:24.0 },  // 季配：近4季 7+6+5.5+5 ≈ 24元
+  { id:'2303', name:'聯電',       tier:'spec',   fairValue:72,   expValue:128,  fairPER:18, tp:null, cheapValue:48,  annualDiv:2.6  },  // GoodInfo確認 FY2025宣告
+  { id:'2308', name:'台達電',     tier:'growth', fairValue:732,  expValue:867,  fairPER:27, tp:null, cheapValue:596, annualDiv:12.0 },  // ⚠️ 請確認
+  { id:'2382', name:'廣達',       tier:'growth', fairValue:350,  expValue:506,  fairPER:18, tp:400,  cheapValue:253, annualDiv:15.6 },  // GoodInfo確認
+  { id:'3231', name:'緯創',       tier:'growth', fairValue:181,  expValue:302,  fairPER:18, tp:null, cheapValue:101, annualDiv:5.5  },  // GoodInfo確認
+  { id:'2345', name:'智邦',       tier:'growth', fairValue:1375, expValue:1692, fairPER:26, tp:null, url:'2345_per_analysis_2026.html', cheapValue:1110, annualDiv:50.0 },  // ⚠️ 請確認
+  { id:'3017', name:'奇鋐',       tier:'growth', fairValue:1583, expValue:2070, fairPER:26, tp:3140, cheapValue:1096, annualDiv:15.0 },  // ⚠️ 請確認
+  { id:'3324', name:'雙鴻',       tier:'growth', fairValue:978,  expValue:1258, fairPER:28, tp:1425, cheapValue:699, annualDiv:12.0 },  // ⚠️ 請確認
+  { id:'2327', name:'國巨',       tier:'growth', fairValue:255,  expValue:318,  fairPER:20, tp:null, cheapValue:204, annualDiv:6.0  },  // GoodInfo確認 ~5.999
 
   // ── 高風險 ── 高波動 / 景氣循環 / 小型 / 單季轉盈 ─────
-  { id:'6669', name:'緯穎',       tier:'spec',   fairValue:4475, expValue:5966, fairPER:15, tp:null, cheapValue:3281, annualDiv:70.0 },
-  { id:'2301', name:'光寶科',     tier:'spec',   fairValue:136,  expValue:177,  fairPER:20, tp:null, cheapValue:102, annualDiv:3.5  },
-  { id:'3596', name:'智易',       tier:'spec',   fairValue:177,  expValue:278,  fairPER:14, tp:null, cheapValue:126, annualDiv:12.0 },
-  { id:'8210', name:'勤誠',       tier:'spec',   fairValue:747,  expValue:1019, fairPER:22, tp:null, cheapValue:475, annualDiv:32.0 },
-  { id:'3037', name:'欣興',       tier:'spec',   fairValue:141,  expValue:211,  fairPER:20, tp:null, cheapValue:84,  annualDiv:4.0  },
-  { id:'8046', name:'南電',       tier:'spec',   fairValue:119,  expValue:198,  fairPER:12, tp:null, cheapValue:79,  annualDiv:6.0  },
-  { id:'3481', name:'群創',       tier:'spec',   fairValue:30,   expValue:50,   fairPER:20, tp:null, cheapValue:15,  annualDiv:0    },  // 虧損，無配息
+  { id:'6669', name:'緯穎',       tier:'spec',   fairValue:4475, expValue:5966, fairPER:15, tp:null, cheapValue:3281, annualDiv:80.0 },  // ⚠️ 請確認
+  { id:'2301', name:'光寶科',     tier:'spec',   fairValue:136,  expValue:177,  fairPER:20, tp:null, cheapValue:102, annualDiv:3.5  },  // ⚠️ 請確認
+  { id:'3596', name:'智易',       tier:'spec',   fairValue:177,  expValue:278,  fairPER:14, tp:null, cheapValue:126, annualDiv:9.0  },  // GoodInfo確認
+  { id:'8210', name:'勤誠',       tier:'spec',   fairValue:747,  expValue:1019, fairPER:22, tp:null, cheapValue:475, annualDiv:32.0 },  // ⚠️ 請確認
+  { id:'3037', name:'欣興',       tier:'spec',   fairValue:141,  expValue:211,  fairPER:20, tp:null, cheapValue:84,  annualDiv:4.0  },  // ⚠️ 請確認
+  { id:'8046', name:'南電',       tier:'spec',   fairValue:119,  expValue:198,  fairPER:12, tp:null, cheapValue:79,  annualDiv:6.0  },  // ⚠️ 請確認
+  { id:'3481', name:'群創',       tier:'spec',   fairValue:30,   expValue:50,   fairPER:20, tp:null, cheapValue:15,  annualDiv:0    },  // 虧損無配息
   { id:'2337', name:'旺宏',       tier:'spec',   fairValue:163,  expValue:218,  fairPER:12, tp:202,  cheapValue:109, annualDiv:0    },  // 虧損轉盈，尚未配息
   { id:'2344', name:'華邦電',     tier:'spec',   fairValue:88,   expValue:115,  fairPER:26, tp:null, cheapValue:67,  annualDiv:0    },  // 虧損轉盈，尚未配息
-  { id:'3260', name:'威剛',       tier:'spec',   fairValue:719,  expValue:925,  fairPER:14, tp:null, cheapValue:514, annualDiv:35.0 },
-  { id:'2408', name:'南亞科',     tier:'spec',   fairValue:279,  expValue:391,  fairPER:25, tp:380,  cheapValue:167, annualDiv:0    },  // 虧損轉盈，尚未配息
+  { id:'3260', name:'威剛',       tier:'spec',   fairValue:719,  expValue:925,  fairPER:14, tp:null, cheapValue:514, annualDiv:17.0 },  // GoodInfo確認
+  { id:'2408', name:'南亞科',     tier:'spec',   fairValue:279,  expValue:391,  fairPER:25, tp:380,  cheapValue:167, annualDiv:1.5  },  // GoodInfo確認，剛轉盈
 ];
 
 var PRESETS = {
