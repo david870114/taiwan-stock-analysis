@@ -1330,7 +1330,7 @@
       </div>
       <div class="me-item">
         <div class="me-label">預估報酬率</div>
-        <div class="me-desc"><strong>= EPS成長率 + 股息殖利率 + PER回歸空間</strong>。若結果為負，通常代表目前估值過高，PER 若向合理值回歸會抵消獲利成長的收益——即使公司繼續成長，現在買可能也不划算。</div>
+        <div class="me-desc"><strong>= (合理價 ÷ 現價 − 1) + 股息殖利率</strong>。代表若股價回歸合理估值可獲得的總報酬（含股息）。正值越高代表目前越便宜、安全邊際越大；負值代表現價已高於合理價。</div>
       </div>
     </div>
   </div>
@@ -1688,16 +1688,19 @@ async function calcMetrics(stock) {
   var currentPER = null;
   if (perRows.length > 0) currentPER = perRows[perRows.length-1].PER;
 
-  // --- PER change ---
+  // --- PER change (display only, capped ±150%) ---
   if (currentPER && stock.fairPER && currentPER > 0) {
-    result.perChange = (stock.fairPER / currentPER - 1) * 100;
+    var rawPC = (stock.fairPER / currentPER - 1) * 100;
+    result.perChange = Math.max(-150, Math.min(150, rawPC));
   }
 
-  // --- Estimated return ---
-  var eg = result.epsGrowth || 0;
-  var dy = result.divYield  || 0;
-  var pc = result.perChange || 0;
-  result.estReturn = eg + dy + pc;
+  // --- Estimated return = price upside to fair value + dividend yield ---
+  // Using fairValue vs live price avoids double-counting EPS growth & PER reversion,
+  // and stays accurate for cyclicals that just turned profitable.
+  var dy = result.divYield || 0;
+  if (stock.fairValue && price > 0) {
+    result.estReturn = (stock.fairValue / price - 1) * 100 + dy;
+  }
 
   return result;
 }
