@@ -35,7 +35,11 @@ Repo：https://github.com/david870114/taiwan-stock-analysis
 ```powershell
 node C:\Users\USER\goodinfo_scraper.mjs <股票代號> per     # PER 河流圖資料
 node C:\Users\USER\goodinfo_scraper.mjs <股票代號> detail  # 股票基本資訊
+node C:\Users\USER\goodinfo_scraper.mjs <股票代號> div     # 股利日程（年化現金股利）
 ```
+
+`div` 模式會回傳 `annualDiv`（年化現金股利元/股），自動判斷年配/季配/半年配。
+**注意：GoodInfo 有流量限制，批次抓取需每支間隔 20 秒以上，封鎖約 1–2 小時後自動解除。**
 
 **用 PowerShell 工具執行**，例如：
 ```
@@ -144,6 +148,24 @@ PowerShell: node C:\Users\USER\goodinfo_scraper.mjs 2330 per
 - 2345、網通類 → AI/網通
 - 2881–2892 等 → 金融股
 - 其他 → 其他
+
+---
+
+## annualDiv 維護（每年 6–8 月更新一次）
+
+`index.html` 的 TRACKED 陣列每個股票有 `annualDiv` 欄位（年化現金股利，元/股）。
+除息季（約 6–8 月）結束後用 `div` 模式重新抓取並更新：
+
+```powershell
+# 等 GoodInfo 未被限流時執行（每支間隔 20 秒）
+node C:\Users\USER\goodinfo_scraper.mjs 2330 div   # 回傳 annualDiv
+```
+
+- **季配股**（台積電等）：scraper 自動取最近 4 筆加總
+- **年配股**（聯電等）：scraper 取最新一筆
+- **虧損無配息**（群創、旺宏、華邦電、南亞科）：填 0
+
+目前 ⚠️ 待確認：2308 台達電、2345 智邦、3017 奇鋐、3324 雙鴻、6669 緯穎、2301 光寶科、8210 勤誠、3037 欣興、8046 南電
 
 ---
 
