@@ -154,3 +154,6 @@ PowerShell: node C:\Users\USER\goodinfo_scraper.mjs 2330 per
 - EPS 一律用「10x換算欄 ÷ 10」，不用「近四季EPS」欄（季中月會不同）
 - 股票代號請補零至 4 碼（如 8046 → 8046，不足者補零）
 - StockBenefitConsistency.asp 和 StockPER.asp 已 404，不要使用
+- **新增股票到 index.html 需同時做兩件事**：
+  1. 在對應 section 的 `<tbody>` 加入 `<tr>` 列（有 `id="price-{代號}"` 和 `id="vs-{代號}"`）
+  2. 將代號加入 `CHAIN_STOCKS` 陣列（否則供應鏈地圖 mini-card 不會更新即時股價）
