@@ -1,6 +1,6 @@
 ---
 name: taiwan-stock-analysis
-description: 台股個股深度分析 skill。當使用者說「分析 XXXX 股票」、「幫我看 XXXX」、「更新台股追蹤清單」、「新增 XXXX 到追蹤清單」、「更新智邦/台積電/元大台灣50/緯創」、「台股分析」等，立即使用此 skill。功能：從 goodinfo.tw 自動抓取數據 → 產出 PER/殖利率河流圖互動分析頁（HTML）→ 同步更新總覽頁（index.html）→ git push 上傳 GitHub Pages。追蹤清單：0050、0056、00919、2330、2337、2345、2382、3231、3596（可動態新增）。每季財報後說「更新 XXXX」即可重新分析。
+description: 台股個股深度分析 skill。當使用者說「分析 XXXX 股票」、「幫我看 XXXX」、「更新台股追蹤清單」、「新增 XXXX 到追蹤清單」、「更新智邦/台積電/元大台灣50/緯創」、「台股分析」等，立即使用此 skill。功能：從 goodinfo.tw 自動抓取數據 → 產出 PER/殖利率河流圖互動分析頁（HTML）→ 同步更新總覽頁（index.html）→ git push 上傳 GitHub Pages。追蹤清單：0050、0056、00878、00919、2330、2337、2345、2382、3231、3596（可動態新增）。每季財報後說「更新 XXXX」即可重新分析。
 ---
 
 # 台股個股分析 Skill
@@ -87,6 +87,7 @@ node "C:\Users\USER\goodinfo_scraper.mjs" {代號} div
 |------|------|------|---------|-------|
 | 0050 | 元大台灣50 | ETF | 殖利率法 | 0050_analysis.html |
 | 0056 | 元大高股息 | ETF | 殖利率法 | 0056_analysis.html |
+| 00878 | 國泰永續高股息 | ETF | 殖利率法 | 00878_analysis.html |
 | 00919 | 群益台灣精選高息 | ETF | 殖利率法 | 00919_analysis.html |
 | 2301 | 光寶科 | 電源/EMS | PER法 | 2301_analysis.html |
 | 2303 | 聯電 | AI/半導體 | PER法 | 2303_analysis.html |
@@ -148,11 +149,19 @@ node "C:\Users\USER\goodinfo_scraper.mjs" {代號} div
 - EPS 趨勢 Tab 含逐月明細表格（月份、收盤、EPS、PER、各倍數換算值）
 - 基本面分析 Tab：公司營運（含毛利率趨勢表）、商業模式、市場地位、估值指標（含即時 P/E fetch）
 
-### ETF（殖利率法）— 參考 0056_analysis.html / 00919_analysis.html
+### ETF（殖利率法）— 參考 00878_analysis.html / 0056_analysis.html
 
-- Tab：📈 殖利率河流圖 ／ 🎯 三情境買點 ／ 📊 配息趨勢 ／ 🏢 基本面分析 ／ 📋 完整摘要
+- Tab：📈 殖利率河流圖 ／ 🎯 三情境買點 ／ 📊 配息趨勢 ／ 🏦 持股資訊 ／ 🏢 基本面分析
+- **完整摘要已合併進基本面分析，不再獨立一個 Tab**
 - 殖利率帶以 TTM annualDiv 計算，標示各殖利率區間對應價格
 - 配息趨勢 Tab 含逐季配息明細表格
+- **持股資訊 Tab（ETF 專用，必須包含）：**
+  - 資料來源：`https://goodinfo.tw/tw/StockDetail.asp?STOCK_ID={代號}`（Chrome MCP 抓取）
+  - 產業分布 Doughnut 圓餅圖（Chart.js）
+  - 前 15 大持股水平橫條圖（indexAxis: 'y'，漲跌顏色區分）
+  - 完整持股表格（代號、名稱、比重、股價、漲跌、比重視覺條）
+  - 基金基本規格 grid（標的指數、成分股數、前十大合計比重、基金規模）
+- 基本面分析 Tab 包含：估值現況（即時殖利率 fetch）、年化配息趨勢表、ETF策略說明、利多vs風險、同類ETF比較表、操作策略建議、關鍵數據快查表
 
 ### 共用規範
 
