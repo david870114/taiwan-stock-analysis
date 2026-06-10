@@ -825,6 +825,16 @@
         <td id="vs-0050" class="loading">—</td>
         <td class="td-tp">—</td>
       </tr>
+      <tr>
+        <td class="code code-etf">0056</td>
+        <td class="name"><a href="0056_analysis.html">元大高股息</a></td>
+        <td>40 <span class="per-sub">殖利率 9%</span></td>
+        <td>45 <span class="per-sub">殖利率 8%</span></td>
+        <td>51 <span class="per-sub">殖利率 7%</span></td>
+        <td class="price-cell loading td-cur" id="price-0056">…</td>
+        <td id="vs-0056" class="loading">—</td>
+        <td class="td-tp">—</td>
+      </tr>
     </tbody>
   </table>
 </div>
@@ -1420,6 +1430,7 @@
 ══════════════════════════════════════ */
 var STOCKS = [
   { id:'0050',  fairValue:50,   expValue:67 },
+  { id:'0056',  fairValue:45,   expValue:51 },
   { id:'2330',  fairValue:1637, expValue:2083 },
   { id:'2303',  fairValue:72,   expValue:128  },
   { id:'2382',  fairValue:350,  expValue:506 },
@@ -1538,6 +1549,7 @@ document.addEventListener('DOMContentLoaded', function() {
 var TRACKED = [
   // ── 核心 ──────────────────────────────────────────────
   { id:'0050', name:'元大台灣50', tier:'core',   fairValue:50,   expValue:67,   fairPER:20, tp:null, cheapValue:40,  annualDiv:2.1  },  // H1 0.7%+H2 1.39% × 100.95
+  { id:'0056', name:'元大高股息', tier:'core',   fairValue:45,   expValue:51,   fairPER:null, tp:null, cheapValue:40, annualDiv:3.6  },  // 季配：近4季 3.598元；殖利率法
 
   // ── 成長 ── 穩定獲利 + AI 受惠 + 護城河 ────────────────
   { id:'2330', name:'台積電',     tier:'growth', fairValue:1637, expValue:2083, fairPER:22, tp:2588, cheapValue:1265, annualDiv:24.0 },  // 季配：近4季 7+6+5.5+5 ≈ 24元
