@@ -46,7 +46,10 @@
   .buy-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid #1a3a2a; gap: 8px; }
   .buy-row:last-child { border-bottom: none; }
   .current-price-badge { background: #1e3a5f; border: 1px solid #3b82f6; border-radius: 8px; padding: 10px 14px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px; }
-  @media(max-width:600px){ .scenario-grid,.grid3,.grid4{ grid-template-columns:1fr; } .grid2{ grid-template-columns:1fr; } }
+  .chart-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; }
+  .chart-box { background: #1e2535; border: 1px solid #2d3748; border-radius: 10px; padding: 14px; }
+  .chart-box h3 { font-size: 12px; color: #94a3b8; font-weight: 600; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.05em; }
+  @media(max-width:700px){ .chart-row{ grid-template-columns:1fr; } .scenario-grid,.grid3,.grid4{ grid-template-columns:1fr; } .grid2{ grid-template-columns:1fr; } }
 </style>
 </head>
 <body>
@@ -61,7 +64,7 @@
   <button class="tab" onclick="switchTab('scenario', this)">🎯 三情境買點</button>
   <button class="tab" onclick="switchTab('div', this)">📊 配息趨勢</button>
   <button class="tab" onclick="switchTab('fundamental', this)">🏢 基本面分析</button>
-  <button class="tab" onclick="switchTab('summary', this)">📋 完整摘要</button>
+  <button class="tab" onclick="switchTab('holdings', this)">🏦 持股資訊</button>
 </div>
 
 <!-- TAB 1: 殖利率河流圖 -->
@@ -287,27 +290,8 @@
       若以「前瞻年化 4.0 元」（26Q1 × 4）重新計算，現價 30 元殖利率高達 13.3%，仍在合理帶。長期存息投資者應觀察 26Q2 配息是否維持高水位，再決定是否追價。
     </div>
   </div>
-  <p style="font-size:10px;color:#475569;margin-top:14px;line-height:1.6;">⚠️ 本分析僅供參考，不構成投資建議。股市有風險，投資前請自行判斷。</p>
-</div>
-
-<!-- TAB 5: 完整摘要 -->
-<div id="tab-summary" class="panel">
-  <div class="section-title">📌 關鍵數據一覽</div>
-  <table>
-    <thead><tr><th>指標</th><th>數值</th><th>評估</th></tr></thead>
-    <tbody>
-      <tr><td>目前股價（2026/6/10）</td><td style="color:#3b82f6;font-weight:700;" id="summary-price">~30.24 元</td><td><span class="badge badge-watch">偏貴帶（TTM殖利率 9.5%）</span></td></tr>
-      <tr><td>TTM 年化配息</td><td style="color:#22c55e;font-weight:700;">2.86 元</td><td><span class="badge badge-buy">季配穩定</span></td></tr>
-      <tr><td>26Q1 單季配息</td><td style="color:#22c55e;font-weight:700;">1.00 元（歷史新高）</td><td><span class="badge badge-buy">前瞻年化達 4.0 元</span></td></tr>
-      <tr><td>便宜價（殖利率 12%）</td><td>24 元</td><td><span class="badge badge-buy">積極買進帶</span></td></tr>
-      <tr><td>合理價（殖利率 10%）</td><td>29 元</td><td><span class="badge badge-buy">合理佈局帶</span></td></tr>
-      <tr><td>昂貴價（殖利率 8%）</td><td>36 元</td><td><span class="badge badge-avoid">謹慎追高</span></td></tr>
-      <tr><td>基金規模</td><td style="color:#22c55e;font-weight:700;">~5,000 億元</td><td><span class="badge badge-buy">規模第 2 大</span></td></tr>
-      <tr><td>受益人數</td><td>~126 萬人</td><td><span class="badge badge-buy">存股族廣泛持有</span></td></tr>
-      <tr><td>折溢價</td><td>+0.07%（幾乎平價）</td><td><span class="badge badge-buy">正常</span></td></tr>
-    </tbody>
-  </table>
-  <div class="section-title" style="margin-top:20px;">⚡ 利多 vs 風險</div>
+  <!-- 利多 vs 風險 -->
+  <div class="section-title">⚡ 利多 vs 風險</div>
   <div class="grid2">
     <div class="card">
       <h3>🚀 利多</h3>
@@ -340,7 +324,42 @@
       <strong style="color:#eab308;">波段策略：</strong>在 24 元以下（殖利率 12%+）積極加碼，36 元以上（殖利率 8% 以下）逢高減碼。
     </div>
   </div>
+  <!-- 關鍵數據快查 -->
+  <div class="section-title">📌 關鍵數據快查</div>
+  <table>
+    <thead><tr><th>指標</th><th>數值</th><th>評估</th></tr></thead>
+    <tbody>
+      <tr><td>目前股價</td><td style="color:#3b82f6;font-weight:700;" id="summary-price">~30.24 元（2026/6/10）</td><td><span class="badge badge-watch">偏貴帶（TTM殖利率 9.5%）</span></td></tr>
+      <tr><td>TTM 年化配息</td><td style="color:#22c55e;font-weight:700;">2.86 元</td><td><span class="badge badge-buy">季配穩定</span></td></tr>
+      <tr><td>26Q1 單季配息</td><td style="color:#22c55e;font-weight:700;">1.00 元（歷史新高）</td><td><span class="badge badge-buy">前瞻年化達 4.0 元</span></td></tr>
+      <tr><td>便宜價（殖利率 12%）</td><td>24 元</td><td><span class="badge badge-buy">積極買進帶</span></td></tr>
+      <tr><td>合理價（殖利率 10%）</td><td>29 元</td><td><span class="badge badge-buy">合理佈局帶</span></td></tr>
+      <tr><td>昂貴價（殖利率 8%）</td><td>36 元</td><td><span class="badge badge-avoid">謹慎追高</span></td></tr>
+      <tr><td>基金規模</td><td>5,375 億元</td><td><span class="badge badge-buy">規模前三大</span></td></tr>
+      <tr><td>標的指數</td><td>臺灣精選高息指數</td><td><span class="badge badge-buy">季審換股，動態高息</span></td></tr>
+    </tbody>
+  </table>
   <p style="font-size:10px;color:#475569;margin-top:14px;line-height:1.6;">⚠️ 本分析僅供參考，不構成投資建議。股市有風險，投資前請自行判斷。</p>
+</div>
+
+<!-- TAB 4: 持股資訊 -->
+<div id="tab-holdings" class="panel">
+  <div class="grid4" style="margin-top:4px;">
+    <div class="card"><h3>標的指數</h3><div style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.5;">臺灣精選高息指數</div><div class="note">每季審查換股，動態高息</div></div>
+    <div class="card"><h3>成分股數</h3><div class="val blue">40 檔</div><div class="note">資料日期：2026/06/10</div></div>
+    <div class="card"><h3>前十大合計</h3><div class="val yellow">71.4%</div><div class="note">集中度高，金融主導</div></div>
+    <div class="card"><h3>基金規模</h3><div class="val green">5,375 億</div><div class="note">台股高股息 ETF 前三大（6/10）</div></div>
+  </div>
+  <div class="chart-row">
+    <div class="chart-box"><h3>🏭 產業分布</h3><canvas id="industryChart" height="260"></canvas></div>
+    <div class="chart-box"><h3>📊 前 15 大持股比重</h3><canvas id="holdingsChart" height="260"></canvas></div>
+  </div>
+  <div class="section-title" style="margin-top:20px;">完整持股一覽（2026/06/10）</div>
+  <table>
+    <thead><tr><th>#</th><th>代號</th><th>名稱</th><th>比重（%）</th><th>今日股價</th><th>漲跌</th><th>比重視覺</th></tr></thead>
+    <tbody id="holdings-table"></tbody>
+  </table>
+  <p style="font-size:10px;color:#475569;margin-top:8px;">資料來源：<a href="https://goodinfo.tw/tw/StockDetail.asp?STOCK_ID=00919" target="_blank" style="color:#3b82f6;">Goodinfo 台灣股市資訊網</a>，每日更新。</p>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
@@ -486,6 +505,75 @@ async function loadLivePrice() {
   } catch(e) {}
 }
 window.addEventListener('load', loadLivePrice);
+
+// ── 持股資訊 Tab ──
+const holdings00919 = [
+  { id:'2891', name:'中信金',     w:12.80, px:68.2,  chg:-1.45 },
+  { id:'2882', name:'國泰金',     w:12.40, px:99.9,  chg:-3.94 },
+  { id:'2881', name:'富邦金',     w:9.93,  px:122.5, chg:-2.00 },
+  { id:'2303', name:'聯電',       w:8.67,  px:118.5, chg:-7.06 },
+  { id:'2887', name:'台新新光金', w:7.89,  px:28.9,  chg:-2.20 },
+  { id:'2603', name:'長榮',       w:5.65,  px:223,   chg:+0.45 },
+  { id:'2357', name:'華碩',       w:5.24,  px:796,   chg:-6.35 },
+  { id:'3034', name:'聯詠',       w:3.71,  px:478.5, chg:-0.42 },
+  { id:'2609', name:'陽明',       w:2.92,  px:50.6,  chg:-1.94 },
+  { id:'3036', name:'文曄',       w:2.88,  px:239.5, chg:-4.20 },
+  { id:'5347', name:'世界',       w:2.64,  px:152.5, chg:-5.28 },
+  { id:'2618', name:'長榮航',     w:2.37,  px:37.25, chg:+0.68 },
+  { id:'2404', name:'漢唐',       w:2.06,  px:1150,  chg:-3.36 },
+  { id:'6239', name:'力成',       w:1.89,  px:303,   chg:-5.61 },
+  { id:'2474', name:'可成',       w:1.42,  px:204.5, chg:-7.05 },
+  { id:'2451', name:'創見',       w:1.29,  px:293,   chg:-4.25 },
+  { id:'5522', name:'遠雄',       w:1.21,  px:82.2,  chg:+8.16 },
+  { id:'3702', name:'大聯大',     w:1.18,  px:109,   chg:-1.36 },
+  { id:'6121', name:'新普',       w:1.08,  px:403,   chg:-2.89 },
+  { id:'2385', name:'群光',       w:1.01,  px:139,   chg:-0.36 },
+  { id:'2504', name:'國產',       w:1.00,  px:37.2,  chg:+3.77 },
+  { id:'6176', name:'瑞儀',       w:0.93,  px:89.1,  chg:-2.94 },
+  { id:'2637', name:'慧洋-KY',   w:0.91,  px:76,    chg:-1.81 },
+  { id:'2606', name:'裕民',       w:0.80,  px:68.6,  chg:-0.72 },
+  { id:'1477', name:'聚陽',       w:0.72,  px:222,   chg:-1.77 },
+  { id:'3211', name:'順達',       w:0.67,  px:405,   chg:-4.03 },
+  { id:'2027', name:'大成鋼',     w:0.64,  px:42.5,  chg:-0.93 },
+  { id:'8112', name:'至上',       w:0.56,  px:92.6,  chg:+1.54 },
+  { id:'6005', name:'群益證',     w:0.49,  px:38.25, chg:-5.90 },
+  { id:'1215', name:'卜蜂',       w:0.48,  px:118,   chg:+2.61 },
+  { id:'2458', name:'義隆',       w:0.48,  px:146.5, chg:-9.01 },
+  { id:'6670', name:'復盛應用',   w:0.46,  px:281.5, chg:+0.54 },
+  { id:'2211', name:'長榮鋼',     w:0.45,  px:92.4,  chg:-0.22 },
+  { id:'4915', name:'致伸',       w:0.43,  px:75.4,  chg:-2.08 },
+  { id:'4763', name:'材料*-KY',  w:0.41,  px:44.25, chg:-2.43 },
+  { id:'6278', name:'台表科',     w:0.41,  px:188,   chg:-5.29 },
+  { id:'8070', name:'長華*',      w:0.41,  px:57.6,  chg:-3.03 },
+  { id:'6412', name:'群電',       w:0.33,  px:87,    chg:-2.14 },
+  { id:'6757', name:'台灣虎航',   w:0.31,  px:53.6,  chg:+1.71 },
+  { id:'8422', name:'可寧衛*',    w:0.23,  px:30.25, chg:+2.20 },
+];
+const industries00919 = [
+  { label:'金融保險業', pct:43.56, color:'#3b82f6' },
+  { label:'半導體業',   pct:16.04, color:'#22c55e' },
+  { label:'航運業',     pct:12.96, color:'#8b5cf6' },
+  { label:'電腦及週邊', pct:5.24,  color:'#f59e0b' },
+  { label:'電子通路業', pct:5.03,  color:'#06b6d4' },
+  { label:'其他電子業', pct:3.48,  color:'#f97316' },
+  { label:'建材營造',   pct:2.21,  color:'#10b981' },
+  { label:'電子零組件', pct:1.77,  color:'#a855f7' },
+  { label:'光電業',     pct:1.34,  color:'#ec4899' },
+  { label:'其他',       pct:8.37,  color:'#64748b' },
+];
+new Chart(document.getElementById('industryChart').getContext('2d'), {
+  type: 'doughnut',
+  data: { labels: industries00919.map(i=>i.label), datasets: [{ data: industries00919.map(i=>i.pct), backgroundColor: industries00919.map(i=>i.color), borderWidth:2, borderColor:'#0f1117' }] },
+  options: { responsive:true, plugins: { legend:{ position:'right', labels:{ color:'#94a3b8', font:{size:10}, padding:8, boxWidth:12 } }, tooltip:{ callbacks:{ label(ctx){ return `${ctx.label}: ${ctx.parsed}%`; } } } } }
+});
+const top15_00919 = holdings00919.slice(0,15);
+new Chart(document.getElementById('holdingsChart').getContext('2d'), {
+  type:'bar',
+  data:{ labels: top15_00919.map(h=>`${h.id} ${h.name}`), datasets:[{ label:'持股比重（%）', data: top15_00919.map(h=>h.w), backgroundColor: top15_00919.map(h=>h.chg>0?'#22c55e88':h.chg<-5?'#ef444488':'#3b82f688'), borderColor: top15_00919.map(h=>h.chg>0?'#22c55e':h.chg<-5?'#ef4444':'#3b82f6'), borderWidth:1, borderRadius:3 }] },
+  options:{ indexAxis:'y', responsive:true, plugins:{ legend:{display:false}, tooltip:{ callbacks:{ label(ctx){ const h=top15_00919[ctx.dataIndex]; return [`比重: ${h.w}%`,`股價: ${h.px}（${h.chg>0?'+':''}${h.chg}%）`]; } } } }, scales:{ x:{ ticks:{color:'#64748b',font:{size:10}}, grid:{color:'#1e2535'} }, y:{ ticks:{color:'#e2e8f0',font:{size:10}}, grid:{display:false} } } }
+});
+const htbody00919 = document.getElementById('holdings-table');
+if(htbody00919){ holdings00919.forEach((h,i)=>{ const cc=h.chg>0?'#22c55e':h.chg<0?'#ef4444':'#94a3b8'; const bw=Math.round(h.w/12.80*100); htbody00919.innerHTML+=`<tr><td style="color:#64748b;">${i+1}</td><td style="color:#3b82f6;font-weight:600;">${h.id}</td><td>${h.name}</td><td style="font-weight:700;">${h.w}%</td><td>${h.px.toLocaleString()}</td><td style="color:${cc};font-weight:600;">${h.chg>0?'+':''}${h.chg}%</td><td><div style="background:#1e2535;border-radius:3px;height:8px;width:100%;"><div style="background:#3b82f6;height:8px;border-radius:3px;width:${bw}%;"></div></div></td></tr>`; }); }
 </script>
 </body>
 </html>
