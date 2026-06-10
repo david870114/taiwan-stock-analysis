@@ -169,6 +169,12 @@ async function scrapeMarket(browser) {
 }
 
 // ── 從 StockList 抓三大法人個股買超前十名 ──
+// 表格結構（TABLE 4）：
+// 排名(0) | 代號(1) | 名稱(2) | 成交價(3) | 漲跌價(4) | 漲跌幅(5) | 成交張(6) |
+// 法人日期(7) | 外資買(8) | 外資賣(9) | 外資超(10) |
+// 投信買(11) | 投信賣(12) | 投信超(13) |
+// 自營買(14) | 自營賣(15) | 自營超(16) |
+// 合計買(17) | 合計賣(18) | 合計超(19) | 註記(20)
 async function scrapeTopBuyers(browser) {
   const page = await setupPage(browser);
   try {
@@ -178,62 +184,54 @@ async function scrapeTopBuyers(browser) {
     const result = await page.evaluate(() => {
       const stocks = [];
 
+      // 找含代號+法人資料的表格（資料行第一欄是排名數字，第二欄是4-6碼股票代號）
       const allTables = Array.from(document.querySelectorAll('table'));
       let dataTable = null;
 
       for (const tbl of allTables) {
-        const text = tbl.innerText;
-        // 找含「代號」「買超」的表格
-        if (text.includes('代號') && (text.includes('買超') || text.includes('法人'))) {
-          dataTable = tbl;
-          break;
-        }
+        const firstDataRow = Array.from(tbl.querySelectorAll('tr')).find(tr => {
+          const cells = Array.from(tr.querySelectorAll('td')).map(c => c.innerText.trim());
+          return cells.length >= 5 && /^\d+$/.test(cells[0]) && /^\d{4,6}[A-Z]?$/.test(cells[1]);
+        });
+        if (firstDataRow) { dataTable = tbl; break; }
       }
 
       if (!dataTable) return stocks;
 
       const rows = Array.from(dataTable.querySelectorAll('tr'));
-      let headerParsed = false;
-      let codeIdx = -1, nameIdx = -1, netIdx = -1, priceIdx = -1, changeIdx = -1;
-
       for (const row of rows) {
-        const cells = Array.from(row.querySelectorAll('td, th')).map(c => c.innerText.trim());
-        if (cells.length < 3) continue;
+        const cells = Array.from(row.querySelectorAll('td')).map(c => c.innerText.trim());
+        if (cells.length < 10) continue;
 
-        // 找表頭
-        if (!headerParsed) {
-          for (let i = 0; i < cells.length; i++) {
-            if (cells[i].includes('代號')) codeIdx = i;
-            if (cells[i].includes('名稱') || cells[i].includes('股票')) nameIdx = i;
-            if (cells[i].includes('買超') && !cells[i].includes('賣超')) netIdx = i;
-            if (cells[i].includes('收盤') || cells[i] === '股價') priceIdx = i;
-            if (cells[i].includes('漲跌')) changeIdx = i;
-          }
-          if (codeIdx >= 0 && netIdx >= 0) {
-            headerParsed = true;
-            continue;
-          }
-          // 直接嘗試第一列含數字的行
-          if (/^\d{4}$/.test(cells[0])) {
-            codeIdx = 0; nameIdx = 1; netIdx = 2; priceIdx = 3; changeIdx = 4;
-            headerParsed = true;
+        // 第0欄：排名數字，第1欄：股票代號
+        if (!/^\d+$/.test(cells[0])) continue;
+        const code = cells[1];
+        if (!/^\d{4,6}[A-Z]?$/.test(code)) continue;
+
+        const name    = cells[2] || '';
+        const price   = parseFloat(cells[3]) || null;
+        const change  = cells[4] || '';   // 漲跌價
+        const changePct = cells[5] || ''; // 漲跌幅
+
+        // 合計買賣超在第19欄（0-indexed），但部分版面可能有差異，嘗試找帶+/-的欄
+        let net = null;
+        if (cells.length >= 20) {
+          net = parseInt((cells[19] || '0').replace(/,/g, '')) || 0;
+        } else {
+          // fallback：找最後一個帶+/-或較大數值的欄
+          for (let i = cells.length - 2; i >= 8; i--) {
+            const v = cells[i].replace(/,/g, '');
+            if (/^[+-]?\d+$/.test(v) && Math.abs(parseInt(v)) > 0) {
+              net = parseInt(v);
+              break;
+            }
           }
         }
 
-        if (!headerParsed) continue;
-
-        // 資料行
-        const code = codeIdx >= 0 ? cells[codeIdx] : cells[0];
-        if (!/^\d{4,5}$/.test(code)) continue;
-
-        const name = nameIdx >= 0 ? cells[nameIdx] : cells[1];
-        const netRaw = netIdx >= 0 ? cells[netIdx] : cells[2];
-        const net = parseInt((netRaw || '0').replace(/,/g, '')) || 0;
-        const price = priceIdx >= 0 ? parseFloat(cells[priceIdx]) || null : null;
-        const change = changeIdx >= 0 ? cells[changeIdx] : null;
+        const chgDisplay = change ? (changePct ? change + ' (' + changePct + '%)' : change) : '';
 
         if (stocks.length < 10) {
-          stocks.push({ code, name, net, price, change });
+          stocks.push({ code, name, net: net || 0, price, change: chgDisplay });
         }
       }
 
