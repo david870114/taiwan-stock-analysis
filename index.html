@@ -905,6 +905,16 @@
         <td id="vs-0056" class="loading">—</td>
         <td class="td-tp">—</td>
       </tr>
+      <tr>
+        <td class="code code-etf">00919</td>
+        <td class="name"><a href="00919_analysis.html">群益台灣精選高息</a></td>
+        <td>24 <span class="per-sub">殖利率 12%</span></td>
+        <td>29 <span class="per-sub">殖利率 10%</span></td>
+        <td>36 <span class="per-sub">殖利率 8%</span></td>
+        <td class="price-cell loading td-cur" id="price-00919">…</td>
+        <td id="vs-00919" class="loading">—</td>
+        <td class="td-tp">—</td>
+      </tr>
     </tbody>
   </table>
 </div>
@@ -1532,6 +1542,7 @@
 var STOCKS = [
   { id:'0050',  fairValue:50,   expValue:67 },
   { id:'0056',  fairValue:45,   expValue:51 },
+  { id:'00919', fairValue:29,   expValue:36 },
   { id:'2330',  fairValue:1637, expValue:2083 },
   { id:'2303',  fairValue:72,   expValue:128  },
   { id:'2382',  fairValue:350,  expValue:506 },
@@ -1555,7 +1566,7 @@ var STOCKS = [
   { id:'8046',  fairValue:119,  expValue:198 },
 ];
 
-var CHAIN_STOCKS = ['2330','2303','2382','3231','6669','2345','3596','3017','3324','8210','2301','2308','3037','2408','2337','2344','6770','8046'];
+var CHAIN_STOCKS = ['2330','2303','2382','3231','6669','2345','3596','3017','3324','8210','2301','2308','3037','2408','2337','2344','6770','8046','00919'];
 
 async function fetchPrice(id) {
   try {
@@ -1651,6 +1662,7 @@ var TRACKED = [
   // ── 核心 ──────────────────────────────────────────────
   { id:'0050', name:'元大台灣50', tier:'core',   fairValue:50,   expValue:67,   fairPER:20, tp:null, cheapValue:40,  annualDiv:2.1  },  // H1 0.7%+H2 1.39% × 100.95
   { id:'0056', name:'元大高股息', tier:'core',   fairValue:45,   expValue:51,   fairPER:null, tp:null, cheapValue:40, annualDiv:3.6  },  // 季配：近4季 3.598元；殖利率法
+  { id:'00919', name:'群益台灣精選高息', tier:'core', fairValue:29, expValue:36, fairPER:null, tp:null, cheapValue:24, annualDiv:2.86 },  // 季配：近4季 TTM 2.86元；殖利率法
 
   // ── 成長 ── 穩定獲利 + AI 受惠 + 護城河 ────────────────
   { id:'2330', name:'台積電',     tier:'growth', fairValue:1637, expValue:2083, fairPER:22, tp:2588, cheapValue:1265, annualDiv:24.0 },  // 季配：近4季 7+6+5.5+5 ≈ 24元
