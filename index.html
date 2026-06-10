@@ -432,36 +432,6 @@
   .legend-dot  { width: 8px; height: 8px; border-radius: 50%; }
 
 /* ── 法人動態 ── */
-.inst-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
-  margin-bottom: 20px;
-}
-@media(max-width:760px){ .inst-grid{ grid-template-columns: repeat(2,1fr); } }
-
-.inst-card {
-  background: #1e2535;
-  border-radius: 12px;
-  padding: 18px 20px;
-  text-align: center;
-}
-.inst-card .inst-label {
-  font-size: 11px; font-weight: 700;
-  color: #94a3b8; text-transform: uppercase;
-  letter-spacing: 0.08em; margin-bottom: 10px;
-}
-.inst-card .inst-val {
-  font-size: 22px; font-weight: 800;
-  letter-spacing: -0.02em;
-}
-.inst-card .inst-unit {
-  font-size: 11px; color: #64748b; margin-top: 4px;
-}
-.inst-val.buy  { color: #f87171; }
-.inst-val.sell { color: #34d399; }
-.inst-val.zero { color: #94a3b8; }
-
 .inst-table {
   width: 100%; border-collapse: collapse;
   font-size: 13px;
@@ -469,25 +439,52 @@
 .inst-table th {
   background: #141b2d;
   color: #94a3b8; font-size: 11px; font-weight: 700;
-  text-transform: uppercase; letter-spacing: 0.06em;
-  padding: 9px 14px; text-align: left;
+  letter-spacing: 0.06em;
+  padding: 9px 14px; text-align: right;
   border-bottom: 1px solid #1e2535;
+  white-space: nowrap;
 }
+.inst-table th:first-child, .inst-table th:nth-child(2), .inst-table th:nth-child(3) { text-align: left; }
 .inst-table td {
-  padding: 10px 14px;
+  padding: 9px 14px;
   border-bottom: 1px solid #1a2236;
   color: #e2e8f0;
+  white-space: nowrap;
 }
 .inst-table tr:last-child td { border-bottom: none; }
 .inst-table tr:hover td { background: #141b2d; }
-.inst-table .rank { color: #64748b; font-size: 12px; width: 32px; }
+.inst-table .rank { color: #64748b; font-size: 12px; width: 28px; text-align: center; }
 .inst-table .code { color: #7db8f7; font-weight: 700; }
 .inst-table .name { color: #cbd5e1; }
-.inst-table .net-buy  { color: #f87171; font-weight: 700; text-align: right; }
-.inst-table .net-sell { color: #34d399; font-weight: 700; text-align: right; }
-.inst-table .price-col { text-align: right; color: #94a3b8; }
-.inst-table .chg-up   { color: #f87171; text-align: right; }
-.inst-table .chg-down { color: #34d399; text-align: right; }
+.inst-val-buy  { color: #f87171; font-weight: 700; text-align: right; }
+.inst-val-sell { color: #34d399; font-weight: 700; text-align: right; }
+.inst-val-zero { color: #64748b; text-align: right; }
+.inst-price    { text-align: right; color: #94a3b8; }
+.inst-chg-up   { color: #f87171; text-align: right; }
+.inst-chg-down { color: #34d399; text-align: right; }
+.inst-chg-zero { color: #64748b; text-align: right; }
+
+/* 週報表格 */
+.week-table-wrap { overflow-x: auto; }
+.week-table {
+  width: 100%; border-collapse: collapse; font-size: 13px; min-width: 560px;
+}
+.week-table th {
+  background: #141b2d; color: #94a3b8;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.06em;
+  padding: 9px 16px; text-align: right;
+  border-bottom: 1px solid #1e2535; white-space: nowrap;
+}
+.week-table th:first-child { text-align: left; }
+.week-table td {
+  padding: 10px 16px; border-bottom: 1px solid #1a2236;
+  white-space: nowrap; text-align: right;
+}
+.week-table tr:last-child td { border-bottom: none; }
+.week-table tr:hover td { background: #141b2d; }
+.week-table .wt-date { text-align: left; color: #94a3b8; font-size: 12px; }
+.week-table .wt-today .wt-date { color: #7db8f7; font-weight: 700; }
+.week-table .wt-today td { background: #131c2e; }
 
 .inst-no-data {
   background: #1e2535; border-radius: 12px;
@@ -495,23 +492,6 @@
   color: #64748b; font-size: 13px;
 }
 .inst-no-data a { color: #3b82f6; }
-
-.hist-bar-row {
-  display: flex; align-items: center; gap: 8px;
-  margin-bottom: 6px; font-size: 12px;
-}
-.hist-bar-date { color: #64748b; width: 80px; flex-shrink: 0; }
-.hist-bar-track {
-  flex: 1; height: 18px; background: #141b2d;
-  border-radius: 4px; overflow: hidden; position: relative;
-}
-.hist-bar-fill {
-  height: 100%; border-radius: 4px;
-  transition: width 0.3s;
-}
-.hist-bar-fill.buy  { background: rgba(248,113,113,0.5); }
-.hist-bar-fill.sell { background: rgba(52,211,153,0.5); }
-.hist-bar-val { width: 80px; text-align: right; flex-shrink: 0; }
 </style>
 </head>
 <body>
@@ -1518,26 +1498,20 @@
   <button class="update-btn" onclick="loadInstitutional(true)">🔄 重新載入</button>
 </div>
 
-<!-- 市場整體法人買賣超 -->
+<!-- 市場整體法人買賣超（近7個交易日週表） -->
 <div class="section">
-  <div class="section-title">台股法人每日買賣超</div>
+  <div class="section-title">台股三大法人買賣超 — 近7個交易日</div>
   <div id="inst-market-content">
     <div style="color:#64748b;padding:40px;text-align:center">載入中...</div>
   </div>
 </div>
 
-<!-- 個股前十名 -->
+<!-- 個股前十五名 -->
 <div class="section">
-  <div class="section-title">三大法人個股買超前十名（當日）</div>
-  <div id="inst-topbuyers-content">
+  <div class="section-title">三大法人個股買超前15名（當日）</div>
+  <div id="inst-topbuyers-content" style="overflow-x:auto">
     <div style="color:#64748b;padding:40px;text-align:center">載入中...</div>
   </div>
-</div>
-
-<!-- 近30日歷史趨勢 -->
-<div class="section" id="inst-history-section" style="display:none">
-  <div class="section-title">近期法人動向（最近30日）</div>
-  <div id="inst-history-content"></div>
 </div>
 
 <p class="footnote">⚠️ 法人動態資料由 GitHub Actions 於每個交易日收盤後（約17:00）自動抓取 Goodinfo.tw，僅供參考，不構成投資建議。</p>
@@ -2187,126 +2161,111 @@ function loadInstitutional(force) {
 
 function fmtNet(val) {
   if (val === null || val === undefined) return '—';
-  var abs = Math.abs(val);
-  var s = abs >= 10000 ? (abs / 10000).toFixed(1) + '億' : abs.toLocaleString() + '張';
-  return (val >= 0 ? '+' : '-') + s;
+  var n = parseInt(val);
+  if (isNaN(n)) return '—';
+  return (n >= 0 ? '+' : '') + n.toLocaleString();
 }
 
-function netClass(val) {
-  if (val === null || val === undefined) return 'zero';
-  return val > 0 ? 'buy' : val < 0 ? 'sell' : 'zero';
+function netTdClass(val) {
+  var n = parseInt(val);
+  if (isNaN(n) || n === 0) return 'inst-val-zero';
+  return n > 0 ? 'inst-val-buy' : 'inst-val-sell';
+}
+
+function chgClass(pct) {
+  var v = parseFloat(pct);
+  if (isNaN(v) || v === 0) return 'inst-chg-zero';
+  return v > 0 ? 'inst-chg-up' : 'inst-chg-down';
 }
 
 function renderInstitutional(data) {
-  // 更新時間
   var updEl = document.getElementById('inst-last-update');
   if (updEl) updEl.textContent = data.lastUpdated || '尚無資料';
 
-  // ── 市場整體 ──
+  // ── 近7個交易日週表 ──
   var mc = document.getElementById('inst-market-content');
-  if (!data.market || (data.market.foreign === null && data.market.investment_trust === null)) {
+
+  // 組合「今日 + 歷史」成一個完整列表（最新在最上）
+  var rows = [];
+  if (data.market) {
+    rows.push({ date: data.lastUpdated, market: data.market, isToday: true });
+  }
+  (data.history || []).forEach(function(h) {
+    rows.push({ date: h.date, market: h.market, isToday: false });
+  });
+
+  if (rows.length === 0) {
     mc.innerHTML =
-      '<div class="inst-no-data">今日法人整體資料尚未更新（每個交易日收盤後約 17:00 自動抓取）。<br><br>' +
+      '<div class="inst-no-data">法人整體資料尚未更新（每個交易日收盤後約 17:00 自動抓取）。<br><br>' +
       '<a href="https://goodinfo.tw/tw/index.asp" target="_blank">前往 Goodinfo.tw 即時查看 →</a></div>';
   } else {
-    var m = data.market;
-    var cards = [
-      { label: '外資買賣超', val: m.foreign },
-      { label: '投信買賣超', val: m.investment_trust },
-      { label: '自營商買賣超', val: m.dealer },
-      { label: '三大法人合計', val: m.total },
-    ];
-    var html = '<div class="inst-grid">';
-    cards.forEach(function(c) {
-      var cls = netClass(c.val);
+    var html =
+      '<div class="week-table-wrap"><table class="week-table"><thead><tr>' +
+      '<th>日期</th>' +
+      '<th>外資買賣超（張）</th>' +
+      '<th>投信買賣超（張）</th>' +
+      '<th>自營商買賣超（張）</th>' +
+      '<th>三大法人合計（張）</th>' +
+      '</tr></thead><tbody>';
+
+    rows.forEach(function(r) {
+      var m = r.market || {};
+      var rowCls = r.isToday ? 'wt-today' : '';
+      var dateTxt = r.isToday ? (r.date || '—') + ' ▲今日' : (r.date || '—');
       html +=
-        '<div class="inst-card">' +
-        '<div class="inst-label">' + c.label + '</div>' +
-        '<div class="inst-val ' + cls + '">' + fmtNet(c.val) + '</div>' +
-        '<div class="inst-unit">張（千股）</div>' +
-        '</div>';
+        '<tr class="' + rowCls + '">' +
+        '<td class="wt-date">' + dateTxt + '</td>' +
+        '<td class="' + netTdClass(m.foreign) + '">' + fmtNet(m.foreign) + '</td>' +
+        '<td class="' + netTdClass(m.investment_trust) + '">' + fmtNet(m.investment_trust) + '</td>' +
+        '<td class="' + netTdClass(m.dealer) + '">' + fmtNet(m.dealer) + '</td>' +
+        '<td class="' + netTdClass(m.total) + '" style="font-weight:800">' + fmtNet(m.total) + '</td>' +
+        '</tr>';
     });
-    html += '</div>';
 
-    // 資料日期說明
-    if (m.date) {
-      html += '<p style="font-size:11px;color:#64748b;margin-top:-8px;margin-bottom:16px">資料日期：' + m.date + '&nbsp;&nbsp;正值（紅）= 買超，負值（綠）= 賣超</p>';
-    } else {
-      html += '<p style="font-size:11px;color:#64748b;margin-top:-8px;margin-bottom:16px">正值（紅）= 買超，負值（綠）= 賣超</p>';
-    }
-
+    html += '</tbody></table></div>' +
+      '<p style="font-size:11px;color:#64748b;margin-top:10px">正值（紅）= 買超，負值（綠）= 賣超　｜　顯示最近 ' + rows.length + ' 個交易日</p>';
     mc.innerHTML = html;
   }
 
-  // ── 個股前十名 ──
+  // ── 個股前15名（三大法人分開）──
   var tc = document.getElementById('inst-topbuyers-content');
   if (!data.topBuyers || data.topBuyers.length === 0) {
     tc.innerHTML =
       '<div class="inst-no-data">個股買超資料尚未更新。<br><br>' +
       '<a href="https://goodinfo.tw/tw/StockList.asp?MARKET_CAT=%E7%86%B1%E9%96%80%E6%8E%92%E8%A1%8C&INDUSTRY_CAT=%E4%B8%89%E5%A4%A7%E6%B3%95%E4%BA%BA%E7%B4%AF%E8%A8%88%E8%B2%B7%E8%B6%85%E5%BC%B5%E6%95%B8+%E2%80%93+%E7%95%B6%E6%97%A5%40%40%E4%B8%89%E5%A4%A7%E6%B3%95%E4%BA%BA%E7%B4%AF%E8%A8%88%E8%B2%B7%E8%B6%85%40%40%E4%B8%89%E5%A4%A7%E6%B3%95%E4%BA%BA%E8%B2%B7%E8%B6%85%E5%BC%B5%E6%95%B8+%E2%80%93+%E7%95%B6%E6%97%A5" target="_blank">前往 Goodinfo.tw 即時查看 →</a></div>';
   } else {
-    var html = '<table class="inst-table"><thead><tr>' +
-      '<th class="rank">#</th><th>代號</th><th>名稱</th>' +
-      '<th style="text-align:right">法人買超（張）</th>' +
-      '<th style="text-align:right">收盤價</th>' +
-      '<th style="text-align:right">漲跌</th>' +
+    var html =
+      '<table class="inst-table"><thead><tr>' +
+      '<th style="text-align:center">#</th>' +
+      '<th>代號</th>' +
+      '<th>名稱</th>' +
+      '<th>收盤價</th>' +
+      '<th>漲跌幅</th>' +
+      '<th>外資（張）</th>' +
+      '<th>投信（張）</th>' +
+      '<th>自營商（張）</th>' +
+      '<th>合計（張）</th>' +
       '</tr></thead><tbody>';
 
     data.topBuyers.forEach(function(s, i) {
-      var netCls = s.net >= 0 ? 'net-buy' : 'net-sell';
-      var netTxt = s.net >= 0 ? '+' + s.net.toLocaleString() : s.net.toLocaleString();
-      var chgRaw = s.change || '';
-      var chgCls = chgRaw.startsWith('+') || chgRaw.startsWith('▲') ? 'chg-up' :
-                   chgRaw.startsWith('-') || chgRaw.startsWith('▼') ? 'chg-down' : 'price-col';
-      // 連結到個股分析頁（若存在）
-      var codeHtml = '<span class="code">' + s.code + '</span>';
+      var pct = s.changePct || '';
+      var chgTxt = s.change ? s.change + (pct ? ' (' + pct + '%)' : '') : '—';
       html +=
         '<tr>' +
         '<td class="rank">' + (i + 1) + '</td>' +
-        '<td>' + codeHtml + '</td>' +
+        '<td class="code">' + s.code + '</td>' +
         '<td class="name">' + (s.name || '—') + '</td>' +
-        '<td class="' + netCls + '">' + netTxt + '</td>' +
-        '<td class="price-col">' + (s.price !== null ? s.price : '—') + '</td>' +
-        '<td class="' + chgCls + '">' + (chgRaw || '—') + '</td>' +
+        '<td class="inst-price">' + (s.price != null ? s.price : '—') + '</td>' +
+        '<td class="' + chgClass(s.changePct) + '">' + chgTxt + '</td>' +
+        '<td class="' + netTdClass(s.foreignNet) + '">' + fmtNet(s.foreignNet) + '</td>' +
+        '<td class="' + netTdClass(s.trustNet) + '">' + fmtNet(s.trustNet) + '</td>' +
+        '<td class="' + netTdClass(s.dealerNet) + '">' + fmtNet(s.dealerNet) + '</td>' +
+        '<td class="' + netTdClass(s.totalNet) + '" style="font-weight:800">' + fmtNet(s.totalNet) + '</td>' +
         '</tr>';
     });
 
     html += '</tbody></table>';
     tc.innerHTML = html;
-  }
-
-  // ── 歷史趨勢 ──
-  var hist = data.history || [];
-  if (hist.length > 0) {
-    var sec = document.getElementById('inst-history-section');
-    var hc  = document.getElementById('inst-history-content');
-    if (sec) sec.style.display = '';
-
-    // 找最大絕對值用於 bar 寬度
-    var maxAbs = 1;
-    hist.forEach(function(h) {
-      if (h.market && h.market.total !== null) {
-        maxAbs = Math.max(maxAbs, Math.abs(h.market.total));
-      }
-    });
-
-    var hhtml = '';
-    hist.slice(0, 20).forEach(function(h) {
-      var total = (h.market && h.market.total !== null) ? h.market.total : null;
-      var pct = total !== null ? Math.min(100, Math.abs(total) / maxAbs * 100) : 0;
-      var cls = total > 0 ? 'buy' : 'sell';
-      var valTxt = total !== null ? fmtNet(total) : '—';
-      var valCls = total > 0 ? '#f87171' : total < 0 ? '#34d399' : '#94a3b8';
-      hhtml +=
-        '<div class="hist-bar-row">' +
-        '<span class="hist-bar-date">' + (h.date || '') + '</span>' +
-        '<div class="hist-bar-track">' +
-        '<div class="hist-bar-fill ' + cls + '" style="width:' + pct.toFixed(1) + '%"></div>' +
-        '</div>' +
-        '<span class="hist-bar-val" style="color:' + valCls + '">' + valTxt + '</span>' +
-        '</div>';
-    });
-    if (hc) hc.innerHTML = hhtml;
   }
 }
 

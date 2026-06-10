@@ -208,30 +208,43 @@ async function scrapeTopBuyers(browser) {
         const code = cells[1];
         if (!/^\d{4,6}[A-Z]?$/.test(code)) continue;
 
-        const name    = cells[2] || '';
-        const price   = parseFloat(cells[3]) || null;
-        const change  = cells[4] || '';   // 漲跌價
-        const changePct = cells[5] || ''; // 漲跌幅
+        const name      = cells[2] || '';
+        const price     = parseFloat(cells[3]) || null;
+        const change    = cells[4] || '';   // 漲跌價
+        const changePct = cells[5] || '';   // 漲跌幅 (e.g. "+0.47")
 
-        // 合計買賣超在第19欄（0-indexed），但部分版面可能有差異，嘗試找帶+/-的欄
-        let net = null;
+        const parseNet = (v) => parseInt((v || '0').replace(/,/g, '')) || 0;
+
+        // 各法人買賣超（固定欄位）
+        let foreignNet = 0, trustNet = 0, dealerNet = 0, totalNet = 0;
         if (cells.length >= 20) {
-          net = parseInt((cells[19] || '0').replace(/,/g, '')) || 0;
+          foreignNet = parseNet(cells[10]);
+          trustNet   = parseNet(cells[13]);
+          dealerNet  = parseNet(cells[16]);
+          totalNet   = parseNet(cells[19]);
         } else {
-          // fallback：找最後一個帶+/-或較大數值的欄
+          // fallback：嘗試末幾欄
           for (let i = cells.length - 2; i >= 8; i--) {
             const v = cells[i].replace(/,/g, '');
             if (/^[+-]?\d+$/.test(v) && Math.abs(parseInt(v)) > 0) {
-              net = parseInt(v);
+              totalNet = parseInt(v);
               break;
             }
           }
         }
 
-        const chgDisplay = change ? (changePct ? change + ' (' + changePct + '%)' : change) : '';
+        const chgPctDisplay = changePct ? (changePct.startsWith('+') || changePct.startsWith('-') ? changePct : (parseFloat(changePct) >= 0 ? '+' + changePct : changePct)) : '';
 
-        if (stocks.length < 10) {
-          stocks.push({ code, name, net: net || 0, price, change: chgDisplay });
+        if (stocks.length < 15) {
+          stocks.push({
+            code, name, price,
+            change,
+            changePct: chgPctDisplay,
+            foreignNet,
+            trustNet,
+            dealerNet,
+            totalNet,
+          });
         }
       }
 
@@ -288,7 +301,7 @@ async function main() {
   const history = existing.history || [];
   if (existing.market && existing.lastUpdated !== today) {
     history.unshift({ date: existing.lastUpdated, market: existing.market });
-    if (history.length > 30) history.length = 30;
+    if (history.length > 7) history.length = 7;
   }
 
   const output = {
