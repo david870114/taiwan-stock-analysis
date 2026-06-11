@@ -57,14 +57,14 @@
   <a href="index.html" style="color:#64748b;font-size:12px;text-decoration:none;display:inline-flex;align-items:center;gap:4px;padding:5px 10px;border:1px solid #334155;border-radius:8px;transition:all 0.2s;" onmouseover="this.style.color='#e2e8f0';this.style.borderColor='#64748b'" onmouseout="this.style.color='#64748b';this.style.borderColor='#334155'">← 返回總覽</a>
 </div>
 <h1>📈 元大台灣50 (0050) — 殖利率分析</h1>
-<p class="subtitle">殖利率河流圖 ✦ 三情境買點 ✦ 配息趨勢 ✦ 基本面分析 ✦ 完整摘要 ✦ 更新時間：2026年6月11日</p>
+<p class="subtitle">殖利率河流圖 ✦ 三情境買點 ✦ 配息趨勢 ✦ 持股資訊 ✦ 基本面分析 ✦ 更新時間：2026年6月11日</p>
 
 <div class="tabs">
   <button class="tab active" onclick="switchTab('river', this)">📈 殖利率河流圖</button>
   <button class="tab" onclick="switchTab('scenario', this)">🎯 三情境買點</button>
   <button class="tab" onclick="switchTab('div', this)">📊 配息趨勢</button>
+  <button class="tab" onclick="switchTab('holdings', this)">🏦 持股資訊</button>
   <button class="tab" onclick="switchTab('fundamental', this)">🏢 基本面分析</button>
-  <button class="tab" onclick="switchTab('summary', this)">📋 完整摘要</button>
 </div>
 
 <!-- TAB 1: 殖利率河流圖 -->
@@ -82,24 +82,24 @@
 <div id="tab-scenario" class="panel">
   <div class="grid2">
     <div class="card"><h3>近四季年化配息（TTM）</h3><div class="val green">1.36 元</div><div class="note">H1-2025: 0.36元（7/21除息）+ H2-2025: 1.0元（1/22除息）</div></div>
-    <div class="card"><h3>2026 年化配息（推估）</h3><div class="val blue">1.8～2.1 元</div><div class="note">H1-2026 估 0.6～0.8元，H2-2026 估 1.2～1.3元，視台股指數成長而定</div></div>
+    <div class="card"><h3>2026 年化配息（推估）</h3><div class="val blue">1.8～2.1 元</div><div class="note">H1-2026 估 0.6～0.8元；H2-2026 估 1.2～1.3元，視台積電盈利而定</div></div>
   </div>
   <div class="section-title">三情境殖利率買點推算（年化配息 1.36 元 TTM）</div>
   <div class="scenario-grid">
     <div class="scenario-card bear">
       <div class="sc-label">🐻 保守</div>
       <div class="sc-price red">34–39 元</div>
-      <div class="sc-detail">殖利率 3.5–4%<br>大盤深度修正<br>恐慌性拋售帶<br>2022-2023熊市區</div>
+      <div class="sc-detail">殖利率 3.5–4%<br>大盤深度修正<br>恐慌性拋售帶<br>2022–2023 熊市區</div>
     </div>
     <div class="scenario-card base">
       <div class="sc-label">⚖️ 合理</div>
       <div class="sc-price green">45–54 元</div>
-      <div class="sc-detail">殖利率 2.5–3%<br>正常行情區<br>長期投資主力佈局帶<br>2024年主要震盪區</div>
+      <div class="sc-detail">殖利率 2.5–3%<br>正常行情區<br>長期投資主力佈局帶<br>2024 年主要震盪區</div>
     </div>
     <div class="scenario-card bull">
       <div class="sc-label">🚀 樂觀</div>
       <div class="sc-price" style="color:#60a5fa;">65–91 元</div>
-      <div class="sc-detail">殖利率 1.5–2%<br>AI題材/多頭市場<br>2025-2026強勢上漲區<br>資金湧入追漲</div>
+      <div class="sc-detail">殖利率 1.5–2%<br>AI 題材多頭市場<br>2025–2026 強勢上漲區<br>資金湧入追漲</div>
     </div>
   </div>
   <div class="buy-signal">
@@ -121,16 +121,14 @@
     </div>
     <div class="buy-row" style="border-top:1px solid #166534;margin-top:8px;padding-top:10px;">
       <span style="color:#fca5a5;font-size:12px;">觀望 / 等待回調</span>
-      <span style="color:#fca5a5;font-size:13px;font-weight:700;">91 元以上（TTM 殖利率基準）</span>
-      <span class="badge badge-avoid">殖利率 &lt;1.5%，AI題材高估區</span>
+      <span style="color:#fca5a5;font-size:13px;font-weight:700;">91 元以上</span>
+      <span class="badge badge-avoid">殖利率 &lt;1.5%，AI 題材高估區</span>
     </div>
   </div>
   <div style="background:#1e2535;border:1px solid #334155;border-radius:10px;padding:12px;margin-top:14px;">
-    <div style="font-size:12px;font-weight:700;color:#eab308;margin-bottom:6px;">⚠️ 重要說明：市值型 ETF 殖利率視角的侷限性</div>
+    <div style="font-size:12px;font-weight:700;color:#eab308;margin-bottom:6px;">⚠️ 市值型 ETF：殖利率視角的侷限性</div>
     <div style="font-size:12px;color:#94a3b8;line-height:1.8;">
-      0050 是追蹤台灣前50大市值股票的被動式指數 ETF，<strong style="color:#e2e8f0;">投資人主要著眼於長期資本增值</strong>，而非殖利率。<br>
-      目前殖利率約 1.3–1.4%，雖低於歷史均值，但反映的是台積電/AI帶動的指數大幅上漲，而非基本面惡化。<br>
-      <strong style="color:#3b82f6;">長期定期定額</strong>是 0050 最主要的投資方式，不擇時、不追高，每月持續扣款，享受台灣科技股長期成長紅利。
+      0050 主要著眼於<strong style="color:#e2e8f0;">長期資本增值</strong>，而非高殖利率。目前殖利率約 1.3–1.4%，反映的是台積電 AI 帶動指數大漲。<strong style="color:#3b82f6;">長期定期定額</strong>是最主要的投資方式，不需等到「便宜」才買。
     </div>
   </div>
 </div>
@@ -138,26 +136,22 @@
 <!-- TAB 3: 配息趨勢 -->
 <div id="tab-div" class="panel">
   <canvas id="divChart" height="160"></canvas>
-  <div class="section-title" style="margin-top:16px;">歷年配息明細（分割後調整）</div>
+  <div class="section-title" style="margin-top:16px;">歷年配息明細（分割後調整，÷4）</div>
   <table>
     <thead>
-      <tr>
-        <th>年度</th><th>配息方式</th><th>現金股利（元，已還原1拆4）</th><th>年均收盤殖利率</th><th>備註</th>
-      </tr>
+      <tr><th>年度</th><th>配息方式</th><th>現金股利（元，還原1拆4）</th><th>年均收盤殖利率</th><th>備註</th></tr>
     </thead>
     <tbody>
-      <tr><td>2018</td><td>半年配（H1+H2）</td><td>0.70 + 0.55 = <strong>1.25 元</strong></td><td>3.34%</td><td>H2-2017+H1-2018</td></tr>
-      <tr><td>2019</td><td>半年配</td><td>0.55 + 0.20 = <strong>0.75 元</strong></td><td>3.85%</td><td></td></tr>
-      <tr><td>2020</td><td>半年配</td><td>0.73 + 0.18 = <strong>0.90 元</strong></td><td>3.87%</td><td></td></tr>
-      <tr><td>2021</td><td>半年配</td><td>0.76 + 0.09 = <strong>0.85 元</strong></td><td>2.39%</td><td></td></tr>
-      <tr><td>2022</td><td>半年配</td><td>0.45 + 0.80 = <strong>1.25 元</strong></td><td>3.70%</td><td>2022大盤修正，殖利率回升</td></tr>
-      <tr><td>2023</td><td>半年配</td><td>0.48 + 0.65 = <strong>1.13 元</strong></td><td>3.64%</td><td></td></tr>
-      <tr><td>2024</td><td>半年配</td><td>0.25 + 0.75 = <strong>1.00 元</strong></td><td>2.79%</td><td>AI多頭，股價大漲壓低殖利率</td></tr>
-      <tr style="background:#0f2a1e;"><td><strong>2025</strong></td><td>半年配</td><td style="color:#22c55e;font-weight:700;">0.36 + 1.0 = <strong>1.36 元</strong></td><td style="color:#eab308;">~1.8%（年均）</td><td><strong>H1=0.36（7/21），H2=1.0（1/22/2026）</strong></td></tr>
+      <tr><td>2020</td><td>半年配</td><td>0.90</td><td>3.87%</td><td></td></tr>
+      <tr><td>2021</td><td>半年配</td><td>0.85</td><td>2.39%</td><td>低配息年</td></tr>
+      <tr><td>2022</td><td>半年配</td><td>1.25</td><td>3.70%</td><td>大盤修正年，殖利率回升</td></tr>
+      <tr><td>2023</td><td>半年配</td><td>1.13</td><td>3.64%</td><td></td></tr>
+      <tr><td>2024</td><td>半年配</td><td>1.00</td><td>2.79%</td><td>AI 多頭，股價大漲壓低殖利率</td></tr>
+      <tr style="background:#0f2a1e;"><td><strong>2025</strong></td><td>半年配</td><td style="color:#22c55e;font-weight:700;">1.36</td><td style="color:#eab308;">~1.8%（年均）</td><td><strong>H1=0.36（7/21），H2=1.0（1/22/2026）</strong></td></tr>
       <tr><td>2026E</td><td>半年配</td><td style="color:#3b82f6;">1.8～2.1 元（推估）</td><td>~1.5–2.0%</td><td>H1 約 0.6–0.8，H2 約 1.2–1.3</td></tr>
     </tbody>
   </table>
-  <div class="section-title" style="margin-top:20px;">月線收盤價 × 即時殖利率明細（近三年，已還原1拆4）</div>
+  <div class="section-title" style="margin-top:20px;">月線收盤價殖利率明細（近三年，已還原1拆4）</div>
   <table>
     <thead>
       <tr><th>月份</th><th>收盤價（還原）</th><th>殖利率（TTM 1.36元基準）</th><th>估值帶</th></tr>
@@ -167,7 +161,27 @@
   <p style="font-size:10px;color:#475569;margin-top:8px;">* 殖利率 = 1.36 ÷ 收盤價 × 100%。2024年前實際配息不同，此欄僅供估值帶對比參考。</p>
 </div>
 
-<!-- TAB 4: 基本面分析 -->
+<!-- TAB 4: 持股資訊 -->
+<div id="tab-holdings" class="panel">
+  <div class="grid4" style="margin-top:4px;">
+    <div class="card"><h3>標的指數</h3><div style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.5;">臺灣50指數</div><div class="note">市值加權，每季審查調整</div></div>
+    <div class="card"><h3>成分股數</h3><div class="val blue">50 檔</div><div class="note">資料日期：2026/06/11</div></div>
+    <div class="card"><h3>台積電佔比</h3><div class="val yellow">~46%</div><div class="note">最大單一成分股，主導漲跌</div></div>
+    <div class="card"><h3>基金規模</h3><div class="val green">~2 兆</div><div class="note">台灣最大 ETF（2026/06）</div></div>
+  </div>
+  <div class="chart-row">
+    <div class="chart-box"><h3>🏭 產業分布</h3><canvas id="industryChart" height="260"></canvas></div>
+    <div class="chart-box"><h3>📊 前 15 大持股比重</h3><canvas id="holdingsChart" height="260"></canvas></div>
+  </div>
+  <div class="section-title" style="margin-top:20px;">完整持股一覽（2026/06/11 估算）</div>
+  <table>
+    <thead><tr><th>#</th><th>代號</th><th>名稱</th><th>比重（%）</th><th>產業</th><th>比重視覺</th></tr></thead>
+    <tbody id="holdings-table"></tbody>
+  </table>
+  <p style="font-size:10px;color:#475569;margin-top:8px;">* 持股比重為估算值，實際以<a href="https://www.yuantaetfs.com/product/detail/0050" target="_blank" style="color:#3b82f6;">元大投信官網</a>最新公告為準。2026/06 新納南電、貿聯-KY、旺矽、聯亞；剔除中鋼、台塑等傳產股。</p>
+</div>
+
+<!-- TAB 5: 基本面分析 -->
 <div id="tab-fundamental" class="panel">
 
   <!-- 基金概況 -->
@@ -176,7 +190,7 @@
     <div class="card">
       <h3>基金規模</h3>
       <div class="val green">~2 兆</div>
-      <div class="note">2026年6月規模突破2兆，台灣最大ETF</div>
+      <div class="note">2026年6月規模突破2兆，台灣最大 ETF</div>
     </div>
     <div class="card">
       <h3>定期定額人數</h3>
@@ -190,24 +204,22 @@
     </div>
   </div>
 
-  <!-- 配息趨勢表格 -->
+  <!-- 配息趨勢表 -->
   <div style="background:#1e2535;border:1px solid #2d3748;border-radius:10px;padding:14px;margin-top:14px;margin-bottom:14px;">
     <div style="font-size:12px;font-weight:700;color:#cbd5e1;margin-bottom:10px;">年化配息趨勢（分割後還原）</div>
     <table style="margin:0;">
-      <thead>
-        <tr><th>年度</th><th>配息方式</th><th>年化配息（元）</th><th>YoY</th><th>備註</th></tr>
-      </thead>
+      <thead><tr><th>年度</th><th>年化配息（元）</th><th>YoY</th><th>備註</th></tr></thead>
       <tbody>
-        <tr><td>2020</td><td>半年配</td><td>0.90</td><td>—</td><td>疫情年，指數回升</td></tr>
-        <tr><td>2021</td><td>半年配</td><td>0.85</td><td>-6%</td><td>低配息年（H1僅0.09）</td></tr>
-        <tr><td>2022</td><td>半年配</td><td>1.25</td><td>+47%</td><td>大盤修正年，EPS回升</td></tr>
-        <tr><td>2023</td><td>半年配</td><td>1.13</td><td>-10%</td><td></td></tr>
-        <tr><td>2024</td><td>半年配</td><td>1.00</td><td>-12%</td><td>股價大漲但配息降，殖利率收縮</td></tr>
-        <tr style="background:#0f2a1e;"><td><strong>2025</strong></td><td>半年配</td><td style="color:#22c55e;font-weight:700;">1.36</td><td style="color:#22c55e;">+36%</td><td><strong>H2-2025 大增至 1.0元</strong></td></tr>
-        <tr><td>2026E</td><td>半年配</td><td>1.8～2.1</td><td>↑</td><td>台積電配息成長帶動</td></tr>
+        <tr><td>2020</td><td>0.90</td><td>—</td><td></td></tr>
+        <tr><td>2021</td><td>0.85</td><td>-6%</td><td>低配息年（H1 僅 0.09）</td></tr>
+        <tr><td>2022</td><td>1.25</td><td>+47%</td><td>大盤修正年，EPS 回升</td></tr>
+        <tr><td>2023</td><td>1.13</td><td>-10%</td><td></td></tr>
+        <tr><td>2024</td><td>1.00</td><td>-12%</td><td>股價大漲但配息降，殖利率收縮</td></tr>
+        <tr style="background:#0f2a1e;"><td><strong>2025</strong></td><td style="color:#22c55e;font-weight:700;">1.36</td><td style="color:#22c55e;">+36%</td><td><strong>H2-2025 大增至 1.0 元</strong></td></tr>
+        <tr><td>2026E</td><td>1.8～2.1</td><td>↑</td><td>台積電配息成長帶動</td></tr>
       </tbody>
     </table>
-    <div style="font-size:10px;color:#475569;margin-top:8px;">0050 配息與台積電（佔比~45%）的盈利高度相關。台積電AI晶片需求強勁，EPS創新高帶動 0050 持股配息持續增長。</div>
+    <div style="font-size:10px;color:#475569;margin-top:8px;">0050 配息與台積電（佔比~46%）盈利高度相關。台積電 AI 晶片需求強勁，EPS 創新高，帶動 0050 持股配息持續增長。</div>
   </div>
 
   <!-- ETF 策略說明 -->
@@ -219,8 +231,8 @@
         <span style="color:#3b82f6;font-weight:700;">市值加權被動指數</span><br>
         追蹤「台灣50指數」，選取台股市值前50大公司，按市值比例加權，每季審查調整成分股。<br><br>
         <span style="font-size:11px;color:#64748b;">2026年6月最新換血：<br>
-        新增：南電、貿聯-KY、旺矽、聯亞<br>
-        剔除：中鋼、台塑、中碳、遠傳</span>
+        ✅ 新增：南電、貿聯-KY、旺矽、聯亞<br>
+        ❌ 剔除：中鋼、台塑（傳產股）</span>
       </div>
     </div>
     <div class="card">
@@ -229,10 +241,10 @@
         <div style="color:#22c55e;">✅ 台股最大 ETF，流動性極佳</div>
         <div style="color:#64748b;font-size:11px;margin-bottom:6px;">每日成交量龐大，買賣價差小</div>
         <div style="color:#22c55e;">✅ 超低管理費 0.0725%</div>
-        <div style="color:#64748b;font-size:11px;margin-bottom:6px;">2026年規模突破2兆後費率再度調降</div>
-        <div style="color:#22c55e;">✅ 半年配息（7月/1月）</div>
+        <div style="color:#64748b;font-size:11px;margin-bottom:6px;">2026年規模突破2兆後費率再調降</div>
+        <div style="color:#22c55e;">✅ 半年配息（7月/1月除息）</div>
         <div style="color:#64748b;font-size:11px;margin-bottom:6px;">配息來源為成分股實際股利</div>
-        <div style="color:#eab308;">⚠️ 高度集中台積電（~45%）</div>
+        <div style="color:#eab308;">⚠️ 高度集中台積電（~46%）</div>
         <div style="color:#64748b;font-size:11px;">台積電漲跌對 0050 影響最大</div>
       </div>
     </div>
@@ -248,9 +260,9 @@
         <div style="font-size:10px;color:#475569;margin-top:2px;">規模 ~2兆元（2026Q2）</div>
       </div>
       <div>
-        <div style="font-size:11px;color:#64748b;margin-bottom:4px;">成分股數量</div>
-        <div style="font-size:20px;font-weight:800;color:#eab308;">50 檔</div>
-        <div style="font-size:10px;color:#475569;margin-top:2px;">每季審查，追蹤台灣50指數</div>
+        <div style="font-size:11px;color:#64748b;margin-bottom:4px;">成立年份</div>
+        <div style="font-size:20px;font-weight:800;color:#eab308;">2003 年</div>
+        <div style="font-size:10px;color:#475569;margin-top:2px;">台灣最早 ETF，21年歷史</div>
       </div>
       <div>
         <div style="font-size:11px;color:#64748b;margin-bottom:4px;">定期定額戶數</div>
@@ -259,29 +271,8 @@
       </div>
     </div>
     <div style="font-size:11px;color:#64748b;line-height:1.7;">
-      競爭對手：006208（富邦台50）追蹤同一指數，費率略低，但規模遠小於 0050。近年 0050 分割後定期定額人數大幅增加，顯示散戶持續湧入。
+      競爭對手：006208（富邦台50）追蹤同一指數，費率略低，但規模與流動性遠不及 0050。近年 0050 分割後定期定額人數大幅增加，顯示散戶持續湧入，品牌效應明顯。
     </div>
-  </div>
-
-  <!-- 前十大持股 -->
-  <div class="section-title">🏦 前十大持股（2026年6月）</div>
-  <div style="background:#1e2535;border:1px solid #2d3748;border-radius:10px;padding:14px;margin-bottom:14px;">
-    <table style="margin:0;">
-      <thead><tr><th>#</th><th>代號</th><th>名稱</th><th>比重（約）</th><th>備註</th></tr></thead>
-      <tbody>
-        <tr style="background:#0f2a1e;"><td>1</td><td style="color:#22c55e;font-weight:700;">2330</td><td>台積電</td><td style="color:#22c55e;font-weight:700;">~45%</td><td>AI晶片龍頭，主導 0050 走勢</td></tr>
-        <tr><td>2</td><td>2454</td><td>聯發科</td><td>~5%</td><td>手機/AI SoC 龍頭</td></tr>
-        <tr><td>3</td><td>2317</td><td>鴻海</td><td>~4%</td><td>AI伺服器組裝</td></tr>
-        <tr><td>4</td><td>2308</td><td>台達電</td><td>~2.5%</td><td>AI電源管理</td></tr>
-        <tr><td>5</td><td>2881</td><td>富邦金</td><td>~2.5%</td><td>金融</td></tr>
-        <tr><td>6</td><td>2882</td><td>國泰金</td><td>~2%</td><td>金融</td></tr>
-        <tr><td>7</td><td>2891</td><td>中信金</td><td>~2%</td><td>金融</td></tr>
-        <tr><td>8</td><td>3711</td><td>日月光投控</td><td>~1.5%</td><td>半導體封測</td></tr>
-        <tr><td>9</td><td>2379</td><td>瑞昱</td><td>~1.5%</td><td>網通/AI IC</td></tr>
-        <tr><td>10</td><td>2412</td><td>中華電</td><td>~1.5%</td><td>電信防禦</td></tr>
-      </tbody>
-    </table>
-    <div style="font-size:10px;color:#475569;margin-top:8px;">* 持股比重為約略估計，實際以元大投信官網最新公告為準。台積電佔比高，0050 漲跌幾乎跟著台積電走。</div>
   </div>
 
   <!-- 估值指標 -->
@@ -300,21 +291,21 @@
     <div class="card">
       <h3>管理費（總費用率）</h3>
       <div class="val yellow">0.0725%</div>
-      <div class="note">台灣最低費率之一，2026年再調降</div>
+      <div class="note">台灣最低費率之一</div>
     </div>
     <div class="card">
       <h3>2025 含息總報酬</h3>
       <div class="val green">~+40%</div>
-      <div class="note">台積電AI行情帶動（25M03低點起算）</div>
+      <div class="note">台積電 AI 行情帶動</div>
     </div>
   </div>
   <div style="background:#1e2535;border-radius:10px;padding:14px;margin-top:14px;">
     <div style="font-size:12px;font-weight:700;color:#cbd5e1;margin-bottom:8px;">估值解讀</div>
     <div style="font-size:12px;color:#94a3b8;line-height:1.8;">
-      目前股價 ~100 元，殖利率（TTM）約 1.36%，遠低於歷史均值 2.5–3.5%，屬於殖利率歷史低位。<br><br>
-      然而這並非 0050 的問題，而是台積電帶動台灣大盤估值重評。若以 <strong style="color:#e2e8f0;">2026年預估配息 2.0元</strong> 計算，殖利率約 2.0%，與合理帶 2.5% 接近，顯示買在 100 元附近「不算便宜、但也非泡沫」。<br><br>
-      <strong style="color:#3b82f6;">長期定期定額投資人</strong>：不需擇時，持續扣款即可，不必等到「便宜」才買。<br>
-      <strong style="color:#eab308;">一次性買入投資人</strong>：可等待大盤修正（回到 70–80 元）再分批布局，降低平均成本。
+      目前股價 ~100 元，殖利率（TTM）約 1.36%，低於歷史均值 2.5–3.5%，屬於殖利率歷史低位。這反映的是台積電帶動台灣大盤估值重評，而非基本面惡化。<br><br>
+      若以 <strong style="color:#e2e8f0;">2026年預估配息 2.0元</strong> 計算，殖利率約 2.0%，仍偏低，顯示 AI 多頭溢價明顯。<br><br>
+      <strong style="color:#3b82f6;">長期定期定額：</strong>不需擇時，持續扣款，享受台灣科技股長期複利。<br>
+      <strong style="color:#eab308;">一次性買入：</strong>可等待大盤修正（回到 70–80 元），殖利率回到 2% 以上再加碼。
     </div>
   </div>
 
@@ -325,67 +316,40 @@
       <h3>🚀 利多</h3>
       <div style="font-size:12px;line-height:1.9;color:#86efac;">
         ✓ 台股最大 ETF，規模突破2兆<br>
-        ✓ 台積電AI需求持續強勁<br>
+        ✓ 台積電 AI 需求持續強勁<br>
         ✓ 超低費率 0.0725%，長期成本極低<br>
-        ✓ 定期定額戶數持續增加<br>
+        ✓ 定期定額戶數創歷史新高<br>
         ✓ 流動性最佳，買賣價差極小<br>
-        ✓ 台灣半導體全球市占率持續提升
+        ✓ 2026年換血，AI 含金量提升
       </div>
     </div>
     <div class="card">
       <h3>⚠️ 風險</h3>
       <div style="font-size:12px;line-height:1.9;color:#fca5a5;">
-        ✗ 台積電集中度~45%，過度依賴單一股<br>
-        ✗ 殖利率歷史低位，下行空間有限<br>
-        ✗ 地緣政治風險（兩岸緊張）<br>
-        ✗ AI題材若降溫，本益比收縮<br>
-        ✗ 美國對台灣半導體出口限制風險<br>
-        ✗ 匯率貶值（台股以台幣計價）
+        ✗ 台積電集中度 ~46%，過度依賴單一股<br>
+        ✗ 殖利率歷史低位，估值偏高<br>
+        ✗ 地緣政治風險（兩岸情勢）<br>
+        ✗ AI 題材若降溫，本益比收縮<br>
+        ✗ 美國對台半導體出口限制<br>
+        ✗ 台幣匯率貶值風險
       </div>
     </div>
   </div>
 
-  <p style="font-size:10px;color:#475569;margin-top:14px;line-height:1.6;">⚠️ 本分析僅供參考，不構成投資建議。股市有風險，投資前請自行判斷。</p>
-</div>
-
-<!-- TAB 5: 完整摘要 -->
-<div id="tab-summary" class="panel">
-  <div class="section-title">📌 關鍵數據快查</div>
+  <!-- 關鍵數據快查 -->
+  <div class="section-title">📋 關鍵數據快查</div>
   <table>
     <thead><tr><th>指標</th><th>數值</th><th>評估</th></tr></thead>
     <tbody>
-      <tr><td>目前股價</td><td style="color:#3b82f6;font-weight:700;" id="summary-price">~99.85 元（2026/6/11）</td><td><span class="badge badge-avoid">TTM殖利率 1.4%，歷史低位</span></td></tr>
-      <tr><td>近四季年化配息（TTM）</td><td style="color:#22c55e;font-weight:700;">1.36 元</td><td><span class="badge badge-watch">H1-2025+H2-2025</span></td></tr>
-      <tr><td>2026E 年化配息</td><td style="color:#3b82f6;font-weight:700;">1.8～2.1 元</td><td><span class="badge badge-watch">依台積電配息成長估算</span></td></tr>
+      <tr><td>目前股價</td><td style="color:#3b82f6;font-weight:700;" id="summary-price">~99.85 元（2026/6/11）</td><td><span class="badge badge-avoid">TTM 殖利率 1.4%，歷史低位</span></td></tr>
+      <tr><td>近四季年化配息（TTM）</td><td style="color:#22c55e;font-weight:700;">1.36 元</td><td><span class="badge badge-watch">H1-2025 + H2-2025</span></td></tr>
+      <tr><td>2026E 年化配息</td><td style="color:#3b82f6;">1.8～2.1 元</td><td><span class="badge badge-watch">依台積電配息成長估算</span></td></tr>
       <tr><td>便宜價（殖利率 3.5%）</td><td>39 元</td><td><span class="badge badge-buy">熊市積極建倉帶</span></td></tr>
       <tr><td>合理價（殖利率 2.5%）</td><td>54 元</td><td><span class="badge badge-buy">正常估值布局帶</span></td></tr>
       <tr><td>昂貴價（殖利率 1.5%）</td><td>91 元</td><td><span class="badge badge-avoid">多頭高估帶</span></td></tr>
       <tr><td>管理費率</td><td>0.0725%（年化）</td><td><span class="badge badge-buy">台灣最低費率之一</span></td></tr>
-      <tr><td>基金規模</td><td>~2兆元</td><td><span class="badge badge-buy">台灣最大ETF</span></td></tr>
+      <tr><td>基金規模</td><td>~2兆元</td><td><span class="badge badge-buy">台灣最大 ETF</span></td></tr>
       <tr><td>追蹤指數</td><td>台灣50指數</td><td><span class="badge badge-buy">成立最久（2003年），21年歷史</span></td></tr>
-      <tr><td>台積電佔比</td><td>~45%</td><td><span class="badge badge-watch">高集中度，AI相關性高</span></td></tr>
-    </tbody>
-  </table>
-
-  <div class="section-title">🎯 操作策略建議</div>
-  <div style="background:#141b2d;border:1px solid #1e3050;border-radius:10px;padding:14px;margin-bottom:14px;">
-    <div style="font-size:12px;color:#94a3b8;line-height:1.9;">
-      <strong style="color:#22c55e;">長期定期定額（最推薦）：</strong>不擇時，每月固定扣款，享受台灣科技股長期複利成長，無需煩惱何時進場。歷史證明持有10年以上幾乎都是正報酬。<br>
-      <strong style="color:#3b82f6;">一次性加碼：</strong>等待大盤修正 -15% 以上（股價回到 75 元以下），或殖利率回到 2% 以上（約 68 元），再一次性買入較大部位。<br>
-      <strong style="color:#eab308;">高點停利：</strong>若短期有資金需求，可在殖利率低於 1.5%（約 91 元以上）分批出脫，等待回調再買回。<br>
-      <strong style="color:#c4b5fd;">與 006208 比較：</strong>追蹤相同指數，006208 費率更低但流動性較差，兩者長期報酬差異極小，定期定額選 0050 流動性更佳。
-    </div>
-  </div>
-
-  <div class="section-title">📅 重要除息記錄</div>
-  <table>
-    <thead><tr><th>期間</th><th>除息日</th><th>配息（元，分割後）</th><th>除息前股價</th><th>備註</th></tr></thead>
-    <tbody>
-      <tr style="background:#0f2a1e;"><td><strong>H2-2025</strong></td><td>2026/01/22</td><td style="color:#22c55e;font-weight:700;">1.00</td><td>71.85</td><td>殖利率 1.39%</td></tr>
-      <tr><td>H1-2025</td><td>2025/07/21</td><td>0.36</td><td>51.45</td><td>分割後首次除息，殖利率 0.70%</td></tr>
-      <tr><td>H2-2024</td><td>2025/01/17</td><td>0.675（2.7÷4）</td><td>49.5（198÷4）</td><td>分割前最後大配息，還原後殖利率 1.36%</td></tr>
-      <tr><td>H1-2024</td><td>2024/07/16</td><td>0.25（1.0÷4）</td><td>49.18（196.7÷4）</td><td>殖利率 0.51%（分割還原）</td></tr>
-      <tr><td>H2-2023</td><td>2024/01/17</td><td>0.75（3.0÷4）</td><td>32.9（131.6÷4）</td><td>殖利率 2.28%（分割還原）</td></tr>
     </tbody>
   </table>
 
@@ -422,11 +386,10 @@ const data = [
 const labels = data.map(d => d.m);
 const prices = data.map(d => d.px);
 
-// 殖利率帶換算價格（固定水平線）
-const yHigh  = data.map(() => +(annualDiv / 0.035).toFixed(1)); // 3.5% 便宜 → 38.9
-const yMid   = data.map(() => +(annualDiv / 0.025).toFixed(1)); // 2.5% 合理 → 54.4
-const yLow   = data.map(() => +(annualDiv / 0.015).toFixed(1)); // 1.5% 昂貴 → 90.7
-const yVLow  = data.map(() => +(annualDiv / 0.010).toFixed(1)); // 1.0% 極貴 → 136
+const yHigh = data.map(() => +(annualDiv / 0.035).toFixed(1));
+const yMid  = data.map(() => +(annualDiv / 0.025).toFixed(1));
+const yLow  = data.map(() => +(annualDiv / 0.015).toFixed(1));
+const yVLow = data.map(() => +(annualDiv / 0.010).toFixed(1));
 
 // ── 殖利率河流圖 ──
 const riverCtx = document.getElementById('riverChart').getContext('2d');
@@ -436,28 +399,23 @@ new Chart(riverCtx, {
     labels,
     datasets: [
       { label: '股價', data: prices, borderColor: '#ffffff', borderWidth: 2.5, pointRadius: 0, tension: 0.3, spanGaps: true, order: 0 },
-      { label: '殖利率 1.0%（極貴）', data: yVLow, borderColor: '#ef4444', borderWidth: 1, borderDash: [4,3], pointRadius: 0, tension: 0 },
-      { label: '殖利率 1.5%（昂貴）', data: yLow,  borderColor: '#f97316', borderWidth: 1, borderDash: [4,3], pointRadius: 0, tension: 0 },
-      { label: '殖利率 2.5%（合理）', data: yMid,  borderColor: '#22c55e', borderWidth: 1.5, borderDash: [4,3], pointRadius: 0, tension: 0 },
-      { label: '殖利率 3.5%（便宜）', data: yHigh, borderColor: '#3b82f6', borderWidth: 1.5, borderDash: [4,3], pointRadius: 0, tension: 0 },
+      { label: '殖利率 1.0%（極貴）', data: yVLow, borderColor: '#ef4444', borderWidth: 1, borderDash: [4,3], pointRadius: 0 },
+      { label: '殖利率 1.5%（昂貴）', data: yLow,  borderColor: '#f97316', borderWidth: 1, borderDash: [4,3], pointRadius: 0 },
+      { label: '殖利率 2.5%（合理）', data: yMid,  borderColor: '#22c55e', borderWidth: 1.5, borderDash: [4,3], pointRadius: 0 },
+      { label: '殖利率 3.5%（便宜）', data: yHigh, borderColor: '#3b82f6', borderWidth: 1.5, borderDash: [4,3], pointRadius: 0 },
     ]
   },
   options: {
     responsive: true,
     plugins: {
       legend: { labels: { color: '#94a3b8', font: { size: 11 } } },
-      tooltip: {
-        callbacks: {
-          label(ctx) {
-            const v = ctx.parsed.y.toFixed(2);
-            if (ctx.dataset.label === '股價') {
-              const y = (annualDiv / ctx.parsed.y * 100).toFixed(2);
-              return `股價: ${v} 元 (殖利率 ${y}%)`;
-            }
-            return `${ctx.dataset.label}: ${v} 元`;
-          }
+      tooltip: { callbacks: { label(ctx) {
+        const v = ctx.parsed.y.toFixed(2);
+        if (ctx.dataset.label === '股價') {
+          return `股價: ${v} 元 (殖利率 ${(annualDiv / ctx.parsed.y * 100).toFixed(2)}%)`;
         }
-      }
+        return `${ctx.dataset.label}: ${v} 元`;
+      }}}
     },
     scales: {
       x: { ticks: { color: '#475569', maxTicksLimit: 12, font: { size: 10 } }, grid: { color: '#1e2535' } },
@@ -477,10 +435,9 @@ new Chart(divCtx, {
     datasets: [{
       label: '年化配息（元，分割後還原）',
       data: divAmounts,
-      backgroundColor: divAmounts.map((v, i) => i === 7 ? 'rgba(59,130,246,0.5)' : i === 6 ? 'rgba(34,197,94,0.7)' : 'rgba(34,197,94,0.45)'),
-      borderColor: divAmounts.map((v, i) => i === 7 ? '#3b82f6' : '#22c55e'),
-      borderWidth: 1.5,
-      borderRadius: 6,
+      backgroundColor: divAmounts.map((v,i) => i===7?'rgba(59,130,246,0.5)':i===6?'rgba(34,197,94,0.7)':'rgba(34,197,94,0.45)'),
+      borderColor: divAmounts.map((v,i) => i===7?'#3b82f6':'#22c55e'),
+      borderWidth: 1.5, borderRadius: 6,
     }]
   },
   options: {
@@ -491,7 +448,7 @@ new Chart(divCtx, {
     },
     scales: {
       x: { ticks: { color: '#94a3b8' }, grid: { color: '#1e2535' } },
-      y: { ticks: { color: '#94a3b8' }, grid: { color: '#1e2535' }, title: { display: true, text: '元/股（分割後）', color: '#64748b', font: { size: 11 } } }
+      y: { ticks: { color: '#94a3b8' }, grid: { color: '#1e2535' }, title: { display:true, text:'元/股（分割後）', color:'#64748b', font:{size:11} } }
     }
   }
 });
@@ -501,10 +458,10 @@ const tbody = document.getElementById('monthly-table');
 data.slice().reverse().forEach(d => {
   const y = (annualDiv / d.px * 100).toFixed(2);
   let band = '', cls = '';
-  if (d.px < 39)       { band = '便宜帶 (>3.5%)';   cls = 'color:#86efac;'; }
-  else if (d.px < 54)  { band = '合理帶 (2.5–3.5%)'; cls = 'color:#fde68a;'; }
-  else if (d.px < 91)  { band = '偏貴帶 (1.5–2.5%)'; cls = 'color:#fb923c;'; }
-  else                  { band = '昂貴帶 (<1.5%)';   cls = 'color:#f87171;'; }
+  if (d.px < 39)      { band = '便宜帶 (>3.5%)';   cls = 'color:#86efac;'; }
+  else if (d.px < 54) { band = '合理帶 (2.5–3.5%)'; cls = 'color:#fde68a;'; }
+  else if (d.px < 91) { band = '偏貴帶 (1.5–2.5%)'; cls = 'color:#fb923c;'; }
+  else                 { band = '昂貴帶 (<1.5%)';   cls = 'color:#f87171;'; }
   const tr = document.createElement('tr');
   tr.innerHTML = `<td>${d.m}</td><td>${d.px}</td><td>${y}%</td><td style="${cls}">${band}</td>`;
   tbody.appendChild(tr);
@@ -519,15 +476,13 @@ async function loadLivePrice() {
     if (price && !isNaN(price)) {
       document.getElementById('live-price').textContent = 'NT$ ' + price.toFixed(2);
       const y = (annualDiv / price * 100).toFixed(2);
-      const note = `殖利率 ${y}% — `;
       let status = '';
       if (price < 39)      status = '便宜帶，積極建倉';
       else if (price < 54) status = '合理帶，可分批布局';
       else if (price < 91) status = '偏貴帶，謹慎追高';
       else                  status = '昂貴帶，建議等待回調';
-      document.getElementById('live-yield-note').textContent = note + status;
+      document.getElementById('live-yield-note').textContent = `殖利率 ${y}% — ` + status;
       document.getElementById('summary-price').textContent = `NT$ ${price.toFixed(2)} 元`;
-
       const yEl = document.getElementById('fund-yield');
       if (yEl) {
         yEl.textContent = y + '%';
@@ -537,6 +492,116 @@ async function loadLivePrice() {
   } catch(e) {}
 }
 window.addEventListener('load', loadLivePrice);
+
+// ── 持股資訊 Tab ──
+const holdings0050 = [
+  { id:'2330', name:'台積電',     w:46.50, sector:'半導體' },
+  { id:'2454', name:'聯發科',     w:5.20,  sector:'IC設計' },
+  { id:'2317', name:'鴻海',       w:3.90,  sector:'電子製造' },
+  { id:'2308', name:'台達電',     w:2.40,  sector:'電子零組件' },
+  { id:'2881', name:'富邦金',     w:2.00,  sector:'金融' },
+  { id:'2882', name:'國泰金',     w:1.80,  sector:'金融' },
+  { id:'2891', name:'中信金',     w:1.60,  sector:'金融' },
+  { id:'3711', name:'日月光投控', w:1.50,  sector:'半導體封測' },
+  { id:'2412', name:'中華電',     w:1.40,  sector:'通信' },
+  { id:'2379', name:'瑞昱',       w:1.30,  sector:'IC設計' },
+  { id:'3034', name:'聯詠',       w:1.20,  sector:'IC設計' },
+  { id:'2345', name:'智邦',       w:1.10,  sector:'AI網通' },
+  { id:'2382', name:'廣達',       w:1.00,  sector:'AI伺服器' },
+  { id:'2886', name:'兆豐金',     w:0.90,  sector:'金融' },
+  { id:'6669', name:'緯穎',       w:0.85,  sector:'AI伺服器' },
+  { id:'2303', name:'聯電',       w:0.80,  sector:'半導體' },
+  { id:'2884', name:'玉山金',     w:0.75,  sector:'金融' },
+  { id:'2885', name:'元大金',     w:0.70,  sector:'金融' },
+  { id:'1216', name:'統一',       w:0.65,  sector:'食品' },
+  { id:'2357', name:'華碩',       w:0.60,  sector:'電腦週邊' },
+  { id:'5876', name:'上海商銀',   w:0.60,  sector:'金融' },
+  { id:'2395', name:'研華',       w:0.55,  sector:'工業電腦' },
+  { id:'3231', name:'緯創',       w:0.50,  sector:'AI伺服器' },
+  { id:'2887', name:'台新新光金', w:0.50,  sector:'金融' },
+  { id:'3596', name:'智易',       w:0.50,  sector:'AI網通' },
+  { id:'2880', name:'華南金',     w:0.45,  sector:'金融' },
+  { id:'2890', name:'永豐金',     w:0.45,  sector:'金融' },
+  { id:'2002', name:'中鋼',       w:0.40,  sector:'鋼鐵' },
+  { id:'3665', name:'貿聯-KY',    w:0.40,  sector:'AI電源' },
+  { id:'8046', name:'南電',       w:0.38,  sector:'PCB' },
+  { id:'2376', name:'技嘉',       w:0.35,  sector:'電腦週邊' },
+  { id:'2353', name:'宏碁',       w:0.35,  sector:'電腦週邊' },
+  { id:'2883', name:'凱基金',     w:0.30,  sector:'金融' },
+  { id:'3045', name:'台灣大',     w:0.30,  sector:'通信' },
+  { id:'4938', name:'和碩',       w:0.30,  sector:'電子製造' },
+  { id:'6683', name:'旺矽',       w:0.28,  sector:'半導體設備' },
+  { id:'2449', name:'京元電',     w:0.25,  sector:'半導體封測' },
+  { id:'3037', name:'欣興',       w:0.25,  sector:'PCB' },
+  { id:'2618', name:'長榮航',     w:0.25,  sector:'航空' },
+  { id:'2603', name:'長榮',       w:0.25,  sector:'航運' },
+  { id:'2474', name:'可成',       w:0.22,  sector:'金屬機殼' },
+  { id:'1101', name:'台泥',       w:0.20,  sector:'水泥' },
+  { id:'2324', name:'仁寶',       w:0.20,  sector:'電子製造' },
+  { id:'6176', name:'瑞儀',       w:0.18,  sector:'光電' },
+  { id:'2377', name:'微星',       w:0.18,  sector:'電腦週邊' },
+  { id:'3023', name:'信邦',       w:0.15,  sector:'連接器' },
+  { id:'2105', name:'正新',       w:0.15,  sector:'橡膠' },
+  { id:'9904', name:'寶成',       w:0.12,  sector:'橡膠' },
+  { id:'1590', name:'亞德客-KY',  w:0.12,  sector:'工業自動化' },
+  { id:'2409', name:'友達',       w:0.10,  sector:'面板' },
+];
+
+const industries0050 = [
+  { label:'半導體/IC設計', pct:56.0, color:'#3b82f6' },
+  { label:'金融保險',      pct:12.0, color:'#22c55e' },
+  { label:'AI伺服器/電子製造', pct:8.5, color:'#f59e0b' },
+  { label:'電子零組件',   pct:4.5,  color:'#8b5cf6' },
+  { label:'通信/電信',    pct:2.5,  color:'#06b6d4' },
+  { label:'PCB/材料',     pct:2.0,  color:'#ec4899' },
+  { label:'電腦週邊',     pct:2.0,  color:'#f97316' },
+  { label:'AI電源/網通',  pct:2.0,  color:'#10b981' },
+  { label:'其他',         pct:10.5, color:'#64748b' },
+];
+
+new Chart(document.getElementById('industryChart').getContext('2d'), {
+  type: 'doughnut',
+  data: { labels: industries0050.map(i=>i.label), datasets: [{ data: industries0050.map(i=>i.pct), backgroundColor: industries0050.map(i=>i.color), borderWidth:2, borderColor:'#0f1117' }] },
+  options: { responsive:true, plugins: { legend:{ position:'right', labels:{ color:'#94a3b8', font:{size:10}, padding:8, boxWidth:12 } }, tooltip:{ callbacks:{ label(ctx){ return `${ctx.label}: ${ctx.parsed}%`; } } } } }
+});
+
+const top15_0050 = holdings0050.slice(0, 15);
+new Chart(document.getElementById('holdingsChart').getContext('2d'), {
+  type: 'bar',
+  data: {
+    labels: top15_0050.map(h=>`${h.id} ${h.name}`),
+    datasets: [{
+      label: '持股比重（%）',
+      data: top15_0050.map(h=>h.w),
+      backgroundColor: top15_0050.map(h => h.id==='2330'?'#3b82f688':'#22c55e55'),
+      borderColor:     top15_0050.map(h => h.id==='2330'?'#3b82f6':'#22c55e'),
+      borderWidth:1, borderRadius:3
+    }]
+  },
+  options: {
+    indexAxis: 'y', responsive: true,
+    plugins: { legend:{display:false}, tooltip:{ callbacks:{ label(ctx){ return `比重: ${top15_0050[ctx.dataIndex].w}%`; } } } },
+    scales: {
+      x: { ticks:{color:'#64748b',font:{size:10}}, grid:{color:'#1e2535'} },
+      y: { ticks:{color:'#e2e8f0',font:{size:10}}, grid:{display:false} }
+    }
+  }
+});
+
+const htbody = document.getElementById('holdings-table');
+if (htbody) {
+  holdings0050.forEach((h, i) => {
+    const bw = Math.round(h.w / 46.50 * 100);
+    htbody.innerHTML += `<tr>
+      <td style="color:#64748b;">${i+1}</td>
+      <td style="color:#3b82f6;font-weight:600;">${h.id}</td>
+      <td>${h.name}</td>
+      <td style="font-weight:700;">${h.w}%</td>
+      <td style="color:#94a3b8;font-size:11px;">${h.sector}</td>
+      <td><div style="background:#1e2535;border-radius:3px;height:8px;width:100%;"><div style="background:${h.id==='2330'?'#3b82f6':'#22c55e'};height:8px;border-radius:3px;width:${bw}%;"></div></div></td>
+    </tr>`;
+  });
+}
 </script>
 </body>
 </html>
