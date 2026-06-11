@@ -1550,7 +1550,7 @@
    股價追蹤
 ══════════════════════════════════════ */
 var STOCKS = [
-  { id:'0050',  fairValue:50,   expValue:67 },
+  { id:'0050',  fairValue:54,   expValue:91 },
   { id:'0056',  fairValue:45,   expValue:51 },
   { id:'00878', fairValue:27,   expValue:34 },
   { id:'00919', fairValue:29,   expValue:36 },
@@ -1671,7 +1671,7 @@ document.addEventListener('DOMContentLoaded', function() {
 // annualDiv = 年化現金股利（元/股），每年股利宣告後（約6-8月）更新一次
 var TRACKED = [
   // ── 核心 ──────────────────────────────────────────────
-  { id:'0050', name:'元大台灣50', tier:'core',   fairValue:50,   expValue:67,   fairPER:20, tp:null, cheapValue:40,  annualDiv:2.1  },  // H1 0.7%+H2 1.39% × 100.95
+  { id:'0050', name:'元大台灣50', tier:'core',   fairValue:54,   expValue:91,   fairPER:null, tp:null, cheapValue:39, annualDiv:1.36 },  // TTM: H1-2025(0.36)+H2-2025(1.0)=1.36元；殖利率法 3.5%/2.5%/1.5%
   { id:'0056', name:'元大高股息', tier:'core',   fairValue:45,   expValue:51,   fairPER:null, tp:null, cheapValue:40, annualDiv:3.6  },  // 季配：近4季 3.598元；殖利率法
   { id:'00878', name:'國泰永續高股息', tier:'core',  fairValue:27,   expValue:34,   fairPER:null, tp:null, cheapValue:21, annualDiv:1.88 },  // 季配：近4季 1.88元（25Q2~26Q1）；殖利率法
   { id:'00919', name:'群益台灣精選高息', tier:'core', fairValue:29, expValue:36, fairPER:null, tp:null, cheapValue:24, annualDiv:2.86 },  // 季配：近4季 TTM 2.86元；殖利率法
