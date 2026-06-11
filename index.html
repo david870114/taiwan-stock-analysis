@@ -884,47 +884,8 @@
         <th class="th-cur">目前股價</th><th>vs 合理價</th><th class="th-tp">法人目標價</th>
       </tr>
     </thead>
-    <tbody>
-      <tr>
-        <td class="code code-etf">0050</td>
-        <td class="name"><a href="0050_analysis.html">元大台灣50</a></td>
-        <td>39 <span class="per-sub">殖利率 3.5%</span></td>
-        <td>54 <span class="per-sub">殖利率 2.5%</span></td>
-        <td>91 <span class="per-sub">殖利率 1.5%</span></td>
-        <td class="price-cell loading td-cur" id="price-0050">…</td>
-        <td id="vs-0050" class="loading">—</td>
-        <td class="td-tp">—</td>
-      </tr>
-      <tr>
-        <td class="code code-etf">0056</td>
-        <td class="name"><a href="0056_analysis.html">元大高股息</a></td>
-        <td>40 <span class="per-sub">殖利率 9%</span></td>
-        <td>45 <span class="per-sub">殖利率 8%</span></td>
-        <td>51 <span class="per-sub">殖利率 7%</span></td>
-        <td class="price-cell loading td-cur" id="price-0056">…</td>
-        <td id="vs-0056" class="loading">—</td>
-        <td class="td-tp">—</td>
-      </tr>
-      <tr>
-        <td class="code code-etf">00878</td>
-        <td class="name"><a href="00878_analysis.html">國泰永續高股息</a></td>
-        <td>21 <span class="per-sub">殖利率 9%</span></td>
-        <td>27 <span class="per-sub">殖利率 7%</span></td>
-        <td>34 <span class="per-sub">殖利率 5.5%</span></td>
-        <td class="price-cell loading td-cur" id="price-00878">…</td>
-        <td id="vs-00878" class="loading">—</td>
-        <td class="td-tp">—</td>
-      </tr>
-      <tr>
-        <td class="code code-etf">00919</td>
-        <td class="name"><a href="00919_analysis.html">群益台灣精選高息</a></td>
-        <td>24 <span class="per-sub">殖利率 12%</span></td>
-        <td>29 <span class="per-sub">殖利率 10%</span></td>
-        <td>36 <span class="per-sub">殖利率 8%</span></td>
-        <td class="price-cell loading td-cur" id="price-00919">…</td>
-        <td id="vs-00919" class="loading">—</td>
-        <td class="td-tp">—</td>
-      </tr>
+    <tbody id="etf-tbody">
+      <!-- 由 JS buildEtfTable() 從 TRACKED 陣列動態產生，更新 TRACKED 即自動同步 -->
     </tbody>
   </table>
 </div>
@@ -1645,6 +1606,32 @@ async function fetchAllPrices() {
     String(now.getMinutes()).padStart(2,'0')  + ':' +
     String(now.getSeconds()).padStart(2,'0');
 }
+
+// ── ETF 表格動態產生（從 TRACKED 陣列，更新 TRACKED 即自動同步主頁）──
+function buildEtfTable() {
+  const tbody = document.getElementById('etf-tbody');
+  if (!tbody) return;
+  const etfs = TRACKED.filter(s => s.fairPER === null && s.annualDiv != null);
+  tbody.innerHTML = etfs.map(s => {
+    const fmt = v => v >= 1000 ? v.toLocaleString() : v;
+    const yc = (s.annualDiv / s.cheapValue * 100).toFixed(1);
+    const yf = (s.annualDiv / s.fairValue  * 100).toFixed(1);
+    const ye = (s.annualDiv / s.expValue   * 100).toFixed(1);
+    const href = `${s.id}_analysis.html`;
+    return `<tr>
+      <td class="code code-etf">${s.id}</td>
+      <td class="name"><a href="${href}">${s.name}</a></td>
+      <td>${fmt(s.cheapValue)} <span class="per-sub">殖利率 ${yc}%</span></td>
+      <td>${fmt(s.fairValue)}  <span class="per-sub">殖利率 ${yf}%</span></td>
+      <td>${fmt(s.expValue)}   <span class="per-sub">殖利率 ${ye}%</span></td>
+      <td class="price-cell loading td-cur" id="price-${s.id}">…</td>
+      <td id="vs-${s.id}" class="loading">—</td>
+      <td class="td-tp">${s.tp ? fmt(s.tp) : '—'}</td>
+    </tr>`;
+  }).join('');
+}
+
+document.addEventListener('DOMContentLoaded', buildEtfTable);
 
 window.addEventListener('load', fetchAllPrices);
 setInterval(fetchAllPrices, 60000);
