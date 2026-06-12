@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>主動統一台股增長 00981A — 殖利率分析</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #0f1117; color: #e2e8f0; padding: 16px; }
+  h1 { font-size: 18px; font-weight: 700; color: #f8fafc; margin-bottom: 4px; }
+  .subtitle { font-size: 12px; color: #94a3b8; margin-bottom: 16px; }
+  .tabs { display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; }
+  .tab { padding: 6px 14px; border-radius: 20px; font-size: 12px; cursor: pointer; border: 1px solid #334155; color: #94a3b8; background: transparent; transition: all 0.2s; }
+  .tab.active { background: #3b82f6; color: #fff; border-color: #3b82f6; }
+  .tab:hover:not(.active) { border-color: #64748b; color: #e2e8f0; }
+  .panel { display: none; }
+  .panel.active { display: block; }
+  canvas { width: 100% !important; border-radius: 10px; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+  .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-top: 12px; }
+  .grid4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 12px; margin-top: 12px; }
+  .card { background: #1e2535; border: 1px solid #2d3748; border-radius: 10px; padding: 14px; }
+  .card h3 { font-size: 12px; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
+  .card .val { font-size: 22px; font-weight: 700; }
+  .card .note { font-size: 11px; color: #64748b; margin-top: 4px; }
+  .green { color: #22c55e; } .yellow { color: #eab308; } .red { color: #ef4444; } .blue { color: #3b82f6; } .purple { color: #c4b5fd; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 12px; }
+  th { background: #1e2535; color: #64748b; padding: 8px 10px; text-align: left; font-weight: 600; font-size: 11px; text-transform: uppercase; }
+  td { padding: 8px 10px; border-bottom: 1px solid #1e2535; }
+  tr:hover td { background: #1a2030; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: 600; }
+  .badge-buy { background: #14532d; color: #86efac; }
+  .badge-watch { background: #713f12; color: #fde68a; }
+  .badge-avoid { background: #450a0a; color: #fca5a5; }
+  .scenario-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 12px; }
+  .scenario-card { border-radius: 10px; padding: 14px; text-align: center; }
+  .bear { background: linear-gradient(135deg, #1a0a0a, #2d1010); border: 1px solid #7f1d1d; }
+  .base { background: linear-gradient(135deg, #0a1a0a, #102d10); border: 1px solid #14532d; }
+  .bull { background: linear-gradient(135deg, #0a0f1a, #10182d); border: 1px solid #1d4ed8; }
+  .sc-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.7; margin-bottom: 6px; }
+  .sc-price { font-size: 22px; font-weight: 800; margin: 4px 0; }
+  .sc-detail { font-size: 10px; opacity: 0.65; line-height: 1.6; }
+  .section-title { font-size: 13px; font-weight: 600; color: #cbd5e1; margin: 16px 0 8px; }
+  .buy-signal { background: #0f2a1e; border: 1px solid #166534; border-radius: 10px; padding: 14px; margin-top: 12px; }
+  .buy-signal h3 { color: #86efac; font-size: 13px; margin-bottom: 8px; }
+  .buy-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid #1a3a2a; gap: 8px; }
+  .buy-row:last-child { border-bottom: none; }
+  .current-price-badge { background: #1e3a5f; border: 1px solid #3b82f6; border-radius: 8px; padding: 10px 14px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px; }
+  .chart-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; }
+  .chart-box { background: #1e2535; border: 1px solid #2d3748; border-radius: 10px; padding: 14px; }
+  .chart-box h3 { font-size: 12px; color: #94a3b8; font-weight: 600; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.05em; }
+  @media(max-width:700px){ .chart-row{ grid-template-columns:1fr; } .scenario-grid,.grid3,.grid4{ grid-template-columns:1fr; } .grid2{ grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+<div style="margin-bottom:12px;">
+  <a href="index.html" style="color:#64748b;font-size:12px;text-decoration:none;display:inline-flex;align-items:center;gap:4px;padding:5px 10px;border:1px solid #334155;border-radius:8px;transition:all 0.2s;" onmouseover="this.style.color='#e2e8f0';this.style.borderColor='#64748b'" onmouseout="this.style.color='#64748b';this.style.borderColor='#334155'">← 返回總覽</a>
+</div>
+<h1>📈 主動統一台股增長 (00981A) — 殖利率分析</h1>
+<p class="subtitle">殖利率河流圖 ✦ 三情境買點 ✦ 配息趨勢 ✦ 持股資訊 ✦ 基本面分析 ✦ 更新時間：2026年6月12日</p>
+
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('river', this)">📈 殖利率河流圖</button>
+  <button class="tab" onclick="switchTab('scenario', this)">🎯 三情境買點</button>
+  <button class="tab" onclick="switchTab('div', this)">📊 配息趨勢</button>
+  <button class="tab" onclick="switchTab('holdings', this)">🏦 持股資訊</button>
+  <button class="tab" onclick="switchTab('fundamental', this)">🏢 基本面分析</button>
+</div>
+
+<!-- TAB 1: 殖利率河流圖 -->
+<div id="tab-river" class="panel active">
+  <div class="current-price-badge">
+    <span style="color:#94a3b8;font-size:12px;">目前股價（即時）</span>
+    <span style="color:#3b82f6;font-size:20px;font-weight:800;" id="live-price">載入中…</span>
+    <span style="color:#eab308;font-size:12px;" id="live-yield-note">殖利率計算中…</span>
+  </div>
+  <canvas id="riverChart" height="340"></canvas>
+  <p style="font-size:11px;color:#475569;margin-top:8px;text-align:center;">* 殖利率帶以年化配息 2.52 元計算（最新季配 0.63 元 × 4）。00981A 成立於 2025/04，歷史較短，殖利率帶僅供參考。</p>
+</div>
+
+<!-- TAB 2: 三情境 -->
+<div id="tab-scenario" class="panel">
+  <div class="grid2">
+    <div class="card"><h3>近兩季已知配息</h3><div class="val green">0.41 + 0.63 元</div><div class="note">25Q4: 0.41元（3/17除息）；26Q1: 0.63元（6/16即將除息）</div></div>
+    <div class="card"><h3>年化配息推估</h3><div class="val blue">2.52 元</div><div class="note">基於最新季配 0.63 元 × 4；ETF 成立未滿一年，估算有一定不確定性</div></div>
+  </div>
+  <div class="section-title">三情境殖利率買點推算（年化配息 2.52 元）</div>
+  <div class="scenario-grid">
+    <div class="scenario-card bear">
+      <div class="sc-label">🐻 保守</div>
+      <div class="sc-price red">20–25 元</div>
+      <div class="sc-detail">殖利率 10–13%<br>大盤深度修正<br>恐慌性拋售帶<br>IPO 附近價格區</div>
+    </div>
+    <div class="scenario-card base">
+      <div class="sc-label">⚖️ 合理</div>
+      <div class="sc-price green">25–32 元</div>
+      <div class="sc-detail">殖利率 8–10%<br>正常行情區<br>主動 ETF 合理配息帶<br>2026Q1 整理區</div>
+    </div>
+    <div class="scenario-card bull">
+      <div class="sc-label">🚀 樂觀</div>
+      <div class="sc-price" style="color:#60a5fa;">32–42 元</div>
+      <div class="sc-detail">殖利率 6–8%<br>台股多頭市場<br>2026Q2 題材行情區<br>資金追捧主動 ETF</div>
+    </div>
+  </div>
+  <div class="buy-signal">
+    <h3>💰 分批建倉買點建議（以年化配息 2.52 元為基準）</h3>
+    <div class="buy-row">
+      <span style="color:#86efac;font-size:13px;font-weight:600;">第一批（40%）</span>
+      <span style="color:#fde68a;font-size:14px;font-weight:700;">20–25 元</span>
+      <span class="badge badge-buy">殖利率 10%+，大盤修正積極進場</span>
+    </div>
+    <div class="buy-row">
+      <span style="color:#86efac;font-size:13px;font-weight:600;">第二批（40%）</span>
+      <span style="color:#fde68a;font-size:14px;font-weight:700;">25–32 元</span>
+      <span class="badge badge-buy">殖利率 8–10%，合理估值帶布局</span>
+    </div>
+    <div class="buy-row">
+      <span style="color:#86efac;font-size:13px;font-weight:600;">第三批（20%）</span>
+      <span style="color:#fde68a;font-size:14px;font-weight:700;">32–38 元</span>
+      <span class="badge badge-watch">殖利率 6.6–7.9%，偏高估值謹慎追加</span>
+    </div>
+    <div class="buy-row" style="border-top:1px solid #166534;margin-top:8px;padding-top:10px;">
+      <span style="color:#fca5a5;font-size:12px;">觀望 / 等待回調</span>
+      <span style="color:#fca5a5;font-size:13px;font-weight:700;">42 元以上</span>
+      <span class="badge badge-avoid">殖利率 &lt;6%，多頭高估帶</span>
+    </div>
+  </div>
+  <div style="background:#1e2535;border:1px solid #334155;border-radius:10px;padding:12px;margin-top:14px;">
+    <div style="font-size:12px;font-weight:700;color:#eab308;margin-bottom:6px;">⚠️ 主動式成長型 ETF：殖利率視角的侷限性</div>
+    <div style="font-size:12px;color:#94a3b8;line-height:1.8;">
+      00981A 以<strong style="color:#e2e8f0;">長期資本增值</strong>為主要目標，配息為輔。成立不到一年，配息歷史僅兩季（0.41、0.63元），殖利率帶估算不確定性高。<br>
+      2026年前5月含息報酬率接近 <strong style="color:#22c55e;">90%</strong>，主要由台股 AI 行情驅動。<strong style="color:#3b82f6;">長期定期定額</strong>是主要投資方式，不需等到特定殖利率才入場。
+    </div>
+  </div>
+</div>
+
+<!-- TAB 3: 配息趨勢 -->
+<div id="tab-div" class="panel">
+  <canvas id="divChart" height="160"></canvas>
+  <div class="section-title" style="margin-top:16px;">季配息明細（00981A 成立於 2025/04）</div>
+  <table>
+    <thead>
+      <tr><th>期間</th><th>現金股利（元）</th><th>除息日</th><th>配發日</th><th>備註</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>25Q4</td><td style="color:#22c55e;font-weight:700;">0.41</td><td>2026/03/17</td><td>2026/04/10</td><td>首次配息，除息當日填息</td></tr>
+      <tr style="background:#0f2a1e;"><td><strong>26Q1</strong></td><td style="color:#22c55e;font-weight:700;">0.63</td><td>2026/06/16（即將）</td><td>2026/07/09</td><td><strong>配息大幅提升，年化配息率近8%</strong></td></tr>
+      <tr><td>26Q2E</td><td style="color:#3b82f6;">~0.6–0.7元（推估）</td><td>~2026/09</td><td>~2026/10</td><td>視台股行情而定</td></tr>
+      <tr><td>26Q3E</td><td style="color:#3b82f6;">~0.6–0.7元（推估）</td><td>~2026/12</td><td>~2027/01</td><td>視台股行情而定</td></tr>
+    </tbody>
+  </table>
+  <div class="section-title" style="margin-top:20px;">月線收盤價殖利率明細（上市以來）</div>
+  <table>
+    <thead>
+      <tr><th>月份</th><th>收盤價</th><th>殖利率（年化 2.52 元基準）</th><th>估值帶</th></tr>
+    </thead>
+    <tbody id="monthly-table"></tbody>
+  </table>
+  <p style="font-size:10px;color:#475569;margin-top:8px;">* 殖利率 = 2.52 ÷ 收盤價 × 100%。此欄僅供估值帶對比參考，實際配息需以官方公告為準。</p>
+</div>
+
+<!-- TAB 4: 持股資訊 -->
+<div id="tab-holdings" class="panel">
+  <div class="grid4" style="margin-top:4px;">
+    <div class="card"><h3>ETF 類型</h3><div style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.5;">主動式 ETF</div><div class="note">非追蹤指數，由基金經理主動選股</div></div>
+    <div class="card"><h3>受益人數</h3><div class="val blue">~94 萬戶</div><div class="note">2026年6月（快速增長中）</div></div>
+    <div class="card"><h3>台積電佔比</h3><div class="val yellow">~30–40%</div><div class="note">最大持股，確切比例以官網公告為準</div></div>
+    <div class="card"><h3>基金規模</h3><div class="val green">超大型</div><div class="note">日均成交金額逾80億（2026/06）</div></div>
+  </div>
+
+  <div class="section-title" style="margin-top:16px;">主要持股（估算，2026/06）</div>
+  <table>
+    <thead><tr><th>#</th><th>代號</th><th>名稱</th><th>估計比重</th><th>產業</th><th>說明</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>2330</td><td>台積電</td><td>~30–40%</td><td>AI半導體</td><td>最大持股，AI晶片需求強勁</td></tr>
+      <tr><td>2</td><td>2345</td><td>智邦</td><td>~5–10%</td><td>AI網通</td><td>AI交換器龍頭</td></tr>
+      <tr><td>3</td><td>3017</td><td>奇鋐</td><td>~3–8%</td><td>AI散熱</td><td>液冷散熱方案提供商</td></tr>
+      <tr><td>4</td><td>3665</td><td>貿聯-KY</td><td>~3–6%</td><td>AI電源線束</td><td>伺服器電源線束</td></tr>
+      <tr><td>5</td><td>8046</td><td>南電/台光電</td><td>~3–5%</td><td>PCB材料</td><td>AI伺服器基板材料</td></tr>
+      <tr><td colspan="6" style="color:#475569;font-size:10px;text-align:center;padding:10px;">* 持股比重為估算值，實際以<a href="https://www.upamc.com.tw/zh-TW/fund/list/ETF" target="_blank" style="color:#3b82f6;">統一投信官網</a>最新公告為準</td></tr>
+    </tbody>
+  </table>
+
+  <div class="chart-row">
+    <div class="chart-box"><h3>🏭 產業分布（估算）</h3><canvas id="industryChart" height="260"></canvas></div>
+    <div class="chart-box"><h3>📊 選股策略核心</h3>
+      <div style="font-size:12px;line-height:1.9;color:#cbd5e1;margin-top:8px;">
+        <div style="color:#3b82f6;font-weight:700;margin-bottom:8px;">主動選股：聚焦台股成長型企業</div>
+        <div style="color:#22c55e;">✅ 由基金經理主動選股，非被動追蹤指數</div>
+        <div style="color:#22c55e;">✅ 聚焦 AI 供應鏈、科技成長股</div>
+        <div style="color:#22c55e;">✅ 季配息，年化配息率約 8%</div>
+        <div style="color:#22c55e;">✅ 成立以來績效大幅超越大盤</div>
+        <div style="color:#eab308;margin-top:8px;">⚠️ 主動基金費率高於被動 ETF</div>
+        <div style="color:#eab308;">⚠️ 成立未滿一年，配息歷史短</div>
+        <div style="color:#eab308;">⚠️ 台積電集中度高，受單一股影響大</div>
+        <div style="color:#ef4444;margin-top:8px;">✗ 主動選股能否長期持續超越指數存疑</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TAB 5: 基本面分析 -->
+<div id="tab-fundamental" class="panel">
+
+  <!-- 基金概況 -->
+  <div class="section-title">📊 基金概況</div>
+  <div class="grid3">
+    <div class="card">
+      <h3>基金規模</h3>
+      <div class="val green">超大型</div>
+      <div class="note">日均成交逾80億，受益人~94萬（2026年6月）</div>
+    </div>
+    <div class="card">
+      <h3>2026年前5月報酬率</h3>
+      <div class="val blue">~+90%</div>
+      <div class="note">含息總報酬，大幅超越大盤與被動ETF</div>
+    </div>
+    <div class="card">
+      <h3>年化配息推估</h3>
+      <div class="val yellow">2.52 元</div>
+      <div class="note">最新季配 0.63 元 × 4；配息持續成長</div>
+    </div>
+  </div>
+
+  <!-- 配息趨勢 -->
+  <div style="background:#1e2535;border:1px solid #2d3748;border-radius:10px;padding:14px;margin-top:14px;margin-bottom:14px;">
+    <div style="font-size:12px;font-weight:700;color:#cbd5e1;margin-bottom:10px;">季配息趨勢</div>
+    <table style="margin:0;">
+      <thead><tr><th>期間</th><th>配息（元）</th><th>QoQ</th><th>備註</th></tr></thead>
+      <tbody>
+        <tr><td>25Q4</td><td>0.41</td><td>—</td><td>首次配息</td></tr>
+        <tr style="background:#0f2a1e;"><td><strong>26Q1</strong></td><td style="color:#22c55e;font-weight:700;">0.63</td><td style="color:#22c55e;">+54%</td><td><strong>配息大幅提升</strong></td></tr>
+        <tr><td>26Q2E</td><td>~0.6–0.7</td><td>↗</td><td>預估持續高配</td></tr>
+      </tbody>
+    </table>
+    <div style="font-size:10px;color:#475569;margin-top:8px;">00981A 配息來源為基金投資收益，配息可能為收益平準金。主動選股績效持續優於大盤，帶動配息成長。</div>
+  </div>
+
+  <!-- ETF 策略說明 -->
+  <div class="section-title">🏗️ ETF 策略說明</div>
+  <div class="grid2">
+    <div class="card">
+      <h3>選股策略</h3>
+      <div style="font-size:12px;line-height:1.9;color:#cbd5e1;margin-top:4px;">
+        <span style="color:#3b82f6;font-weight:700;">主動式選股，聚焦台股增長</span><br>
+        由基金經理主動選股，非追蹤特定指數。重點布局 AI 供應鏈、台股成長型企業，尤其偏好：<br>
+        ✅ AI 半導體（台積電）<br>
+        ✅ AI 網通（智邦）<br>
+        ✅ AI 散熱（奇鋐）<br>
+        ✅ AI 電源線束（貿聯）<br>
+        ✅ PCB / 基板材料（台光電、南電）
+      </div>
+    </div>
+    <div class="card">
+      <h3>主要競爭 ETF</h3>
+      <div style="font-size:12px;line-height:1.9;margin-top:4px;">
+        <div style="color:#94a3b8;font-size:11px;margin-bottom:6px;">同為主動式台股 ETF</div>
+        <div style="color:#e2e8f0;font-weight:600;">00988A 統一台灣成長</div>
+        <div style="color:#64748b;font-size:11px;margin-bottom:6px;">統一投信同門師兄，績效亦強</div>
+        <div style="color:#e2e8f0;font-weight:600;">00403A 元大台灣主動優選</div>
+        <div style="color:#64748b;font-size:11px;margin-bottom:6px;">2026/05 掛牌，規模逾791億</div>
+        <div style="color:#e2e8f0;font-weight:600;">00994A</div>
+        <div style="color:#64748b;font-size:11px;">另一主動台股ETF，績效前五</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 市場地位 -->
+  <div class="section-title">🌐 市場地位</div>
+  <div style="background:#1e2535;border:1px solid #2d3748;border-radius:10px;padding:14px;margin-bottom:14px;">
+    <div style="display:flex;gap:20px;flex-wrap:wrap;justify-content:space-around;text-align:center;margin-bottom:12px;">
+      <div>
+        <div style="font-size:11px;color:#64748b;margin-bottom:4px;">主動台股ETF 排名</div>
+        <div style="font-size:20px;font-weight:800;color:#3b82f6;">前 5 名</div>
+        <div style="font-size:10px;color:#475569;margin-top:2px;">受益人數、規模均居前列</div>
+      </div>
+      <div>
+        <div style="font-size:11px;color:#64748b;margin-bottom:4px;">成立年份</div>
+        <div style="font-size:20px;font-weight:800;color:#eab308;">2025 年</div>
+        <div style="font-size:10px;color:#475569;margin-top:2px;">2025/04 掛牌，歷史約1年</div>
+      </div>
+      <div>
+        <div style="font-size:11px;color:#64748b;margin-bottom:4px;">定期定額戶數</div>
+        <div style="font-size:20px;font-weight:800;color:#22c55e;">10萬+</div>
+        <div style="font-size:10px;color:#475569;margin-top:2px;">定期定額戶數增速全市場最快之一</div>
+      </div>
+    </div>
+    <div style="font-size:11px;color:#64748b;line-height:1.7;">
+      2026年前5月含息報酬率約90%，為主動台股ETF中績效最強之一（俗稱「瑤池金母」）。但需注意：績效主要由 AI 台股大行情驅動，而非純粹選股能力，未來能否持續超越大盤仍需觀察。
+    </div>
+  </div>
+
+  <!-- 估值指標 -->
+  <div class="section-title">📐 估值指標</div>
+  <div class="grid4">
+    <div class="card">
+      <h3>即時殖利率</h3>
+      <div class="val" id="fund-yield">—</div>
+      <div class="note" id="fund-yield-note">年化配息 2.52 元（推估）</div>
+    </div>
+    <div class="card">
+      <h3>淨值（NAV）</h3>
+      <div class="val blue" id="fund-nav">30.41 元</div>
+      <div class="note">折溢價 +0.62%（2026/06/12）</div>
+    </div>
+    <div class="card">
+      <h3>年化配息率（推估）</h3>
+      <div class="val yellow">~8%</div>
+      <div class="note">基於 0.63元×4 ÷ ~31.5元</div>
+    </div>
+    <div class="card">
+      <h3>2026前5月報酬</h3>
+      <div class="val green">~+90%</div>
+      <div class="note">含息總報酬，大幅超越0050</div>
+    </div>
+  </div>
+  <div style="background:#1e2535;border-radius:10px;padding:14px;margin-top:14px;">
+    <div style="font-size:12px;font-weight:700;color:#cbd5e1;margin-bottom:8px;">估值解讀</div>
+    <div style="font-size:12px;color:#94a3b8;line-height:1.8;">
+      目前股價約 30.6 元，以年化配息 2.52 元計算，殖利率約 8.2%，接近「合理帶」上緣。<br><br>
+      相較被動型 ETF（0050 殖利率~1.4%），00981A 配息率高得多，但這部分源自其<strong style="color:#e2e8f0;">主動選股帶來的超額報酬</strong>，而非單純的高股息策略。<br><br>
+      <strong style="color:#3b82f6;">長期投資：</strong>主動 ETF 費用率較高，長期能否持續超越指數是關鍵考量。<br>
+      <strong style="color:#eab308;">短中期：</strong>台股 AI 行情若持續，00981A 有望維持高績效；若行情降溫，需注意回檔風險（已從 IPO 10元飆漲至30元，漲幅逾200%）。
+    </div>
+  </div>
+
+  <!-- 利多 vs 風險 -->
+  <div class="section-title">⚡ 利多 vs 風險</div>
+  <div class="grid2">
+    <div class="card">
+      <h3>🚀 利多</h3>
+      <div style="font-size:12px;line-height:1.9;color:#86efac;">
+        ✓ 2026年前5月含息報酬率~90%，稱霸主動ETF<br>
+        ✓ 受益人~94萬戶，增速全市場最快<br>
+        ✓ 季配息，年化配息率~8%，高於一般ETF<br>
+        ✓ 統一投信主動選股，聚焦AI台股核心標的<br>
+        ✓ 配息持續成長（0.41→0.63，+54%）<br>
+        ✓ 首次配息即填息（除息當日完成）
+      </div>
+    </div>
+    <div class="card">
+      <h3>⚠️ 風險</h3>
+      <div style="font-size:12px;line-height:1.9;color:#fca5a5;">
+        ✗ 成立僅~1年，主動選股能力尚待驗證<br>
+        ✗ 股價從IPO 10元漲至~31元，已漲逾200%<br>
+        ✗ 主動基金費率高於被動ETF（費用侵蝕報酬）<br>
+        ✗ 配息可能來源為收益平準金（官方有揭露風險）<br>
+        ✗ 過度集中台積電，地緣政治風險高<br>
+        ✗ AI 題材若降溫，波動風險大<br>
+        ✗ 歷史短，殖利率帶估算不確定性高
+      </div>
+    </div>
+  </div>
+
+  <!-- 關鍵數據快查 -->
+  <div class="section-title">📋 關鍵數據快查</div>
+  <table>
+    <thead><tr><th>指標</th><th>數值</th><th>評估</th></tr></thead>
+    <tbody>
+      <tr><td>目前股價</td><td style="color:#3b82f6;font-weight:700;" id="summary-price">~30.6 元（2026/06/12）</td><td><span class="badge badge-watch">殖利率~8.2%，接近合理帶</span></td></tr>
+      <tr><td>IPO 價格</td><td>~10 元（2025/04）</td><td><span class="badge badge-avoid">上市以來漲逾200%</span></td></tr>
+      <tr><td>已知配息（25Q4）</td><td style="color:#22c55e;font-weight:700;">0.41 元</td><td><span class="badge badge-buy">首次配息，除息當日填息</span></td></tr>
+      <tr><td>即將配息（26Q1）</td><td style="color:#22c55e;font-weight:700;">0.63 元（6/16除息）</td><td><span class="badge badge-buy">較上季+54%，年化配息率~8%</span></td></tr>
+      <tr><td>便宜價（殖利率10%）</td><td>25 元</td><td><span class="badge badge-buy">大盤修正積極建倉帶</span></td></tr>
+      <tr><td>合理價（殖利率8%）</td><td>32 元</td><td><span class="badge badge-buy">正常估值布局帶</span></td></tr>
+      <tr><td>昂貴價（殖利率6%）</td><td>42 元</td><td><span class="badge badge-avoid">多頭高估帶</span></td></tr>
+      <tr><td>受益人數</td><td>~94 萬戶（2026/06）</td><td><span class="badge badge-buy">增速全市場最快之一</span></td></tr>
+      <tr><td>配息頻率</td><td>季配（每季除息一次）</td><td><span class="badge badge-buy">現金流較穩定</span></td></tr>
+    </tbody>
+  </table>
+
+  <p style="font-size:10px;color:#475569;margin-top:14px;line-height:1.6;">⚠️ 本分析僅供參考，不構成投資建議。股市有風險，投資前請自行判斷。配息來源可能為收益平準金，詳見統一投信官網公告。</p>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<script>
+function switchTab(id, btn) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  btn.classList.add('active');
+}
+
+const annualDiv = 2.52;
+
+const data = [
+  { m:'25M05', px:10.06 },
+  { m:'25M06', px:10.95 },
+  { m:'25M07', px:12.06 },
+  { m:'25M08', px:13.59 },
+  { m:'25M09', px:13.58 },
+  { m:'25M10', px:15.73 },
+  { m:'25M11', px:16.23 },
+  { m:'25M12', px:16.91 },
+  { m:'26M01', px:17.95 },
+  { m:'26M02', px:20.2  },
+  { m:'26M03', px:19.48 },
+  { m:'26M04', px:28.28 },
+  { m:'26M05', px:31.54 },
+  { m:'26M06', px:30.6  },
+];
+
+const labels = data.map(d => d.m);
+const prices = data.map(d => d.px);
+
+const y10  = data.map(() => +(annualDiv / 0.10).toFixed(1));
+const y8   = data.map(() => +(annualDiv / 0.08).toFixed(1));
+const y6   = data.map(() => +(annualDiv / 0.06).toFixed(1));
+const y4   = data.map(() => +(annualDiv / 0.04).toFixed(1));
+
+const riverCtx = document.getElementById('riverChart').getContext('2d');
+new Chart(riverCtx, {
+  type: 'line',
+  data: {
+    labels,
+    datasets: [
+      { label: '股價', data: prices, borderColor: '#ffffff', borderWidth: 2.5, pointRadius: 0, tension: 0.3, spanGaps: true, order: 0 },
+      { label: '殖利率 4%（極貴）', data: y4,  borderColor: '#ef4444', borderWidth: 1, borderDash: [4,3], pointRadius: 0 },
+      { label: '殖利率 6%（昂貴）', data: y6,  borderColor: '#f97316', borderWidth: 1, borderDash: [4,3], pointRadius: 0 },
+      { label: '殖利率 8%（合理）', data: y8,  borderColor: '#22c55e', borderWidth: 1.5, borderDash: [4,3], pointRadius: 0 },
+      { label: '殖利率 10%（便宜）',data: y10, borderColor: '#3b82f6', borderWidth: 1.5, borderDash: [4,3], pointRadius: 0 },
+    ]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      legend: { labels: { color: '#94a3b8', font: { size: 11 } } },
+      tooltip: { callbacks: { label(ctx) {
+        const v = ctx.parsed.y.toFixed(2);
+        if (ctx.dataset.label === '股價') {
+          return `股價: ${v} 元 (殖利率 ${(annualDiv / ctx.parsed.y * 100).toFixed(2)}%)`;
+        }
+        return `${ctx.dataset.label}: ${v} 元`;
+      }}}
+    },
+    scales: {
+      x: { ticks: { color: '#475569', maxTicksLimit: 12, font: { size: 10 } }, grid: { color: '#1e2535' } },
+      y: { ticks: { color: '#94a3b8', font: { size: 10 } }, grid: { color: '#1e2535' } }
+    }
+  }
+});
+
+const divLabels  = ['25Q4', '26Q1', '26Q2E', '26Q3E'];
+const divAmounts = [0.41, 0.63, 0.65, 0.65];
+const divCtx = document.getElementById('divChart').getContext('2d');
+new Chart(divCtx, {
+  type: 'bar',
+  data: {
+    labels: divLabels,
+    datasets: [{
+      label: '季配息（元）',
+      data: divAmounts,
+      backgroundColor: divAmounts.map((v,i) => i>=2?'rgba(59,130,246,0.5)':i===1?'rgba(34,197,94,0.7)':'rgba(34,197,94,0.45)'),
+      borderColor: divAmounts.map((v,i) => i>=2?'#3b82f6':'#22c55e'),
+      borderWidth: 1.5, borderRadius: 6,
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      legend: { labels: { color: '#94a3b8', font: { size: 11 } } },
+      tooltip: { callbacks: { label(ctx) { return `季配息: ${ctx.parsed.y} 元`; } } }
+    },
+    scales: {
+      x: { ticks: { color: '#94a3b8' }, grid: { color: '#1e2535' } },
+      y: { ticks: { color: '#94a3b8' }, grid: { color: '#1e2535' }, title: { display:true, text:'元/股', color:'#64748b', font:{size:11} } }
+    }
+  }
+});
+
+const tbody = document.getElementById('monthly-table');
+data.slice().reverse().forEach(d => {
+  const y = (annualDiv / d.px * 100).toFixed(2);
+  let band = '', cls = '';
+  if (d.px < 25)      { band = '便宜帶 (>10%)';  cls = 'color:#86efac;'; }
+  else if (d.px < 32) { band = '合理帶 (8–10%)';  cls = 'color:#fde68a;'; }
+  else if (d.px < 42) { band = '偏貴帶 (6–8%)';   cls = 'color:#fb923c;'; }
+  else                 { band = '昂貴帶 (<6%)';    cls = 'color:#f87171;'; }
+  const tr = document.createElement('tr');
+  tr.innerHTML = `<td>${d.m}</td><td>${d.px}</td><td>${y}%</td><td style="${cls}">${band}</td>`;
+  tbody.appendChild(tr);
+});
+
+// 產業分布圖
+const industries = [
+  { label:'AI半導體',     pct:40, color:'#3b82f6' },
+  { label:'AI網通',       pct:12, color:'#22c55e' },
+  { label:'AI散熱',       pct:10, color:'#f59e0b' },
+  { label:'AI電源/線束',  pct:8,  color:'#8b5cf6' },
+  { label:'PCB/基板材料', pct:7,  color:'#ec4899' },
+  { label:'金融/其他台股',pct:23, color:'#64748b' },
+];
+new Chart(document.getElementById('industryChart').getContext('2d'), {
+  type: 'doughnut',
+  data: { labels: industries.map(i=>i.label), datasets: [{ data: industries.map(i=>i.pct), backgroundColor: industries.map(i=>i.color), borderWidth:2, borderColor:'#0f1117' }] },
+  options: { responsive:true, plugins: { legend:{ position:'right', labels:{ color:'#94a3b8', font:{size:10}, padding:8, boxWidth:12 } }, tooltip:{ callbacks:{ label(ctx){ return `${ctx.label}: ~${ctx.parsed}%（估算）`; } } } } }
+});
+
+async function loadLivePrice() {
+  try {
+    const res = await fetch('https://taiwan-stock-price.david870114.workers.dev/?id=00981A', { cache: 'no-cache' });
+    const json = JSON.parse(await res.text());
+    const price = parseFloat(json.price);
+    if (price && !isNaN(price)) {
+      document.getElementById('live-price').textContent = 'NT$ ' + price.toFixed(2);
+      const y = (annualDiv / price * 100).toFixed(2);
+      let status = '';
+      if (price < 25)      status = '便宜帶，積極建倉';
+      else if (price < 32) status = '合理帶，可分批布局';
+      else if (price < 42) status = '偏貴帶，謹慎追高';
+      else                  status = '昂貴帶，建議等待回調';
+      document.getElementById('live-yield-note').textContent = `殖利率 ${y}% — ` + status;
+      document.getElementById('summary-price').textContent = `NT$ ${price.toFixed(2)} 元`;
+      const yEl = document.getElementById('fund-yield');
+      if (yEl) {
+        yEl.textContent = y + '%';
+        yEl.style.color = parseFloat(y) > 10 ? '#22c55e' : parseFloat(y) > 8 ? '#eab308' : '#ef4444';
+      }
+    }
+  } catch(e) {}
+}
+window.addEventListener('load', loadLivePrice);
+</script>
+</body>
+</html>

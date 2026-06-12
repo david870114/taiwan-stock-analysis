@@ -1536,9 +1536,10 @@ var STOCKS = [
   { id:'2408',  fairValue:279,  expValue:391 },
   { id:'6770',  fairValue:44,   expValue:62  },
   { id:'8046',  fairValue:119,  expValue:198 },
+  { id:'00981A', fairValue:32, expValue:42 },
 ];
 
-var CHAIN_STOCKS = ['2330','2303','2382','3231','6669','2345','3596','3017','3324','8210','2301','2308','3037','2408','2337','2344','6770','8046','00919','00878'];
+var CHAIN_STOCKS = ['2330','2303','2382','3231','6669','2345','3596','3017','3324','8210','2301','2308','3037','2408','2337','2344','6770','8046','00919','00878','00981A'];
 
 async function fetchPrice(id) {
   try {
@@ -1662,6 +1663,7 @@ var TRACKED = [
   { id:'0056', name:'元大高股息', tier:'core',   fairValue:45,   expValue:51,   fairPER:null, tp:null, cheapValue:40, annualDiv:3.6  },  // 季配：近4季 3.598元；殖利率法
   { id:'00878', name:'國泰永續高股息', tier:'core',  fairValue:27,   expValue:34,   fairPER:null, tp:null, cheapValue:21, annualDiv:1.88 },  // 季配：近4季 1.88元（25Q2~26Q1）；殖利率法
   { id:'00919', name:'群益台灣精選高息', tier:'core', fairValue:29, expValue:36, fairPER:null, tp:null, cheapValue:24, annualDiv:2.86 },  // 季配：近4季 TTM 2.86元；殖利率法
+  { id:'00981A', name:'主動統一台股增長', tier:'core', fairValue:32, expValue:42, fairPER:null, tp:null, cheapValue:25, annualDiv:2.52, url:'00981A_analysis.html' },  // 季配：0.63元×4=2.52元年化；殖利率法 10%/8%/6%
 
   // ── 成長 ── 穩定獲利 + AI 受惠 + 護城河 ────────────────
   { id:'2330', name:'台積電',     tier:'growth', fairValue:1637, expValue:2083, fairPER:22, tp:2588, cheapValue:1265, annualDiv:24.0 },  // 季配：近4季 7+6+5.5+5 ≈ 24元
