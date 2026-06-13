@@ -86,6 +86,7 @@ node "C:\Users\USER\goodinfo_scraper.mjs" {代號} div
 | 代號 | 名稱 | 類別 | 估值方法 | 分析頁 |
 |------|------|------|---------|-------|
 | 0050 | 元大台灣50 | ETF | 殖利率法 | 0050_analysis.html |
+| 006208 | 富邦台50 | ETF（同台灣50指數，未分割）| 殖利率法 | 006208_analysis.html |
 | 0056 | 元大高股息 | ETF | 殖利率法 | 0056_analysis.html |
 | 00878 | 國泰永續高股息 | ETF | 殖利率法 | 00878_analysis.html |
 | 00919 | 群益台灣精選高息 | ETF | 殖利率法 | 00919_analysis.html |
