@@ -511,6 +511,15 @@
 .etf-chart-wrap { position:relative; height:360px; }
 @media(max-width:600px){ .etf-chart-wrap{ height:300px; } }
 
+/* ETF 成長率欄 */
+col.col-grow { width:78px; }
+th.th-grow { background:#15212f; color:#7db8f7; }
+td.grow-cell { font-family:monospace; font-weight:700; font-size:12px; background:#0e1826; }
+td.grow-cell.up   { color:#f87171; }   /* 漲＝紅（台股慣例）*/
+td.grow-cell.down { color:#34d399; }   /* 跌＝綠 */
+td.grow-cell.flat { color:#94a3b8; }
+td.grow-cell.na   { color:#475569; font-weight:400; }
+
 /* ETF 選擇 chips */
 .etf-toggle-row { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:14px; }
 .etf-toggle {
@@ -529,29 +538,21 @@
 }
 .chart-mode-btn.sel { background:#1e3050; border-color:#3b82f6; color:#93c5fd; }
 
-/* 除息行事曆 */
-.sched-table { width:100%; border-collapse:collapse; font-size:13px; }
-.sched-table th {
-  background:#141b2d; color:#94a3b8; font-size:11px; font-weight:700;
-  letter-spacing:0.05em; padding:9px 12px; text-align:left;
-  border-bottom:1px solid #1e2535; white-space:nowrap;
-}
-.sched-table td { padding:10px 12px; border-bottom:1px solid #1a2236; vertical-align:top; }
-.sched-table tr:last-child td { border-bottom:none; }
-.sched-table tr:hover td { background:#141b2d; }
-.sched-table tr.now td { background:#131c2e; }
-.sched-month { font-weight:700; color:#e2e8f0; font-size:13px; width:70px; }
-.sched-month .now-tag { font-size:9px; color:#3b82f6; font-weight:700; display:block; }
-.sched-total { text-align:right; font-family:monospace; font-weight:700; color:#22c55e; white-space:nowrap; }
+/* 除息行事曆（橫式月曆）*/
+.sched-grid { display:grid; grid-template-columns:repeat(6, 1fr); gap:10px; }
+@media(max-width:900px){ .sched-grid{ grid-template-columns:repeat(3, 1fr); } }
+@media(max-width:560px){ .sched-grid{ grid-template-columns:repeat(2, 1fr); } }
+.sched-cell { background:#141b2d; border:1px solid #1e3050; border-radius:10px; padding:10px; min-height:96px; }
+.sched-cell.now { border-color:#3b82f6; box-shadow:0 0 8px rgba(59,130,246,0.25); }
+.sched-cell-month { font-size:14px; font-weight:800; color:#e2e8f0; margin-bottom:8px; display:flex; align-items:center; gap:6px; }
+.sm-now { font-size:9px; color:#fff; background:#3b82f6; border-radius:8px; padding:1px 6px; font-weight:700; }
+.sched-cell-body { display:flex; flex-direction:column; gap:5px; }
+.sched-etf { display:flex; align-items:center; gap:6px; font-size:12px; }
+.sched-etf .dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+.sched-etf .se-code { font-family:monospace; font-weight:700; color:#93c5fd; }
+.sched-etf .se-name { color:#94a3b8; }
+.sched-etf .se-est { font-size:9px; color:#64748b; }
 .sched-empty { color:#475569; font-size:12px; }
-.etf-pill {
-  display:inline-flex; align-items:center; gap:5px;
-  background:#192033; border:1px solid #1e3050; border-radius:16px;
-  padding:3px 10px; margin:2px 4px 2px 0; font-size:12px;
-}
-.etf-pill .dot { width:8px; height:8px; border-radius:50%; }
-.etf-pill .pill-code { font-family:monospace; font-weight:700; color:#93c5fd; }
-.etf-pill .pill-amt { color:#86efac; font-weight:700; font-family:monospace; }
 
 /* 試算工具 */
 .calc-mode-row { display:flex; gap:8px; margin-bottom:18px; flex-wrap:wrap; }
@@ -564,10 +565,15 @@
 .calc-pane.active { display:block; }
 
 .etf-weight-row { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
-.etf-weight-row .ew-name { min-width:130px; font-size:12px; color:#cbd5e1; display:flex; align-items:center; gap:6px; }
-.etf-weight-row .ew-name .dot { width:8px; height:8px; border-radius:50%; }
-.etf-weight-row input[type=range] { flex:1; }
-.etf-weight-row .ew-pct { min-width:46px; text-align:right; font-family:monospace; font-weight:700; color:#7db8f7; font-size:13px; }
+.etf-weight-row .ew-name { width:160px; flex:0 0 160px; font-size:12px; color:#cbd5e1; display:flex; align-items:center; gap:6px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.etf-weight-row .ew-name .dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+.etf-weight-row input[type=range] { flex:1; min-width:0; }
+.etf-weight-row .ew-pct { width:48px; flex:0 0 48px; text-align:right; font-family:monospace; font-weight:700; color:#7db8f7; font-size:13px; }
+@media(max-width:560px){ .etf-weight-row .ew-name{ width:108px; flex-basis:108px; } }
+
+/* 投入金額對齊：label 固定寬、數字靠右 */
+.input-row .calc-amount { text-align:right; font-size:16px; font-weight:700; font-family:monospace; }
+.alloc-card .input-row label { min-width:120px; }
 .ew-sum { font-size:11px; margin-top:6px; }
 .ew-sum.bad { color:#ef4444; }
 .ew-sum.ok  { color:#64748b; }
@@ -1406,20 +1412,24 @@
 
   <!-- ① ETF 追蹤清單 -->
   <div class="etf-block">
-    <div class="etf-block-title">📋 ETF 追蹤清單（殖利率估值）</div>
-    <table>
-    <colgroup><col class="col-code"><col class="col-name"><col class="col-price"><col class="col-price"><col class="col-price"><col class="col-cur"><col class="col-vs"><col class="col-tp"></colgroup>
+    <div class="etf-block-title">📋 ETF 追蹤清單（殖利率估值 + 月線成長率）</div>
+    <div style="overflow-x:auto">
+    <table style="min-width:920px">
+    <colgroup><col class="col-code"><col class="col-name"><col class="col-price"><col class="col-price"><col class="col-price"><col class="col-cur"><col class="col-vs"><col class="col-grow"><col class="col-grow"><col class="col-grow"><col class="col-grow"><col class="col-grow"></colgroup>
       <thead>
         <tr>
           <th>代號</th><th>名稱</th>
           <th>便宜價</th><th>合理價</th><th>昂貴價</th>
-          <th class="th-cur">目前股價</th><th>vs 合理價</th><th class="th-tp">法人目標價</th>
+          <th class="th-cur">目前股價</th><th>vs 合理價</th>
+          <th class="th-grow">1個月</th><th class="th-grow">3個月</th><th class="th-grow">半年</th><th class="th-grow">1年</th><th class="th-grow">3年</th>
         </tr>
       </thead>
       <tbody id="etf-tbody">
         <!-- 由 JS buildEtfTable() 從 TRACKED 陣列動態產生 -->
       </tbody>
     </table>
+    </div>
+    <p style="font-size:11px;color:#475569;margin-top:8px">成長率＝以月線收盤計算的報酬率（紅漲綠跌，台股慣例）。掛牌未滿對應期間者顯示「—」。</p>
   </div>
 
   <!-- ② 殖利率河流圖比較 -->
@@ -1428,15 +1438,17 @@
       <span>📊 ETF 河流圖比較（近三年）</span>
       <span class="chart-mode-row">
         <button class="chart-mode-btn sel" id="cm-yield" onclick="setChartMode('yield')">殖利率 %</button>
-        <button class="chart-mode-btn" id="cm-rebase" onclick="setChartMode('rebase')">價格指數（起點=100）</button>
+        <button class="chart-mode-btn" id="cm-price" onclick="setChartMode('price')">實際價格</button>
+        <button class="chart-mode-btn" id="cm-growth" onclick="setChartMode('growth')">成長率 %</button>
       </span>
     </div>
     <div class="etf-toggle-row" id="etf-toggle-row"><!-- JS 產生 --></div>
     <div class="etf-chart-wrap"><canvas id="etfCompareChart"></canvas></div>
     <p style="font-size:11px;color:#475569;margin-top:10px;line-height:1.6">
-      • <strong style="color:#94a3b8">殖利率 %</strong> 模式 = 年化配息 ÷ 當月收盤價，可橫向比較各 ETF 的便宜／昂貴程度；殖利率越高代表股價相對配息越便宜。<br>
-      • <strong style="color:#94a3b8">價格指數</strong> 模式把每檔 ETF 起點設為 100，方便比較三年來的漲跌幅。<br>
-      • 點上方膠囊或圖例可<strong style="color:#94a3b8">隱藏／顯示</strong>任一檔 ETF。主動式 ETF（00991A 尚無配息）僅在價格指數模式顯示。
+      • <strong style="color:#94a3b8">殖利率 %</strong> = 年化配息 ÷ 當月收盤價，可橫向比較各 ETF 的便宜／昂貴程度；殖利率越高代表股價相對配息越便宜。<br>
+      • <strong style="color:#94a3b8">實際價格</strong> = 各 ETF 的實際月收盤價（元）。<br>
+      • <strong style="color:#94a3b8">成長率 %</strong> = 以起點為基準的累積報酬率，方便比較三年來各檔漲跌幅。<br>
+      • 點上方膠囊或圖例可<strong style="color:#94a3b8">隱藏／顯示</strong>任一檔 ETF。主動式 ETF（00991A 尚無配息）僅在「實際價格／成長率」模式顯示。
     </p>
   </div>
 
@@ -1445,16 +1457,9 @@
     <div class="etf-block-title">📅 ETF 除息行事曆（1–12 月）</div>
     <p style="font-size:12px;color:#94a3b8;margin-bottom:14px;line-height:1.6">
       經典「月月配」組合：<strong style="color:#7db8f7">0056（1/4/7/10月）＋ 00878（2/5/8/11月）＋ 00919（3/6/9/12月）</strong>，三檔搭配即可每月領息。
-      下表每月金額為「每張（1,000 股）單次配息」估算，依近一年配息推估，實際以各投信公告為準。
+      下方依月份列出當月除息的所有 ETF，實際除息日以各投信公告為準。
     </p>
-    <div style="overflow-x:auto">
-      <table class="sched-table">
-        <thead>
-          <tr><th>月份</th><th>除息 ETF（單次配息／張）</th><th style="text-align:right">每張合計</th></tr>
-        </thead>
-        <tbody id="sched-tbody"></tbody>
-      </table>
-    </div>
+    <div class="sched-grid" id="sched-grid"></div>
   </div>
 
   <!-- ④ 試算工具 -->
@@ -1466,41 +1471,46 @@
       <button class="calc-mode-tab" id="cmt-target" onclick="setCalcMode('target')">🎯 我想要月領 → 算所需資金</button>
     </div>
 
+    <!-- 投入金額（放在配置比例上方）-->
+    <!-- 模式 A：資金 → 配息 -->
+    <div class="calc-pane active" id="calc-fund">
+      <div class="alloc-card" style="margin-bottom:16px">
+        <h3>💵 投入金額</h3>
+        <div class="input-row">
+          <label>總資金（元）</label>
+          <input type="number" id="etf-total-fund" class="calc-amount" min="0" step="10000" placeholder="例：1000000" value="1000000">
+        </div>
+      </div>
+    </div>
+
+    <!-- 模式 B：目標月領 → 所需資金 -->
+    <div class="calc-pane" id="calc-target">
+      <div class="alloc-card" style="margin-bottom:16px">
+        <h3>🎯 目標被動收入</h3>
+        <div class="input-row">
+          <label>希望平均每月領（元）</label>
+          <input type="number" id="etf-target-monthly" class="calc-amount" min="0" step="1000" placeholder="例：30000" value="30000">
+        </div>
+      </div>
+    </div>
+
     <!-- 共用：ETF 配置比例 -->
     <div class="alloc-card" style="margin-bottom:16px">
       <h3>📐 ETF 配置比例</h3>
-      <p style="font-size:11px;color:#64748b;margin:-6px 0 12px">調整各 ETF 權重（總和需 = 100%）。預設為月月配組合。</p>
+      <p style="font-size:11px;color:#64748b;margin:-6px 0 12px">調整各 ETF 權重（總和需 = 100%）。可直接套用下方推薦組合。</p>
       <div id="etf-weight-list"></div>
       <div class="ew-sum ok" id="ew-sum">合計 100%</div>
       <div class="preset-row" style="margin-top:12px">
         <button class="preset-btn sel" onclick="applyEtfPreset('monthly', this)">月月配（0056+00878+00919）</button>
         <button class="preset-btn" onclick="applyEtfPreset('highyield', this)">高息優先</button>
         <button class="preset-btn" onclick="applyEtfPreset('balanced', this)">均衡四檔</button>
+        <button class="preset-btn" onclick="applyEtfPreset('total', this)">⭐ 成長＋殖利率推薦</button>
       </div>
+      <p style="font-size:10px;color:#475569;margin-top:8px" id="total-preset-note"></p>
     </div>
 
-    <!-- 模式 A：資金 → 配息 -->
-    <div class="calc-pane active" id="calc-fund">
-      <div class="alloc-card">
-        <h3>💵 投入金額</h3>
-        <div class="input-row">
-          <label>總資金（元）</label>
-          <input type="number" id="etf-total-fund" min="0" step="10000" placeholder="例：1000000" value="1000000">
-        </div>
-        <button class="calc-btn" onclick="runFundCalc()">🧮 計算每年／每月可領配息</button>
-      </div>
-    </div>
-
-    <!-- 模式 B：目標月領 → 所需資金 -->
-    <div class="calc-pane" id="calc-target">
-      <div class="alloc-card">
-        <h3>🎯 目標被動收入</h3>
-        <div class="input-row">
-          <label>希望平均每月領（元）</label>
-          <input type="number" id="etf-target-monthly" min="0" step="1000" placeholder="例：30000" value="30000">
-        </div>
-        <button class="calc-btn" onclick="runTargetCalc()">🧮 計算所需資金與存股張數</button>
-      </div>
+    <div>
+      <button class="calc-btn" onclick="runCalc()" id="calc-run-btn">🧮 開始試算</button>
     </div>
 
     <!-- 結果 -->
@@ -1803,6 +1813,7 @@ async function fetchAllPrices() {
       }
     }
   }));
+  if (typeof updateEtfGrowthCells === 'function') updateEtfGrowthCells();
   var now = new Date();
   document.getElementById('lastUpdate').textContent =
     now.getFullYear() + '/' +
@@ -1837,9 +1848,14 @@ function buildEtfTable() {
       <td>${fmt(s.expValue)}   <span class="per-sub">${expSub}</span></td>
       <td class="price-cell loading td-cur" id="price-${s.id}">…</td>
       <td id="vs-${s.id}" class="loading">—</td>
-      <td class="td-tp">${s.tp ? fmt(s.tp) : '—'}</td>
+      <td class="grow-cell" id="g-1m-${s.id}">—</td>
+      <td class="grow-cell" id="g-3m-${s.id}">—</td>
+      <td class="grow-cell" id="g-6m-${s.id}">—</td>
+      <td class="grow-cell" id="g-1y-${s.id}">—</td>
+      <td class="grow-cell" id="g-3y-${s.id}">—</td>
     </tr>`;
   }).join('');
+  updateEtfGrowthCells();
 }
 
 document.addEventListener('DOMContentLoaded', buildEtfTable);
@@ -2550,15 +2566,59 @@ function etfLivePrice(id) {
   return e ? etfLatestPx(e) : null;
 }
 
+// 由最新月份往前推 N 個月的月份 key（如 26M06 往前 3 → 26M03）
+function monthBack(latestKey, back) {
+  var yy = parseInt(latestKey.slice(0,2)), mm = parseInt(latestKey.slice(3));
+  mm -= back;
+  while (mm <= 0) { mm += 12; yy -= 1; }
+  return String(yy).padStart(2,'0') + 'M' + String(mm).padStart(2,'0');
+}
+// 成長率 % = (現價 − N月前收盤) / N月前收盤；現價優先取即時股價
+function etfGrowthPct(e, back) {
+  var keys = Object.keys(e.raw);
+  var latestKey = keys[keys.length - 1];
+  var firstKey = keys[0];
+  var cur = etfLivePrice(e.id);
+  var wantKey = monthBack(latestKey, back);
+  var past = e.raw[wantKey];
+  // 若目標月份早於最早資料，但資料長度已接近所求期間（誤差 ≤3 月），改用最早一筆
+  if (past == null) {
+    var iLatest = ETF_MONTHS.indexOf(latestKey), iFirst = ETF_MONTHS.indexOf(firstKey);
+    var span = (iLatest >= 0 && iFirst >= 0) ? iLatest - iFirst : -1;
+    if (span >= back - 3 && span < back) past = e.raw[firstKey];
+  }
+  if (cur == null || past == null || past <= 0) return null;
+  return (cur - past) / past * 100;
+}
+function fillGrowthCell(id, pct) {
+  var el = document.getElementById(id);
+  if (!el) return;
+  if (pct == null) { el.textContent = '—'; el.className = 'grow-cell na'; return; }
+  var cls = pct > 0.05 ? 'up' : (pct < -0.05 ? 'down' : 'flat');
+  el.textContent = (pct > 0 ? '+' : '') + pct.toFixed(1) + '%';
+  el.className = 'grow-cell ' + cls;
+}
+function updateEtfGrowthCells() {
+  ETF_DATA.forEach(function(e) {
+    if (e.noDiv && !document.getElementById('g-1m-' + e.id)) return;
+    fillGrowthCell('g-1m-' + e.id, etfGrowthPct(e, 1));
+    fillGrowthCell('g-3m-' + e.id, etfGrowthPct(e, 3));
+    fillGrowthCell('g-6m-' + e.id, etfGrowthPct(e, 6));
+    fillGrowthCell('g-1y-' + e.id, etfGrowthPct(e, 12));
+    fillGrowthCell('g-3y-' + e.id, etfGrowthPct(e, 36));
+  });
+}
+
 function buildEtfSeries(e, mode) {
   var firstPx = null;
   return ETF_MONTHS.map(function(m) {
     var px = e.raw[m];
     if (px == null) return null;
     if (firstPx == null) firstPx = px;
-    if (mode === 'rebase') return +(px / firstPx * 100).toFixed(1);
-    if (e.noDiv) return null;                       // 殖利率模式不畫無配息 ETF
-    return +(e.annualDiv / px * 100).toFixed(2);    // 殖利率 %
+    if (mode === 'price')  return px;                          // 實際價格（元）
+    if (mode === 'growth') return +((px / firstPx - 1) * 100).toFixed(1); // 成長率 %
+    if (e.noDiv) return null;                                  // 殖利率模式不畫無配息 ETF
+    return +(e.annualDiv / px * 100).toFixed(2);               // 殖利率 %
   });
 }
 
@@ -2587,10 +2647,12 @@ function buildEtfCompareChart() {
       plugins: {
         legend: { display: false },
         tooltip: {
+          // 依數值由大到小排序 → 對應圖上由上到下的線條順序
+          itemSort: function(a, b) { return b.parsed.y - a.parsed.y; },
           callbacks: {
             label: function(ctx) {
               if (ctx.parsed.y == null) return null;
-              var suffix = etfChartMode === 'yield' ? ' %' : '';
+              var suffix = etfChartMode === 'price' ? ' 元' : ' %';
               return ctx.dataset.label + '：' + ctx.parsed.y + suffix;
             }
           }
@@ -2599,9 +2661,9 @@ function buildEtfCompareChart() {
       scales: {
         x: { ticks: { color: '#64748b', font: { size: 10 }, maxRotation: 60, autoSkip: true, maxTicksLimit: 14 }, grid: { color: '#1a2236' } },
         y: {
-          ticks: { color: '#64748b', font: { size: 11 }, callback: function(v){ return etfChartMode === 'yield' ? v + '%' : v; } },
+          ticks: { color: '#64748b', font: { size: 11 }, callback: function(v){ return etfChartMode === 'price' ? v : v + '%'; } },
           grid: { color: '#1a2236' },
-          title: { display: true, text: etfChartMode === 'yield' ? '年化殖利率 (%)' : '價格指數 (起點=100)', color: '#94a3b8', font: { size: 11 } }
+          title: { display: true, text: etfChartMode === 'yield' ? '年化殖利率 (%)' : (etfChartMode === 'price' ? '月收盤價 (元)' : '累積成長率 (%)'), color: '#94a3b8', font: { size: 11 } }
         }
       }
     }
@@ -2630,41 +2692,37 @@ function toggleEtf(id) {
 function setChartMode(mode) {
   etfChartMode = mode;
   document.getElementById('cm-yield').classList.toggle('sel', mode === 'yield');
-  document.getElementById('cm-rebase').classList.toggle('sel', mode === 'rebase');
-  // 切到殖利率模式時自動隱藏無配息 ETF，切到價格模式則全顯示
+  document.getElementById('cm-price').classList.toggle('sel', mode === 'price');
+  document.getElementById('cm-growth').classList.toggle('sel', mode === 'growth');
+  // 殖利率模式自動隱藏無配息 ETF；實際價格／成長率模式則全顯示
   ETF_DATA.forEach(function(e){
-    if (e.noDiv) etfVisible[e.id] = (mode === 'rebase');
+    if (e.noDiv) etfVisible[e.id] = (mode !== 'yield');
   });
   buildEtfToggles();
   buildEtfCompareChart();
 }
 
-// ── 除息行事曆 ──
+// ── 除息行事曆（橫式 1–12 月，列出所有配息 ETF）──
 var MONTH_NAMES = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
 function buildSchedule() {
-  var tbody = document.getElementById('sched-tbody');
-  if (!tbody) return;
+  var grid = document.getElementById('sched-grid');
+  if (!grid) return;
   var nowM = new Date().getMonth() + 1;
   var html = '';
   for (var m = 1; m <= 12; m++) {
     var payers = ETF_DATA.filter(function(e){ return !e.noDiv && e.divMonths && e.divMonths.indexOf(m) !== -1; });
-    var totalPerLot = 0;
-    var pills = payers.map(function(e) {
-      var perShare = e.annualDiv / e.freq;
-      var perLot = perShare * 1000;
-      totalPerLot += perLot;
-      return '<span class="etf-pill"><span class="dot" style="background:' + e.color + '"></span>' +
-             '<span class="pill-code">' + e.id + '</span>' + e.name +
-             '<span class="pill-amt">$' + Math.round(perLot).toLocaleString() + '</span>' +
-             (e.est ? '<span style="color:#64748b;font-size:10px">推估</span>' : '') + '</span>';
+    var items = payers.map(function(e) {
+      return '<div class="sched-etf"><span class="dot" style="background:' + e.color + '"></span>' +
+             '<span class="se-code">' + e.id + '</span><span class="se-name">' + e.name + '</span>' +
+             (e.est ? '<span class="se-est">推估</span>' : '') + '</div>';
     }).join('');
-    var rowCls = (m === nowM) ? ' class="now"' : '';
-    var nowTag = (m === nowM) ? '<span class="now-tag">本月</span>' : '';
-    html += '<tr' + rowCls + '><td class="sched-month">' + MONTH_NAMES[m-1] + nowTag + '</td>' +
-            '<td>' + (pills || '<span class="sched-empty">—</span>') + '</td>' +
-            '<td class="sched-total">' + (totalPerLot > 0 ? '$' + Math.round(totalPerLot).toLocaleString() : '—') + '</td></tr>';
+    var nowCls = (m === nowM) ? ' now' : '';
+    var nowTag = (m === nowM) ? '<span class="sm-now">本月</span>' : '';
+    html += '<div class="sched-cell' + nowCls + '">' +
+            '<div class="sched-cell-month">' + MONTH_NAMES[m-1] + nowTag + '</div>' +
+            '<div class="sched-cell-body">' + (items || '<span class="sched-empty">無除息</span>') + '</div></div>';
   }
-  tbody.innerHTML = html;
+  grid.innerHTML = html;
 }
 
 // ── 試算工具 ──
@@ -2675,11 +2733,57 @@ var ETF_PRESETS = {
   highyield: { '0056':30, '00919':30, '00878':20, '00981A':20 },
   balanced:  { '0050':25, '0056':25, '00878':25, '00919':25 }
 };
+// 估算各 ETF 的年化成長率（優先用 1 年，其次半年×2、3 個月×4）
+function etfAnnualGrowth(e) {
+  var g = etfGrowthPct(e, 12);
+  if (g != null) return g;
+  g = etfGrowthPct(e, 6);  if (g != null) return g * 2;
+  g = etfGrowthPct(e, 3);  if (g != null) return g * 4;
+  return 0;
+}
+// 依「成長率 + 殖利率（近似總報酬）」推薦配置
+function computeTotalReturnWeights() {
+  var scores = CALC_ETFS.map(function(e) {
+    var p = etfLivePrice(e.id);
+    var yld = p > 0 ? e.annualDiv / p * 100 : 0;
+    var grow = etfAnnualGrowth(e);
+    // 總報酬分數：殖利率 + 成長率的一半（成長率波動大，給較低權重），地板 0
+    var score = Math.max(0, yld + grow * 0.5);
+    return { e: e, yld: yld, grow: grow, score: score };
+  });
+  var sum = scores.reduce(function(s, x){ return s + x.score; }, 0);
+  var weights = {};
+  if (sum <= 0) { CALC_ETFS.forEach(function(e){ weights[e.id] = Math.round(100/CALC_ETFS.length); }); return { weights: weights, scores: scores }; }
+  // 比例分配後四捨五入，最後把餘數補到分數最高者
+  var raw = scores.map(function(x){ return { id: x.e.id, w: x.score / sum * 100 }; });
+  var rounded = raw.map(function(r){ return { id: r.id, w: Math.round(r.w) }; });
+  var diff = 100 - rounded.reduce(function(s, r){ return s + r.w; }, 0);
+  if (diff !== 0) {
+    var topIdx = 0, best = -1;
+    raw.forEach(function(r, i){ if (r.w > best) { best = r.w; topIdx = i; } });
+    rounded[topIdx].w += diff;
+  }
+  rounded.forEach(function(r){ weights[r.id] = r.w; });
+  return { weights: weights, scores: scores };
+}
+
 function applyEtfPreset(name, btn) {
   document.querySelectorAll('#tab-etf .preset-btn').forEach(function(b){ b.classList.remove('sel'); });
   if (btn) btn.classList.add('sel');
-  var preset = ETF_PRESETS[name] || {};
-  CALC_ETFS.forEach(function(e){ etfWeights[e.id] = preset[e.id] || 0; });
+  var note = document.getElementById('total-preset-note');
+  if (name === 'total') {
+    var res = computeTotalReturnWeights();
+    CALC_ETFS.forEach(function(e){ etfWeights[e.id] = res.weights[e.id] || 0; });
+    if (note) {
+      var top = res.scores.slice().sort(function(a,b){ return b.score - a.score; }).slice(0,3)
+        .map(function(x){ return x.e.id + '（殖利率 ' + x.yld.toFixed(1) + '% + 年成長 ' + (x.grow>=0?'+':'') + x.grow.toFixed(0) + '%）'; }).join('、');
+      note.textContent = '⭐ 依近一年總報酬（殖利率＋成長率）推薦，分數最高：' + top + '。成長率波動大，僅供參考。';
+    }
+  } else {
+    var preset = ETF_PRESETS[name] || {};
+    CALC_ETFS.forEach(function(e){ etfWeights[e.id] = preset[e.id] || 0; });
+    if (note) note.textContent = '';
+  }
   buildWeightList();
 }
 function buildWeightList() {
@@ -2724,6 +2828,11 @@ function setCalcMode(mode) {
   document.getElementById('cmt-target').classList.toggle('sel', mode === 'target');
   document.getElementById('calc-fund').classList.toggle('active', mode === 'fund');
   document.getElementById('calc-target').classList.toggle('active', mode === 'target');
+  var btn = document.getElementById('calc-run-btn');
+  if (btn) btn.textContent = mode === 'fund' ? '🧮 計算每年／每月可領配息' : '🧮 計算所需資金與存股張數';
+}
+function runCalc() {
+  if (etfCalcMode === 'fund') runFundCalc(); else runTargetCalc();
 }
 
 function calcAllocation(capital, w) {
