@@ -130,16 +130,18 @@ node "C:\Users\USER\goodinfo_scraper.mjs" {代號} div
 1. 判斷 ETF 或個股 → 選對應資料蒐集方式（見上方）
 2. 抓取數據（全自動，不需使用者截圖）
 3. 產出分析 HTML（五個 Tab，見下方規範）
-4. 同步更新 index.html（四處，見下方）
-5. 更新 SKILL.md 與 CLAUDE.md 追蹤清單
-6. `git add . && git commit -m "新增 {代號} 分析" && git push`
+4. 同步更新 index.html（個股四處 / ETF 五處，見下方）
+5. **若新增的是 ETF → 必須觸發 ETF 子分頁工具**：把月線收盤、配息資訊寫進 `ETF_DATA` 陣列（見「ETF 子分頁」章節），河流圖比較、除息行事曆、成長率欄、試算工具才會出現這檔 ETF
+6. 更新 SKILL.md 與 CLAUDE.md 追蹤清單
+7. `git add . && git commit -m "新增 {代號} 分析" && git push`
 
 ### 每季更新流程
 
 1. 判斷 ETF 或個股 → 選對應資料蒐集方式
 2. 補充最新月份數據，重新計算估值
 3. 更新分析 HTML + index.html
-4. `git add . && git commit -m "更新 {代號} 分析" && git push`
+4. **若是 ETF → 一併把最新月份收盤補進 `ETF_DATA[].raw`**，並視情況更新 `annualDiv`（河流圖、成長率欄才會反映最新月）
+5. `git add . && git commit -m "更新 {代號} 分析" && git push`
 
 ---
 
@@ -239,11 +241,13 @@ window.addEventListener('load', updateLiveMetric);
 
 ---
 
-## index.html 更新（每次新增/更新必須改四處）
+## index.html 更新（個股改四處 / ETF 改五處）
 
 **1. 對應 section 的 tbody 加新列**
+
+- **個股**：在對應產業 section 的 `<tbody>` 手動加一列：
 ```html
-<td class="code code-etf">{代號}</td>  <!-- ETF 用 code-etf，個股用 code -->
+<td class="code">{代號}</td>
 <td class="name"><a href="{代號}_analysis.html">{名稱}</a></td>
 <td>{便宜價} <span class="per-sub">...</span></td>
 <td>{合理價} <span class="per-sub">...</span></td>
@@ -252,6 +256,7 @@ window.addEventListener('load', updateLiveMetric);
 <td id="vs-{代號}" class="loading">—</td>
 <td class="td-tp">—</td>
 ```
+- **ETF**：**不用手動加列**。ETF 表格在「📈 ETF 追蹤與配息試算」子分頁，由 `buildEtfTable()` 從 TRACKED 自動產生（含 1個月/3個月/半年/1年/3年成長率欄），只要改 TRACKED（第 3 處）即自動同步。
 
 **2. STOCKS 陣列**
 ```javascript
@@ -267,6 +272,37 @@ window.addEventListener('load', updateLiveMetric);
 ```javascript
 '{代號}'
 ```
+
+**5. ETF_DATA 陣列（僅 ETF，新增 ETF 必加，見下方「ETF 子分頁」章節）**
+
+---
+
+## ETF 子分頁（新增 ETF 必須觸發）
+
+「📈 ETF 追蹤與配息試算」子分頁包含四塊，全部由 index.html 內的 **`ETF_DATA` 陣列**驅動：
+
+1. **ETF 追蹤清單**（殖利率估值 + 月線成長率欄）
+2. **河流圖比較**（殖利率% / 實際價格 / 成長率% 三模式，可隱藏顯示、tooltip 依數值上到下排序）
+3. **除息行事曆**（橫式 1–12 月，列出每月所有除息 ETF）
+4. **存股／配息試算工具**（資金→配息、月領→所需資金，含「⭐ 成長＋殖利率推薦」組合）
+
+### 新增一檔 ETF → 在 `ETF_DATA` 加一個物件
+
+```javascript
+{ id:'{代號}', name:'{名稱}', color:'{HEX}', annualDiv:{年化配息}, freq:{年配息次數}, divMonths:[{除息月份}], est:{除息月份是否為推估 true/省略},
+  raw:{ '23M07':px, '23M08':px, ... , '26M06':px } },   // 近三年逐月收盤（key 用 YYMMM 格式）
+```
+
+欄位說明：
+- `color`：圖表用，沿用既有色票避免撞色 — 0050 `#3b82f6`、0056 `#22c55e`、00878 `#f59e0b`、00919 `#ec4899`、00981A `#a855f7`、00991A `#06b6d4`；新 ETF 另選 `#14b8a6`/`#eab308`/`#f97316` 等
+- `annualDiv` / `freq`：年化配息與年配息次數（季配 4、半年配 2、年配 1）；行事曆每月每張單次配息 = `annualDiv / freq × 1000`
+- `divMonths`：除息月份陣列（季配範例：0056 `[1,4,7,10]`、00878 `[2,5,8,11]`、00919 `[3,6,9,12]`）；月份不確定時填上推估值並加 `est:true`
+- `raw`：近三年逐月收盤，月份 key 格式 `YYMMM`（如 `26M06`）。**直接沿用該 ETF 分析頁裡 `const data` 的月線**（把 `{m:'26M06',px:49.62}` 轉成 `'26M06':49.62`）
+- **無配息的主動式 ETF**（如 00991A）：`annualDiv:null, noDiv:true`，省略 `freq`/`divMonths`；只在「實際價格／成長率」模式畫線，不進行事曆與試算
+
+### 成長率欄資料來源
+
+成長率（1個月～3年）由 `ETF_DATA[].raw` 的月線收盤即時計算，**不需另外抓 FinMind**。每季更新分析頁時，把最新月份補進對應 ETF 的 `raw`，成長率與河流圖即自動更新。
 
 ---
 
