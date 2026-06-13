@@ -521,8 +521,10 @@ new Chart(document.getElementById('industryChart').getContext('2d'), {
 
 // 前15大持股 Horizontal Bar
 const top15 = holdings.slice(0, 15);
+const barLabelPlugin_00878 = { id:'barLabel00878', afterDatasetsDraw(chart){ const {ctx}=chart; chart.getDatasetMeta(0).data.forEach((bar,j)=>{ const h=top15[j]; if(!h||h.px==null)return; const clr=h.chg>0?'#22c55e':h.chg<0?'#ef4444':'#94a3b8'; const txt=`${h.px.toLocaleString()} (${h.chg>0?'+':''}${h.chg}%)`; ctx.save(); ctx.font='10px -apple-system,sans-serif'; ctx.fillStyle=clr; ctx.textAlign='left'; ctx.textBaseline='middle'; ctx.fillText(txt,bar.x+4,bar.y); ctx.restore(); }); } };
 new Chart(document.getElementById('holdingsChart').getContext('2d'), {
   type: 'bar',
+  plugins: [barLabelPlugin_00878],
   data: {
     labels: top15.map(h => `${h.id} ${h.name}`),
     datasets: [{
@@ -537,6 +539,7 @@ new Chart(document.getElementById('holdingsChart').getContext('2d'), {
   options: {
     indexAxis: 'y',
     responsive: true,
+    layout: { padding: { right: 140 } },
     plugins: {
       legend: { display: false },
       tooltip: { callbacks: { label(ctx) { const h = top15[ctx.dataIndex]; return [`比重: ${h.w}%`, `股價: ${h.px}（${h.chg > 0 ? '+' : ''}${h.chg}%）`]; } } }
