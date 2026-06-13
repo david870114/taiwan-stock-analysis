@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>元大台灣50正2 00631L — 槓桿ETF 價格走勢分析</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #0f1117; color: #e2e8f0; padding: 16px; }
+  h1 { font-size: 18px; font-weight: 700; color: #f8fafc; margin-bottom: 4px; }
+  .subtitle { font-size: 12px; color: #94a3b8; margin-bottom: 16px; }
+  .tabs { display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; }
+  .tab { padding: 6px 14px; border-radius: 20px; font-size: 12px; cursor: pointer; border: 1px solid #334155; color: #94a3b8; background: transparent; transition: all 0.2s; }
+  .tab.active { background: #14b8a6; color: #fff; border-color: #14b8a6; }
+  .tab:hover:not(.active) { border-color: #64748b; color: #e2e8f0; }
+  .panel { display: none; }
+  .panel.active { display: block; }
+  canvas { width: 100% !important; border-radius: 10px; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+  .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-top: 12px; }
+  .grid4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 12px; margin-top: 12px; }
+  .card { background: #1e2535; border: 1px solid #2d3748; border-radius: 10px; padding: 14px; }
+  .card h3 { font-size: 12px; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
+  .card .val { font-size: 22px; font-weight: 700; }
+  .card .note { font-size: 11px; color: #64748b; margin-top: 4px; }
+  .green { color: #22c55e; } .yellow { color: #eab308; } .red { color: #ef4444; } .blue { color: #3b82f6; } .teal { color: #14b8a6; } .purple { color: #c4b5fd; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 12px; }
+  th { background: #1e2535; color: #64748b; padding: 8px 10px; text-align: left; font-weight: 600; font-size: 11px; text-transform: uppercase; }
+  td { padding: 8px 10px; border-bottom: 1px solid #1e2535; }
+  tr:hover td { background: #1a2030; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: 600; }
+  .badge-buy { background: #14532d; color: #86efac; }
+  .badge-watch { background: #713f12; color: #fde68a; }
+  .badge-avoid { background: #450a0a; color: #fca5a5; }
+  .scenario-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 12px; }
+  .scenario-card { border-radius: 10px; padding: 14px; text-align: center; }
+  .bear { background: linear-gradient(135deg, #1a0a0a, #2d1010); border: 1px solid #7f1d1d; }
+  .base { background: linear-gradient(135deg, #0a1a0a, #102d10); border: 1px solid #14532d; }
+  .bull { background: linear-gradient(135deg, #0a0f1a, #10182d); border: 1px solid #1d4ed8; }
+  .sc-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.7; margin-bottom: 6px; }
+  .sc-price { font-size: 22px; font-weight: 800; margin: 4px 0; }
+  .sc-detail { font-size: 10px; opacity: 0.65; line-height: 1.6; }
+  .section-title { font-size: 13px; font-weight: 600; color: #cbd5e1; margin: 16px 0 8px; }
+  .buy-signal { background: #0f2a1e; border: 1px solid #166534; border-radius: 10px; padding: 14px; margin-top: 12px; }
+  .buy-signal h3 { color: #86efac; font-size: 13px; margin-bottom: 8px; }
+  .buy-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid #1a3a2a; gap: 8px; }
+  .buy-row:last-child { border-bottom: none; }
+  .current-price-badge { background: #0d2e2a; border: 1px solid #14b8a6; border-radius: 8px; padding: 10px 14px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px; }
+  .chart-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; }
+  .chart-box { background: #1e2535; border: 1px solid #2d3748; border-radius: 10px; padding: 14px; }
+  .chart-box h3 { font-size: 12px; color: #94a3b8; font-weight: 600; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .warn-box { background: linear-gradient(135deg,#2a1505,#3a1d08); border: 1px solid #b45309; border-radius: 10px; padding: 14px; margin-top: 14px; }
+  .warn-box h3 { color: #fbbf24; font-size: 13px; margin-bottom: 8px; }
+  @media(max-width:700px){ .chart-row{ grid-template-columns:1fr; } .scenario-grid,.grid3,.grid4{ grid-template-columns:1fr; } .grid2{ grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+<div style="margin-bottom:12px;">
+  <a href="index.html" style="color:#64748b;font-size:12px;text-decoration:none;display:inline-flex;align-items:center;gap:4px;padding:5px 10px;border:1px solid #334155;border-radius:8px;transition:all 0.2s;" onmouseover="this.style.color='#e2e8f0';this.style.borderColor='#64748b'" onmouseout="this.style.color='#64748b';this.style.borderColor='#334155'">← 返回總覽</a>
+</div>
+<h1>⚡ 元大台灣50正2 (00631L) — 槓桿ETF 價格走勢分析</h1>
+<p class="subtitle">單日正向2倍 ✦ 價格走勢 ✦ 三情境評估 ✦ 月線報酬 ✦ 持股結構 ✦ 槓桿風險解析 ✦ 更新時間：2026年6月13日</p>
+
+<div class="warn-box" style="margin-top:0;margin-bottom:14px;">
+  <h3>⚠️ 這是「單日正向 2 倍」槓桿型 ETF — 不是一般 0050</h3>
+  <div style="font-size:12px;color:#fde68a;line-height:1.8;">
+    00631L 追蹤<strong style="color:#fff;">台灣50指數「單日」報酬的 2 倍</strong>，每日重設槓桿。長期報酬<strong style="color:#fff;">不等於</strong>大盤漲幅的 2 倍，盤整盤會產生<strong style="color:#fff;">波動耗損（volatility decay）</strong>。<strong style="color:#fff;">不配息</strong>、不適合無紀律的長抱，較適合明確多頭趨勢中的波段操作。
+  </div>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('price', this)">📈 價格走勢</button>
+  <button class="tab" onclick="switchTab('scenario', this)">🎯 三情境評估</button>
+  <button class="tab" onclick="switchTab('ret', this)">📊 月線報酬</button>
+  <button class="tab" onclick="switchTab('holdings', this)">🏦 持股結構</button>
+  <button class="tab" onclick="switchTab('fundamental', this)">⚡ 槓桿風險解析</button>
+</div>
+
+<!-- TAB 1: 價格走勢 -->
+<div id="tab-price" class="panel active">
+  <div class="current-price-badge">
+    <span style="color:#94a3b8;font-size:12px;">目前股價（即時）</span>
+    <span style="color:#14b8a6;font-size:20px;font-weight:800;" id="live-price">載入中…</span>
+    <span style="color:#eab308;font-size:12px;" id="live-return-note">計算中…</span>
+  </div>
+  <canvas id="priceChart" height="340"></canvas>
+  <p style="font-size:11px;color:#475569;margin-top:8px;text-align:center;">* 圖為<strong style="color:#94a3b8;">還原權值（分割還原）</strong>後的近3年月線收盤。00631L 於 <strong style="color:#94a3b8;">2026/03/31 進行 1 拆 22 分割</strong>（分割前 ~443 元 → 分割後 ~20 元），歷史價格已統一還原為分割後基準，故走勢連續。</p>
+
+  <div class="grid4" style="margin-top:16px;">
+    <div class="card">
+      <h3>3年前（還原）</h3>
+      <div class="val teal">~6.36 元</div>
+      <div class="note">2023/07 還原後基準</div>
+    </div>
+    <div class="card">
+      <h3>目前股價</h3>
+      <div class="val green" id="stat-price">34.83 元</div>
+      <div class="note">2026/06/12</div>
+    </div>
+    <div class="card">
+      <h3>近3年報酬（還原）</h3>
+      <div class="val green">+448%</div>
+      <div class="note">2x 槓桿×台股多頭放大</div>
+    </div>
+    <div class="card">
+      <h3>淨值（NAV）</h3>
+      <div class="val yellow">34.97 元</div>
+      <div class="note">折溢價 -0.4%（2026/06/12）</div>
+    </div>
+  </div>
+</div>
+
+<!-- TAB 2: 三情境評估 -->
+<div id="tab-scenario" class="panel">
+  <div class="grid2">
+    <div class="card">
+      <h3>近3年報酬（還原）</h3>
+      <div class="val green">+448%</div>
+      <div class="note">23M07（~6.36）→ 26M06（34.83），2x 槓桿</div>
+    </div>
+    <div class="card">
+      <h3>估值基礎</h3>
+      <div class="val teal">價格位階</div>
+      <div class="note">槓桿型無 EPS／無配息，僅以價格位階與大盤趨勢評估，非傳統估值</div>
+    </div>
+  </div>
+
+  <div class="section-title">三情境價格評估（分割後基準，現價 ~34.8 元）</div>
+  <div class="scenario-grid">
+    <div class="scenario-card bear">
+      <div class="sc-label">🐻 保守</div>
+      <div class="sc-price red">22–26 元</div>
+      <div class="sc-detail">大盤深度修正<br>2x 放大跌幅<br>回測 26M03 低點 19 元帶<br>趨勢轉空應減碼</div>
+    </div>
+    <div class="scenario-card base">
+      <div class="sc-label">⚖️ 合理</div>
+      <div class="sc-price green">30–35 元</div>
+      <div class="sc-detail">大盤多頭延續中<br>貼近 NAV 區間<br>波段持有區</div>
+    </div>
+    <div class="scenario-card bull">
+      <div class="sc-label">🚀 樂觀</div>
+      <div class="sc-price" style="color:#5eead4;">40–48 元</div>
+      <div class="sc-detail">台股強勢創高<br>2x 槓桿加速上行<br>留意過熱、嚴設停利</div>
+    </div>
+  </div>
+
+  <div class="buy-signal">
+    <h3>💰 波段操作買點建議（價格位階法，非長抱）</h3>
+    <div class="buy-row">
+      <span style="color:#86efac;font-size:13px;font-weight:600;">第一批（40%）</span>
+      <span style="color:#fde68a;font-size:14px;font-weight:700;">22–26 元</span>
+      <span class="badge badge-buy">大盤深度修正、趨勢仍多時分批</span>
+    </div>
+    <div class="buy-row">
+      <span style="color:#86efac;font-size:13px;font-weight:600;">第二批（40%）</span>
+      <span style="color:#fde68a;font-size:14px;font-weight:700;">28–32 元</span>
+      <span class="badge badge-buy">回測月線、多頭續抱布局</span>
+    </div>
+    <div class="buy-row">
+      <span style="color:#86efac;font-size:13px;font-weight:600;">第三批（20%）</span>
+      <span style="color:#fde68a;font-size:14px;font-weight:700;">32–36 元</span>
+      <span class="badge badge-watch">追勢需嚴設停損</span>
+    </div>
+    <div class="buy-row" style="border-top:1px solid #166534;margin-top:8px;padding-top:10px;">
+      <span style="color:#fca5a5;font-size:12px;">趨勢轉空 / 跌破月線</span>
+      <span style="color:#fca5a5;font-size:13px;font-weight:700;">果斷減碼</span>
+      <span class="badge badge-avoid">槓桿下跌速度遠快於一般 ETF</span>
+    </div>
+  </div>
+
+  <div class="warn-box">
+    <h3>⚠️ 槓桿 ETF：沒有「便宜價長抱」這回事</h3>
+    <div style="font-size:12px;color:#fde68a;line-height:1.8;">
+      00631L 以<strong style="color:#fff;">每日 2 倍</strong>為目標，<strong style="color:#fff;">波動耗損會侵蝕長期報酬</strong>。它的買賣應依<strong style="color:#5eead4;">大盤趨勢與紀律停損停利</strong>，而非「跌深就抱著等回本」。上述價格帶僅供波段參考，<strong style="color:#fff;">趨勢轉空時應優先保護本金</strong>，不要向下攤平槓桿部位。
+    </div>
+  </div>
+</div>
+
+<!-- TAB 3: 月線報酬 -->
+<div id="tab-ret" class="panel">
+  <div style="background:#1e2535;border:1px solid #334155;border-radius:10px;padding:16px;margin-top:8px;">
+    <div style="font-size:14px;font-weight:700;color:#14b8a6;margin-bottom:8px;">📊 槓桿型 ETF 不配息</div>
+    <div style="font-size:12px;color:#94a3b8;line-height:1.8;">
+      00631L 為單日正向 2 倍槓桿 ETF，<strong style="color:#e2e8f0;">不進行現金配息</strong>（收益再投入以維持槓桿曝險）。因此沒有殖利率可言，報酬全數來自<strong style="color:#e2e8f0;">價格（資本利得）</strong>。下表為還原分割後的月線收盤與月報酬。
+    </div>
+  </div>
+
+  <div class="section-title" style="margin-top:18px;">分割事件</div>
+  <table>
+    <thead><tr><th>項目</th><th>內容</th></tr></thead>
+    <tbody>
+      <tr><td>分割比例</td><td style="color:#14b8a6;font-weight:700;">1 拆 22</td></tr>
+      <tr><td>分割前最後交易日</td><td>2026/03/24</td></tr>
+      <tr><td>恢復交易日</td><td>2026/03/31</td></tr>
+      <tr><td>分割前參考價</td><td>~443 元</td></tr>
+      <tr><td>分割後參考價</td><td style="color:#22c55e;">~20.1 元（一張約 2 萬元）</td></tr>
+      <tr><td>本頁歷史價格</td><td>已全部<strong style="color:#e2e8f0;">還原為分割後基準</strong>，走勢連續可比</td></tr>
+    </tbody>
+  </table>
+
+  <div class="section-title" style="margin-top:18px;">月線收盤價明細（還原分割後，近一年）</div>
+  <table>
+    <thead>
+      <tr><th>月份</th><th>還原收盤（元）</th><th>月漲跌幅</th><th>備註</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>25M07</td><td>11.15</td><td style="color:#22c55e;">+14.8%</td><td></td></tr>
+      <tr><td>25M08</td><td>11.79</td><td style="color:#22c55e;">+5.8%</td><td></td></tr>
+      <tr><td>25M09</td><td>13.49</td><td style="color:#22c55e;">+14.4%</td><td></td></tr>
+      <tr><td>25M10</td><td>16.14</td><td style="color:#22c55e;">+19.6%</td><td></td></tr>
+      <tr><td>25M11</td><td>15.30</td><td style="color:#ef4444;">-5.2%</td><td></td></tr>
+      <tr><td>25M12</td><td>16.50</td><td style="color:#22c55e;">+7.8%</td><td></td></tr>
+      <tr><td>26M01</td><td>20.23</td><td style="color:#22c55e;">+22.6%</td><td></td></tr>
+      <tr><td>26M02</td><td>24.45</td><td style="color:#22c55e;">+20.9%</td><td>分割前高點</td></tr>
+      <tr><td>26M03</td><td style="color:#ef4444;font-weight:700;">19.26</td><td style="color:#ef4444;">-21.2%</td><td>3月大盤急殺，2x 放大 + 分割執行</td></tr>
+      <tr><td>26M04</td><td>28.61</td><td style="color:#22c55e;">+48.5%</td><td>台股反攻、2x 加速</td></tr>
+      <tr><td>26M05</td><td>36.94</td><td style="color:#22c55e;">+29.1%</td><td>波段高點</td></tr>
+      <tr style="background:#0d2e2a;"><td><strong>26M06</strong></td><td style="color:#14b8a6;font-weight:700;">34.83</td><td style="color:#ef4444;">-5.7%（截至06/12）</td><td></td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:10px;color:#475569;margin-top:10px;line-height:1.6;">* 26M03 的 -21.2% 為「還原後」的真實月報酬（24.45→19.26）；GoodInfo 原始頁面顯示的 -96.4% 是分割造成的面額變動，非實際虧損。</p>
+</div>
+
+<!-- TAB 4: 持股結構 -->
+<div id="tab-holdings" class="panel">
+  <div class="grid4" style="margin-top:4px;">
+    <div class="card"><h3>ETF 類型</h3><div style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.5;">單日正向2倍槓桿</div><div class="note">台灣50指數單日2倍報酬</div></div>
+    <div class="card"><h3>發行投信</h3><div class="val blue" style="font-size:16px;">元大投信</div><div class="note">Yuanta，2014/10 掛牌</div></div>
+    <div class="card"><h3>配息</h3><div class="val" style="font-size:16px;color:#94a3b8;">不配息</div><div class="note">槓桿型不分配收益</div></div>
+    <div class="card"><h3>NAV（淨值）</h3><div class="val green">34.97 元</div><div class="note">折溢價 -0.4%（2026/06/12）</div></div>
+  </div>
+
+  <div class="section-title" style="margin-top:16px;">曝險結構（達成 2 倍槓桿的方式，2026/05 起調整）</div>
+  <table>
+    <thead><tr><th>部位</th><th>估計比重</th><th>角色</th></tr></thead>
+    <tbody>
+      <tr><td>台積電（2330）現貨</td><td style="color:#22c55e;">~40%</td><td>調整後改抱現貨，「含積量」最高的正2 ETF</td></tr>
+      <tr><td>台股期貨／台灣50期貨</td><td style="color:#3b82f6;">放大曝險</td><td>以期貨槓桿達成單日 2 倍目標</td></tr>
+      <tr><td>其他台灣50成分股現貨</td><td>其餘</td><td>聯發科、鴻海、台達電等權值股</td></tr>
+      <tr><td colspan="3" style="color:#475569;font-size:10px;text-align:center;padding:10px;">* 槓桿透過期貨＋現貨組合每日動態調整，比重為估算，實際以<a href="https://www.yuantaetfs.com" target="_blank" style="color:#14b8a6;">元大投信官網</a>每日公告為準</td></tr>
+    </tbody>
+  </table>
+
+  <div class="chart-row">
+    <div class="chart-box"><h3>🏭 標的指數產業分布（台灣50）</h3><canvas id="industryChart" height="260"></canvas></div>
+    <div class="chart-box"><h3>📊 運作機制核心</h3>
+      <div style="font-size:12px;line-height:1.9;color:#cbd5e1;margin-top:8px;">
+        <div style="color:#14b8a6;font-weight:700;margin-bottom:8px;">目標：台灣50指數「單日」報酬 × 2</div>
+        <div style="color:#22c55e;">✅ 每日收盤重設槓桿，維持 2 倍曝險</div>
+        <div style="color:#22c55e;">✅ 透過台指期貨 + 權值股現貨組合達成</div>
+        <div style="color:#22c55e;">✅ 2026/05 增持台積電現貨至約 40%</div>
+        <div style="color:#22c55e;">✅ 多頭趨勢中報酬顯著放大</div>
+        <div style="color:#eab308;margin-top:8px;">⚠️ 每日重設 → 長期報酬路徑相依</div>
+        <div style="color:#eab308;">⚠️ 盤整／震盪盤產生波動耗損</div>
+        <div style="color:#eab308;">⚠️ 內含期貨轉倉、管理費等成本</div>
+        <div style="color:#ef4444;margin-top:8px;">✗ 下跌時跌幅同樣放大 2 倍，不適合無停損長抱</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TAB 5: 槓桿風險解析 -->
+<div id="tab-fundamental" class="panel">
+
+  <!-- 商品概況 -->
+  <div class="section-title">📊 商品概況</div>
+  <div class="grid3">
+    <div class="card">
+      <h3>掛牌日期</h3>
+      <div class="val blue" style="font-size:16px;">2014年10月</div>
+      <div class="note">台灣首檔槓桿型 ETF</div>
+    </div>
+    <div class="card">
+      <h3>近3年報酬（還原）</h3>
+      <div class="val green">+448%</div>
+      <div class="note">2x 槓桿×台股多頭，截至 2026/06</div>
+    </div>
+    <div class="card">
+      <h3>2026 分割</h3>
+      <div class="val teal" style="font-size:16px;">1 拆 22</div>
+      <div class="note">2026/03/31 生效，一張約 2 萬元</div>
+    </div>
+  </div>
+
+  <!-- 槓桿運作說明 -->
+  <div class="section-title">⚙️ 槓桿如何運作（必讀）</div>
+  <div class="grid2">
+    <div class="card">
+      <h3>單日 2 倍 ≠ 長期 2 倍</h3>
+      <div style="font-size:12px;line-height:1.9;color:#cbd5e1;margin-top:4px;">
+        00631L 只保證<strong style="color:#14b8a6;">「單日」</strong>貼近台灣50的 2 倍報酬。<br>
+        因每日重設槓桿，連續報酬具<strong style="color:#e2e8f0;">路徑相依</strong>：<br>
+        ✅ 單邊上漲 → 報酬常 <strong style="color:#22c55e;">大於</strong> 2 倍<br>
+        ✗ 上下震盪 → 報酬常 <strong style="color:#ef4444;">小於</strong> 2 倍（波動耗損）<br>
+        <span style="color:#64748b;font-size:11px;margin-top:4px;display:block;">例：大盤 +10%/-9% 來回，2x ETF 可能不漲反跌。</span>
+      </div>
+    </div>
+    <div class="card">
+      <h3>適合 / 不適合</h3>
+      <div style="font-size:12px;line-height:1.9;margin-top:4px;">
+        <div style="color:#86efac;">✅ 明確多頭趨勢的波段操作</div>
+        <div style="color:#86efac;">✅ 有紀律停利停損的積極投資人</div>
+        <div style="color:#86efac;">✅ 看對方向時放大資金效率</div>
+        <div style="color:#fca5a5;margin-top:6px;">✗ 無腦長抱、向下攤平</div>
+        <div style="color:#fca5a5;">✗ 當「存股」領息（根本不配息）</div>
+        <div style="color:#fca5a5;">✗ 盤整／空頭趨勢中持有</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 市場地位 -->
+  <div class="section-title">🌐 市場地位</div>
+  <div style="background:#1e2535;border:1px solid #2d3748;border-radius:10px;padding:14px;margin-bottom:14px;">
+    <div style="display:flex;gap:20px;flex-wrap:wrap;justify-content:space-around;text-align:center;margin-bottom:12px;">
+      <div>
+        <div style="font-size:11px;color:#64748b;margin-bottom:4px;">商品定位</div>
+        <div style="font-size:18px;font-weight:800;color:#14b8a6;">正2 ETF 龍頭</div>
+        <div style="font-size:10px;color:#475569;margin-top:2px;">台灣規模最大的槓桿型 ETF</div>
+      </div>
+      <div>
+        <div style="font-size:11px;color:#64748b;margin-bottom:4px;">掛牌年份</div>
+        <div style="font-size:18px;font-weight:800;color:#eab308;">2014 年</div>
+        <div style="font-size:10px;color:#475569;margin-top:2px;">台灣首檔槓桿 ETF</div>
+      </div>
+      <div>
+        <div style="font-size:11px;color:#64748b;margin-bottom:4px;">2026 分割效果</div>
+        <div style="font-size:18px;font-weight:800;color:#22c55e;">親民化</div>
+        <div style="font-size:10px;color:#475569;margin-top:2px;">分割後人數激增、流動性提升</div>
+      </div>
+    </div>
+    <div style="font-size:11px;color:#64748b;line-height:1.7;">
+      00631L 是台灣最具代表性、規模最大的單日正向 2 倍槓桿 ETF。2026/03 完成 1 拆 22 分割後，單張門檻由近 50 萬降至約 2 萬，投資人數大增。2026/05 並將台積電現貨拉高至約 40%，成為「含積量」最高的正2 ETF。惟其本質為槓桿交易工具，績效高度取決於大盤趨勢與進出場時機。
+    </div>
+  </div>
+
+  <!-- 估值指標 -->
+  <div class="section-title">📐 關鍵指標</div>
+  <div class="grid4">
+    <div class="card">
+      <h3>即時股價</h3>
+      <div class="val teal" id="fund-price">—</div>
+      <div class="note" id="fund-price-note">載入中…</div>
+    </div>
+    <div class="card">
+      <h3>淨值（NAV）</h3>
+      <div class="val yellow">34.97 元</div>
+      <div class="note">折溢價 -0.4%（2026/06/12）</div>
+    </div>
+    <div class="card">
+      <h3>槓桿倍數</h3>
+      <div class="val red">2.0x（單日）</div>
+      <div class="note">每日收盤重設</div>
+    </div>
+    <div class="card">
+      <h3>配息率</h3>
+      <div class="val" style="color:#475569;">N/A</div>
+      <div class="note">槓桿型不配息</div>
+    </div>
+  </div>
+
+  <!-- 利多 vs 風險 -->
+  <div class="section-title">⚡ 利多 vs 風險</div>
+  <div class="grid2">
+    <div class="card">
+      <h3>🚀 利多</h3>
+      <div style="font-size:12px;line-height:1.9;color:#86efac;">
+        ✓ 多頭趨勢中報酬放大 2 倍<br>
+        ✓ 台灣規模最大、流動性最佳的正2 ETF<br>
+        ✓ 2026 分割後門檻親民（一張 ~2 萬）<br>
+        ✓ 增持台積電現貨至 ~40%，連動權王<br>
+        ✓ 資金效率高，看對方向獲利可觀<br>
+        ✓ 免融資利息、無斷頭追繳壓力
+      </div>
+    </div>
+    <div class="card">
+      <h3>⚠️ 風險</h3>
+      <div style="font-size:12px;line-height:1.9;color:#fca5a5;">
+        ✗ 下跌同樣放大 2 倍，波動極大<br>
+        ✗ 盤整盤波動耗損侵蝕報酬<br>
+        ✗ 長期報酬路徑相依，非單純 2 倍<br>
+        ✗ 不配息，無法當存股領息<br>
+        ✗ 內含期貨轉倉與管理成本<br>
+        ✗ 須紀律停損，不適合無腦長抱
+      </div>
+    </div>
+  </div>
+
+  <!-- 關鍵數據快查 -->
+  <div class="section-title">📋 關鍵數據快查</div>
+  <table>
+    <thead><tr><th>指標</th><th>數值</th><th>評估</th></tr></thead>
+    <tbody>
+      <tr><td>目前股價</td><td style="color:#14b8a6;font-weight:700;" id="summary-price">~34.83 元（2026/06/12）</td><td><span class="badge badge-watch">合理偏高，留意過熱</span></td></tr>
+      <tr><td>近3年報酬（還原）</td><td style="color:#22c55e;">+448%</td><td><span class="badge badge-avoid">已大漲，追高風險高</span></td></tr>
+      <tr><td>2026分割</td><td>1 拆 22（03/31）</td><td><span class="badge badge-buy">門檻親民、流動性佳</span></td></tr>
+      <tr><td>26M03 還原低點</td><td style="color:#ef4444;">19.26 元</td><td><span class="badge badge-buy">大盤修正時的支撐參考</span></td></tr>
+      <tr><td>NAV（淨值）</td><td>34.97 元</td><td><span class="badge badge-buy">折溢價 -0.4%，定價合理</span></td></tr>
+      <tr><td>配息</td><td style="color:#64748b;">不配息</td><td><span class="badge badge-avoid">無殖利率，純資本利得</span></td></tr>
+      <tr><td>合理價（參考）</td><td>30–35 元</td><td><span class="badge badge-buy">多頭續抱波段帶</span></td></tr>
+      <tr><td>便宜價（參考）</td><td>22–26 元</td><td><span class="badge badge-buy">大盤深度修正分批帶</span></td></tr>
+      <tr><td>槓桿倍數</td><td style="color:#ef4444;">2.0x（單日）</td><td><span class="badge badge-avoid">高波動，須停損紀律</span></td></tr>
+    </tbody>
+  </table>
+
+  <p style="font-size:10px;color:#475569;margin-top:14px;line-height:1.6;">⚠️ 本分析僅供參考，不構成投資建議。00631L 為槓桿型 ETF，波動與風險遠高於一般 ETF，長期持有有波動耗損疑慮，請務必了解產品特性、嚴設停損停利後再投資。</p>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<script>
+function switchTab(id, btn) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// 還原分割後（1拆22）的近3年月線收盤
+const data = [
+  { m:'23M07', px:6.36 }, { m:'23M08', px:6.02 }, { m:'23M09', px:5.81 }, { m:'23M10', px:5.54 },
+  { m:'23M11', px:6.52 }, { m:'23M12', px:6.87 }, { m:'24M01', px:6.91 }, { m:'24M02', px:7.73 },
+  { m:'24M03', px:8.85 }, { m:'24M04', px:8.93 }, { m:'24M05', px:9.64 }, { m:'24M06', px:11.40 },
+  { m:'24M07', px:10.63 }, { m:'24M08', px:10.45 }, { m:'24M09', px:10.41 }, { m:'24M10', px:10.87 },
+  { m:'24M11', px:10.33 }, { m:'24M12', px:10.93 }, { m:'25M01', px:11.40 }, { m:'25M02', px:10.84 },
+  { m:'25M03', px:8.68 }, { m:'25M04', px:7.74 }, { m:'25M05', px:8.73 }, { m:'25M06', px:9.70 },
+  { m:'25M07', px:11.15 }, { m:'25M08', px:11.79 }, { m:'25M09', px:13.49 }, { m:'25M10', px:16.14 },
+  { m:'25M11', px:15.30 }, { m:'25M12', px:16.50 }, { m:'26M01', px:20.23 }, { m:'26M02', px:24.45 },
+  { m:'26M03', px:19.26 }, { m:'26M04', px:28.61 }, { m:'26M05', px:36.94 }, { m:'26M06', px:34.83 },
+];
+
+const labels = data.map(d => d.m);
+const prices = data.map(d => d.px);
+const refPrice = data[0].px; // 3年前還原基準
+
+const priceCtx = document.getElementById('priceChart').getContext('2d');
+new Chart(priceCtx, {
+  type: 'line',
+  data: {
+    labels,
+    datasets: [
+      { label: '還原股價', data: prices, borderColor: '#ffffff', borderWidth: 2.5, pointRadius: 3, pointBackgroundColor: '#14b8a6', tension: 0.3, spanGaps: true, order: 0 },
+    ]
+  },
+  options: {
+    responsive: true,
+    interaction: { mode: 'index', intersect: false },
+    plugins: {
+      legend: { labels: { color: '#94a3b8', font: { size: 11 } } },
+      tooltip: { callbacks: { label(ctx) {
+        const v = ctx.parsed.y.toFixed(2);
+        const ret = ((ctx.parsed.y - refPrice) / refPrice * 100).toFixed(0);
+        return `還原股價: ${v} 元（近3年 ${ret >= 0 ? '+' : ''}${ret}%）`;
+      }}}
+    },
+    scales: {
+      x: { ticks: { color: '#475569', maxTicksLimit: 12, font: { size: 10 } }, grid: { color: '#1e2535' } },
+      y: { ticks: { color: '#94a3b8', font: { size: 10 } }, grid: { color: '#1e2535' }, min: 4 }
+    }
+  }
+});
+
+const industries = [
+  { label:'半導體（含台積電）', pct:62, color:'#22c55e' },
+  { label:'金融保險',          pct:11, color:'#3b82f6' },
+  { label:'電腦及週邊',        pct:8,  color:'#f59e0b' },
+  { label:'電子零組件',        pct:7,  color:'#a855f7' },
+  { label:'其他',              pct:12, color:'#64748b' },
+];
+new Chart(document.getElementById('industryChart').getContext('2d'), {
+  type: 'doughnut',
+  data: { labels: industries.map(i=>i.label), datasets: [{ data: industries.map(i=>i.pct), backgroundColor: industries.map(i=>i.color), borderWidth:2, borderColor:'#0f1117' }] },
+  options: { responsive:true, plugins: { legend:{ position:'right', labels:{ color:'#94a3b8', font:{size:10}, padding:8, boxWidth:12 } }, tooltip:{ callbacks:{ label(ctx){ return `${ctx.label}: ~${ctx.parsed}%（台灣50指數）`; } } } } }
+});
+
+async function loadLivePrice() {
+  try {
+    const res = await fetch('https://taiwan-stock-price.david870114.workers.dev/?id=00631L', { cache: 'no-cache' });
+    const d = JSON.parse(await res.text());
+    const price = parseFloat(d.price);
+    if (price && !isNaN(price)) {
+      const ret = ((price - refPrice) / refPrice * 100).toFixed(0);
+      document.getElementById('live-price').textContent = price.toFixed(2) + ' 元';
+      document.getElementById('live-return-note').textContent = `近3年（還原）+${ret}%`;
+      document.getElementById('stat-price').textContent = price.toFixed(2) + ' 元';
+      document.getElementById('summary-price').textContent = `${price.toFixed(2)} 元（即時）`;
+      const fundEl = document.getElementById('fund-price');
+      if (fundEl) { fundEl.textContent = price.toFixed(2) + ' 元'; }
+      const noteEl = document.getElementById('fund-price-note');
+      if (noteEl) { noteEl.textContent = `近3年（還原）+${ret}%`; }
+    }
+  } catch(e) {}
+}
+window.addEventListener('load', loadLivePrice);
+</script>
+</body>
+</html>

@@ -91,6 +91,7 @@ node "C:\Users\USER\goodinfo_scraper.mjs" {代號} div
 | 00919 | 群益台灣精選高息 | ETF | 殖利率法 | 00919_analysis.html |
 | 00981A | 主動元大全球AI | ETF | 價格追蹤（無配息）| 00981A_analysis.html |
 | 00991A | 主動復華未來50 | ETF | 價格追蹤（無配息）| 00991A_analysis.html |
+| 00631L | 元大台灣50正2 | ETF（單日正向2倍槓桿） | 價格追蹤（不配息，1拆22還原）| 00631L_analysis.html |
 | 2301 | 光寶科 | 電源/EMS | PER法 | 2301_analysis.html |
 | 2303 | 聯電 | AI/半導體 | PER法 | 2303_analysis.html |
 | 2308 | 台達電 | AI/電源 | PER法 | 2308_analysis.html |
@@ -218,6 +219,12 @@ node "C:\Users\USER\goodinfo_scraper.mjs" {代號} div
   fairPER:null, tp:null, cheapValue:14, annualDiv:null, noDivYet:true,
   url:'00991A_analysis.html' }
 ```
+
+### 槓桿型 ETF（單日正向2倍，如 00631L）
+
+槓桿型 ETF **永不配息**，同樣用價格追蹤法（`noDivYet:true` / ETF_DATA `noDiv:true`），但有兩點特別注意：
+- **分割還原**：00631L 於 2026/03/31 進行 **1 拆 22** 分割（分割前 ~443 元 → 後 ~20 元）。GoodInfo 月線顯示的原始價在分割月會出現 -96% 假跌幅，**必須把分割前（26M02 含以前）的收盤全部 ÷22 還原**，才能讓走勢連續、成長率正確。每季更新只需補最新月（已是分割後價，免再除）。
+- **分析頁重點**：強調「單日 2 倍 ≠ 長期 2 倍」、波動耗損（volatility decay）、路徑相依、須停損紀律、不可無腦長抱；Tab 用 價格走勢／三情境評估／月線報酬／持股結構／槓桿風險解析。
 
 ### 共用規範
 
