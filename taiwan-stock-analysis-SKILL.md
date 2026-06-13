@@ -89,6 +89,8 @@ node "C:\Users\USER\goodinfo_scraper.mjs" {代號} div
 | 0056 | 元大高股息 | ETF | 殖利率法 | 0056_analysis.html |
 | 00878 | 國泰永續高股息 | ETF | 殖利率法 | 00878_analysis.html |
 | 00919 | 群益台灣精選高息 | ETF | 殖利率法 | 00919_analysis.html |
+| 00981A | 主動元大全球AI | ETF | 價格追蹤（無配息）| 00981A_analysis.html |
+| 00991A | 主動復華未來50 | ETF | 價格追蹤（無配息）| 00991A_analysis.html |
 | 2301 | 光寶科 | 電源/EMS | PER法 | 2301_analysis.html |
 | 2303 | 聯電 | AI/半導體 | PER法 | 2303_analysis.html |
 | 2308 | 台達電 | AI/電源 | PER法 | 2308_analysis.html |
@@ -158,10 +160,62 @@ node "C:\Users\USER\goodinfo_scraper.mjs" {代號} div
 - **持股資訊 Tab（ETF 專用，必須包含）：**
   - 資料來源：`https://goodinfo.tw/tw/StockDetail.asp?STOCK_ID={代號}`（Chrome MCP 抓取）
   - 產業分布 Doughnut 圓餅圖（Chart.js）
-  - 前 15 大持股水平橫條圖（indexAxis: 'y'，漲跌顏色區分）
+  - 前 15 大持股水平橫條圖（indexAxis: 'y'）
   - 完整持股表格（代號、名稱、比重、股價、漲跌、比重視覺條）
   - 基金基本規格 grid（標的指數、成分股數、前十大合計比重、基金規模）
+
+  **持股 bar chart 顏色規則（依產業，不用漲跌顏色）：**
+  | 產業 | 顏色 |
+  |------|------|
+  | 金融保險業 | `#3b82f6` 藍 |
+  | 半導體業 | `#22c55e` 綠 |
+  | 電腦及週邊 | `#f59e0b` 琥珀 |
+  | 航運業 | `#8b5cf6` 靛 |
+  | 通信網路業 | `#ec4899` 粉 |
+  | 電子零組件 | `#a855f7` 紫（或 `#f97316` 橙，依各ETF） |
+  | 電子通路業 | `#06b6d4` 青 |
+  | 食品工業 | `#10b981` 翠綠 |
+  | 其他 | `#64748b` 灰 |
+
+  **持股 bar chart 右側股價標籤（afterDatasetsDraw plugin）：**
+  ```javascript
+  // holdings 陣列須有 px, chg 欄位（手動維護，定期更新）
+  const barLabelPlugin_{ETF} = {
+    id: 'barLabel{ETF}',
+    afterDatasetsDraw(chart) {
+      const { ctx } = chart;
+      chart.getDatasetMeta(0).data.forEach((bar, j) => {
+        const h = top15_{ETF}[j];
+        if (!h || h.px == null) return;
+        const clr = h.chg > 0 ? '#22c55e' : h.chg < 0 ? '#ef4444' : '#94a3b8';
+        const txt = `${h.px.toLocaleString()} (${h.chg > 0 ? '+' : ''}${h.chg}%)`;
+        ctx.save();
+        ctx.font = '10px -apple-system, sans-serif';
+        ctx.fillStyle = clr;
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(txt, bar.x + 4, bar.y);
+        ctx.restore();
+      });
+    }
+  };
+  // new Chart(..., { plugins: [barLabelPlugin_{ETF}], options: { layout: { padding: { right: 140 } }, ... } })
+  ```
+  - **0050 例外**：holdings 無 px/chg，改用即時 API fetch 顯示股價（無漲幅），fetch 後 `holdingsChart0050.update()`
 - 基本面分析 Tab 包含：估值現況（即時殖利率 fetch）、年化配息趨勢表、ETF策略說明、利多vs風險、同類ETF比較表、操作策略建議、關鍵數據快查表
+- **河流圖 tooltip**：必須加 `interaction: { mode: 'index', intersect: false }` 讓滑鼠移到任意位置都會顯示數據（只加到第一個 chart，不加到 bar chart 或 donut chart）
+
+### 主動式 ETF（無配息，noDivYet: true）
+
+新掛牌、尚無配息歷史的主動式 ETF（如 00981A、00991A）使用**價格追蹤法**，不用殖利率法：
+- 分析頁：顯示價格走勢圖 + 三情境評估（以價格區間判斷便宜/合理/昂貴）
+- index.html TRACKED 陣列使用 `noDivYet: true`，`annualDiv: null`
+- `buildEtfTable()` 對此類 ETF 顯示「尚無配息 / 價格追蹤 / 待宣告」，不計算殖利率
+```javascript
+{ id:'00991A', name:'主動復華未來50', tier:'core', fairValue:19, expValue:25,
+  fairPER:null, tp:null, cheapValue:14, annualDiv:null, noDivYet:true,
+  url:'00991A_analysis.html' }
+```
 
 ### 共用規範
 
