@@ -577,7 +577,7 @@ new Chart(document.getElementById('industryChart').getContext('2d'), {
   options: { responsive:true, plugins: { legend:{ position:'right', labels:{ color:'#94a3b8', font:{size:10}, padding:8, boxWidth:12 } }, tooltip:{ callbacks:{ label(ctx){ return `${ctx.label}: ${ctx.parsed}%`; } } } } }
 });
 const top15_0056 = holdings0056.slice(0,15);
-const barLabelPlugin_0056 = { id:'barLabel0056', afterDatasetsDraw(chart){ const {ctx}=chart; chart.getDatasetMeta(0).data.forEach((bar,j)=>{ const h=top15_0056[j]; if(!h||h.px==null)return; const clr=h.chg>0?'#22c55e':h.chg<0?'#ef4444':'#94a3b8'; const txt=`${h.px.toLocaleString()} (${h.chg>0?'+':''}${h.chg}%)`; ctx.save(); ctx.font='10px -apple-system,sans-serif'; ctx.fillStyle=clr; ctx.textAlign='left'; ctx.textBaseline='middle'; ctx.fillText(txt,bar.x+4,bar.y); ctx.restore(); }); } };
+const barLabelPlugin_0056 = { id:'barLabel0056', afterDatasetsDraw(chart){ const {ctx}=chart; chart.getDatasetMeta(0).data.forEach((bar,j)=>{ const h=top15_0056[j]; if(!h||h.px==null)return; const clr=h.chg>0?'#ef4444':h.chg<0?'#22c55e':'#94a3b8'; const txt=`${h.px.toLocaleString()} (${h.chg>0?'+':''}${h.chg}%)`; ctx.save(); ctx.font='10px -apple-system,sans-serif'; ctx.fillStyle=clr; ctx.textAlign='left'; ctx.textBaseline='middle'; ctx.fillText(txt,bar.x+4,bar.y); ctx.restore(); }); } };
 new Chart(document.getElementById('holdingsChart').getContext('2d'), {
   type:'bar',
   plugins:[barLabelPlugin_0056],
@@ -588,7 +588,8 @@ new Chart(document.getElementById('holdingsChart').getContext('2d'), {
   options:{ indexAxis:'y', responsive:true, layout:{padding:{right:140}}, plugins:{ legend:{display:false}, tooltip:{ callbacks:{ label(ctx){ const h=top15_0056[ctx.dataIndex]; return [`比重: ${h.w}%`,`股價: ${h.px}（${h.chg>0?'+':''}${h.chg}%）`]; } } } }, scales:{ x:{ ticks:{color:'#64748b',font:{size:10}}, grid:{color:'#1e2535'} }, y:{ ticks:{color:'#e2e8f0',font:{size:10}}, grid:{display:false} } } }
 });
 const htbody0056 = document.getElementById('holdings-table');
-if(htbody0056){ holdings0056.forEach((h,i)=>{ const cc=h.chg>0?'#22c55e':h.chg<0?'#ef4444':'#94a3b8'; const bw=Math.round(h.w/4.70*100); htbody0056.innerHTML+=`<tr><td style="color:#64748b;">${i+1}</td><td style="color:#3b82f6;font-weight:600;">${h.id}</td><td>${h.name}</td><td style="font-weight:700;">${h.w}%</td><td>${h.px.toLocaleString()}</td><td style="color:${cc};font-weight:600;">${h.chg>0?'+':''}${h.chg}%</td><td><div style="background:#1e2535;border-radius:3px;height:8px;width:100%;"><div style="background:#3b82f6;height:8px;border-radius:3px;width:${bw}%;"></div></div></td></tr>`; }); }
+if(htbody0056){ holdings0056.forEach((h,i)=>{ const cc=h.chg>0?'#ef4444':h.chg<0?'#22c55e':'#94a3b8'; const bw=Math.round(h.w/4.70*100); htbody0056.innerHTML+=`<tr><td style="color:#64748b;">${i+1}</td><td style="color:#3b82f6;font-weight:600;">${h.id}</td><td>${h.name}</td><td style="font-weight:700;">${h.w}%</td><td>${h.px.toLocaleString()}</td><td style="color:${cc};font-weight:600;">${h.chg>0?'+':''}${h.chg}%</td><td><div style="background:#1e2535;border-radius:3px;height:8px;width:100%;"><div style="background:#3b82f6;height:8px;border-radius:3px;width:${bw}%;"></div></div></td></tr>`; }); }
 </script>
 </body>
 </html>
+
