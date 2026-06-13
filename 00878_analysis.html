@@ -528,8 +528,8 @@ new Chart(document.getElementById('holdingsChart').getContext('2d'), {
     datasets: [{
       label: '持股比重（%）',
       data: top15.map(h => h.w),
-      backgroundColor: top15.map(h => h.chg > 0 ? '#22c55e88' : h.chg < -5 ? '#ef444488' : '#3b82f688'),
-      borderColor:     top15.map(h => h.chg > 0 ? '#22c55e'   : h.chg < -5 ? '#ef4444'   : '#3b82f6'),
+      backgroundColor: ['#3b82f688','#3b82f688','#3b82f688','#22c55e88','#22c55e88','#f9731688','#f59e0b88','#3b82f688','#22c55e88','#f59e0b88','#8b5cf688','#8b5cf688','#94a3b888','#22c55e88','#8b5cf688'],
+      borderColor:     ['#3b82f6',  '#3b82f6',  '#3b82f6',  '#22c55e',  '#22c55e',  '#f97316',  '#f59e0b',  '#3b82f6',  '#22c55e',  '#f59e0b',  '#8b5cf6',  '#8b5cf6',  '#94a3b8',  '#22c55e',  '#8b5cf6'  ],
       borderWidth: 1,
       borderRadius: 3,
     }]
