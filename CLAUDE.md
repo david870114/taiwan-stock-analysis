@@ -4,4 +4,4 @@
 
 **`taiwan-stock-analysis-SKILL.md`**（本資料夾內）
 
-請直接參考該檔案，CLAUDE.md 不重複記錄，避免兩份不同步。
+@taiwan-stock-analysis-SKILL.md
