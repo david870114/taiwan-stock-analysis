@@ -23,9 +23,7 @@ async function fetchPrice(id) {
   // STOCK_DAY 欄位：[日期, 成交股數, 成交金額, 開盤, 最高, 最低, 收盤, 漲跌價差, 成交筆數]
   const px = parseFloat(last[6].replace(/,/g, ''));
   const chgPriceStr = last[7].replace(/,/g, '');
-  const chgPrice = chgPriceStr.startsWith('▲') ? parseFloat(chgPriceStr.slice(1))
-                 : chgPriceStr.startsWith('▼') ? -parseFloat(chgPriceStr.slice(1))
-                 : 0;
+  const chgPrice = parseFloat(chgPriceStr) || 0;
   const prevPx = px - chgPrice;
   const chg = prevPx > 0 ? parseFloat((chgPrice / prevPx * 100).toFixed(2)) : 0;
 
