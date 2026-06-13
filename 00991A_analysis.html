@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>主動復華未來50 00991A — 價格走勢分析</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #0f1117; color: #e2e8f0; padding: 16px; }
+  h1 { font-size: 18px; font-weight: 700; color: #f8fafc; margin-bottom: 4px; }
+  .subtitle { font-size: 12px; color: #94a3b8; margin-bottom: 16px; }
+  .tabs { display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; }
+  .tab { padding: 6px 14px; border-radius: 20px; font-size: 12px; cursor: pointer; border: 1px solid #334155; color: #94a3b8; background: transparent; transition: all 0.2s; }
+  .tab.active { background: #3b82f6; color: #fff; border-color: #3b82f6; }
+  .tab:hover:not(.active) { border-color: #64748b; color: #e2e8f0; }
+  .panel { display: none; }
+  .panel.active { display: block; }
+  canvas { width: 100% !important; border-radius: 10px; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+  .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-top: 12px; }
+  .grid4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 12px; margin-top: 12px; }
+  .card { background: #1e2535; border: 1px solid #2d3748; border-radius: 10px; padding: 14px; }
+  .card h3 { font-size: 12px; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
+  .card .val { font-size: 22px; font-weight: 700; }
+  .card .note { font-size: 11px; color: #64748b; margin-top: 4px; }
+  .green { color: #22c55e; } .yellow { color: #eab308; } .red { color: #ef4444; } .blue { color: #3b82f6; } .purple { color: #c4b5fd; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 12px; }
+  th { background: #1e2535; color: #64748b; padding: 8px 10px; text-align: left; font-weight: 600; font-size: 11px; text-transform: uppercase; }
+  td { padding: 8px 10px; border-bottom: 1px solid #1e2535; }
+  tr:hover td { background: #1a2030; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: 600; }
+  .badge-buy { background: #14532d; color: #86efac; }
+  .badge-watch { background: #713f12; color: #fde68a; }
+  .badge-avoid { background: #450a0a; color: #fca5a5; }
+  .scenario-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 12px; }
+  .scenario-card { border-radius: 10px; padding: 14px; text-align: center; }
+  .bear { background: linear-gradient(135deg, #1a0a0a, #2d1010); border: 1px solid #7f1d1d; }
+  .base { background: linear-gradient(135deg, #0a1a0a, #102d10); border: 1px solid #14532d; }
+  .bull { background: linear-gradient(135deg, #0a0f1a, #10182d); border: 1px solid #1d4ed8; }
+  .sc-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.7; margin-bottom: 6px; }
+  .sc-price { font-size: 22px; font-weight: 800; margin: 4px 0; }
+  .sc-detail { font-size: 10px; opacity: 0.65; line-height: 1.6; }
+  .section-title { font-size: 13px; font-weight: 600; color: #cbd5e1; margin: 16px 0 8px; }
+  .buy-signal { background: #0f2a1e; border: 1px solid #166534; border-radius: 10px; padding: 14px; margin-top: 12px; }
+  .buy-signal h3 { color: #86efac; font-size: 13px; margin-bottom: 8px; }
+  .buy-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid #1a3a2a; gap: 8px; }
+  .buy-row:last-child { border-bottom: none; }
+  .current-price-badge { background: #1e3a5f; border: 1px solid #3b82f6; border-radius: 8px; padding: 10px 14px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px; }
+  .chart-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; }
+  .chart-box { background: #1e2535; border: 1px solid #2d3748; border-radius: 10px; padding: 14px; }
+  .chart-box h3 { font-size: 12px; color: #94a3b8; font-weight: 600; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.05em; }
+  @media(max-width:700px){ .chart-row{ grid-template-columns:1fr; } .scenario-grid,.grid3,.grid4{ grid-template-columns:1fr; } .grid2{ grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+<div style="margin-bottom:12px;">
+  <a href="index.html" style="color:#64748b;font-size:12px;text-decoration:none;display:inline-flex;align-items:center;gap:4px;padding:5px 10px;border:1px solid #334155;border-radius:8px;transition:all 0.2s;" onmouseover="this.style.color='#e2e8f0';this.style.borderColor='#64748b'" onmouseout="this.style.color='#64748b';this.style.borderColor='#334155'">← 返回總覽</a>
+</div>
+<h1>📈 主動復華未來50 (00991A) — 價格走勢分析</h1>
+<p class="subtitle">價格走勢 ✦ 三情境評估 ✦ 配息紀錄 ✦ 持股資訊 ✦ 基本面分析 ✦ 更新時間：2026年6月13日</p>
+
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('price', this)">📈 價格走勢</button>
+  <button class="tab" onclick="switchTab('scenario', this)">🎯 三情境評估</button>
+  <button class="tab" onclick="switchTab('div', this)">📊 配息紀錄</button>
+  <button class="tab" onclick="switchTab('holdings', this)">🏦 持股資訊</button>
+  <button class="tab" onclick="switchTab('fundamental', this)">🏢 基本面分析</button>
+</div>
+
+<!-- TAB 1: 價格走勢 -->
+<div id="tab-price" class="panel active">
+  <div class="current-price-badge">
+    <span style="color:#94a3b8;font-size:12px;">目前股價（即時）</span>
+    <span style="color:#3b82f6;font-size:20px;font-weight:800;" id="live-price">載入中…</span>
+    <span style="color:#eab308;font-size:12px;" id="live-return-note">計算中…</span>
+  </div>
+  <canvas id="priceChart" height="340"></canvas>
+  <p style="font-size:11px;color:#475569;margin-top:8px;text-align:center;">* 00991A 成立於 2025/12，歷史較短（約7個月），尚無 EPS 及配息紀錄，以價格走勢追蹤為主。</p>
+
+  <div class="grid4" style="margin-top:16px;">
+    <div class="card">
+      <h3>掛牌價（25M12）</h3>
+      <div class="val blue">10.47 元</div>
+      <div class="note">2025年12月掛牌</div>
+    </div>
+    <div class="card">
+      <h3>目前股價</h3>
+      <div class="val green" id="stat-price">19.05 元</div>
+      <div class="note">2026/06/12</div>
+    </div>
+    <div class="card">
+      <h3>掛牌以來報酬</h3>
+      <div class="val green">+81.9%</div>
+      <div class="note">約6個月（2025/12 → 2026/06）</div>
+    </div>
+    <div class="card">
+      <h3>淨值（NAV）</h3>
+      <div class="val yellow">19.02 元</div>
+      <div class="note">折溢價 +0.16%（2026/06/12）</div>
+    </div>
+  </div>
+</div>
+
+<!-- TAB 2: 三情境評估 -->
+<div id="tab-scenario" class="panel">
+  <div class="grid2">
+    <div class="card">
+      <h3>掛牌以來報酬</h3>
+      <div class="val green">+81.9%</div>
+      <div class="note">25M12（10.47）→ 26M06（19.05），約6個月</div>
+    </div>
+    <div class="card">
+      <h3>估值基礎</h3>
+      <div class="val blue">價格 / NAV</div>
+      <div class="note">尚無 EPS 及配息，以淨值折溢價與價格位階評估</div>
+    </div>
+  </div>
+
+  <div class="section-title">三情境價格評估（以掛牌價 10.47 元為基準）</div>
+  <div class="scenario-grid">
+    <div class="scenario-card bear">
+      <div class="sc-label">🐻 保守</div>
+      <div class="sc-price red">12–15 元</div>
+      <div class="sc-detail">大盤深度修正<br>回測掛牌後低點<br>26M03低點11.75元附近<br>積極進場帶</div>
+    </div>
+    <div class="scenario-card base">
+      <div class="sc-label">⚖️ 合理</div>
+      <div class="sc-price green">17–20 元</div>
+      <div class="sc-detail">貼近 NAV 合理帶<br>前5月整理區上緣<br>正常估值布局帶</div>
+    </div>
+    <div class="scenario-card bull">
+      <div class="sc-label">🚀 樂觀</div>
+      <div class="sc-price" style="color:#60a5fa;">23–28 元</div>
+      <div class="sc-detail">台股多頭延伸行情<br>主動 ETF 資金追捧<br>溢價 20–40% 於 NAV</div>
+    </div>
+  </div>
+
+  <div class="buy-signal">
+    <h3>💰 分批建倉買點建議（價格位階法）</h3>
+    <div class="buy-row">
+      <span style="color:#86efac;font-size:13px;font-weight:600;">第一批（40%）</span>
+      <span style="color:#fde68a;font-size:14px;font-weight:700;">12–15 元</span>
+      <span class="badge badge-buy">大盤修正積極進場，回測掛牌區</span>
+    </div>
+    <div class="buy-row">
+      <span style="color:#86efac;font-size:13px;font-weight:600;">第二批（40%）</span>
+      <span style="color:#fde68a;font-size:14px;font-weight:700;">17–20 元</span>
+      <span class="badge badge-buy">貼近 NAV 合理帶布局</span>
+    </div>
+    <div class="buy-row">
+      <span style="color:#86efac;font-size:13px;font-weight:600;">第三批（20%）</span>
+      <span style="color:#fde68a;font-size:14px;font-weight:700;">20–23 元</span>
+      <span class="badge badge-watch">偏高估值謹慎追加</span>
+    </div>
+    <div class="buy-row" style="border-top:1px solid #166534;margin-top:8px;padding-top:10px;">
+      <span style="color:#fca5a5;font-size:12px;">觀望 / 等待回調</span>
+      <span style="color:#fca5a5;font-size:13px;font-weight:700;">25 元以上</span>
+      <span class="badge badge-avoid">高溢價帶，追高風險高</span>
+    </div>
+  </div>
+
+  <div style="background:#1e2535;border:1px solid #334155;border-radius:10px;padding:12px;margin-top:14px;">
+    <div style="font-size:12px;font-weight:700;color:#eab308;margin-bottom:6px;">⚠️ 主動式成長型 ETF：尚無 EPS / 殖利率估值基礎</div>
+    <div style="font-size:12px;color:#94a3b8;line-height:1.8;">
+      00991A 以<strong style="color:#e2e8f0;">長期資本增值</strong>為主要目標，2025/12 掛牌至今尚無配息紀錄。無法使用 PER 河流圖或殖利率帶估值，目前以<strong style="color:#3b82f6;">價格位階與 NAV 折溢價</strong>評估。<br>
+      掛牌約6個月報酬率已達 <strong style="color:#22c55e;">+82%</strong>，主要由台股 AI 行情驅動。<strong style="color:#3b82f6;">長期定期定額</strong>是主要投資方式，首次配息後將更新為殖利率法。
+    </div>
+  </div>
+</div>
+
+<!-- TAB 3: 配息紀錄 -->
+<div id="tab-div" class="panel">
+  <div style="background:#1e2535;border:1px solid #334155;border-radius:10px;padding:20px;margin-top:8px;text-align:center;">
+    <div style="font-size:32px;margin-bottom:10px;">📋</div>
+    <div style="font-size:14px;font-weight:700;color:#eab308;margin-bottom:8px;">尚無配息紀錄</div>
+    <div style="font-size:12px;color:#94a3b8;line-height:1.8;">
+      00991A 主動復華未來50 掛牌於 2025年12月，截至 2026年6月尚無任何配息紀錄（Goodinfo 查詢：查無股利政策資訊）。<br><br>
+      若未來宣告配息，將依實際配息金額更新本頁，並切換為殖利率河流圖分析。
+    </div>
+  </div>
+
+  <div class="section-title" style="margin-top:20px;">月線收盤價明細（上市以來）</div>
+  <table>
+    <thead>
+      <tr><th>月份</th><th>收盤價（元）</th><th>月漲跌幅</th><th>累計報酬（vs 掛牌 10.47）</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>25M12</td><td>10.47</td><td>—</td><td style="color:#94a3b8;">+0.0%（掛牌）</td></tr>
+      <tr><td>26M01</td><td>11.82</td><td style="color:#22c55e;">+12.9%</td><td style="color:#22c55e;">+12.9%</td></tr>
+      <tr><td>26M02</td><td>12.88</td><td style="color:#22c55e;">+9.0%</td><td style="color:#22c55e;">+23.0%</td></tr>
+      <tr><td>26M03</td><td>11.75</td><td style="color:#ef4444;">-8.8%</td><td style="color:#22c55e;">+12.2%</td></tr>
+      <tr><td>26M04</td><td>16.80</td><td style="color:#22c55e;">+43.0%</td><td style="color:#22c55e;">+60.5%</td></tr>
+      <tr><td>26M05</td><td>19.64</td><td style="color:#22c55e;">+16.9%</td><td style="color:#22c55e;">+87.6%</td></tr>
+      <tr style="background:#0f2a1e;"><td><strong>26M06</strong></td><td style="color:#22c55e;font-weight:700;">19.05</td><td style="color:#ef4444;">-3.0%（截至06/12）</td><td style="color:#22c55e;font-weight:700;"><strong>+81.9%</strong></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- TAB 4: 持股資訊 -->
+<div id="tab-holdings" class="panel">
+  <div class="grid4" style="margin-top:4px;">
+    <div class="card"><h3>ETF 類型</h3><div style="font-size:13px;font-weight:700;color:#e2e8f0;line-height:1.5;">主動式 ETF</div><div class="note">非追蹤指數，由基金經理主動選股</div></div>
+    <div class="card"><h3>發行投信</h3><div class="val blue" style="font-size:16px;">復華投信</div><div class="note">Fuh Hwa Investment Trust</div></div>
+    <div class="card"><h3>配息頻率</h3><div class="val yellow" style="font-size:16px;">尚未配息</div><div class="note">掛牌未滿一年，待宣告</div></div>
+    <div class="card"><h3>NAV（淨值）</h3><div class="val green">19.02 元</div><div class="note">折溢價 +0.16%（2026/06/12）</div></div>
+  </div>
+
+  <div class="section-title" style="margin-top:16px;">主要持股（估算，2026/06）</div>
+  <table>
+    <thead><tr><th>#</th><th>代號</th><th>名稱</th><th>估計比重</th><th>產業</th><th>說明</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>2330</td><td>台積電</td><td>~25–35%</td><td>AI半導體</td><td>最大持股，台灣最大市值企業</td></tr>
+      <tr><td>2</td><td>2454</td><td>聯發科</td><td>~5–10%</td><td>AI半導體</td><td>手機與 AI 晶片設計龍頭</td></tr>
+      <tr><td>3</td><td>2345</td><td>智邦</td><td>~3–7%</td><td>AI網通</td><td>AI交換器龍頭</td></tr>
+      <tr><td>4</td><td>2382</td><td>廣達</td><td>~3–6%</td><td>AI伺服器</td><td>AI伺服器 ODM 大廠</td></tr>
+      <tr><td>5</td><td>3231</td><td>緯創</td><td>~2–5%</td><td>AI伺服器</td><td>AI伺服器及雲端設備</td></tr>
+      <tr><td colspan="6" style="color:#475569;font-size:10px;text-align:center;padding:10px;">* 持股比重為估算值，實際以<a href="https://www.fuhhwa.com.tw" target="_blank" style="color:#3b82f6;">復華投信官網</a>最新公告為準</td></tr>
+    </tbody>
+  </table>
+
+  <div class="chart-row">
+    <div class="chart-box"><h3>🏭 產業分布（估算）</h3><canvas id="industryChart" height="260"></canvas></div>
+    <div class="chart-box"><h3>📊 選股策略核心</h3>
+      <div style="font-size:12px;line-height:1.9;color:#cbd5e1;margin-top:8px;">
+        <div style="color:#3b82f6;font-weight:700;margin-bottom:8px;">主動選股：聚焦台灣未來成長企業（未來50）</div>
+        <div style="color:#22c55e;">✅ 由基金經理主動選股，非被動追蹤指數</div>
+        <div style="color:#22c55e;">✅ 聚焦台灣未來最具競爭力的50家企業</div>
+        <div style="color:#22c55e;">✅ AI 供應鏈、科技成長股為主力</div>
+        <div style="color:#22c55e;">✅ 成立以來績效大幅超越大盤（+82%，約6個月）</div>
+        <div style="color:#eab308;margin-top:8px;">⚠️ 主動基金費率高於被動 ETF</div>
+        <div style="color:#eab308;">⚠️ 成立未滿一年，尚無配息紀錄</div>
+        <div style="color:#eab308;">⚠️ 台積電等少數大股集中度高</div>
+        <div style="color:#ef4444;margin-top:8px;">✗ 主動選股能否長期持續超越指數存疑</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TAB 5: 基本面分析 -->
+<div id="tab-fundamental" class="panel">
+
+  <!-- 基金概況 -->
+  <div class="section-title">📊 基金概況</div>
+  <div class="grid3">
+    <div class="card">
+      <h3>掛牌日期</h3>
+      <div class="val blue" style="font-size:16px;">2025年12月</div>
+      <div class="note">掛牌價約 10.47 元，至今約6個月</div>
+    </div>
+    <div class="card">
+      <h3>掛牌以來報酬</h3>
+      <div class="val green">+81.9%</div>
+      <div class="note">截至 2026/06/12，大幅超越大盤</div>
+    </div>
+    <div class="card">
+      <h3>配息狀況</h3>
+      <div class="val yellow" style="font-size:16px;">尚未配息</div>
+      <div class="note">待首次宣告後更新殖利率分析</div>
+    </div>
+  </div>
+
+  <!-- ETF 策略說明 -->
+  <div class="section-title">🏗️ ETF 策略說明</div>
+  <div class="grid2">
+    <div class="card">
+      <h3>選股策略</h3>
+      <div style="font-size:12px;line-height:1.9;color:#cbd5e1;margin-top:4px;">
+        <span style="color:#3b82f6;font-weight:700;">主動式選股，聚焦台灣未來50強企業</span><br>
+        由復華投信基金經理主動選股，以台灣最具未來競爭力的50家企業為投資核心，重點布局：<br>
+        ✅ AI 半導體（台積電、聯發科）<br>
+        ✅ AI 網通（智邦）<br>
+        ✅ AI 伺服器（廣達、緯創）<br>
+        ✅ 其他台灣成長型企業<br>
+        <span style="color:#64748b;font-size:11px;margin-top:4px;display:block;">投資組合強調「未來性」，選擇具有長期競爭優勢的台灣企業</span>
+      </div>
+    </div>
+    <div class="card">
+      <h3>主要競爭 ETF</h3>
+      <div style="font-size:12px;line-height:1.9;margin-top:4px;">
+        <div style="color:#94a3b8;font-size:11px;margin-bottom:6px;">同為主動式台股 ETF</div>
+        <div style="color:#e2e8f0;font-weight:600;">00981A 主動統一台股增長</div>
+        <div style="color:#64748b;font-size:11px;margin-bottom:6px;">統一投信，2025/04掛牌，掛牌以來漲逾200%</div>
+        <div style="color:#e2e8f0;font-weight:600;">00403A 元大台灣主動優選</div>
+        <div style="color:#64748b;font-size:11px;margin-bottom:6px;">2026/05掛牌，規模逾791億，最新加入者</div>
+        <div style="color:#e2e8f0;font-weight:600;">00994A</div>
+        <div style="color:#64748b;font-size:11px;">另一主動台股ETF，績效居前</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 市場地位 -->
+  <div class="section-title">🌐 市場地位</div>
+  <div style="background:#1e2535;border:1px solid #2d3748;border-radius:10px;padding:14px;margin-bottom:14px;">
+    <div style="display:flex;gap:20px;flex-wrap:wrap;justify-content:space-around;text-align:center;margin-bottom:12px;">
+      <div>
+        <div style="font-size:11px;color:#64748b;margin-bottom:4px;">5月主動台股ETF績效</div>
+        <div style="font-size:20px;font-weight:800;color:#22c55e;">贏大盤</div>
+        <div style="font-size:10px;color:#475569;margin-top:2px;">13檔中僅3檔贏大盤，00991A入列</div>
+      </div>
+      <div>
+        <div style="font-size:11px;color:#64748b;margin-bottom:4px;">成立年份</div>
+        <div style="font-size:20px;font-weight:800;color:#eab308;">2025 年</div>
+        <div style="font-size:10px;color:#475569;margin-top:2px;">2025/12 掛牌，歷史最短約6個月</div>
+      </div>
+      <div>
+        <div style="font-size:11px;color:#64748b;margin-bottom:4px;">前5月含息報酬</div>
+        <div style="font-size:20px;font-weight:800;color:#22c55e;">+82%</div>
+        <div style="font-size:10px;color:#475569;margin-top:2px;">優於大盤，主動式ETF前段班</div>
+      </div>
+    </div>
+    <div style="font-size:11px;color:#64748b;line-height:1.7;">
+      2026年前5月報酬約+82%（無配息，純價格報酬），為主動台股ETF中的前段班。5月單月績效贏大盤的主動台股ETF僅3檔，00991A為其中之一。但需注意：績效主要由 AI 台股大行情驅動，而非純粹選股能力。
+    </div>
+  </div>
+
+  <!-- 估值指標 -->
+  <div class="section-title">📐 估值指標</div>
+  <div class="grid4">
+    <div class="card">
+      <h3>即時股價</h3>
+      <div class="val blue" id="fund-price">—</div>
+      <div class="note" id="fund-price-note">載入中…</div>
+    </div>
+    <div class="card">
+      <h3>淨值（NAV）</h3>
+      <div class="val yellow">19.02 元</div>
+      <div class="note">折溢價 +0.16%（2026/06/12）</div>
+    </div>
+    <div class="card">
+      <h3>年化配息率</h3>
+      <div class="val" style="color:#475569;">N/A</div>
+      <div class="note">尚無配息，待宣告後更新</div>
+    </div>
+    <div class="card">
+      <h3>掛牌以來報酬</h3>
+      <div class="val green">+81.9%</div>
+      <div class="note">2025/12 → 2026/06（純價格）</div>
+    </div>
+  </div>
+  <div style="background:#1e2535;border-radius:10px;padding:14px;margin-top:14px;">
+    <div style="font-size:12px;font-weight:700;color:#cbd5e1;margin-bottom:8px;">估值解讀</div>
+    <div style="font-size:12px;color:#94a3b8;line-height:1.8;">
+      00991A 掛牌僅約6個月，尚無 EPS 及配息數據，無法使用傳統 PER 河流圖或殖利率帶估值。目前以<strong style="color:#e2e8f0;">淨值折溢價</strong>（+0.16%，幾乎貼近 NAV）及<strong style="color:#e2e8f0;">價格走勢</strong>評估。<br><br>
+      目前股價 19.05 元，NAV 19.02 元，折溢價極小，代表市場定價合理。<strong style="color:#3b82f6;">首次配息宣告後</strong>，本頁將更新為殖利率河流圖分析模式。<br><br>
+      <strong style="color:#eab308;">注意：</strong>ETF 從 10.47 元漲至 19.05 元（+82%），已有相當漲幅。若台股 AI 行情降溫，需注意回檔風險。
+    </div>
+  </div>
+
+  <!-- 利多 vs 風險 -->
+  <div class="section-title">⚡ 利多 vs 風險</div>
+  <div class="grid2">
+    <div class="card">
+      <h3>🚀 利多</h3>
+      <div style="font-size:12px;line-height:1.9;color:#86efac;">
+        ✓ 掛牌約6個月報酬率+82%，超越大盤<br>
+        ✓ 5月績效贏大盤（13檔中僅3檔達成）<br>
+        ✓ 復華投信主動選股，聚焦台灣未來50強<br>
+        ✓ 股價貼近 NAV，折溢價小（+0.16%）<br>
+        ✓ AI 台股核心資產布局完整<br>
+        ✓ 「未來50」概念符合台股長期投資邏輯
+      </div>
+    </div>
+    <div class="card">
+      <h3>⚠️ 風險</h3>
+      <div style="font-size:12px;line-height:1.9;color:#fca5a5;">
+        ✗ 成立僅約6個月，主動選股能力尚待驗證<br>
+        ✗ 股價從10.47元漲至~19元，已漲逾80%<br>
+        ✗ 尚無配息，無法用殖利率法估值<br>
+        ✗ 主動基金費率高於被動 ETF<br>
+        ✗ 歷史極短，缺乏市場各階段驗證<br>
+        ✗ AI 題材若降溫，波動風險大
+      </div>
+    </div>
+  </div>
+
+  <!-- 關鍵數據快查 -->
+  <div class="section-title">📋 關鍵數據快查</div>
+  <table>
+    <thead><tr><th>指標</th><th>數值</th><th>評估</th></tr></thead>
+    <tbody>
+      <tr><td>目前股價</td><td style="color:#3b82f6;font-weight:700;" id="summary-price">~19.05 元（2026/06/12）</td><td><span class="badge badge-watch">貼近 NAV，折溢價正常</span></td></tr>
+      <tr><td>掛牌價（25M12）</td><td>10.47 元</td><td><span class="badge badge-avoid">已漲逾80%</span></td></tr>
+      <tr><td>歷史低點（26M03）</td><td style="color:#ef4444;">11.75 元</td><td><span class="badge badge-buy">大盤修正時的支撐參考</span></td></tr>
+      <tr><td>NAV（淨值）</td><td>19.02 元</td><td><span class="badge badge-buy">折溢價 +0.16%，定價合理</span></td></tr>
+      <tr><td>配息紀錄</td><td style="color:#64748b;">尚無</td><td><span class="badge badge-watch">待首次宣告後更新</span></td></tr>
+      <tr><td>便宜價（參考）</td><td>12–15 元</td><td><span class="badge badge-buy">大盤深度修正積極建倉帶</span></td></tr>
+      <tr><td>合理價（參考）</td><td>17–20 元</td><td><span class="badge badge-buy">貼近 NAV 正常估值帶</span></td></tr>
+      <tr><td>昂貴價（參考）</td><td>25 元以上</td><td><span class="badge badge-avoid">高溢價帶，追高需謹慎</span></td></tr>
+      <tr><td>配息頻率（預計）</td><td>季配（推測）</td><td><span class="badge badge-watch">待復華投信公告確認</span></td></tr>
+    </tbody>
+  </table>
+
+  <p style="font-size:10px;color:#475569;margin-top:14px;line-height:1.6;">⚠️ 本分析僅供參考，不構成投資建議。股市有風險，投資前請自行判斷。00991A 掛牌歷史極短，估值僅為初步參考，待配息後將更新為殖利率法分析。</p>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<script>
+function switchTab(id, btn) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  btn.classList.add('active');
+}
+
+const data = [
+  { m:'25M12', px:10.47 },
+  { m:'26M01', px:11.82 },
+  { m:'26M02', px:12.88 },
+  { m:'26M03', px:11.75 },
+  { m:'26M04', px:16.80 },
+  { m:'26M05', px:19.64 },
+  { m:'26M06', px:19.05 },
+];
+
+const labels = data.map(d => d.m);
+const prices = data.map(d => d.px);
+const ipoPrice = 10.47;
+const ipoLine = data.map(() => ipoPrice);
+
+const priceCtx = document.getElementById('priceChart').getContext('2d');
+new Chart(priceCtx, {
+  type: 'line',
+  data: {
+    labels,
+    datasets: [
+      { label: '股價', data: prices, borderColor: '#ffffff', borderWidth: 2.5, pointRadius: 4, pointBackgroundColor: '#3b82f6', tension: 0.3, spanGaps: true, order: 0 },
+      { label: '掛牌價（10.47）', data: ipoLine, borderColor: '#64748b', borderWidth: 1, borderDash: [4,3], pointRadius: 0 },
+    ]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      legend: { labels: { color: '#94a3b8', font: { size: 11 } } },
+      tooltip: { callbacks: { label(ctx) {
+        const v = ctx.parsed.y.toFixed(2);
+        if (ctx.dataset.label === '股價') {
+          const ret = ((ctx.parsed.y - ipoPrice) / ipoPrice * 100).toFixed(1);
+          return `股價: ${v} 元（掛牌以來 ${ret >= 0 ? '+' : ''}${ret}%）`;
+        }
+        return `${ctx.dataset.label}: ${v} 元`;
+      }}}
+    },
+    scales: {
+      x: { ticks: { color: '#475569', maxTicksLimit: 12, font: { size: 10 } }, grid: { color: '#1e2535' } },
+      y: { ticks: { color: '#94a3b8', font: { size: 10 } }, grid: { color: '#1e2535' }, min: 8 }
+    }
+  }
+});
+
+const industries = [
+  { label:'AI半導體',     pct:35, color:'#3b82f6' },
+  { label:'AI網通',       pct:10, color:'#22c55e' },
+  { label:'AI伺服器/ODM', pct:12, color:'#f59e0b' },
+  { label:'AI散熱/電源',  pct:8,  color:'#8b5cf6' },
+  { label:'金融/其他',    pct:35, color:'#64748b' },
+];
+new Chart(document.getElementById('industryChart').getContext('2d'), {
+  type: 'doughnut',
+  data: { labels: industries.map(i=>i.label), datasets: [{ data: industries.map(i=>i.pct), backgroundColor: industries.map(i=>i.color), borderWidth:2, borderColor:'#0f1117' }] },
+  options: { responsive:true, plugins: { legend:{ position:'right', labels:{ color:'#94a3b8', font:{size:10}, padding:8, boxWidth:12 } }, tooltip:{ callbacks:{ label(ctx){ return `${ctx.label}: ~${ctx.parsed}%（估算）`; } } } } }
+});
+
+async function loadLivePrice() {
+  try {
+    const res = await fetch('https://taiwan-stock-price.david870114.workers.dev/?id=00991A', { cache: 'no-cache' });
+    const d = JSON.parse(await res.text());
+    const price = parseFloat(d.price);
+    if (price && !isNaN(price)) {
+      const ret = ((price - ipoPrice) / ipoPrice * 100).toFixed(1);
+      document.getElementById('live-price').textContent = price.toFixed(2) + ' 元';
+      document.getElementById('live-return-note').textContent = `掛牌以來 +${ret}%`;
+      document.getElementById('stat-price').textContent = price.toFixed(2) + ' 元';
+      document.getElementById('summary-price').textContent = `${price.toFixed(2)} 元（即時）`;
+      const fundEl = document.getElementById('fund-price');
+      if (fundEl) { fundEl.textContent = price.toFixed(2) + ' 元'; }
+      const noteEl = document.getElementById('fund-price-note');
+      if (noteEl) { noteEl.textContent = `掛牌以來 +${ret}%`; }
+    }
+  } catch(e) {}
+}
+window.addEventListener('load', loadLivePrice);
+</script>
+</body>
+</html>
