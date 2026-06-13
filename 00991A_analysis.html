@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
@@ -429,6 +429,7 @@ new Chart(priceCtx, {
   },
   options: {
     responsive: true,
+    interaction: { mode: 'index', intersect: false },
     plugins: {
       legend: { labels: { color: '#94a3b8', font: { size: 11 } } },
       tooltip: { callbacks: { label(ctx) {
