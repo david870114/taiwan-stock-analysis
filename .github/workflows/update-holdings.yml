@@ -1,8 +1,8 @@
-name: Update 0050 Holdings Prices
+name: Update ETF Holdings Prices
 
 on:
   schedule:
-    # 每個交易日 15:30 台灣時間（UTC+8）= UTC 07:30，收盤後 2 小時確保資料上架
+    # 每個交易日 15:30 台灣時間（UTC+8）= UTC 07:30，確保 TWSE 資料已上架
     - cron: '30 7 * * 1-5'
   workflow_dispatch:  # 允許手動觸發
 
@@ -19,15 +19,15 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Fetch TWSE prices and update HTML
-        run: node scripts/update-0050-holdings.mjs
+      - name: Fetch TWSE prices and update ETF HTML files
+        run: node scripts/update-etf-holdings.mjs
 
       - name: Commit and push if changed
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add 0050_analysis.html
+          git add 0050_analysis.html 0056_analysis.html 00878_analysis.html 00919_analysis.html
           git diff --staged --quiet && echo "No changes" || (
-            git commit -m "Auto-update 0050 holdings prices $(date -u '+%Y-%m-%d')"
+            git commit -m "Auto-update ETF holdings prices $(date -u '+%Y-%m-%d')"
             git push
           )
