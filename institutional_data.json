@@ -1,10 +1,10 @@
 {
-  "lastUpdated": "2026/06/18",
+  "lastUpdated": "2026/06/19",
   "market": {
     "foreign": 211,
-    "investment_trust": 1,
+    "investment_trust": 8,
     "dealer": 155,
-    "total": 367,
+    "total": 374,
     "date": "2026/06/18"
   },
   "topBuyers": [
@@ -147,9 +147,9 @@
       "change": "+5.5",
       "changePct": "+3.93",
       "foreignNet": 65777,
-      "trustNet": -49268,
+      "trustNet": -49326,
       "dealerNet": 8305,
-      "totalNet": 24815
+      "totalNet": 24757
     },
     {
       "code": "00687B",
@@ -175,6 +175,16 @@
     }
   ],
   "history": [
+    {
+      "date": "2026/06/18",
+      "market": {
+        "foreign": 211,
+        "investment_trust": 1,
+        "dealer": 155,
+        "total": 367,
+        "date": "2026/06/18"
+      }
+    },
     {
       "date": "2026/06/17",
       "market": {
