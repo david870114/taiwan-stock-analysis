@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>力成 6239 — 2026 股價推算分析</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #0f1117; color: #e2e8f0; padding: 16px; }
+  h1 { font-size: 18px; font-weight: 700; color: #f8fafc; margin-bottom: 4px; }
+  .subtitle { font-size: 12px; color: #94a3b8; margin-bottom: 16px; }
+  .tabs { display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; }
+  .tab { padding: 6px 14px; border-radius: 20px; font-size: 12px; cursor: pointer; border: 1px solid #334155; color: #94a3b8; background: transparent; transition: all 0.2s; }
+  .tab.active { background: #3b82f6; color: #fff; border-color: #3b82f6; }
+  .tab:hover:not(.active) { border-color: #64748b; color: #e2e8f0; }
+  .panel { display: none; }
+  .panel.active { display: block; }
+  canvas { width: 100% !important; border-radius: 10px; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+  .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-top: 16px; }
+  .grid4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 12px; margin-top: 16px; }
+  @media(max-width:640px){ .grid2,.grid3,.grid4{ grid-template-columns:1fr 1fr; } }
+  @media(max-width:400px){ .grid2,.grid3,.grid4{ grid-template-columns:1fr; } }
+  .card { background: #1e2535; border: 1px solid #2d3748; border-radius: 10px; padding: 14px; }
+  .card h3 { font-size: 12px; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
+  .card .val { font-size: 22px; font-weight: 700; }
+  .card .note { font-size: 11px; color: #64748b; margin-top: 4px; }
+  .green { color: #22c55e; } .yellow { color: #eab308; } .red { color: #ef4444; } .blue { color: #3b82f6; } .purple { color: #a855f7; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 12px; }
+  th { background: #1e2535; color: #64748b; padding: 8px 10px; text-align: left; font-weight: 600; font-size: 11px; text-transform: uppercase; }
+  td { padding: 8px 10px; border-bottom: 1px solid #1e2535; }
+  tr:hover td { background: #1a2030; }
+  tr.highlight td { background: #0f2a1e; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: 600; }
+  .badge-buy { background: #14532d; color: #86efac; }
+  .badge-watch { background: #713f12; color: #fde68a; }
+  .badge-avoid { background: #450a0a; color: #fca5a5; }
+  .badge-neutral { background: #1e293b; color: #94a3b8; }
+  .scenario-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 12px; }
+  @media(max-width:500px){ .scenario-grid{ grid-template-columns:1fr; } }
+  .scenario-card { border-radius: 10px; padding: 14px; text-align: center; }
+  .bear { background: linear-gradient(135deg, #1a0a0a, #2d1010); border: 1px solid #7f1d1d; }
+  .base { background: linear-gradient(135deg, #0a1a0a, #102d10); border: 1px solid #14532d; }
+  .bull { background: linear-gradient(135deg, #0a0f1a, #10182d); border: 1px solid #1d4ed8; }
+  .sc-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.7; margin-bottom: 6px; }
+  .sc-price { font-size: 22px; font-weight: 800; margin: 4px 0; }
+  .sc-detail { font-size: 10px; opacity: 0.65; line-height: 1.6; }
+  .section-title { font-size: 13px; font-weight: 600; color: #cbd5e1; margin: 16px 0 8px; }
+  .buy-signal { background: #0f2a1e; border: 1px solid #166534; border-radius: 10px; padding: 14px; margin-top: 12px; }
+  .buy-signal h3 { color: #86efac; font-size: 13px; margin-bottom: 8px; }
+  .buy-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid #1a3a2a; gap: 8px; }
+  .buy-row:last-child { border-bottom: none; }
+  .current-price-badge { background: #1e3a5f; border: 1px solid #3b82f6; border-radius: 8px; padding: 10px 14px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px; }
+  .warn-box { background: #2d1010; border: 1px solid #7f1d1d; border-radius: 10px; padding: 14px; margin-top: 12px; }
+  .warn-box h3 { color: #fca5a5; font-size: 13px; margin-bottom: 8px; }
+  .info-box { background: #1e2535; border: 1px solid #2d3748; border-radius: 10px; padding: 14px; margin-top: 12px; font-size: 12px; color: #94a3b8; line-height: 1.8; }
+  .info-box strong { color: #e2e8f0; }
+  .stat-bar { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 12px; }
+  .stat-item { background: #1e2535; border-radius: 10px; padding: 12px 16px; flex: 1; min-width: 120px; }
+  .stat-label { font-size: 10px; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+  .stat-val { font-size: 18px; font-weight: 700; color: #e2e8f0; }
+  .stat-sub { font-size: 10px; color: #64748b; margin-top: 2px; }
+  .client-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; }
+  @media(max-width:500px){ .client-row{ grid-template-columns:1fr; } }
+  .client-block { background: #1e2535; border-radius: 10px; padding: 14px; }
+  .client-block h4 { font-size: 11px; color: #64748b; text-transform: uppercase; margin-bottom: 10px; }
+  .client-item { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid #1a2030; font-size: 12px; }
+  .client-item:last-child { border-bottom: none; }
+  .moat-row { display: flex; align-items: flex-start; gap: 8px; padding: 5px 0; border-bottom: 1px solid #1a2030; font-size: 12px; }
+  .moat-row:last-child { border-bottom: none; }
+  .moat-icon { flex-shrink: 0; }
+</style>
+</head>
+<body>
+
+<div style="margin-bottom:12px;">
+  <a href="index.html" style="color:#64748b;font-size:12px;text-decoration:none;display:inline-flex;align-items:center;gap:4px;padding:5px 10px;border:1px solid #334155;border-radius:8px;transition:all 0.2s;" onmouseover="this.style.color='#e2e8f0';this.style.borderColor='#64748b'" onmouseout="this.style.color='#64748b';this.style.borderColor='#334155'">← 返回總覽</a>
+</div>
+<h1>📦 力成 (6239) — 2026 股價推算分析</h1>
+<p class="subtitle">PER 河流圖估值 ✦ 三情境試算 ✦ 記憶體封測龍頭 ✦ AI／FOPLP 題材 ✦ 更新時間：2026年6月14日</p>
+
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('river', this)">📈 PER 河流圖</button>
+  <button class="tab" onclick="switchTab('scenario', this)">🎯 三情境買點</button>
+  <button class="tab" onclick="switchTab('eps', this)">📊 EPS 趨勢</button>
+  <button class="tab" onclick="switchTab('fundamental', this)">🏢 基本面分析</button>
+  <button class="tab" onclick="switchTab('summary', this)">📋 完整摘要</button>
+</div>
+
+<!-- ══ TAB 1: PER River ══ -->
+<div id="tab-river" class="panel active">
+  <div class="current-price-badge">
+    <span style="color:#94a3b8;font-size:12px;">目前股價（即時）</span>
+    <span style="color:#3b82f6;font-size:20px;font-weight:800;" id="live-price">載入中…</span>
+    <span style="color:#ef4444;font-size:12px;" id="live-per-note">⚠️ 目前 PER 約 41x，遠高於歷史區間</span>
+  </div>
+  <canvas id="riverChart" height="340"></canvas>
+  <p style="font-size:11px;color:#475569;margin-top:8px;text-align:center;">* 河流帶＝各月 TTM EPS ×（11x／15x／22x／30x）。白線為月收盤價。2026 年股價噴出，已遠離所有河流帶上緣。</p>
+
+  <div class="warn-box" style="margin-top:14px;">
+    <h3>⚠️ 估值嚴重偏離歷史區間</h3>
+    <p style="font-size:12px;color:#fca5a5;line-height:1.8;">力成近 10 年 PER 多落在 <strong>8~18x</strong> 區間，近三年（含 AI 封測題材）也僅 11~24x。2026 年 1 月起股價自 ~170 元噴出至 <strong>26M05 379 元（PER 45x）</strong>，目前 347.5 元對應 PER 約 <strong>41x</strong>，是歷史均值（約 15x）的近 3 倍。市場顯然在「預先定價」FOPLP／AI 先進封裝的未來成長，但 TTM EPS 仍僅 8.41 元，本益比已嚴重透支。</p>
+  </div>
+</div>
+
+<!-- ══ TAB 2: 三情境 ══ -->
+<div id="tab-scenario" class="panel">
+  <div class="grid2">
+    <div class="card"><h3>26Q1 TTM EPS（最新季末）</h3><div class="val green">8.41 元</div><div class="note">季末月 26M03，10x欄 84.1 ÷ 10 確認</div></div>
+    <div class="card"><h3>近三年 PER 區間</h3><div class="val yellow">11x ~ 24x</div><div class="note">均值約 15x；排除 26M05/06 短暫題材高點（40x+）</div></div>
+  </div>
+
+  <div class="section-title">三情境估值試算（基於 26Q1 TTM EPS = 8.41 元）</div>
+  <div class="scenario-grid">
+    <div class="scenario-card bear">
+      <div class="sc-label">🐻 悲觀（便宜價）</div>
+      <div class="sc-price" style="color:#fca5a5;">NT$ 93</div>
+      <div class="sc-detail">
+        PER 11x<br>
+        8.41元 × 11<br>
+        景氣回落或題材退燒<br>
+        回到 2024 年底估值水準
+      </div>
+    </div>
+    <div class="scenario-card base">
+      <div class="sc-label">📊 合理價</div>
+      <div class="sc-price" style="color:#86efac;">NT$ 126</div>
+      <div class="sc-detail">
+        PER 15x<br>
+        8.41元 × 15<br>
+        對應歷史均值本益比<br>
+        封測獲利穩定下的合理評價
+      </div>
+    </div>
+    <div class="scenario-card bull">
+      <div class="sc-label">🚀 昂貴價</div>
+      <div class="sc-price" style="color:#93c5fd;">NT$ 185</div>
+      <div class="sc-detail">
+        PER 22x<br>
+        8.41元 × 22<br>
+        AI／FOPLP 題材推升估值上緣<br>
+        近三年（非題材）相對高檔
+      </div>
+    </div>
+  </div>
+
+  <div class="warn-box" style="margin-top:14px;">
+    <h3>⚠️ 目前股價 347.5 元（26M06）已遠超昂貴價</h3>
+    <p style="font-size:12px;color:#fca5a5;line-height:1.8;">
+      以目前 TTM EPS 8.41 元計算，347.5 元對應 PER <strong>41.3x</strong>，幾乎是昂貴價（185 元，22x）的 <strong>近一倍</strong>，更別說合理價（126 元）。<br>
+      若要讓現價合理化，FY2026 EPS 需大幅跳升至 <strong>16 元以上</strong>（22x）才行；以目前每月自結獲利（4 月 EPS 0.95 元）推估，全年 EPS 約落在 10~12 元，與現價仍有明顯落差。<br>
+      26M05 一度衝至 379 元（PER 45x），屬明顯題材炒作，追高風險極大。
+    </p>
+  </div>
+
+  <div class="buy-signal">
+    <h3>✅ 合理進場參考區間（PER 法）</h3>
+    <div class="buy-row"><span style="font-size:12px;color:#86efac;">🟢 便宜價（PER 11x）</span><span style="font-weight:700;color:#86efac;">NT$ 93</span></div>
+    <div class="buy-row"><span style="font-size:12px;color:#fde68a;">🟡 合理價（PER 15x）</span><span style="font-weight:700;color:#fde68a;">NT$ 126</span></div>
+    <div class="buy-row"><span style="font-size:12px;color:#fca5a5;">🔴 昂貴價（PER 22x）</span><span style="font-weight:700;color:#fca5a5;">NT$ 185</span></div>
+    <div class="buy-row"><span style="font-size:12px;color:#ef4444;">⚠️ 目前股價（26M06）</span><span style="font-weight:700;color:#ef4444;">NT$ 347.5（PER ≈ 41x，嚴重高估）</span></div>
+  </div>
+
+  <div class="info-box" style="margin-top:12px;">
+    <strong>⚡ 注意：力成屬「景氣循環＋題材股」</strong><br>
+    力成獲利隨記憶體（DRAM／NAND）封測景氣波動，EPS 在 7~12 元之間起伏，並非高成長股。2026 年股價的爆發來自 <strong>FOPLP（扇出型面板級封裝）＋ AI 先進封裝</strong>的市場想像，而非當期獲利跳升。<br>
+    評估重點：① FY2026~2027 EPS 能否實質跳升（FOPLP 量產與毛利貢獻）② 記憶體封測景氣方向 ③ 題材退燒後估值是否回歸 15~22x。目前 41x 已充分（甚至過度）定價樂觀預期。
+  </div>
+</div>
+
+<!-- ══ TAB 3: EPS 趨勢 ══ -->
+<div id="tab-eps" class="panel">
+  <canvas id="epsChart" height="260"></canvas>
+  <div class="section-title">📋 逐月明細表格（供驗證）</div>
+  <table>
+    <thead>
+      <tr>
+        <th>月份</th><th>收盤價</th><th>10x換算欄</th><th>河流圖EPS</th><th>目前PER</th><th>11x換算</th><th>15x換算</th><th>22x換算</th><th>30x換算</th>
+      </tr>
+    </thead>
+    <tbody id="eps-table-body">
+    </tbody>
+  </table>
+  <p style="font-size:10px;color:#475569;margin-top:8px;">* 河流圖 EPS = 10x換算欄 ÷ 10（每月 TTM EPS）。綠色列為最新季（26Q1 後）。</p>
+</div>
+
+<!-- ══ TAB 4: 基本面分析 ══ -->
+<div id="tab-fundamental" class="panel">
+
+  <!-- 1. 公司營運 -->
+  <div class="section-title">🏭 公司營運</div>
+  <div class="grid3">
+    <div class="card">
+      <h3>主營業務</h3>
+      <div class="val blue" style="font-size:16px;">記憶體封測</div>
+      <div class="note">DRAM／NAND Flash 封裝測試全球領先</div>
+    </div>
+    <div class="card">
+      <h3>26Q1 TTM EPS</h3>
+      <div class="val green" style="font-size:18px;">8.41 元</div>
+      <div class="note">自結 4 月 EPS 0.95 元，YoY +183%</div>
+    </div>
+    <div class="card">
+      <h3>2025 全年配息</h3>
+      <div class="val yellow" style="font-size:18px;">4.5 元</div>
+      <div class="note">前三年皆 7 元，今年下調保留資本</div>
+    </div>
+  </div>
+
+  <div class="section-title">📊 近年獲利與配息趨勢</div>
+  <table>
+    <thead>
+      <tr><th>年度</th><th>TTM EPS（約）</th><th>現金股利</th><th>備註</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>2022（FY2021 配）</td><td style="color:#e2e8f0;">~11.5 元</td><td style="color:#86efac;">6.8 元</td><td style="color:#94a3b8;">記憶體景氣高檔</td></tr>
+      <tr><td>2023（FY2022 配）</td><td style="color:#e2e8f0;">~10.7 元</td><td style="color:#86efac;">7.0 元</td><td style="color:#94a3b8;">記憶體下行年</td></tr>
+      <tr><td>2024（FY2023 配）</td><td style="color:#e2e8f0;">~11~12 元</td><td style="color:#86efac;">7.0 元</td><td style="color:#94a3b8;">獲利回升</td></tr>
+      <tr><td>2025（FY2024 配）</td><td style="color:#eab308;">~7.5 元</td><td style="color:#86efac;">7.0 元</td><td style="color:#94a3b8;">獲利回落、配息維持</td></tr>
+      <tr class="highlight"><td>2026 ✦（FY2025 配）</td><td style="color:#22c55e;font-weight:700;">8.41 元（TTM）</td><td style="color:#eab308;font-weight:700;">4.5 元</td><td style="color:#22c55e;">配息下調，保留盈餘投入 FOPLP／先進封裝</td></tr>
+    </tbody>
+  </table>
+  <div class="info-box" style="margin-top:10px;">
+    <strong>獲利與配息說明：</strong>力成 EPS 多年穩定在 7~12 元區間，屬獲利穩健的成熟封測廠。2026 年配息自 7 元下調至 <strong>4.5 元</strong>，主因是公司積極投入 FOPLP（扇出型面板級封裝）與 AI 先進封裝產能，需保留現金支應龐大資本支出。配息下調＋股價噴出，使現金殖利率自過去的 ~6% 急降至約 1.3%。
+  </div>
+
+  <!-- 2. 商業模式 -->
+  <div class="section-title">💡 商業模式</div>
+  <div class="grid2">
+    <div class="card">
+      <h3>怎麼賺錢</h3>
+      <div style="font-size:12px;color:#94a3b8;line-height:1.8;margin-top:6px;">
+        力成（PTI）為全球領先的 <strong>專業封裝測試（OSAT）</strong> 廠，記憶體封測為核心：<br>
+        • <strong>記憶體封測</strong>（DRAM／NAND Flash）：營收主力，全球龍頭地位<br>
+        • <strong>邏輯 IC 封測</strong>：SiP 系統級封裝、覆晶<br>
+        • <strong>晶圓級／面板級封裝</strong>：WLP、<strong>FOPLP</strong>（新成長動能）<br>
+        商業模式為代工服務，獲利隨記憶體與半導體景氣循環波動。
+      </div>
+    </div>
+    <div class="card">
+      <h3>護城河評估</h3>
+      <div style="font-size:12px;line-height:1.9;margin-top:6px;">
+        <div class="moat-row"><span class="moat-icon">✅</span><span><strong>記憶體封測龍頭：</strong>美光、Kioxia、SK海力士長期合作，技術與規模領先</span></div>
+        <div class="moat-row"><span class="moat-icon">✅</span><span><strong>客戶黏性高：</strong>封測製程驗證門檻高，轉換成本可觀</span></div>
+        <div class="moat-row"><span class="moat-icon">✅</span><span><strong>FOPLP 卡位：</strong>面板級封裝為下一世代 AI／HPC 先進封裝，先發布局</span></div>
+        <div class="moat-row"><span class="moat-icon">⚠️</span><span><strong>景氣循環：</strong>記憶體報價週期影響獲利，EPS 波動大</span></div>
+        <div class="moat-row"><span class="moat-icon">⚠️</span><span><strong>資本密集：</strong>先進封裝擴產折舊壓力重，影響短期毛利</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="client-row">
+    <div class="client-block">
+      <h4>主要客戶</h4>
+      <div class="client-item"><span>美光 Micron</span><span class="badge badge-watch">DRAM 封測</span></div>
+      <div class="client-item"><span>Kioxia / 鎧俠</span><span class="badge badge-neutral">NAND Flash</span></div>
+      <div class="client-item"><span>SK 海力士</span><span class="badge badge-neutral">記憶體</span></div>
+      <div class="client-item"><span>邏輯 IC 設計商</span><span class="badge badge-neutral">SiP／覆晶</span></div>
+    </div>
+    <div class="client-block">
+      <h4>主要競爭對手</h4>
+      <div class="client-item"><span>日月光投控（3711）</span><span class="badge badge-avoid">封測龍頭</span></div>
+      <div class="client-item"><span>京元電（2449）</span><span class="badge badge-watch">測試專業</span></div>
+      <div class="client-item"><span>南茂（8150）</span><span class="badge badge-neutral">記憶體封測</span></div>
+      <div class="client-item"><span>Amkor</span><span class="badge badge-avoid">國際 OSAT</span></div>
+    </div>
+  </div>
+
+  <!-- 3. 市場地位 -->
+  <div class="section-title">🌏 市場地位</div>
+  <div class="stat-bar">
+    <div class="stat-item"><div class="stat-label">產業地位</div><div class="stat-val yellow">記憶體封測龍頭</div><div class="stat-sub">全球領先 OSAT</div></div>
+    <div class="stat-item"><div class="stat-label">核心領域</div><div class="stat-val blue">DRAM / NAND</div><div class="stat-sub">記憶體封裝測試</div></div>
+    <div class="stat-item"><div class="stat-label">成長動能</div><div class="stat-val green">FOPLP / 先進封裝</div><div class="stat-sub">AI／HPC 應用</div></div>
+    <div class="stat-item"><div class="stat-label">營運性質</div><div class="stat-val purple">景氣循環</div><div class="stat-sub">隨記憶體報價波動</div></div>
+  </div>
+  <div class="info-box" style="margin-top:10px;">
+    力成在記憶體封測領域全球領先，與美光、Kioxia、SK海力士等記憶體大廠長期合作。近年積極切入 <strong>FOPLP（扇出型面板級封裝）</strong>，被市場視為承接「台積電 FOPLP 外溢」與 AI／HPC 先進封裝商機的受惠者，這也是 2026 年股價噴出的核心題材。實質貢獻仍待 FOPLP 量產與良率放大後逐季驗證。
+  </div>
+
+  <!-- 4. 估值指標 -->
+  <div class="section-title">💰 估值指標（即時）</div>
+  <div class="grid4">
+    <div class="card">
+      <h3>本益比 P/E</h3>
+      <div class="val red" id="fund-pe">計算中…</div>
+      <div class="note" id="fund-pe-note">TTM EPS = 8.41元</div>
+    </div>
+    <div class="card">
+      <h3>合理 P/E（歷史均值）</h3>
+      <div class="val yellow">15x</div>
+      <div class="note">近三年 11~24x，均值約 15x</div>
+    </div>
+    <div class="card">
+      <h3>股價淨值比 P/B</h3>
+      <div class="val blue">約 4.4x</div>
+      <div class="note">淨值約 79 元（GoodInfo）</div>
+    </div>
+    <div class="card">
+      <h3>現金殖利率</h3>
+      <div class="val red" id="fund-yield">計算中…</div>
+      <div class="note">年配息 4.5 元（FY2025）</div>
+    </div>
+  </div>
+
+  <div class="info-box" style="margin-top:12px;">
+    <strong>估值解讀：</strong>目前股價 347.5 元（26M06），TTM PER ≈ 41x，遠超合理價（126 元，15x）與昂貴價（185 元，22x）。市場已在<strong>預先定價 FOPLP／AI 先進封裝</strong>的未來成長，而非當期 8.41 元 EPS 所能支撐。配息下調至 4.5 元後，殖利率僅約 1.3%，亦不具存股吸引力。投資人需自行評估 FOPLP 放量的確定性與時程。
+  </div>
+
+  <p style="font-size:10px;color:#475569;margin-top:16px;text-align:center;">⚠️ 本分析僅供參考，不構成投資建議</p>
+</div>
+
+<!-- ══ TAB 5: 完整摘要 ══ -->
+<div id="tab-summary" class="panel">
+  <div class="card" style="margin-bottom:12px;">
+    <h3>📌 力成（6239）投資摘要</h3>
+    <div style="font-size:13px;line-height:2.0;margin-top:10px;color:#94a3b8;">
+      <strong style="color:#e2e8f0;">公司性質：</strong>全球領先專業封裝測試（OSAT）廠，記憶體封測龍頭，主攻 DRAM／NAND Flash 封測，並切入 FOPLP 面板級先進封裝。<br>
+      <strong style="color:#e2e8f0;">獲利特性：</strong>景氣循環股，EPS 多年落在 7~12 元，26Q1 TTM EPS 8.41 元；並非高速成長股。<br>
+      <strong style="color:#e2e8f0;">估值基準：</strong>近三年 PER 11~24x（均值約 15x）。便宜價 93 元（11x）／ 合理價 126 元（15x）／ 昂貴價 185 元（22x）。<br>
+      <strong style="color:#ef4444;">目前股價：</strong>347.5 元（26M06），對應 PER 41x，遠超昂貴價，屬 FOPLP／AI 題材<strong>前瞻溢價＋炒作</strong>。<br>
+      <strong style="color:#e2e8f0;">配息：</strong>FY2025 配息 4.5 元（前三年皆 7 元），保留盈餘投入先進封裝；殖利率僅約 1.3%。<br>
+      <strong style="color:#e2e8f0;">關鍵觀察：</strong>① FOPLP 量產時程與毛利貢獻 ② 記憶體封測景氣方向 ③ FY2026 EPS 能否實質跳升 ④ 題材退燒後估值是否回歸。<br>
+      <strong style="color:#e2e8f0;">主要風險：</strong>估值嚴重透支、記憶體景氣反轉、FOPLP 量產不如預期、先進封裝折舊壓力、題材退燒回檔。<br>
+      <strong style="color:#e2e8f0;">類股比較：</strong>封測同業日月光投控（3711）、京元電（2449）、南茂（8150）。
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <h3>✅ 投資亮點</h3>
+      <div style="font-size:12px;color:#86efac;line-height:2.0;margin-top:8px;">
+        ✅ 記憶體封測全球龍頭，地位穩固<br>
+        ✅ FOPLP／AI 先進封裝卡位，承接題材想像<br>
+        ✅ 美光、Kioxia、SK海力士長期客戶<br>
+        ✅ 獲利穩健，EPS 多年維持 7~12 元<br>
+        ✅ 自結 4 月獲利 YoY +183%，動能轉強
+      </div>
+    </div>
+    <div class="card">
+      <h3>⚠️ 主要風險</h3>
+      <div style="font-size:12px;color:#fca5a5;line-height:2.0;margin-top:8px;">
+        🔴 目前 347.5 元，PER 41x 嚴重高估<br>
+        🔴 遠超昂貴價（185 元），追高風險大<br>
+        🔴 配息下調至 4.5 元，殖利率僅 1.3%<br>
+        🔴 記憶體景氣循環，EPS 波動大<br>
+        🔴 FOPLP 量產與貢獻仍待逐季驗證
+      </div>
+    </div>
+  </div>
+
+  <div class="buy-signal" style="margin-top:12px;">
+    <h3>📊 各情境目標股價區間</h3>
+    <div class="buy-row"><span style="font-size:12px;color:#86efac;">🟢 EPS 8.41元 × 11~15x（便宜~合理）</span><span style="font-weight:700;color:#86efac;">NT$ 93~126</span></div>
+    <div class="buy-row"><span style="font-size:12px;color:#fde68a;">🟡 EPS 若跳升至 12元 × 15~22x</span><span style="font-weight:700;color:#fde68a;">NT$ 180~264</span></div>
+    <div class="buy-row"><span style="font-size:12px;color:#fca5a5;">🔴 目前 8.41元 × 41x（現況）</span><span style="font-weight:700;color:#fca5a5;">NT$ 347.5（前瞻溢價）</span></div>
+  </div>
+
+  <div class="info-box" style="margin-top:12px;">
+    <strong>💡 操作建議：</strong><br>
+    力成基本面為獲利穩健的封測龍頭，但目前股價已脫離 PER 法可支撐的合理區間（合理價 126 元 / 昂貴價 185 元）。現價 347.5 元完全建立在 FOPLP／AI 先進封裝的未來想像上。<br>
+    若相信 FY2026~2027 EPS 能跳升至 12~16 元，現價對應前瞻 PER 才回到 22~28x；若 FOPLP 放量不如預期，回測昂貴價（185 元）的修正幅度逾 45%。<strong>追高風險高，宜等估值回歸或基本面實質跳升再評估。</strong>
+  </div>
+
+  <p style="font-size:10px;color:#475569;margin-top:16px;text-align:center;">⚠️ 本分析僅供參考，不構成投資建議。股市有風險，請自行判斷。</p>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<script>
+
+// ══ 切 Tab ══
+function switchTab(id, btn) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ══ 數據定義（eps = 10x換算欄 ÷ 10，每月 TTM EPS） ══
+const data = [
+  { m:'23M07', px:110.5, eps:7.957, per:13.89 },
+  { m:'23M08', px:99.7,  eps:7.583, per:13.15 },
+  { m:'23M09', px:101.5, eps:7.21,  per:14.08 },
+  { m:'23M10', px:105,   eps:8.38,  per:12.53 },
+  { m:'23M11', px:112,   eps:9.55,  per:11.73 },
+  { m:'23M12', px:141,   eps:10.72, per:13.15 },
+  { m:'24M01', px:145.5, eps:10.98, per:13.25 },
+  { m:'24M02', px:156,   eps:11.25, per:13.87 },
+  { m:'24M03', px:200.5, eps:11.51, per:17.42 },
+  { m:'24M04', px:174.5, eps:11.73, per:14.87 },
+  { m:'24M05', px:178,   eps:11.96, per:14.89 },
+  { m:'24M06', px:188,   eps:12.18, per:15.44 },
+  { m:'24M07', px:163.5, eps:12.24, per:13.36 },
+  { m:'24M08', px:145.5, eps:12.3,  per:11.83 },
+  { m:'24M09', px:137,   eps:12.36, per:11.08 },
+  { m:'24M10', px:126.5, eps:11.27, per:11.22 },
+  { m:'24M11', px:122.5, eps:10.18, per:12.03 },
+  { m:'24M12', px:122,   eps:9.09,  per:13.42 },
+  { m:'25M01', px:117,   eps:8.85,  per:13.22 },
+  { m:'25M02', px:128,   eps:8.61,  per:14.87 },
+  { m:'25M03', px:122,   eps:8.37,  per:14.58 },
+  { m:'25M04', px:108.5, eps:7.99,  per:13.58 },
+  { m:'25M05', px:117,   eps:7.61,  per:15.37 },
+  { m:'25M06', px:131.5, eps:7.23,  per:18.19 },
+  { m:'25M07', px:126,   eps:7.16,  per:17.6  },
+  { m:'25M08', px:119,   eps:7.09,  per:16.78 },
+  { m:'25M09', px:146,   eps:7.02,  per:20.8  },
+  { m:'25M10', px:173,   eps:7.173, per:24.12 },
+  { m:'25M11', px:157,   eps:7.327, per:21.43 },
+  { m:'25M12', px:173,   eps:7.48,  per:23.13 },
+  { m:'26M01', px:254,   eps:7.79,  per:32.61 },
+  { m:'26M02', px:258,   eps:8.1,   per:31.85 },
+  { m:'26M03', px:187,   eps:8.41,  per:22.24 },
+  { m:'26M04', px:203,   eps:8.41,  per:24.14 },
+  { m:'26M05', px:379,   eps:8.41,  per:45.07 },
+  { m:'26M06', px:347.5, eps:8.41,  per:41.32 },
+];
+
+const labels = data.map(d => d.m);
+const prices = data.map(d => d.px);
+
+const r11 = data.map(d => +(d.eps * 11).toFixed(1));
+const r15 = data.map(d => +(d.eps * 15).toFixed(1));
+const r22 = data.map(d => +(d.eps * 22).toFixed(1));
+const r30 = data.map(d => +(d.eps * 30).toFixed(1));
+
+// ══ PER 河流圖 ══
+const ctx1 = document.getElementById('riverChart').getContext('2d');
+new Chart(ctx1, {
+  type: 'line',
+  data: {
+    labels,
+    datasets: [
+      { label: '30x（極貴）', data: r30, borderColor: '#ef4444', borderWidth: 1.5, borderDash: [4,3], pointRadius: 0, fill: false, tension: 0.3 },
+      { label: '22x（昂貴）', data: r22, borderColor: '#eab308', borderWidth: 1.5, borderDash: [4,3], pointRadius: 0, fill: false, tension: 0.3 },
+      { label: '15x（合理）', data: r15, borderColor: '#22c55e', borderWidth: 1.5, borderDash: [4,3], pointRadius: 0, fill: false, tension: 0.3 },
+      { label: '11x（便宜）', data: r11, borderColor: '#3b82f6', borderWidth: 1.5, borderDash: [4,3], pointRadius: 0, fill: false, tension: 0.3 },
+      {
+        label: '月收盤價', data: prices,
+        borderColor: '#ffffff', backgroundColor: 'rgba(255,255,255,0.05)',
+        borderWidth: 2.5, pointRadius: 2.5, pointBackgroundColor: '#ffffff',
+        fill: false, spanGaps: true, tension: 0.3, z: 10,
+      },
+    ]
+  },
+  options: {
+    responsive: true,
+    interaction: { mode: 'index', intersect: false },
+    plugins: {
+      legend: { labels: { color: '#94a3b8', font: { size: 11 } } },
+      tooltip: {
+        callbacks: {
+          label: ctx => {
+            if (ctx.dataset.label === '月收盤價') return `收盤：${ctx.parsed.y}`;
+            return `${ctx.dataset.label}：${ctx.parsed.y ?? '—'}`;
+          }
+        }
+      }
+    },
+    scales: {
+      x: { ticks: { color: '#64748b', maxRotation: 45, font: { size: 10 } }, grid: { color: '#1e2535' } },
+      y: { ticks: { color: '#64748b', font: { size: 10 } }, grid: { color: '#1e2535' } }
+    }
+  }
+});
+
+// ══ EPS 趨勢圖 ══
+const ctx2 = document.getElementById('epsChart').getContext('2d');
+new Chart(ctx2, {
+  type: 'bar',
+  data: {
+    labels,
+    datasets: [
+      {
+        label: 'TTM EPS（元）',
+        data: data.map(d => d.eps),
+        backgroundColor: '#22c55e99',
+        borderColor: '#22c55e',
+        borderWidth: 1,
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    plugins: { legend: { labels: { color: '#94a3b8', font: { size: 11 } } } },
+    scales: {
+      x: { ticks: { color: '#64748b', maxRotation: 45, font: { size: 10 } }, grid: { color: '#1e2535' } },
+      y: {
+        ticks: { color: '#64748b', font: { size: 10 } },
+        grid: { color: '#1e2535' },
+        title: { display: true, text: 'EPS（元）', color: '#64748b', font: { size: 11 } }
+      }
+    }
+  }
+});
+
+// ══ EPS 表格 ══
+const tbody = document.getElementById('eps-table-body');
+data.forEach(d => {
+  const isHighlight = d.m >= '26M03';
+  const rowClass = isHighlight ? ' class="highlight"' : '';
+  const epsStr = d.eps.toFixed(3);
+  const perStr = d.per.toFixed(2);
+  const tenxStr = (d.eps * 10).toFixed(1);
+  const c11 = (d.eps * 11).toFixed(1);
+  const c15 = (d.eps * 15).toFixed(1);
+  const c22 = (d.eps * 22).toFixed(1);
+  const c30 = (d.eps * 30).toFixed(1);
+  const priceColor = d.px > d.eps * 22 ? 'color:#ef4444' : d.px < d.eps * 11 ? 'color:#22c55e' : 'color:#e2e8f0';
+  tbody.innerHTML += `<tr${rowClass}><td>${d.m}</td><td style="${priceColor}">${d.px}</td><td>${tenxStr}</td><td>${epsStr}</td><td>${perStr}</td><td>${c11}</td><td>${c15}</td><td>${c22}</td><td>${c30}</td></tr>`;
+});
+
+// ══ 即時股價 ══
+const TTM_EPS = 8.41;
+const ANNUAL_DIV = 4.5;
+
+async function updateLivePrice() {
+  try {
+    const res = await fetch('https://taiwan-stock-price.david870114.workers.dev/?id=6239', { cache: 'no-cache' });
+    const d = JSON.parse(await res.text());
+    const price = parseFloat(d.price);
+    if (price && !isNaN(price)) {
+      document.getElementById('live-price').textContent = 'NT$ ' + price.toLocaleString();
+      const pe = (price / TTM_EPS).toFixed(1);
+      const note = document.getElementById('live-per-note');
+      note.textContent = `TTM PER ≈ ${pe}x（EPS 8.41元）${price > 185 ? '｜⚠️ 超過昂貴價，嚴重高估' : price > 126 ? '｜🟡 偏高' : price > 93 ? '｜✅ 合理區間' : '｜🟢 便宜'}`;
+      note.style.color = price > 185 ? '#ef4444' : price > 126 ? '#eab308' : '#22c55e';
+    }
+  } catch(e) {}
+}
+
+async function updateFundamental() {
+  try {
+    const res = await fetch('https://taiwan-stock-price.david870114.workers.dev/?id=6239', { cache: 'no-cache' });
+    const d = JSON.parse(await res.text());
+    const price = parseFloat(d.price);
+    if (price && !isNaN(price)) {
+      const pe = (price / TTM_EPS).toFixed(1);
+      const peEl = document.getElementById('fund-pe');
+      if (peEl) {
+        peEl.textContent = pe + 'x';
+        peEl.style.color = pe > 22 ? '#ef4444' : pe > 15 ? '#eab308' : '#22c55e';
+      }
+      const peNote = document.getElementById('fund-pe-note');
+      if (peNote) peNote.textContent = `TTM EPS = 8.41元 ｜ 股價 ${price}`;
+      const yld = (ANNUAL_DIV / price * 100).toFixed(2);
+      const yEl = document.getElementById('fund-yield');
+      if (yEl) {
+        yEl.textContent = yld + '%';
+        yEl.style.color = yld < 2 ? '#ef4444' : yld < 4 ? '#eab308' : '#22c55e';
+      }
+    }
+  } catch(e) {}
+}
+
+window.addEventListener('load', () => {
+  updateLivePrice();
+  updateFundamental();
+});
+
+</script>
+</body>
+</html>

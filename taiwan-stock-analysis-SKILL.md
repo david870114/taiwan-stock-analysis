@@ -103,6 +103,7 @@ node "C:\Users\USER\goodinfo_scraper.mjs" {代號} div
 | 2345 | 智邦 | AI/網通 | PER法 | 2345_per_analysis_2026.html |
 | 2382 | 廣達 | AI/伺服器 | PER法 | 2382_analysis.html |
 | 2408 | 南亞科 | 記憶體 | PER法 | 2408_analysis.html |
+| 2492 | 華新科 | 被動元件/MLCC | PER法 | 2492_analysis.html |
 | 3017 | 奇鋐 | AI/散熱 | PER法 | 3017_analysis.html |
 | 3037 | 欣興 | ABF載板 | PER法 | 3037_analysis.html |
 | 3231 | 緯創 | AI/伺服器 | PER法 | 3231_analysis.html |
@@ -111,6 +112,7 @@ node "C:\Users\USER\goodinfo_scraper.mjs" {代號} div
 | 3481 | 群創 | 面板 | PER法 | 3481_analysis.html |
 | 3596 | 智易 | AI/網通 | PER法 | 3596_analysis.html |
 | 4790 | 日盛金 | 金融 | PER法 | 4790_analysis.html |
+| 6239 | 力成 | 封測（記憶體封測龍頭/FOPLP）| PER法 | 6239_analysis.html |
 | 6669 | 緯穎 | AI/伺服器 | PER法 | 6669_analysis.html |
 | 6770 | 力積電 | 晶圓代工 | PER法 | 6770_analysis.html |
 | 8046 | 南電 | ABF載板 | PER法 | 8046_analysis.html |

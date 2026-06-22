@@ -1008,6 +1008,16 @@ td.grow-cell.na   { color:#475569; font-weight:400; }
         <td id="vs-2303" class="loading">—</td>
         <td class="td-tp">— <span class="per-sub">無</span></td>
       </tr>
+      <tr>
+        <td class="code code-pkg">6239</td>
+        <td class="name"><a href="6239_analysis.html">力成</a></td>
+        <td>93 <span class="per-sub">11x PER</span></td>
+        <td>126 <span class="per-sub">15x PER</span></td>
+        <td>185 <span class="per-sub">22x PER</span></td>
+        <td class="price-cell loading td-cur" id="price-6239">…</td>
+        <td id="vs-6239" class="loading">—</td>
+        <td class="td-tp">— <span class="per-sub">封測</span></td>
+      </tr>
     </tbody>
   </table>
 </div>
@@ -1152,6 +1162,19 @@ td.grow-cell.na   { color:#475569; font-weight:400; }
         <td>318 <span class="per-sub">25x PER</span></td>
         <td class="price-cell loading td-cur" id="price-2327">…</td>
         <td id="vs-2327" class="loading">—</td>
+        <td class="td-tp">— <span class="per-sub">無</span></td>
+      </tr>
+      <tr>
+        <td class="code code-net">2492</td>
+        <td class="name">
+          <a href="2492_analysis.html">華新科</a><br>
+          <span class="fwd-note">* 強景氣循環股，TTM EPS 5.22元；26M05-06 PER 75-118x 屬題材炒作</span>
+        </td>
+        <td>73 <span class="per-sub">14x PER</span></td>
+        <td>115 <span class="per-sub">22x PER</span></td>
+        <td>157 <span class="per-sub">30x PER</span></td>
+        <td class="price-cell loading td-cur" id="price-2492">…</td>
+        <td id="vs-2492" class="loading">—</td>
         <td class="td-tp">— <span class="per-sub">無</span></td>
       </tr>
     </tbody>
@@ -1732,6 +1755,7 @@ var STOCKS = [
   { id:'00919', fairValue:29,   expValue:36 },
   { id:'2330',  fairValue:1637, expValue:2083 },
   { id:'2303',  fairValue:72,   expValue:128  },
+  { id:'6239',  fairValue:126,  expValue:185 },
   { id:'2382',  fairValue:350,  expValue:506 },
   { id:'3231',  fairValue:181,  expValue:302 },
   { id:'6669',  fairValue:4475, expValue:5966 },
@@ -1742,6 +1766,7 @@ var STOCKS = [
   { id:'8210',  fairValue:747,  expValue:1019 },
   { id:'2301',  fairValue:136,  expValue:177 },
   { id:'2327',  fairValue:255,  expValue:318 },
+  { id:'2492',  fairValue:115,  expValue:157 },
   { id:'3481',  fairValue:30,   expValue:50 },
   { id:'2337',  fairValue:163,  expValue:218 },
   { id:'2344',  fairValue:88,   expValue:115 },
@@ -1756,7 +1781,7 @@ var STOCKS = [
   { id:'00631L', fairValue:32, expValue:42 },
 ];
 
-var CHAIN_STOCKS = ['2330','2303','2382','3231','6669','2345','3596','3017','3324','8210','2301','2308','3037','2408','2337','2344','6770','8046','00919','00878','00981A','00991A','00631L'];
+var CHAIN_STOCKS = ['2330','2303','6239','2382','3231','6669','2345','3596','3017','3324','8210','2301','2308','3037','2408','2337','2344','6770','8046','00919','00878','00981A','00991A','00631L'];
 
 async function fetchPrice(id) {
   try {
@@ -1899,6 +1924,7 @@ var TRACKED = [
   // ── 成長 ── 穩定獲利 + AI 受惠 + 護城河 ────────────────
   { id:'2330', name:'台積電',     tier:'growth', fairValue:1637, expValue:2083, fairPER:22, tp:2588, cheapValue:1265, annualDiv:24.0 },  // 季配：近4季 7+6+5.5+5 ≈ 24元
   { id:'2303', name:'聯電',       tier:'spec',   fairValue:72,   expValue:128,  fairPER:18, tp:null, cheapValue:48,  annualDiv:2.6  },  // GoodInfo確認 FY2025宣告
+  { id:'6239', name:'力成',       tier:'spec',   fairValue:126,  expValue:185,  fairPER:15, tp:null, cheapValue:93,  annualDiv:4.5  },  // 封測，FY2025配息4.5元（前三年7元）；近三年PER 11~24x；現價PER 41x嚴重高估
   { id:'2308', name:'台達電',     tier:'growth', fairValue:732,  expValue:867,  fairPER:27, tp:null, cheapValue:596, annualDiv:11.5 },  // 0.51% × 2255
   { id:'2382', name:'廣達',       tier:'growth', fairValue:350,  expValue:506,  fairPER:18, tp:400,  cheapValue:253, annualDiv:15.6 },  // GoodInfo確認
   { id:'3231', name:'緯創',       tier:'growth', fairValue:181,  expValue:302,  fairPER:18, tp:null, cheapValue:101, annualDiv:5.5  },  // GoodInfo確認
@@ -1906,6 +1932,7 @@ var TRACKED = [
   { id:'3017', name:'奇鋐',       tier:'growth', fairValue:1583, expValue:2070, fairPER:26, tp:3140, cheapValue:1096, annualDiv:21.1 },  // 0.82% × 2570
   { id:'3324', name:'雙鴻',       tier:'growth', fairValue:978,  expValue:1258, fairPER:28, tp:1425, cheapValue:699, annualDiv:11.9 },  // 1.09% × 1095
   { id:'2327', name:'國巨',       tier:'growth', fairValue:255,  expValue:318,  fairPER:20, tp:null, cheapValue:204, annualDiv:6.0  },  // GoodInfo確認
+  { id:'2492', name:'華新科',     tier:'spec',   fairValue:115,  expValue:157,  fairPER:22, tp:null, cheapValue:73,  annualDiv:2.5  },  // 被動元件強循環股；TTM EPS 5.22，近三年PER 14-35x；26M06現價617 PER 118x嚴重泡沫
 
   // ── 高風險 ── 高波動 / 景氣循環 / 小型 / 單季轉盈 ─────
   { id:'6669', name:'緯穎',       tier:'spec',   fairValue:4475, expValue:5966, fairPER:15, tp:null, cheapValue:3281, annualDiv:144.5 },  // 2.74% × 5275（現金）；另有股票股利20元

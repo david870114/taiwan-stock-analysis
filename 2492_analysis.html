@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>華新科 2492 — 2026 股價推算分析</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #0f1117; color: #e2e8f0; padding: 16px; }
+  h1 { font-size: 18px; font-weight: 700; color: #f8fafc; margin-bottom: 4px; }
+  .subtitle { font-size: 12px; color: #94a3b8; margin-bottom: 16px; }
+  .tabs { display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; }
+  .tab { padding: 6px 14px; border-radius: 20px; font-size: 12px; cursor: pointer; border: 1px solid #334155; color: #94a3b8; background: transparent; transition: all 0.2s; }
+  .tab.active { background: #3b82f6; color: #fff; border-color: #3b82f6; }
+  .tab:hover:not(.active) { border-color: #64748b; color: #e2e8f0; }
+  .panel { display: none; }
+  .panel.active { display: block; }
+  canvas { width: 100% !important; border-radius: 10px; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+  .card { background: #1e2535; border: 1px solid #2d3748; border-radius: 10px; padding: 14px; }
+  .card h3 { font-size: 12px; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
+  .card .val { font-size: 22px; font-weight: 700; }
+  .card .note { font-size: 11px; color: #64748b; margin-top: 4px; }
+  .green { color: #22c55e; } .yellow { color: #eab308; } .red { color: #ef4444; } .blue { color: #3b82f6; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 12px; }
+  th { background: #1e2535; color: #64748b; padding: 8px 10px; text-align: left; font-weight: 600; font-size: 11px; text-transform: uppercase; }
+  td { padding: 8px 10px; border-bottom: 1px solid #1e2535; }
+  tr:hover td { background: #1a2030; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: 600; }
+  .badge-buy { background: #14532d; color: #86efac; }
+  .badge-watch { background: #713f12; color: #fde68a; }
+  .badge-avoid { background: #450a0a; color: #fca5a5; }
+  .scenario-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 12px; }
+  .scenario-card { border-radius: 10px; padding: 14px; text-align: center; }
+  .bear { background: linear-gradient(135deg, #1a0a0a, #2d1010); border: 1px solid #7f1d1d; }
+  .base { background: linear-gradient(135deg, #0a1a0a, #102d10); border: 1px solid #14532d; }
+  .bull { background: linear-gradient(135deg, #0a0f1a, #10182d); border: 1px solid #1d4ed8; }
+  .sc-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.7; margin-bottom: 6px; }
+  .sc-price { font-size: 22px; font-weight: 800; margin: 4px 0; }
+  .sc-detail { font-size: 10px; opacity: 0.65; line-height: 1.6; }
+  .section-title { font-size: 13px; font-weight: 600; color: #cbd5e1; margin: 16px 0 8px; }
+  .buy-signal { background: #0f2a1e; border: 1px solid #166534; border-radius: 10px; padding: 14px; margin-top: 12px; }
+  .buy-signal h3 { color: #86efac; font-size: 13px; margin-bottom: 8px; }
+  .buy-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid #1a3a2a; gap: 8px; }
+  .buy-row:last-child { border-bottom: none; }
+  .current-price-badge { background: #1e3a5f; border: 1px solid #3b82f6; border-radius: 8px; padding: 10px 14px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px; }
+  .warning-box { background: #2d1010; border: 1px solid #7f1d1d; border-radius: 10px; padding: 12px; margin-bottom: 12px; font-size: 12px; color: #fca5a5; line-height: 1.7; }
+</style>
+</head>
+<body>
+<div style="margin-bottom:12px;">
+  <a href="index.html" style="color:#64748b;font-size:12px;text-decoration:none;display:inline-flex;align-items:center;gap:4px;padding:5px 10px;border:1px solid #334155;border-radius:8px;transition:all 0.2s;" onmouseover="this.style.color='#e2e8f0';this.style.borderColor='#64748b'" onmouseout="this.style.color='#64748b';this.style.borderColor='#334155'">← 返回總覽</a>
+</div>
+<h1>🔌 華新科技 (2492) — 2026 股價推算分析</h1>
+<p class="subtitle">本益比河流圖 ✦ 三情境估值 ✦ 分批買點建議 ✦ 更新時間：2026年6月22日</p>
+
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('river', this)">📈 PER 河流圖</button>
+  <button class="tab" onclick="switchTab('scenario', this)">🎯 三情境買點</button>
+  <button class="tab" onclick="switchTab('eps', this)">📊 EPS 趨勢</button>
+  <button class="tab" onclick="switchTab('fundamental', this)">🏢 基本面分析</button>
+  <button class="tab" onclick="switchTab('summary', this)">📋 完整摘要</button>
+</div>
+
+<!-- TAB 1: PER River -->
+<div id="tab-river" class="panel active">
+  <div class="warning-box">
+    ⚠️ <strong>重要提醒：</strong>華新科為被動元件（MLCC）景氣循環股，EPS 隨產業庫存週期大幅波動（2021 高峰 TTM EPS ~16 元、2022 谷底 ~3.4 元）。最新季末（26M03）TTM EPS ≈ 5.22 元。26M05-06 股價自 131→394→617 元噴出（PER 75→118x），為 MLCC 漲價＋AI 被動元件題材行情，已遠超昂貴帶，屬嚴重泡沫區。
+  </div>
+  <div class="current-price-badge">
+    <span style="color:#94a3b8;font-size:12px;">目前股價（即時）</span>
+    <span style="color:#3b82f6;font-size:20px;font-weight:800;" id="live-price">載入中…</span>
+    <span style="color:#ef4444;font-size:12px;">PER ≈ 118x（TTM EPS 5.22元）遠高於昂貴價</span>
+  </div>
+  <canvas id="riverChart" height="360"></canvas>
+  <p style="font-size:11px;color:#475569;margin-top:8px;text-align:center;">* 河流帶以 GoodInfo 逐月還原 EPS（本益比換算價格 10x÷10）為準，反映實際歷史 PER 區間 14–35x。</p>
+</div>
+
+<!-- TAB 2: 三情境 -->
+<div id="tab-scenario" class="panel">
+  <div class="grid2">
+    <div class="card"><h3>2025 全年 TTM EPS</h3><div class="val blue">~4.7 元</div><div class="note">景氣循環谷底回升中</div></div>
+    <div class="card"><h3>2026 Q1 TTM EPS（最新）</h3><div class="val green">5.22 元</div><div class="note">5月自結 EPS 0.88元，YoY 年增近2倍 ｜ 動能加速</div></div>
+  </div>
+  <div class="section-title">2026 全年三情境 EPS 與股價推算</div>
+  <div class="scenario-grid">
+    <div class="scenario-card bear">
+      <div class="sc-label">🐻 悲觀</div>
+      <div class="sc-price red">73–105</div>
+      <div class="sc-detail">EPS 5–6元<br>PER 14–18x<br>MLCC漲價未延續<br>題材資金退潮</div>
+    </div>
+    <div class="scenario-card base">
+      <div class="sc-label">⚖️ 基本</div>
+      <div class="sc-price green">130–200</div>
+      <div class="sc-detail">EPS 7–9元<br>PER 18–22x<br>MLCC需求回溫<br>稼動率/報價提升</div>
+    </div>
+    <div class="scenario-card bull">
+      <div class="sc-label">🚀 樂觀</div>
+      <div class="sc-price" style="color:#60a5fa;">250–420</div>
+      <div class="sc-detail">EPS 11–14元<br>PER 22–30x<br>AI被動元件供不應求<br>重演2021超級循環</div>
+    </div>
+  </div>
+  <div class="buy-signal">
+    <h3>💰 分批建倉買點建議（以合理價115元為錨，基於TTM EPS 5.22元）</h3>
+    <div class="buy-row">
+      <span style="color:#86efac;font-size:13px;font-weight:600;">第一批（40%）</span>
+      <span style="color:#fde68a;font-size:14px;font-weight:700;">73–90 元</span>
+      <span class="badge badge-buy">積極進場 PER 14–17x</span>
+    </div>
+    <div class="buy-row">
+      <span style="color:#86efac;font-size:13px;font-weight:600;">第二批（40%）</span>
+      <span style="color:#fde68a;font-size:14px;font-weight:700;">90–115 元</span>
+      <span class="badge badge-buy">主力倉位 PER 17–22x</span>
+    </div>
+    <div class="buy-row">
+      <span style="color:#86efac;font-size:13px;font-weight:600;">第三批（20%）</span>
+      <span style="color:#fde68a;font-size:14px;font-weight:700;">115–157 元</span>
+      <span class="badge badge-watch">追蹤 PER 22–30x</span>
+    </div>
+    <div class="buy-row" style="border-top:1px solid #166534;margin-top:8px;padding-top:10px;">
+      <span style="color:#fca5a5;font-size:12px;">觀望/分批減倉</span>
+      <span style="color:#fca5a5;font-size:13px;font-weight:700;">200 元以上</span>
+      <span class="badge badge-avoid">PER > 38x 過熱</span>
+    </div>
+    <div class="buy-row">
+      <span style="color:#fca5a5;font-size:12px;">嚴重高估，避免追高</span>
+      <span style="color:#fca5a5;font-size:13px;font-weight:700;">目前 617 元（PER 118x）</span>
+      <span class="badge badge-avoid">⚠️ 嚴重泡沫風險</span>
+    </div>
+    <p style="font-size:10px;color:#64748b;margin-top:10px;line-height:1.6;">* 買點以「最新季末 TTM EPS 5.22元」推算；若後續季報 EPS 大幅成長（樂觀情境），合理價將同步上修。MLCC 為高波動景氣循環股，務必嚴設停損、分批操作。</p>
+  </div>
+</div>
+
+<!-- TAB 3: EPS -->
+<div id="tab-eps" class="panel">
+  <canvas id="epsChart" height="300"></canvas>
+  <div class="grid2" style="margin-top:16px;">
+    <div class="card"><h3>循環高峰 TTM EPS（2021）</h3><div class="val yellow">~16 元</div><div class="note">MLCC 超級循環，PER 一度僅 8–10x</div></div>
+    <div class="card"><h3>最新 TTM EPS（26Q1）</h3><div class="val green">5.22 元</div><div class="note">谷底回升，月營收／自結獲利加速向上</div></div>
+  </div>
+  <div class="section-title">📋 逐月數據明細表（近三年）</div>
+  <table>
+    <thead><tr><th>月份</th><th>收盤價</th><th>河流圖EPS</th><th>目前PER</th><th>14x</th><th>22x</th><th>30x</th></tr></thead>
+    <tbody id="eps-tbody"></tbody>
+  </table>
+  <p style="font-size:11px;color:#64748b;margin-top:8px;">* 河流圖EPS = GoodInfo「本益比換算價格 10x」欄÷10，反映該月實際採用的還原 TTM EPS（與最新一次性 TTM 略有差異屬正常）。</p>
+</div>
+
+<!-- TAB 4: 基本面分析 -->
+<div id="tab-fundamental" class="panel">
+
+  <!-- 1. 公司營運 -->
+  <div class="section-title">🏭 公司營運</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px;">
+    <div class="card" style="text-align:center;">
+      <h3>主要產品</h3>
+      <div class="val blue" style="font-size:18px;">MLCC</div>
+      <div class="note">積層陶瓷電容、晶片電阻為核心</div>
+    </div>
+    <div class="card" style="text-align:center;">
+      <h3>最新月自結 EPS</h3>
+      <div class="val green">0.88 元</div>
+      <div class="note">2026年5月，YoY 年增近 2 倍</div>
+    </div>
+    <div class="card" style="text-align:center;">
+      <h3>最新 TTM EPS</h3>
+      <div class="val yellow">5.22 元</div>
+      <div class="note">26Q1（截至 26M03）</div>
+    </div>
+  </div>
+
+  <div class="section-title">📊 近季財務趨勢</div>
+  <table>
+    <thead><tr><th>期間</th><th>TTM EPS</th><th>PER（月底）</th><th>股價</th><th>備註</th></tr></thead>
+    <tbody>
+      <tr><td>24M12</td><td>6.15 元</td><td>15.0x</td><td>92.5</td><td>前一波小高峰後回落</td></tr>
+      <tr><td>25M06</td><td>3.56 元</td><td>22.8x</td><td>81.3</td><td>循環谷底，獲利低點</td></tr>
+      <tr><td>25M12</td><td>4.74 元</td><td>24.7x</td><td>117</td><td>獲利落底回升</td></tr>
+      <tr style="background:#0f2a1e;"><td>26M03 ★</td><td style="color:#22c55e;font-weight:700;">5.22 元</td><td>22.4x</td><td>117</td><td>最新季末，EPS 向上</td></tr>
+      <tr style="background:#2d1010;"><td>26M06 ⚠️</td><td>5.22 元</td><td style="color:#ef4444;font-weight:700;">118.2x</td><td>617</td><td>MLCC題材炒作，PER嚴重泡沫</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:11px;color:#64748b;margin-top:8px;">* 被動元件毛利率隨稼動率與報價波動大，具體季度細節請參考最新公開財報。</p>
+
+  <!-- 2. 商業模式 -->
+  <div class="section-title">💡 商業模式</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+    <div class="card">
+      <h3>怎麼賺錢</h3>
+      <p style="font-size:12px;color:#94a3b8;line-height:1.8;">華新科（華新麗華集團）為台灣第二大、全球前段班的 MLCC（積層陶瓷電容）廠，並產晶片電阻、電感等被動元件。獲利高度連動 MLCC 報價、稼動率與產業庫存週期。消費性電子、車用、AI 伺服器、工控為主要終端市場。漲價循環時毛利率與 EPS 彈性極大。</p>
+    </div>
+    <div class="card">
+      <h3>護城河評估</h3>
+      <p style="font-size:12px;color:#94a3b8;line-height:1.8;">
+        ✅ 台灣 MLCC 第二大廠、規模經濟<br>
+        ✅ 集團（華新麗華）資源、上游材料整合<br>
+        ✅ 高容、車用利基品逐步放量<br>
+        ⚠️ 產品標準化程度高、價格競爭激烈<br>
+        ⚠️ 強烈景氣循環，EPS 大起大落<br>
+        ⚠️ 與龍頭國巨、日系村田/TDK 技術仍有差距
+      </p>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+    <div class="card">
+      <h3>成長驅動</h3>
+      <p style="font-size:12px;color:#94a3b8;line-height:1.8;">
+        MLCC 漲價循環 <span class="badge badge-buy">報價彈性</span><br>
+        AI 伺服器用高容 MLCC <span class="badge badge-buy">AI 需求</span><br>
+        車用電子滲透率提升 <span class="badge badge-watch">長線成長</span><br>
+        消費性電子庫存回補 <span class="badge badge-watch">循環回溫</span>
+      </p>
+    </div>
+    <div class="card">
+      <h3>主要競爭對手</h3>
+      <p style="font-size:12px;color:#94a3b8;line-height:1.8;">
+        國巨（台）— 台灣龍頭、市值最大<br>
+        村田製作所（日）— 全球第一<br>
+        TDK／太陽誘電（日）— MLCC 大廠<br>
+        三星電機（韓）— 高階 MLCC<br>
+        風華高科（中）— 低價競爭
+      </p>
+    </div>
+  </div>
+
+  <!-- 3. 市場地位 -->
+  <div class="section-title">🌍 市場地位</div>
+  <div style="display:flex;gap:16px;margin-bottom:12px;flex-wrap:wrap;">
+    <div style="text-align:center;flex:1;min-width:120px;">
+      <div style="font-size:11px;color:#64748b;margin-bottom:4px;">台灣被動元件</div>
+      <div style="font-size:20px;font-weight:800;color:#3b82f6;">第二大</div>
+      <div style="font-size:10px;color:#475569;margin-top:2px;">僅次於國巨</div>
+    </div>
+    <div style="text-align:center;flex:1;min-width:120px;">
+      <div style="font-size:11px;color:#64748b;margin-bottom:4px;">獲利彈性</div>
+      <div style="font-size:20px;font-weight:800;color:#22c55e;">極高</div>
+      <div style="font-size:10px;color:#475569;margin-top:2px;">漲價循環受惠最劇</div>
+    </div>
+    <div style="text-align:center;flex:1;min-width:120px;">
+      <div style="font-size:11px;color:#64748b;margin-bottom:4px;">產品結構（趨勢）</div>
+      <div style="font-size:20px;font-weight:800;color:#eab308;">高階化</div>
+      <div style="font-size:10px;color:#475569;margin-top:2px;">車用/高容/AI 比重提升</div>
+    </div>
+  </div>
+  <div style="margin-top:12px;font-size:11px;color:#64748b;border-top:1px solid #2d3748;padding-top:10px;">
+    📌 華新科為 MLCC 報價與景氣循環的高彈性標的：上行循環時 EPS 與股價爆發力極強，下行時獲利亦快速萎縮。投資須以「循環位置＋庫存週期」判斷，不可單看單季高 EPS 外推。
+  </div>
+
+  <!-- 4. 估值指標 -->
+  <div class="section-title">💰 估值指標</div>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:10px;">
+    <div class="card" style="text-align:center;">
+      <h3>本益比 P/E</h3>
+      <div class="val" id="fund-pe" style="color:#f8fafc;">計算中…</div>
+      <div class="note" id="fund-pe-note">TTM EPS 5.22 元</div>
+    </div>
+    <div class="card" style="text-align:center;">
+      <h3>前瞻 P/E（2026E）</h3>
+      <div class="val red">~50–80x</div>
+      <div class="note">即便 EPS 成長至 8–12 元仍偏高</div>
+    </div>
+    <div class="card" style="text-align:center;">
+      <h3>近三年 PER 區間</h3>
+      <div class="val" style="color:#f97316;">14–35x</div>
+      <div class="note">排除題材月（75–118x）</div>
+    </div>
+    <div class="card" style="text-align:center;">
+      <h3>現金股利</h3>
+      <div class="val yellow">2.5 元</div>
+      <div class="note">2026 配發（年配）｜ 26/06/12 除息</div>
+    </div>
+  </div>
+  <div style="background:#1e2535;border:1px solid #2d3748;border-radius:10px;padding:12px;font-size:11px;color:#64748b;line-height:1.8;">
+    📌 <strong style="color:#94a3b8;">估值解讀：</strong>
+    目前 PER 118x 已遠超近三年正常區間（14–35x）。2026 年 5–6 月股價自 131 元噴至 617 元，主要由 MLCC 漲價＋AI 被動元件題材驅動，市場提前反映「未來 EPS 大幅成長」的預期。以最新 TTM EPS 5.22 元計算，合理股價約 115 元、昂貴價約 157 元，目前 617 元相當於昂貴價的近 4 倍，估值回歸風險極高。若獲利確實重演 2021 超級循環（EPS 上看 12–16 元），則合理價將大幅上修——但屬高度不確定的賭注。
+  </div>
+
+  <p style="font-size:10px;color:#334155;margin-top:14px;line-height:1.6;">⚠️ 本分析僅供參考，不構成投資建議。華新科為強景氣循環股，單季高 EPS 不可線性外推，PER 區間需搭配循環位置判讀。</p>
+</div>
+
+<!-- TAB 5: Summary -->
+<div id="tab-summary" class="panel">
+  <div class="warning-box">
+    ⚠️ <strong>特別提醒：被動元件強循環特性</strong><br>
+    華新科 EPS 隨 MLCC 報價與庫存週期大幅波動：2021 循環高峰 TTM EPS 約 16 元、2022 谷底僅約 3.4 元。最新（26Q1）TTM EPS 5.22 元仍處回升初段。26M05-06 股價噴出（PER 75→118x）為題材行情，遠超歷史正常區間（14–35x），請勿以單季高 EPS 線性外推追高。
+  </div>
+  <div class="section-title">📌 關鍵數據摘要</div>
+  <table>
+    <thead><tr><th>指標</th><th>數值</th><th>評估</th></tr></thead>
+    <tbody>
+      <tr><td>目前股價（2026/6）</td><td style="color:#ef4444;font-weight:700;">617 元</td><td><span class="badge badge-avoid">嚴重高估</span></td></tr>
+      <tr><td>TTM EPS（26Q1）</td><td style="color:#22c55e;font-weight:700;">5.22 元</td><td><span class="badge badge-watch">谷底回升中</span></td></tr>
+      <tr><td>目前 PER</td><td style="color:#ef4444;font-weight:700;">118.2x</td><td><span class="badge badge-avoid">遠超昂貴帶</span></td></tr>
+      <tr><td>便宜價（14x）</td><td>73 元</td><td><span class="badge badge-buy">合理進場區</span></td></tr>
+      <tr><td>合理價（22x）</td><td>115 元</td><td><span class="badge badge-watch">合理估值中線</span></td></tr>
+      <tr><td>昂貴價（30x）</td><td>157 元</td><td><span class="badge badge-avoid">估值上限</span></td></tr>
+      <tr><td>目前股價 vs 合理價</td><td style="color:#ef4444;font-weight:700;">+436%（約 5.4 倍）</td><td><span class="badge badge-avoid">極度泡沫</span></td></tr>
+      <tr><td>近三年 PER 區間</td><td>14–35x（題材月除外）</td><td><span class="badge badge-watch">循環股區間寬</span></td></tr>
+      <tr><td>EPS 動能</td><td>5月自結 0.88元，YoY 年增近2倍</td><td><span class="badge badge-buy">加速向上</span></td></tr>
+      <tr><td>現金股利（2026）</td><td>2.5 元（年配，已除息）</td><td><span class="badge badge-watch">殖利率偏低</span></td></tr>
+      <tr><td>主要驅動力</td><td>MLCC 漲價、AI 伺服器、車用</td><td><span class="badge badge-buy">循環向上</span></td></tr>
+    </tbody>
+  </table>
+  <div class="section-title" style="margin-top:20px;">📐 PER 河流帶參考（TTM EPS 5.22 元）</div>
+  <table>
+    <thead><tr><th>估值帶</th><th>PER</th><th>對應股價</th><th>說明</th></tr></thead>
+    <tbody>
+      <tr><td style="color:#22c55e;font-weight:600;">便宜帶</td><td>14x</td><td style="color:#22c55e;font-weight:700;">73 元</td><td>近三年歷史低點 PER</td></tr>
+      <tr><td style="color:#eab308;font-weight:600;">合理帶</td><td>22x</td><td style="color:#eab308;font-weight:700;">115 元</td><td>近三年 PER 均值</td></tr>
+      <tr><td style="color:#f97316;font-weight:600;">昂貴帶</td><td>30x</td><td style="color:#f97316;font-weight:700;">157 元</td><td>近三年高點 PER</td></tr>
+      <tr><td style="color:#ef4444;font-weight:600;">危險帶（題材）</td><td>40x+</td><td style="color:#ef4444;font-weight:700;">209+ 元</td><td>市場炒作，無基本面支撐</td></tr>
+      <tr style="background:#2d1010;"><td style="color:#ef4444;font-weight:600;">⚠️ 目前市場</td><td style="color:#ef4444;">118x</td><td style="color:#ef4444;font-weight:700;">617 元</td><td>嚴重泡沫，高估值回歸風險</td></tr>
+    </tbody>
+  </table>
+  <div style="background:#1e2535;border:1px solid #2d3748;border-radius:10px;padding:14px;margin-top:16px;font-size:12px;color:#94a3b8;line-height:1.9;">
+    <strong style="color:#f8fafc;">📌 投資結論（僅供參考）：</strong><br>
+    華新科為台灣第二大 MLCC 廠，獲利對 MLCC 報價循環具高度彈性，當前正受惠 AI 被動元件＋漲價題材，月獲利動能強勁。<br>
+    然而 2026 年 5-6 月股價飆至 617 元（PER 118x），已脫離任何合理估值區間，市場提前反映尚未實現的爆發性成長預期。<br>
+    <span style="color:#ef4444;">目前嚴重高估，不宜追高。</span>建議待回調至 73–157 元區間（PER 14–30x）、並確認 EPS 確實放量後再分批評估。<br>
+    若獲利重演 2021 超級循環（EPS 上看 12–16 元），合理價可上看 250–420 元，可作為高風險、需嚴設停損的中期想像空間。
+  </div>
+  <p style="font-size:10px;color:#334155;margin-top:14px;line-height:1.6;">⚠️ 本分析僅供參考，不構成投資建議。股市有風險，請自行判斷。</p>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<script>
+function switchTab(id, btn) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  btn.classList.add('active');
+  if (id === 'eps' && !window.epsDrawn) drawEPS();
+}
+
+// 月份標籤 (23M07 ~ 26M06)
+const months = [
+  '23M07','23M08','23M09','23M10','23M11','23M12',
+  '24M01','24M02','24M03','24M04','24M05','24M06',
+  '24M07','24M08','24M09','24M10','24M11','24M12',
+  '25M01','25M02','25M03','25M04','25M05','25M06',
+  '25M07','25M08','25M09','25M10','25M11','25M12',
+  '26M01','26M02','26M03','26M04','26M05','26M06'
+];
+
+// 河流圖 EPS（GoodInfo 本益比換算價格 10x÷10）
+const epsArr = [
+  2.74,3.11,3.49,3.69,3.89,4.09,
+  4.32,4.55,4.78,4.90,5.01,5.13,
+  4.70,4.28,3.85,4.62,5.38,6.15,
+  6.13,6.12,6.10,5.25,4.41,3.56,
+  3.99,4.42,4.85,4.81,4.78,4.74,
+  4.90,5.06,5.22,5.22,5.22,5.22
+];
+
+// 收盤價
+const closePx = [
+  94.9,98.6,102.5,104.5,136.5,123,
+  108,112,113,111.5,114.5,118,
+  114,110.5,108,101,94.2,92.5,
+  92.9,95.9,86.5,78.1,81.8,81.3,
+  84.9,82.4,104.5,124,119.5,117,
+  136.5,156,117,131.5,394,617
+];
+
+// 目前 PER（月底）
+const perArr = [
+  34.68,31.67,29.37,28.32,35.09,30.07,
+  25.00,24.62,23.64,22.77,22.84,23.00,
+  24.24,25.84,28.05,21.88,17.50,15.04,
+  15.15,15.68,14.18,14.87,18.56,22.84,
+  21.28,18.64,21.55,25.76,25.02,24.68,
+  27.86,30.83,22.41,25.19,75.48,118.2
+];
+
+function band(mult) { return epsArr.map(e => +(e * mult).toFixed(1)); }
+
+async function updateLivePrice() {
+  try {
+    const res = await fetch('https://taiwan-stock-price.david870114.workers.dev/?id=2492', { cache: 'no-cache' });
+    const data = JSON.parse(await res.text());
+    const price = parseFloat(data.price);
+    const el = document.getElementById('live-price');
+    if (price && !isNaN(price)) {
+      el.textContent = '$ ' + price.toLocaleString();
+    }
+  } catch(e) {}
+}
+
+async function updateFundamentalPE() {
+  try {
+    const res = await fetch('https://taiwan-stock-price.david870114.workers.dev/?id=2492', { cache: 'no-cache' });
+    const data = JSON.parse(await res.text());
+    const price = parseFloat(data.price);
+    if (price && !isNaN(price)) {
+      const ttmEPS = 5.22;
+      const pe = (price / ttmEPS).toFixed(1);
+      const el = document.getElementById('fund-pe');
+      const noteEl = document.getElementById('fund-pe-note');
+      if (el) {
+        el.textContent = pe + 'x';
+        el.style.color = pe > 40 ? '#ef4444' : pe > 25 ? '#eab308' : '#22c55e';
+      }
+      if (noteEl) noteEl.textContent = '股價 ' + price.toLocaleString() + ' ｜ TTM EPS 5.22';
+    }
+  } catch(e) {}
+}
+
+// 逐月明細表
+function fillEpsTable() {
+  const tb = document.getElementById('eps-tbody');
+  if (!tb) return;
+  let html = '';
+  for (let i = months.length - 1; i >= 0; i--) {
+    const danger = perArr[i] > 40;
+    html += '<tr' + (danger ? ' style="background:#2d1010;"' : '') + '>' +
+      '<td>' + months[i] + (danger ? ' ⚠️' : '') + '</td>' +
+      '<td>' + closePx[i] + '</td>' +
+      '<td>' + epsArr[i].toFixed(2) + '</td>' +
+      '<td' + (danger ? ' style="color:#ef4444;font-weight:700;"' : '') + '>' + perArr[i] + 'x</td>' +
+      '<td>' + (epsArr[i]*14).toFixed(1) + '</td>' +
+      '<td>' + (epsArr[i]*22).toFixed(1) + '</td>' +
+      '<td>' + (epsArr[i]*30).toFixed(1) + '</td>' +
+      '</tr>';
+  }
+  tb.innerHTML = html;
+}
+
+window.addEventListener('load', () => {
+  updateLivePrice();
+  updateFundamentalPE();
+  fillEpsTable();
+  setTimeout(() => {
+    const ctx = document.getElementById('riverChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: months,
+        datasets: [
+          { label: 'PER 30x（昂貴）', data: band(30), borderColor:'#ef4444', backgroundColor:'rgba(239,68,68,0.05)', borderWidth:1.5, pointRadius:0, fill:false },
+          { label: 'PER 26x', data: band(26), borderColor:'#f97316', backgroundColor:'rgba(249,115,22,0.05)', borderWidth:1, borderDash:[4,4], pointRadius:0, fill:false },
+          { label: 'PER 22x（合理）', data: band(22), borderColor:'#eab308', backgroundColor:'rgba(234,179,8,0.07)', borderWidth:1.5, pointRadius:0, fill:false },
+          { label: 'PER 18x', data: band(18), borderColor:'#84cc16', backgroundColor:'rgba(132,204,22,0.05)', borderWidth:1, borderDash:[4,4], pointRadius:0, fill:false },
+          { label: 'PER 14x（便宜）', data: band(14), borderColor:'#22c55e', backgroundColor:'rgba(34,197,94,0.07)', borderWidth:1.5, pointRadius:0, fill:false },
+          { label: '實際股價', data: closePx, borderColor:'#ffffff', borderWidth:2.5, pointRadius:2.5, pointBackgroundColor:'#fff', fill:false, tension:0.3, spanGaps:true },
+        ]
+      },
+      options: {
+        responsive: true,
+        interaction: { mode:'index', intersect:false },
+        plugins: {
+          legend: { labels:{ color:'#94a3b8', font:{size:11}, boxWidth:18 } },
+          tooltip: { backgroundColor:'#1e2535', titleColor:'#f8fafc', bodyColor:'#94a3b8', borderColor:'#334155', borderWidth:1 },
+        },
+        scales: {
+          x: { ticks:{ color:'#64748b', font:{size:10}, maxRotation:45 }, grid:{ color:'rgba(30,37,53,0.8)' } },
+          y: { ticks:{ color:'#64748b', font:{size:10}, callback: v => v.toLocaleString() }, grid:{ color:'rgba(30,37,53,0.8)' } }
+        }
+      }
+    });
+  }, 200);
+});
+
+function drawEPS() {
+  window.epsDrawn = true;
+  const ctx2 = document.getElementById('epsChart').getContext('2d');
+  const labels = ['2021(高峰)','2022','2023','2024','2025(TTM)','26Q1 TTM'];
+  const eps =    [16.35,       3.4,    4.09,  6.15,  4.74,        5.22];
+  new Chart(ctx2, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{
+        label: 'TTM EPS（元）',
+        data: eps,
+        backgroundColor: ['rgba(234,179,8,0.7)','rgba(239,68,68,0.7)','rgba(59,130,246,0.7)','rgba(34,197,94,0.7)','rgba(234,179,8,0.7)','rgba(34,197,94,0.7)'],
+        borderColor:     ['#eab308','#ef4444','#3b82f6','#22c55e','#eab308','#22c55e'],
+        borderWidth:1.5, borderRadius:6
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend:{ labels:{ color:'#94a3b8' } },
+        tooltip:{ backgroundColor:'#1e2535', bodyColor:'#94a3b8' }
+      },
+      scales: {
+        x:{ ticks:{ color:'#64748b' }, grid:{ color:'rgba(30,37,53,0.8)' } },
+        y:{ ticks:{ color:'#64748b', callback: v => v+'元' }, grid:{ color:'rgba(30,37,53,0.8)' } }
+      }
+    }
+  });
+}
+</script>
+</body>
+</html>
