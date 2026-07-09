@@ -1,6 +1,6 @@
 ---
 name: taiwan-stock-analysis
-description: 台股個股深度分析 skill。當使用者說「分析 XXXX 股票」、「幫我看 XXXX」、「更新台股追蹤清單」、「新增 XXXX 到追蹤清單」、「更新智邦/台積電/元大台灣50/緯創」、「台股分析」等，立即使用此 skill。功能：從 goodinfo.tw 自動抓取數據 → 產出 PER/殖利率河流圖互動分析頁（HTML）→ 同步更新總覽頁（index.html）→ git push 上傳 GitHub Pages。追蹤清單：0050、0056、00878、00919、2330、2337、2345、2382、3231、3596（可動態新增）。每季財報後說「更新 XXXX」即可重新分析。
+description: 台股個股深度分析 skill。當使用者說「分析 XXXX 股票」、「幫我看 XXXX」、「更新台股追蹤清單」、「新增 XXXX 到追蹤清單」、「更新智邦/台積電/元大台灣50/緯創」、「台股分析」等，立即使用此 skill。功能：從 goodinfo.tw 自動抓取數據 → 產出 PER/殖利率河流圖互動分析頁（HTML）→ 同步更新總覽頁（index.html）→ git push 上傳 GitHub Pages。追蹤清單：0050、0056、00878、00919、00981A、2330、2345、2382、3231 等 30+ 檔（完整清單見正文，可動態新增）。每季財報後說「更新 XXXX」即可重新分析。
 ---
 
 # 台股個股分析 Skill
@@ -90,7 +90,7 @@ node "C:\Users\USER\goodinfo_scraper.mjs" {代號} div
 | 0056 | 元大高股息 | ETF | 殖利率法 | 0056_analysis.html |
 | 00878 | 國泰永續高股息 | ETF | 殖利率法 | 00878_analysis.html |
 | 00919 | 群益台灣精選高息 | ETF | 殖利率法 | 00919_analysis.html |
-| 00981A | 主動元大全球AI | ETF | 價格追蹤（無配息）| 00981A_analysis.html |
+| 00981A | 主動統一台股增長 | ETF | 殖利率法（季配 0.63×4）| 00981A_analysis.html |
 | 00991A | 主動復華未來50 | ETF | 價格追蹤（無配息）| 00991A_analysis.html |
 | 00631L | 元大台灣50正2 | ETF（單日正向2倍槓桿） | 價格追蹤（不配息，1拆22還原）| 00631L_analysis.html |
 | 2301 | 光寶科 | 電源/EMS | PER法 | 2301_analysis.html |
@@ -107,11 +107,10 @@ node "C:\Users\USER\goodinfo_scraper.mjs" {代號} div
 | 3017 | 奇鋐 | AI/散熱 | PER法 | 3017_analysis.html |
 | 3037 | 欣興 | ABF載板 | PER法 | 3037_analysis.html |
 | 3231 | 緯創 | AI/伺服器 | PER法 | 3231_analysis.html |
-| 3260 | 威強電 | 工業電腦 | PER法 | 3260_analysis.html |
+| 3260 | 威剛 | 記憶體模組 | PER法 | 3260_analysis.html |
 | 3324 | 雙鴻 | AI/散熱 | PER法 | 3324_analysis.html |
 | 3481 | 群創 | 面板 | PER法 | 3481_analysis.html |
 | 3596 | 智易 | AI/網通 | PER法 | 3596_analysis.html |
-| 4790 | 日盛金 | 金融 | PER法 | 4790_analysis.html |
 | 6239 | 力成 | 封測（記憶體封測龍頭/FOPLP）| PER法 | 6239_analysis.html |
 | 6669 | 緯穎 | AI/伺服器 | PER法 | 6669_analysis.html |
 | 6770 | 力積電 | 晶圓代工 | PER法 | 6770_analysis.html |
@@ -136,8 +135,8 @@ node "C:\Users\USER\goodinfo_scraper.mjs" {代號} div
 3. 產出分析 HTML（五個 Tab，見下方規範）
 4. 同步更新 index.html（個股四處 / ETF 五處，見下方）
 5. **若新增的是 ETF → 必須觸發 ETF 子分頁工具**：把月線收盤、配息資訊寫進 `ETF_DATA` 陣列（見「ETF 子分頁」章節），河流圖比較、除息行事曆、成長率欄、試算工具才會出現這檔 ETF
-6. 更新 SKILL.md 與 CLAUDE.md 追蹤清單
-7. `git add . && git commit -m "新增 {代號} 分析" && git push`
+6. 更新 SKILL.md 追蹤清單（CLAUDE.md 只是指標檔，不用改）
+7. **先 `git pull --ff-only`**（repo 有每日自動 commit 的 GitHub Actions，不 pull 會 push 失敗）→ `git add . && git commit -m "新增 {代號} 分析" && git push`
 
 ### 每季更新流程
 
@@ -145,7 +144,7 @@ node "C:\Users\USER\goodinfo_scraper.mjs" {代號} div
 2. 補充最新月份數據，重新計算估值
 3. 更新分析 HTML + index.html
 4. **若是 ETF → 一併把最新月份收盤補進 `ETF_DATA[].raw`**，並視情況更新 `annualDiv`（河流圖、成長率欄才會反映最新月）
-5. `git add . && git commit -m "更新 {代號} 分析" && git push`
+5. **先 `git pull --ff-only`** → `git add . && git commit -m "更新 {代號} 分析" && git push`
 
 ---
 
@@ -213,7 +212,7 @@ node "C:\Users\USER\goodinfo_scraper.mjs" {代號} div
 
 ### 主動式 ETF（無配息，noDivYet: true）
 
-新掛牌、尚無配息歷史的主動式 ETF（如 00981A、00991A）使用**價格追蹤法**，不用殖利率法：
+新掛牌、尚無配息歷史的主動式 ETF（如 00991A）使用**價格追蹤法**，不用殖利率法（00981A 已於 2026 開始季配，改用殖利率法）：
 - 分析頁：顯示價格走勢圖 + 三情境評估（以價格區間判斷便宜/合理/昂貴）
 - index.html TRACKED 陣列使用 `noDivYet: true`，`annualDiv: null`
 - `buildEtfTable()` 對此類 ETF 顯示「尚無配息 / 價格追蹤 / 待宣告」，不計算殖利率
@@ -278,7 +277,7 @@ window.addEventListener('load', updateLiveMetric);
 { id:'{代號}', name:'{名稱}', tier:'core'/'growth'/'spec', fairValue:X, expValue:Y, fairPER:null/N, tp:null, cheapValue:Z, annualDiv:D },
 ```
 
-**4. CHAIN_STOCKS 陣列**（個股必加，ETF 視情況）
+**4. CHAIN_STOCKS 陣列**（僅 AI 供應鏈個股加入——對應「AI 供應鏈」mini-card 區塊；傳產/金融/被動元件不加，ETF 視情況）
 ```javascript
 '{代號}'
 ```

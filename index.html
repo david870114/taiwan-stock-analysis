@@ -1411,6 +1411,37 @@ td.grow-cell.na   { color:#475569; font-weight:400; }
   </table>
 </div>
 
+<!-- 塑化／傳產 -->
+<div class="section">
+  <div class="section-title">塑化／傳產</div>
+  <table>
+  <colgroup><col class="col-code"><col class="col-name"><col class="col-price"><col class="col-price"><col class="col-price"><col class="col-cur"><col class="col-vs"><col class="col-tp"></colgroup>
+
+    <thead>
+      <tr>
+        <th>代號</th><th>名稱</th>
+        <th>便宜價</th><th>合理價</th><th>昂貴價</th>
+        <th class="th-cur">目前股價</th><th>vs 合理價</th><th class="th-tp">法人目標價</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="code">1303</td>
+        <td class="name">
+          <a href="1303_analysis.html">南亞</a><br>
+          <span class="fwd-note">* 景氣循環股，26Q1 TTM EPS 2.31元轉正。前瞻PER法</span>
+        </td>
+        <td>58 <span class="per-sub">25x PER</span></td>
+        <td>81 <span class="per-sub">35x PER</span></td>
+        <td>116 <span class="per-sub">50x PER</span></td>
+        <td class="price-cell loading td-cur" id="price-1303">…</td>
+        <td id="vs-1303" class="loading">—</td>
+        <td class="td-tp">—</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
 <p class="footer">
   ⚠️ 本頁僅供參考，不構成投資建議。股市有風險，請自行判斷。<br>
   * 旺宏（2337）歷史虧損無 TTM PER，改用 2026E EPS 前瞻本益比推算。<br>
@@ -1776,6 +1807,7 @@ var STOCKS = [
   { id:'2408',  fairValue:279,  expValue:391 },
   { id:'6770',  fairValue:44,   expValue:62  },
   { id:'8046',  fairValue:119,  expValue:198 },
+  { id:'1303',  fairValue:81,   expValue:116 },
   { id:'00981A', fairValue:32, expValue:42 },
   { id:'00991A', fairValue:19, expValue:25 },
   { id:'00631L', fairValue:32, expValue:42 },
@@ -1946,6 +1978,8 @@ var TRACKED = [
   { id:'2344', name:'華邦電',     tier:'spec',   fairValue:88,   expValue:115,  fairPER:26, tp:null, cheapValue:67,  annualDiv:0    },  // 虧損轉盈，尚未配息
   { id:'3260', name:'威剛',       tier:'spec',   fairValue:719,  expValue:925,  fairPER:14, tp:null, cheapValue:514, annualDiv:17.0 },  // GoodInfo確認
   { id:'2408', name:'南亞科',     tier:'spec',   fairValue:279,  expValue:391,  fairPER:25, tp:380,  cheapValue:167, annualDiv:1.5  },  // GoodInfo確認，剛轉盈
+  { id:'6770', name:'力積電',     tier:'spec',   fairValue:44,   expValue:62,   fairPER:25, tp:null, cheapValue:27,  annualDiv:0    },  // 景氣循環，26Q1 TTM EPS 1.77元轉正，尚未配息
+  { id:'1303', name:'南亞',       tier:'spec',   fairValue:81,   expValue:116,  fairPER:35, tp:null, cheapValue:58,  annualDiv:0.8  },  // 石化景氣循環，26Q1 TTM EPS 2.31元；FY2025配息0.8元（26/07/08除息）
 ];
 
 var PRESETS = {
