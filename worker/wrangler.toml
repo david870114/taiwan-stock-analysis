@@ -6,11 +6,9 @@ compatibility_date = "2026-07-01"
 [triggers]
 crons = ["*/30 1-5 * * 1-5"]
 
-# 部署前先建立 KV：npx wrangler kv namespace create MYSTOCKS
-# 再把回傳的 id 填到下面
 [[kv_namespaces]]
 binding = "KV"
-id = "REPLACE_WITH_KV_ID"
+id = "6f4e132a6bc94e11892657838c14595f"
 
 # 機密（部署後執行）：
 # npx wrangler secret put LINE_CHANNEL_ACCESS_TOKEN
