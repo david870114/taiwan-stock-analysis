@@ -608,6 +608,7 @@ td.grow-cell.na   { color:#475569; font-weight:400; }
 <!-- ── Tab Bar ── -->
 <div class="tab-bar">
   <button class="tab-btn active" data-tab="watchlist">📊 追蹤清單</button>
+  <button class="tab-btn" data-tab="nonai">🏭 非AI產業鏈</button>
   <button class="tab-btn" data-tab="etf">📈 ETF 追蹤與配息試算</button>
   <button class="tab-btn" data-tab="allocator">💰 資金配置試算</button>
   <button class="tab-btn" data-tab="institutional" onclick="loadInstitutional()">🏛 法人動態</button>
@@ -1433,6 +1434,66 @@ td.grow-cell.na   { color:#475569; font-weight:400; }
   </table>
 </div>
 
+<p class="footer">
+  ⚠️ 本頁僅供參考，不構成投資建議。股市有風險，請自行判斷。<br>
+  * 旺宏（2337）歷史虧損無 TTM PER，改用 2026E EPS 前瞻本益比推算。<br>
+  * 南亞科（2408）為景氣循環股，2023–25Q3 長期虧損，25Q4 轉盈，EPS 11.17元（26Q1）× 復甦區間 PER 15–35x 推算。<br>
+  * 華邦電（2344）景氣循環股，2023–25Q3 虧損，26Q1 TTM EPS 3.37元轉正，PER 20–34x 推算。26M05-06 漲至 46-48x 屬題材溢價。<br>
+  * 力積電（6770）景氣循環股，23M11–26M01 連續虧損，26Q1 TTM EPS 1.77元轉正。前瞻PER法估算，便宜 27 / 合理 44 / 昂貴 62 元。<br>
+  * 外資目標價來源：大摩（Morgan Stanley）為優先，如無則取其他主要外資最新報告（麥格理 / 大和 / FactSet 分析師中位數等），2026/07/09 更新。數據僅供參考，請以各券商最新報告為準。
+</p>
+
+</div><!-- end tab-watchlist -->
+
+<!-- ══ Tab: 非AI產業鏈 ══ -->
+<div id="tab-nonai" class="tab-panel">
+
+<!-- ── Header ── -->
+<div class="page-header">
+  <div>
+    <h1>🏭 非 AI 產業鏈追蹤清單</h1>
+    <p class="meta">重電／傳產等非 AI 供應鏈個股 ✦ 即時股價每分鐘自動更新</p>
+  </div>
+  <button class="update-btn" onclick="fetchAllPrices()">🔄 更新即時股價</button>
+</div>
+
+<!-- ── 凡例 ── -->
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot" style="background:#22c55e"></div> 低於合理價（低估）</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#eab308"></div> 接近合理價</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#ef4444"></div> 高於昂貴價</div>
+</div>
+
+<!-- 重電／電力設備 -->
+<div class="section">
+  <div class="section-title">重電／電力設備</div>
+  <table>
+  <colgroup><col class="col-code"><col class="col-name"><col class="col-price"><col class="col-price"><col class="col-price"><col class="col-cur"><col class="col-vs"><col class="col-tp"></colgroup>
+    <thead>
+      <tr>
+        <th>代號</th><th>名稱</th>
+        <th>便宜價</th><th>合理價</th><th>昂貴價</th>
+        <th class="th-cur">目前股價</th><th>vs 合理價</th><th class="th-tp">法人目標價</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="code">1519</td>
+        <td class="name">
+          <a href="1519_analysis.html">華城</a><br>
+          <span class="fwd-note">* 重電/變壓器，美國電網+AI資料中心用電需求；2023起估值結構性重估，PER近3年27–82x</span>
+        </td>
+        <td>510 <span class="per-sub">35x PER</span></td>
+        <td>700 <span class="per-sub">48x PER</span></td>
+        <td>903 <span class="per-sub">62x PER</span></td>
+        <td class="price-cell loading td-cur" id="price-1519">…</td>
+        <td id="vs-1519" class="loading">—</td>
+        <td class="td-tp">— <span class="per-sub">無</span></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
 <!-- 塑化／傳產 -->
 <div class="section">
   <div class="section-title">塑化／傳產</div>
@@ -1466,14 +1527,11 @@ td.grow-cell.na   { color:#475569; font-weight:400; }
 
 <p class="footer">
   ⚠️ 本頁僅供參考，不構成投資建議。股市有風險，請自行判斷。<br>
-  * 旺宏（2337）歷史虧損無 TTM PER，改用 2026E EPS 前瞻本益比推算。<br>
-  * 南亞科（2408）為景氣循環股，2023–25Q3 長期虧損，25Q4 轉盈，EPS 11.17元（26Q1）× 復甦區間 PER 15–35x 推算。<br>
-  * 華邦電（2344）景氣循環股，2023–25Q3 虧損，26Q1 TTM EPS 3.37元轉正，PER 20–34x 推算。26M05-06 漲至 46-48x 屬題材溢價。<br>
-  * 力積電（6770）景氣循環股，23M11–26M01 連續虧損，26Q1 TTM EPS 1.77元轉正。前瞻PER法估算，便宜 27 / 合理 44 / 昂貴 62 元。<br>
-  * 外資目標價來源：大摩（Morgan Stanley）為優先，如無則取其他主要外資最新報告（麥格理 / 大和 / FactSet 分析師中位數等），2026/07/09 更新。數據僅供參考，請以各券商最新報告為準。
+  * 華城（1519）TTM EPS 14.56元（26Q1），近三年 PER 27–82x（均值約48x），便宜 510 / 合理 700 / 昂貴 903 元。FY2025 配息現金11元＋股票1元。<br>
+  * 南亞（1303）景氣循環股，26Q1 TTM EPS 2.31元轉正。前瞻PER法，便宜 58 / 合理 81 / 昂貴 116 元。
 </p>
 
-</div><!-- end tab-watchlist -->
+</div><!-- end tab-nonai -->
 
 <!-- ══ Tab: ETF 追蹤與配息試算 ══ -->
 <div id="tab-etf" class="tab-panel">
@@ -1831,6 +1889,7 @@ var STOCKS = [
   { id:'6770',  fairValue:44,   expValue:62  },
   { id:'8046',  fairValue:119,  expValue:198 },
   { id:'1303',  fairValue:81,   expValue:116 },
+  { id:'1519',  fairValue:700,  expValue:903 },
   { id:'00981A', fairValue:32, expValue:42 },
   { id:'00991A', fairValue:19, expValue:25 },
   { id:'00631L', fairValue:32, expValue:42 },
@@ -1990,6 +2049,7 @@ var TRACKED = [
   { id:'3324', name:'雙鴻',       tier:'growth', fairValue:978,  expValue:1258, fairPER:28, tp:1425, cheapValue:699, annualDiv:11.9 },  // 1.09% × 1095
   { id:'2327', name:'國巨',       tier:'growth', fairValue:255,  expValue:318,  fairPER:20, tp:null, cheapValue:204, annualDiv:6.0  },  // GoodInfo確認
   { id:'2492', name:'華新科',     tier:'spec',   fairValue:115,  expValue:157,  fairPER:22, tp:null, cheapValue:73,  annualDiv:2.5  },  // 被動元件強循環股；TTM EPS 5.22，近三年PER 14-35x；26M06現價617 PER 118x嚴重泡沫
+  { id:'1519', name:'華城',       tier:'growth', fairValue:700,  expValue:903,  fairPER:48, tp:null, cheapValue:510, annualDiv:11   },  // 重電/變壓器（非AI產業鏈分頁）；TTM EPS 14.56，近3年PER 27-82x均值48x；FY2025配息現金11元＋股票1元（26/06/12除息）
 
   // ── 高風險 ── 高波動 / 景氣循環 / 小型 / 單季轉盈 ─────
   { id:'6669', name:'緯穎',       tier:'spec',   fairValue:4475, expValue:5966, fairPER:15, tp:null, cheapValue:3281, annualDiv:144.4 },  // FY2025 現金144.4元（26/06/22除息）＋股票20元

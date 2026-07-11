@@ -117,7 +117,8 @@ node "C:\Users\USER\goodinfo_scraper.mjs" {代號} div
 | 6770 | 力積電 | 晶圓代工 | PER法 | 6770_analysis.html |
 | 8046 | 南電 | ABF載板 | PER法 | 8046_analysis.html |
 | 8210 | 勤誠 | AI/機殼 | PER法 | 8210_analysis.html |
-| 1303 | 南亞 | 石化 | PER法 | 1303_analysis.html |
+| 1303 | 南亞 | 石化（非AI分頁） | PER法 | 1303_analysis.html |
+| 1519 | 華城 | 重電/電力設備（非AI分頁） | PER法 | 1519_analysis.html |
 
 ---
 
@@ -255,7 +256,7 @@ window.addEventListener('load', updateLiveMetric);
 
 **1. 對應 section 的 tbody 加新列**
 
-- **個股**：在對應產業 section 的 `<tbody>` 手動加一列：
+- **個股**：在對應產業 section 的 `<tbody>` 手動加一列。**非 AI 產業鏈個股（重電、塑化、傳產、金融等）放在「🏭 非AI產業鏈」分頁（`tab-nonai`）內的 section**，AI 供應鏈個股放在主追蹤清單分頁（`tab-watchlist`）：
 ```html
 <td class="code">{代號}</td>
 <td class="name"><a href="{代號}_analysis.html">{名稱}</a></td>
