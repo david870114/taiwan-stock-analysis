@@ -256,7 +256,7 @@ window.addEventListener('load', updateLiveMetric);
 
 **1. 對應 section 的 tbody 加新列**
 
-- **個股**：在對應產業 section 的 `<tbody>` 手動加一列。**非 AI 產業鏈個股（重電、塑化、傳產、金融等）放在「🏭 非AI產業鏈」分頁（`tab-nonai`）內的 section**，AI 供應鏈個股放在主追蹤清單分頁（`tab-watchlist`）：
+- **個股**：在對應產業 section 的 `<tbody>` 手動加一列。**非 AI 產業鏈個股（重電、塑化、傳產、金融等）放在「🏭 其他追蹤清單」分頁（`tab-nonai`）內的 section**，AI 供應鏈個股放在「📊 AI 產業鏈」分頁（`tab-watchlist`）：
 ```html
 <td class="code">{代號}</td>
 <td class="name"><a href="{代號}_analysis.html">{名稱}</a></td>
