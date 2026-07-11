@@ -1,0 +1,320 @@
+{
+ "updated": "2026-07-11",
+ "stocks": [
+  {
+   "id": "0050",
+   "name": "元大台灣50",
+   "cheap": 46,
+   "fair": 64,
+   "expensive": 107,
+   "annualDiv": 1.6,
+   "url": "0050_analysis.html"
+  },
+  {
+   "id": "006208",
+   "name": "富邦台50",
+   "cheap": 107,
+   "fair": 148,
+   "expensive": 248,
+   "annualDiv": 8.198,
+   "url": "006208_analysis.html"
+  },
+  {
+   "id": "0056",
+   "name": "元大高股息",
+   "cheap": 45,
+   "fair": 51,
+   "expensive": 58,
+   "annualDiv": 4.08,
+   "url": "0056_analysis.html"
+  },
+  {
+   "id": "00878",
+   "name": "國泰永續高股息",
+   "cheap": 21,
+   "fair": 27,
+   "expensive": 34,
+   "annualDiv": 1.88,
+   "url": "00878_analysis.html"
+  },
+  {
+   "id": "00919",
+   "name": "群益台灣精選高息",
+   "cheap": 24,
+   "fair": 29,
+   "expensive": 36,
+   "annualDiv": 2.86,
+   "url": "00919_analysis.html"
+  },
+  {
+   "id": "00981A",
+   "name": "主動統一台股增長",
+   "cheap": 25,
+   "fair": 32,
+   "expensive": 42,
+   "annualDiv": 2.52,
+   "url": "00981A_analysis.html"
+  },
+  {
+   "id": "00991A",
+   "name": "主動復華未來50",
+   "cheap": 14,
+   "fair": 19,
+   "expensive": 25,
+   "annualDiv": null,
+   "url": "00991A_analysis.html"
+  },
+  {
+   "id": "00631L",
+   "name": "元大台灣50正2",
+   "cheap": 25,
+   "fair": 32,
+   "expensive": 42,
+   "annualDiv": null,
+   "url": "00631L_analysis.html"
+  },
+  {
+   "id": "2330",
+   "name": "台積電",
+   "cheap": 1265,
+   "fair": 1637,
+   "expensive": 2083,
+   "annualDiv": 24,
+   "url": "2330_analysis.html"
+  },
+  {
+   "id": "2454",
+   "name": "聯發科",
+   "cheap": 944,
+   "fair": 1258,
+   "expensive": 1635,
+   "annualDiv": 53.5,
+   "url": "2454_analysis.html"
+  },
+  {
+   "id": "2303",
+   "name": "聯電",
+   "cheap": 48,
+   "fair": 72,
+   "expensive": 128,
+   "annualDiv": 2.61,
+   "url": "2303_analysis.html"
+  },
+  {
+   "id": "6239",
+   "name": "力成",
+   "cheap": 93,
+   "fair": 126,
+   "expensive": 185,
+   "annualDiv": 4.5,
+   "url": "6239_analysis.html"
+  },
+  {
+   "id": "2308",
+   "name": "台達電",
+   "cheap": 596,
+   "fair": 732,
+   "expensive": 867,
+   "annualDiv": 11.6,
+   "url": "2308_analysis.html"
+  },
+  {
+   "id": "2382",
+   "name": "廣達",
+   "cheap": 253,
+   "fair": 350,
+   "expensive": 506,
+   "annualDiv": 15.6,
+   "url": "2382_analysis.html"
+  },
+  {
+   "id": "3231",
+   "name": "緯創",
+   "cheap": 101,
+   "fair": 181,
+   "expensive": 302,
+   "annualDiv": 5.5,
+   "url": "3231_analysis.html"
+  },
+  {
+   "id": "2345",
+   "name": "智邦",
+   "cheap": 1110,
+   "fair": 1375,
+   "expensive": 1692,
+   "annualDiv": 15,
+   "url": "2345_per_analysis_2026.html"
+  },
+  {
+   "id": "3017",
+   "name": "奇鋐",
+   "cheap": 1096,
+   "fair": 1583,
+   "expensive": 2070,
+   "annualDiv": 18,
+   "url": "3017_analysis.html"
+  },
+  {
+   "id": "3324",
+   "name": "雙鴻",
+   "cheap": 699,
+   "fair": 978,
+   "expensive": 1258,
+   "annualDiv": 11.9,
+   "url": "3324_analysis.html"
+  },
+  {
+   "id": "2327",
+   "name": "國巨",
+   "cheap": 204,
+   "fair": 255,
+   "expensive": 318,
+   "annualDiv": 6,
+   "url": "2327_analysis.html"
+  },
+  {
+   "id": "2492",
+   "name": "華新科",
+   "cheap": 73,
+   "fair": 115,
+   "expensive": 157,
+   "annualDiv": 2.5,
+   "url": "2492_analysis.html"
+  },
+  {
+   "id": "1519",
+   "name": "華城",
+   "cheap": 510,
+   "fair": 700,
+   "expensive": 903,
+   "annualDiv": 11,
+   "url": "1519_analysis.html"
+  },
+  {
+   "id": "1513",
+   "name": "中興電",
+   "cheap": 149,
+   "fair": 169,
+   "expensive": 198,
+   "annualDiv": 6,
+   "url": "1513_analysis.html"
+  },
+  {
+   "id": "6669",
+   "name": "緯穎",
+   "cheap": 3281,
+   "fair": 4475,
+   "expensive": 5966,
+   "annualDiv": 144.4,
+   "url": "6669_analysis.html"
+  },
+  {
+   "id": "2301",
+   "name": "光寶科",
+   "cheap": 102,
+   "fair": 136,
+   "expensive": 177,
+   "annualDiv": 5,
+   "url": "2301_analysis.html"
+  },
+  {
+   "id": "3596",
+   "name": "智易",
+   "cheap": 126,
+   "fair": 177,
+   "expensive": 278,
+   "annualDiv": 8,
+   "url": "3596_analysis.html"
+  },
+  {
+   "id": "8210",
+   "name": "勤誠",
+   "cheap": 475,
+   "fair": 747,
+   "expensive": 1019,
+   "annualDiv": 14,
+   "url": "8210_analysis.html"
+  },
+  {
+   "id": "3037",
+   "name": "欣興",
+   "cheap": 84,
+   "fair": 141,
+   "expensive": 211,
+   "annualDiv": 2,
+   "url": "3037_analysis.html"
+  },
+  {
+   "id": "8046",
+   "name": "南電",
+   "cheap": 79,
+   "fair": 119,
+   "expensive": 198,
+   "annualDiv": 2,
+   "url": "8046_analysis.html"
+  },
+  {
+   "id": "3481",
+   "name": "群創",
+   "cheap": 15,
+   "fair": 30,
+   "expensive": 50,
+   "annualDiv": 1,
+   "url": "3481_analysis.html"
+  },
+  {
+   "id": "2337",
+   "name": "旺宏",
+   "cheap": 109,
+   "fair": 163,
+   "expensive": 218,
+   "annualDiv": 0,
+   "url": "2337_analysis.html"
+  },
+  {
+   "id": "2344",
+   "name": "華邦電",
+   "cheap": 67,
+   "fair": 88,
+   "expensive": 115,
+   "annualDiv": 0.5,
+   "url": "2344_analysis.html"
+  },
+  {
+   "id": "3260",
+   "name": "威剛",
+   "cheap": 514,
+   "fair": 719,
+   "expensive": 925,
+   "annualDiv": 17,
+   "url": "3260_analysis.html"
+  },
+  {
+   "id": "2408",
+   "name": "南亞科",
+   "cheap": 167,
+   "fair": 279,
+   "expensive": 391,
+   "annualDiv": 1.35,
+   "url": "2408_analysis.html"
+  },
+  {
+   "id": "6770",
+   "name": "力積電",
+   "cheap": 27,
+   "fair": 44,
+   "expensive": 62,
+   "annualDiv": 0,
+   "url": "6770_analysis.html"
+  },
+  {
+   "id": "1303",
+   "name": "南亞",
+   "cheap": 58,
+   "fair": 81,
+   "expensive": 116,
+   "annualDiv": 0.8,
+   "url": "1303_analysis.html"
+  }
+ ]
+}

@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>👤 我的股票 — 台股追蹤</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background:#0f1117; color:#e2e8f0; padding:24px; max-width:1200px; margin:0 auto;
+}
+a { color:#7db8f7; }
+.back-link { display:inline-block; margin-bottom:16px; font-size:13px; text-decoration:none; color:#64748b; }
+.back-link:hover { color:#7db8f7; }
+h1 { font-size:24px; margin-bottom:4px; }
+.meta { color:#64748b; font-size:13px; margin-bottom:20px; }
+.card {
+  background:#1e2535; border:1px solid #2a3450; border-radius:14px;
+  padding:20px; margin-bottom:20px;
+}
+.card h2 { font-size:16px; margin-bottom:14px; color:#93c5fd; }
+.card h2 .sub { font-size:11px; color:#64748b; font-weight:400; margin-left:8px; }
+
+/* ── 登入 ── */
+#authView { max-width:420px; margin:60px auto; }
+.auth-tabs { display:flex; gap:8px; margin-bottom:18px; }
+.auth-tabs button {
+  flex:1; padding:10px; border-radius:10px; border:1px solid #2a3450;
+  background:#141b2d; color:#94a3b8; font-size:14px; font-weight:600; cursor:pointer;
+}
+.auth-tabs button.sel { background:#1e3050; border-color:#3b82f6; color:#93c5fd; }
+.field { margin-bottom:14px; }
+.field label { display:block; font-size:12px; color:#94a3b8; margin-bottom:6px; }
+.field input {
+  width:100%; padding:11px 14px; border-radius:10px; border:1px solid #2a3450;
+  background:#141b2d; color:#e2e8f0; font-size:14px;
+}
+.field input:focus { outline:none; border-color:#3b82f6; }
+.btn {
+  padding:10px 20px; border-radius:10px; border:none; cursor:pointer;
+  font-size:14px; font-weight:700; background:#3b82f6; color:#fff; transition:opacity .15s;
+}
+.btn:hover { opacity:.85; }
+.btn.full { width:100%; }
+.btn.ghost { background:#141b2d; border:1px solid #2a3450; color:#94a3b8; }
+.btn.green { background:#16a34a; }
+.btn.sm { padding:6px 12px; font-size:12px; }
+.err { color:#f87171; font-size:13px; margin-top:10px; min-height:18px; }
+.hint { color:#64748b; font-size:11px; margin-top:12px; line-height:1.6; }
+
+/* ── 主畫面 ── */
+#mainView { display:none; }
+.topbar { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:20px; }
+.topbar .who { font-size:13px; color:#94a3b8; }
+.topbar .who b { color:#e2e8f0; }
+
+.stat-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:12px; margin-bottom:20px; }
+.stat {
+  background:#1e2535; border:1px solid #2a3450; border-radius:14px; padding:16px 18px;
+}
+.stat .lb { font-size:11px; color:#64748b; margin-bottom:6px; }
+.stat .val { font-size:22px; font-weight:800; font-family:monospace; }
+.stat .val.green { color:#22c55e; } .stat .val.red { color:#ef4444; }
+
+table { width:100%; border-collapse:collapse; font-size:13px; }
+th { text-align:right; color:#64748b; font-size:11px; font-weight:700; padding:8px 10px; border-bottom:1px solid #2a3450; white-space:nowrap; }
+th:first-child, th:nth-child(2) { text-align:left; }
+td { padding:8px 10px; border-bottom:1px solid #1a2236; text-align:right; font-family:monospace; white-space:nowrap; }
+td:first-child, td:nth-child(2) { text-align:left; }
+tr:last-child td { border-bottom:none; }
+td input {
+  background:#141b2d; border:1px solid #2a3450; color:#e2e8f0; border-radius:8px;
+  padding:6px 8px; font-size:13px; font-family:monospace; text-align:right;
+}
+td input.code-in { width:78px; text-align:left; }
+td input.num-in { width:92px; }
+.name-cell { color:#cbd5e1; font-family:inherit; }
+.pl-pos { color:#22c55e; } .pl-neg { color:#ef4444; }
+.badge { display:inline-block; padding:2px 9px; border-radius:20px; font-size:11px; font-weight:700; font-family:inherit; cursor:pointer; }
+.badge.exp   { background:rgba(239,68,68,.15);  color:#f87171; }
+.badge.high  { background:rgba(245,158,11,.15); color:#fbbf24; }
+.badge.near  { background:rgba(34,197,94,.12);  color:#4ade80; }
+.badge.cheap { background:rgba(34,197,94,.25);  color:#22c55e; }
+.badge.none  { background:#141b2d; color:#475569; }
+.del-btn { background:none; border:none; color:#475569; cursor:pointer; font-size:15px; }
+.del-btn:hover { color:#ef4444; }
+.table-wrap { overflow-x:auto; }
+
+/* 估值位置條 */
+.vrow { display:flex; align-items:center; gap:12px; margin-bottom:12px; }
+.vrow .vname { width:150px; flex:0 0 150px; font-size:12px; color:#cbd5e1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.vbar { flex:1; height:14px; border-radius:7px; position:relative;
+  background:linear-gradient(90deg,#16a34a 0%,#16a34a 25%,#3b82f6 45%,#f59e0b 75%,#ef4444 100%); opacity:.9; }
+.vmark { position:absolute; top:-4px; width:3px; height:22px; background:#fff; border-radius:2px; box-shadow:0 0 6px rgba(255,255,255,.7); }
+.vlabels { flex:0 0 190px; font-size:10px; color:#64748b; font-family:monospace; text-align:left; }
+@media(max-width:640px){ .vrow .vname{width:90px;flex-basis:90px;} .vlabels{flex-basis:130px;} }
+
+.charts-grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+@media(max-width:800px){ .charts-grid { grid-template-columns:1fr; } }
+.chart-box { position:relative; height:280px; }
+
+/* 通知設定 */
+.switch-row { display:flex; align-items:center; gap:10px; margin-bottom:14px; font-size:14px; }
+.switch-row input[type=checkbox] { width:18px; height:18px; accent-color:#3b82f6; cursor:pointer; }
+#lineUserId { width:100%; max-width:420px; padding:10px 14px; border-radius:10px; border:1px solid #2a3450; background:#141b2d; color:#e2e8f0; font-size:13px; font-family:monospace; }
+details { margin-top:14px; font-size:13px; color:#94a3b8; }
+details summary { cursor:pointer; color:#7db8f7; font-weight:600; margin-bottom:8px; }
+details ol { margin:10px 0 10px 22px; line-height:2; }
+details code { background:#141b2d; padding:2px 6px; border-radius:6px; font-size:12px; color:#fbbf24; }
+
+/* 儲存列 */
+.save-bar {
+  position:sticky; bottom:16px; display:flex; justify-content:flex-end; gap:10px;
+  padding:12px 16px; background:rgba(20,27,45,.92); border:1px solid #2a3450;
+  border-radius:14px; backdrop-filter:blur(8px); margin-top:8px;
+}
+.dirty-dot { align-self:center; font-size:12px; color:#fbbf24; display:none; }
+.saved-msg { align-self:center; font-size:12px; color:#22c55e; display:none; }
+.add-row-btn { margin-top:12px; }
+.loading-px { color:#475569; }
+</style>
+</head>
+<body>
+
+<a href="index.html" class="back-link">← 返回總覽</a>
+
+<!-- ══ 登入畫面 ══ -->
+<div id="authView">
+  <div class="card">
+    <h1 style="margin-bottom:14px">👤 我的股票</h1>
+    <div class="auth-tabs">
+      <button id="tabLogin" class="sel" onclick="setAuthMode('login')">登入</button>
+      <button id="tabRegister" onclick="setAuthMode('register')">首次使用（註冊）</button>
+    </div>
+    <div class="field">
+      <label>帳號（email 或 LINE ID）</label>
+      <input id="accountInput" type="text" placeholder="you@example.com" autocomplete="username">
+    </div>
+    <div class="field">
+      <label>密碼</label>
+      <input id="passwordInput" type="password" placeholder="至少 4 個字元" autocomplete="current-password">
+    </div>
+    <button class="btn full" id="authBtn" onclick="doAuth()">登入</button>
+    <div class="err" id="authErr"></div>
+    <div class="hint">
+      資產資料加密儲存於 Cloudflare KV，僅供個人使用。<br>
+      首次使用請點「首次使用（註冊）」建立帳號。
+    </div>
+  </div>
+</div>
+
+<!-- ══ 主畫面 ══ -->
+<div id="mainView">
+  <div class="topbar">
+    <div>
+      <h1>👤 我的股票</h1>
+      <p class="meta">股價每分鐘自動更新 ｜ <span id="pxUpdated">股價載入中…</span></p>
+    </div>
+    <div style="display:flex; gap:10px; align-items:center">
+      <span class="who">帳號：<b id="whoAccount"></b></span>
+      <button class="btn ghost sm" onclick="logout()">登出</button>
+    </div>
+  </div>
+
+  <!-- 總覽統計 -->
+  <div class="stat-row">
+    <div class="stat"><div class="lb">總市值</div><div class="val" id="statMV">—</div></div>
+    <div class="stat"><div class="lb">總成本</div><div class="val" id="statCost">—</div></div>
+    <div class="stat"><div class="lb">未實現損益</div><div class="val" id="statPL">—</div></div>
+    <div class="stat"><div class="lb">報酬率</div><div class="val" id="statRet">—</div></div>
+  </div>
+
+  <!-- 持股 -->
+  <div class="card">
+    <h2>💼 我的持股 <span class="sub">代號輸入後自動帶入名稱；點「估值」欄可自訂便宜/合理/昂貴價</span></h2>
+    <div class="table-wrap">
+    <table id="holdingsTable">
+      <thead><tr>
+        <th>代號</th><th>名稱</th><th>股數</th><th>平均成本</th><th>現價</th>
+        <th>市值</th><th>損益</th><th>報酬%</th><th>估值</th><th></th>
+      </tr></thead>
+      <tbody id="holdingsBody"></tbody>
+    </table>
+    </div>
+    <button class="btn ghost sm add-row-btn" onclick="addHolding()">＋ 新增持股</button>
+  </div>
+
+  <!-- 追蹤清單 -->
+  <div class="card">
+    <h2>⭐ 想追蹤的標的 <span class="sub">未持有但想收到到價通知的股票</span></h2>
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th>代號</th><th>名稱</th><th>現價</th><th>便宜價</th><th>合理價</th><th>昂貴價</th><th>估值</th><th></th></tr></thead>
+      <tbody id="watchBody"></tbody>
+    </table>
+    </div>
+    <button class="btn ghost sm add-row-btn" onclick="addWatch()">＋ 新增追蹤</button>
+  </div>
+
+  <!-- 圖表 -->
+  <div class="charts-grid">
+    <div class="card"><h2>🥧 資產配置</h2><div class="chart-box"><canvas id="allocChart"></canvas></div></div>
+    <div class="card"><h2>📊 個股損益</h2><div class="chart-box"><canvas id="plChart"></canvas></div></div>
+  </div>
+
+  <!-- 估值位置 -->
+  <div class="card">
+    <h2>🎯 估值位置 <span class="sub">白線 = 現價在「便宜 → 昂貴」區間中的位置</span></h2>
+    <div id="valuationBars"></div>
+  </div>
+
+  <!-- 通知設定 -->
+  <div class="card">
+    <h2>🔔 LINE 到價通知</h2>
+    <div class="switch-row">
+      <input type="checkbox" id="alertEnabled" onchange="markDirty()">
+      <label for="alertEnabled">開啟通知（交易時段每 30 分鐘檢查：<b style="color:#f87171">到達昂貴價</b> 或 <b style="color:#4ade80">跌到合理價 10% 內</b> 時推播）</label>
+    </div>
+    <div class="field" style="max-width:460px">
+      <label>LINE User ID（加官方帳號好友後，傳任意訊息即會回覆你的 ID）</label>
+      <input id="lineUserId" type="text" placeholder="Uxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" oninput="markDirty()">
+    </div>
+    <div style="display:flex; gap:10px; margin-top:10px">
+      <button class="btn green sm" onclick="testLine()">📨 發送測試通知</button>
+      <span id="testResult" style="align-self:center;font-size:12px;color:#94a3b8"></span>
+    </div>
+    <details>
+      <summary>📖 首次設定教學（約 10 分鐘）</summary>
+      <ol>
+        <li>到 <a href="https://developers.line.biz/console/" target="_blank">LINE Developers Console</a> 用你的 LINE 帳號登入</li>
+        <li>建立 Provider → 建立 <b>Messaging API</b> channel（名稱隨意，例如「台股到價通知」）</li>
+        <li>在 channel 的 <b>Messaging API</b> 分頁最下方，發行 <code>Channel access token</code>（交給管理者設定到伺服器）</li>
+        <li>用手機 LINE 掃描該分頁的 QR code，把官方帳號加為好友</li>
+        <li>Webhook URL 設為 <code>https://my-stocks-api.david870114.workers.dev/line-webhook</code> 並開啟「Use webhook」</li>
+        <li>對官方帳號傳任意訊息，它會回覆你的 <b>LINE User ID</b>，貼到上面欄位並儲存即完成</li>
+      </ol>
+    </details>
+  </div>
+
+  <!-- 儲存 -->
+  <div class="save-bar">
+    <span class="dirty-dot" id="dirtyDot">● 有未儲存的變更</span>
+    <span class="saved-msg" id="savedMsg">✓ 已儲存</span>
+    <button class="btn" onclick="savePortfolio()">💾 儲存變更</button>
+  </div>
+</div>
+
+<datalist id="stockList"></datalist>
+
+<script>
+var API_BASE = 'https://my-stocks-api.david870114.workers.dev';
+var PRICE_API = 'https://taiwan-stock-price.david870114.workers.dev/?id=';
+
+var token = localStorage.getItem('mystocks_token') || '';
+var account = localStorage.getItem('mystocks_account') || '';
+var authMode = 'login';
+var portfolio = { holdings: [], watchlist: [], alerts: { enabled: false, lineUserId: '', custom: {} } };
+var VAL = {};            // id → {name, cheap, fair, expensive}
+var prices = {};         // id → 現價
+var dirty = false;
+var allocChart = null, plChart = null;
+
+// ── 估值資料（與總覽頁共用 valuations.json）──
+async function loadValuations() {
+  try {
+    var res = await fetch('valuations.json', { cache: 'no-cache' });
+    var data = await res.json();
+    var dl = document.getElementById('stockList');
+    data.stocks.forEach(function(s) {
+      VAL[s.id] = s;
+      var opt = document.createElement('option');
+      opt.value = s.id; opt.label = s.name;
+      dl.appendChild(opt);
+    });
+  } catch (e) { /* 離線時仍可操作 */ }
+}
+
+// ── 認證 ──
+function setAuthMode(m) {
+  authMode = m;
+  document.getElementById('tabLogin').classList.toggle('sel', m === 'login');
+  document.getElementById('tabRegister').classList.toggle('sel', m === 'register');
+  document.getElementById('authBtn').textContent = m === 'login' ? '登入' : '註冊並登入';
+}
+async function doAuth() {
+  var acct = document.getElementById('accountInput').value.trim();
+  var pw = document.getElementById('passwordInput').value;
+  var errEl = document.getElementById('authErr');
+  errEl.textContent = '';
+  if (!acct || !pw) { errEl.textContent = '請輸入帳號與密碼'; return; }
+  document.getElementById('authBtn').disabled = true;
+  try {
+    var res = await fetch(API_BASE + '/api/' + (authMode === 'login' ? 'login' : 'register'), {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ account: acct, password: pw })
+    });
+    var data = await res.json();
+    if (!res.ok) { errEl.textContent = data.error || '發生錯誤'; return; }
+    token = data.token; account = data.account;
+    localStorage.setItem('mystocks_token', token);
+    localStorage.setItem('mystocks_account', account);
+    enterMain();
+  } catch (e) {
+    errEl.textContent = '無法連線到伺服器（Worker 尚未部署或網路異常）';
+  } finally {
+    document.getElementById('authBtn').disabled = false;
+  }
+}
+function logout() {
+  localStorage.removeItem('mystocks_token');
+  localStorage.removeItem('mystocks_account');
+  location.reload();
+}
+
+async function enterMain() {
+  document.getElementById('authView').style.display = 'none';
+  document.getElementById('mainView').style.display = 'block';
+  document.getElementById('whoAccount').textContent = account;
+  try {
+    var res = await fetch(API_BASE + '/api/portfolio', { headers: { 'Authorization': 'Bearer ' + token } });
+    if (res.status === 401) { logout(); return; }
+    portfolio = await res.json();
+    if (!portfolio.alerts) portfolio.alerts = { enabled: false, lineUserId: '', custom: {} };
+    if (!portfolio.alerts.custom) portfolio.alerts.custom = {};
+  } catch (e) { /* 使用空白組合 */ }
+  document.getElementById('alertEnabled').checked = !!portfolio.alerts.enabled;
+  document.getElementById('lineUserId').value = portfolio.alerts.lineUserId || '';
+  renderAll();
+  refreshPrices();
+  setInterval(refreshPrices, 60000);
+}
+
+// ── 資料操作 ──
+function markDirty() {
+  dirty = true;
+  document.getElementById('dirtyDot').style.display = 'inline';
+  document.getElementById('savedMsg').style.display = 'none';
+}
+function addHolding() {
+  portfolio.holdings.push({ id: '', name: '', shares: 0, cost: 0 });
+  markDirty(); renderAll();
+}
+function addWatch() {
+  portfolio.watchlist.push('');
+  markDirty(); renderAll();
+}
+function updateHolding(i, field, value) {
+  var h = portfolio.holdings[i];
+  if (field === 'id') {
+    h.id = value.trim();
+    if (VAL[h.id]) h.name = VAL[h.id].name;
+    fetchPrice(h.id).then(renderAll);
+  } else if (field === 'name') {
+    h.name = value.trim();
+  } else {
+    h[field] = parseFloat(value) || 0;
+  }
+  markDirty(); renderAll();
+}
+function updateWatch(i, value) {
+  portfolio.watchlist[i] = value.trim();
+  if (portfolio.watchlist[i]) fetchPrice(portfolio.watchlist[i]).then(renderAll);
+  markDirty(); renderAll();
+}
+function delHolding(i) { portfolio.holdings.splice(i, 1); markDirty(); renderAll(); }
+function delWatch(i) { portfolio.watchlist.splice(i, 1); markDirty(); renderAll(); }
+
+function editCustomVal(id) {
+  var cur = portfolio.alerts.custom[id] || VAL[id] || {};
+  var input = prompt(
+    '自訂 ' + id + ' 的估值（格式：便宜價,合理價,昂貴價）\n留空並確定 = 清除自訂、恢復預設',
+    (cur.cheap != null ? cur.cheap : '') + ',' + (cur.fair != null ? cur.fair : '') + ',' + (cur.expensive != null ? cur.expensive : '')
+  );
+  if (input === null) return;
+  if (input.trim() === '' || input.trim() === ',,') {
+    delete portfolio.alerts.custom[id];
+  } else {
+    var parts = input.split(',').map(function(x){ return parseFloat(x); });
+    portfolio.alerts.custom[id] = {
+      cheap: isNaN(parts[0]) ? null : parts[0],
+      fair: isNaN(parts[1]) ? null : parts[1],
+      expensive: isNaN(parts[2]) ? null : parts[2]
+    };
+  }
+  markDirty(); renderAll();
+}
+
+function getVal(id) {
+  var c = portfolio.alerts.custom[id];
+  var v = VAL[id] || {};
+  if (!c) return { cheap: v.cheap, fair: v.fair, expensive: v.expensive, custom: false };
+  return {
+    cheap: c.cheap != null ? c.cheap : v.cheap,
+    fair: c.fair != null ? c.fair : v.fair,
+    expensive: c.expensive != null ? c.expensive : v.expensive,
+    custom: true
+  };
+}
+
+function valBadge(id) {
+  var px = prices[id];
+  var v = getVal(id);
+  var star = v.custom ? '✎' : '';
+  if (!px || (v.fair == null && v.expensive == null)) {
+    return '<span class="badge none" onclick="editCustomVal(\'' + id + '\')">' + (star || '設定') + '估值</span>';
+  }
+  var cls = 'high', txt = '合理偏高';
+  if (v.expensive != null && px >= v.expensive) { cls = 'exp'; txt = '🔴 昂貴'; }
+  else if (v.cheap != null && px <= v.cheap) { cls = 'cheap'; txt = '🟢 便宜'; }
+  else if (v.fair != null && px <= v.fair * 1.10) { cls = 'near'; txt = '🟡 近合理'; }
+  return '<span class="badge ' + cls + '" onclick="editCustomVal(\'' + id + '\')" title="點擊自訂估值">' + txt + star + '</span>';
+}
+
+// ── 渲染 ──
+function fmt(n, dec) {
+  if (n == null || isNaN(n)) return '—';
+  return n.toLocaleString('zh-TW', { maximumFractionDigits: dec != null ? dec : 0 });
+}
+function pxCell(id) {
+  var px = prices[id];
+  return px ? fmt(px, 2) : '<span class="loading-px">…</span>';
+}
+
+function renderAll() {
+  renderHoldings();
+  renderWatch();
+  renderStats();
+  renderCharts();
+  renderValuationBars();
+}
+
+function renderHoldings() {
+  var tb = document.getElementById('holdingsBody');
+  tb.innerHTML = portfolio.holdings.map(function(h, i) {
+    var px = prices[h.id];
+    var mv = px ? px * h.shares : null;
+    var cost = h.cost * h.shares;
+    var pl = mv != null ? mv - cost : null;
+    var ret = (pl != null && cost > 0) ? pl / cost * 100 : null;
+    var plCls = pl > 0 ? 'pl-pos' : pl < 0 ? 'pl-neg' : '';
+    return '<tr>' +
+      '<td><input class="code-in" list="stockList" value="' + h.id + '" onchange="updateHolding(' + i + ',\'id\',this.value)"></td>' +
+      '<td class="name-cell"><input class="code-in" style="text-align:left;font-family:inherit" value="' + (h.name || '') + '" onchange="updateHolding(' + i + ',\'name\',this.value)"></td>' +
+      '<td><input class="num-in" type="number" min="0" value="' + h.shares + '" onchange="updateHolding(' + i + ',\'shares\',this.value)"></td>' +
+      '<td><input class="num-in" type="number" min="0" step="0.01" value="' + h.cost + '" onchange="updateHolding(' + i + ',\'cost\',this.value)"></td>' +
+      '<td>' + pxCell(h.id) + '</td>' +
+      '<td>' + fmt(mv) + '</td>' +
+      '<td class="' + plCls + '">' + (pl != null ? (pl > 0 ? '+' : '') + fmt(pl) : '—') + '</td>' +
+      '<td class="' + plCls + '">' + (ret != null ? (ret > 0 ? '+' : '') + ret.toFixed(1) + '%' : '—') + '</td>' +
+      '<td>' + valBadge(h.id) + '</td>' +
+      '<td><button class="del-btn" onclick="delHolding(' + i + ')" title="刪除">✕</button></td>' +
+    '</tr>';
+  }).join('') || '<tr><td colspan="10" style="text-align:center;color:#475569;padding:20px">尚無持股，點下方「＋ 新增持股」開始</td></tr>';
+}
+
+function renderWatch() {
+  var tb = document.getElementById('watchBody');
+  tb.innerHTML = portfolio.watchlist.map(function(id, i) {
+    var v = getVal(id);
+    var name = (VAL[id] || {}).name || '';
+    return '<tr>' +
+      '<td><input class="code-in" list="stockList" value="' + id + '" onchange="updateWatch(' + i + ',this.value)"></td>' +
+      '<td class="name-cell">' + name + '</td>' +
+      '<td>' + pxCell(id) + '</td>' +
+      '<td>' + fmt(v.cheap, 1) + '</td>' +
+      '<td>' + fmt(v.fair, 1) + '</td>' +
+      '<td>' + fmt(v.expensive, 1) + '</td>' +
+      '<td>' + valBadge(id) + '</td>' +
+      '<td><button class="del-btn" onclick="delWatch(' + i + ')" title="刪除">✕</button></td>' +
+    '</tr>';
+  }).join('') || '<tr><td colspan="8" style="text-align:center;color:#475569;padding:20px">尚無追蹤標的</td></tr>';
+}
+
+function renderStats() {
+  // 損益只計「已取得現價」的持股，避免股價載入中/抓不到時顯示 -100%
+  var mv = 0, cost = 0, costWithPx = 0, hasAll = true;
+  portfolio.holdings.forEach(function(h) {
+    cost += h.cost * h.shares;
+    if (prices[h.id]) {
+      mv += prices[h.id] * h.shares;
+      costWithPx += h.cost * h.shares;
+    } else if (h.shares > 0) {
+      hasAll = false;
+    }
+  });
+  var pl = mv - costWithPx;
+  document.getElementById('statMV').textContent = costWithPx > 0 ? (fmt(mv) + (hasAll ? '' : '+')) : '—';
+  document.getElementById('statCost').textContent = fmt(cost);
+  var plEl = document.getElementById('statPL');
+  plEl.textContent = costWithPx > 0 ? ((pl > 0 ? '+' : '') + fmt(pl)) : '—';
+  plEl.className = 'val ' + (pl > 0 ? 'green' : pl < 0 ? 'red' : '');
+  var retEl = document.getElementById('statRet');
+  retEl.textContent = costWithPx > 0 ? ((pl > 0 ? '+' : '') + (pl / costWithPx * 100).toFixed(2) + '%') : '—';
+  retEl.className = plEl.className;
+}
+
+var PALETTE = ['#3b82f6','#22c55e','#f59e0b','#ec4899','#a855f7','#06b6d4','#ef4444','#14b8a6','#eab308','#f97316','#8b5cf6','#10b981'];
+
+function renderCharts() {
+  var rows = portfolio.holdings.filter(function(h){ return h.id && h.shares > 0 && prices[h.id]; });
+  var labels = rows.map(function(h){ return h.name || h.id; });
+
+  // 資產配置
+  var mvs = rows.map(function(h){ return Math.round(prices[h.id] * h.shares); });
+  if (allocChart) allocChart.destroy();
+  allocChart = new Chart(document.getElementById('allocChart'), {
+    type: 'doughnut',
+    data: { labels: labels, datasets: [{ data: mvs, backgroundColor: PALETTE, borderColor: '#1e2535', borderWidth: 2 }] },
+    options: { responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { position: 'right', labels: { color: '#94a3b8', font: { size: 11 }, boxWidth: 12 } } } }
+  });
+
+  // 個股損益
+  var pls = rows.map(function(h){ return Math.round((prices[h.id] - h.cost) * h.shares); });
+  if (plChart) plChart.destroy();
+  plChart = new Chart(document.getElementById('plChart'), {
+    type: 'bar',
+    data: { labels: labels, datasets: [{ data: pls,
+      backgroundColor: pls.map(function(v){ return v >= 0 ? 'rgba(34,197,94,.7)' : 'rgba(239,68,68,.7)'; }),
+      borderRadius: 4 }] },
+    options: { responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { ticks: { color: '#94a3b8', font: { size: 10 } }, grid: { display: false } },
+        y: { ticks: { color: '#64748b', font: { size: 10 } }, grid: { color: '#1a2236' } }
+      } }
+  });
+}
+
+function renderValuationBars() {
+  var ids = [];
+  portfolio.holdings.forEach(function(h){ if (h.id && ids.indexOf(h.id) < 0) ids.push(h.id); });
+  portfolio.watchlist.forEach(function(id){ if (id && ids.indexOf(id) < 0) ids.push(id); });
+  var html = ids.map(function(id) {
+    var v = getVal(id);
+    var px = prices[id];
+    if (!px || v.cheap == null || v.expensive == null) return '';
+    var pct = Math.max(0, Math.min(100, (px - v.cheap) / (v.expensive - v.cheap) * 100));
+    var name = (VAL[id] || {}).name || id;
+    return '<div class="vrow">' +
+      '<div class="vname">' + name + '（' + id + '）</div>' +
+      '<div class="vbar"><div class="vmark" style="left:' + pct.toFixed(1) + '%"></div></div>' +
+      '<div class="vlabels">' + fmt(v.cheap,0) + ' / ' + fmt(v.fair,0) + ' / ' + fmt(v.expensive,0) + '　現價 ' + fmt(px,1) + '</div>' +
+    '</div>';
+  }).join('');
+  document.getElementById('valuationBars').innerHTML =
+    html || '<div style="color:#475569;font-size:13px">新增持股或追蹤標的後，這裡會顯示每檔的估值位置</div>';
+}
+
+// ── 即時股價（Worker 有限流：逐一發送，間隔 ≥250ms）──
+async function fetchPrice(id) {
+  if (!id) return;
+  try {
+    var res = await fetch(PRICE_API + id, { cache: 'no-cache' });
+    var data = JSON.parse(await res.text());
+    var px = parseFloat(data.price);
+    if (px > 0) prices[id] = px;
+  } catch (e) { /* skip */ }
+}
+var refreshing = false;
+async function refreshPrices() {
+  if (refreshing) return;
+  refreshing = true;
+  var ids = [];
+  portfolio.holdings.forEach(function(h){ if (h.id && ids.indexOf(h.id) < 0) ids.push(h.id); });
+  portfolio.watchlist.forEach(function(id){ if (id && ids.indexOf(id) < 0) ids.push(id); });
+  for (var i = 0; i < ids.length; i++) {
+    await fetchPrice(ids[i]);
+    await new Promise(function(r){ setTimeout(r, 300); });
+  }
+  refreshing = false;
+  document.getElementById('pxUpdated').textContent = '更新於 ' + new Date().toLocaleTimeString('zh-TW');
+  renderAll();
+}
+
+// ── 儲存 ──
+async function savePortfolio() {
+  portfolio.alerts.enabled = document.getElementById('alertEnabled').checked;
+  portfolio.alerts.lineUserId = document.getElementById('lineUserId').value.trim();
+  portfolio.holdings = portfolio.holdings.filter(function(h){ return h.id; });
+  portfolio.watchlist = portfolio.watchlist.filter(function(id){ return id; });
+  try {
+    var res = await fetch(API_BASE + '/api/portfolio', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+      body: JSON.stringify(portfolio)
+    });
+    if (res.status === 401) { logout(); return; }
+    if (!res.ok) throw new Error();
+    dirty = false;
+    document.getElementById('dirtyDot').style.display = 'none';
+    var msg = document.getElementById('savedMsg');
+    msg.style.display = 'inline';
+    setTimeout(function(){ msg.style.display = 'none'; }, 3000);
+    renderAll();
+  } catch (e) {
+    alert('儲存失敗，請稍後再試');
+  }
+}
+
+async function testLine() {
+  var el = document.getElementById('testResult');
+  el.textContent = '傳送中…';
+  if (dirty) await savePortfolio();
+  try {
+    var res = await fetch(API_BASE + '/api/test-line', {
+      method: 'POST', headers: { 'Authorization': 'Bearer ' + token }
+    });
+    var data = await res.json();
+    el.textContent = res.ok ? '✓ 已發送，請查看 LINE' : ('✗ ' + (data.error || '失敗'));
+    el.style.color = res.ok ? '#22c55e' : '#f87171';
+  } catch (e) {
+    el.textContent = '✗ 無法連線';
+    el.style.color = '#f87171';
+  }
+}
+
+window.addEventListener('beforeunload', function(e) {
+  if (dirty) { e.preventDefault(); e.returnValue = ''; }
+});
+
+// ── 啟動 ──
+(async function init() {
+  await loadValuations();
+  if (token) enterMain();
+})();
+</script>
+</body>
+</html>
