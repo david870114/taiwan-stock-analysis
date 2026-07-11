@@ -1935,40 +1935,78 @@ function vsInfo(price, fairValue, expValue) {
   return { pct: sign + pct + '%', cls: cls, badge: badge, label: label };
 }
 
-async function fetchAllPrices() {
-  document.getElementById('lastUpdate').textContent = '更新中...';
-  await Promise.all(STOCKS.map(async function(s) {
-    var price = await fetchPrice(s.id);
-    var priceEl = document.getElementById('price-' + s.id);
-    var vsEl    = document.getElementById('vs-'    + s.id);
-    if (price !== null) {
-      priceEl.textContent = price.toLocaleString();
-      priceEl.className   = 'price-cell td-cur';
-      var v = vsInfo(price, s.fairValue, s.expValue);
-      vsEl.innerHTML  = '<span class="vs-cell ' + v.cls + '">' + v.pct + '</span> <span class="badge ' + v.badge + '">' + v.label + '</span>';
-      vsEl.className  = '';
-    } else {
-      priceEl.textContent = '—';
-      priceEl.className   = 'price-cell gray';
-      vsEl.textContent    = '—';
-    }
-    if (CHAIN_STOCKS.indexOf(s.id) !== -1) {
-      var cpEl = document.getElementById('cp-' + s.id);
-      var cvEl = document.getElementById('cv-' + s.id);
-      if (cpEl && cvEl) {
-        if (price !== null) {
-          cpEl.textContent = price.toLocaleString();
-          var v2 = vsInfo(price, s.fairValue, s.expValue);
-          cvEl.textContent = v2.pct;
-          cvEl.className   = 'mc-vs-val ' + v2.cls;
-        } else {
-          cpEl.textContent = '—';
-          cpEl.style.color = '#334155';
-          cvEl.textContent = '—';
-        }
+// 上游報價來源在瞬間大量請求時會回 error 520（實測約 25-30 個請求/數秒即觸發），因此：
+// 1. 分批請求（每批 4 檔、間隔 1 秒，平均約 3 個請求/秒） 2. 首次載入失敗隔 1 秒重試一次 3. 仍失敗則沿用上一輪價格
+var LAST_PRICE = {};
+var BLOCK_ROUNDS = 0;  // 連續整輪全失敗的次數（判定已被上游封鎖）
+var SKIP_TICKS = 0;    // 封鎖時跳過的自動更新次數（指數退避）
+var sleep = function(ms) { return new Promise(function(r) { setTimeout(r, ms); }); };
+
+async function updateStockCells(s) {
+  var price = await fetchPrice(s.id);
+  if (price === null && LAST_PRICE[s.id] == null && BLOCK_ROUNDS === 0) {
+    // 只在還沒拿過價格且未偵測到封鎖時重試，避免封鎖期間請求量翻倍
+    await sleep(1000);
+    price = await fetchPrice(s.id);
+  }
+  var fresh = price !== null;
+  if (price !== null) LAST_PRICE[s.id] = price;
+  else if (LAST_PRICE[s.id] != null) price = LAST_PRICE[s.id];
+  var priceEl = document.getElementById('price-' + s.id);
+  var vsEl    = document.getElementById('vs-'    + s.id);
+  if (!priceEl || !vsEl) return fresh;
+  if (price !== null) {
+    priceEl.textContent = price.toLocaleString();
+    priceEl.className   = 'price-cell td-cur';
+    var v = vsInfo(price, s.fairValue, s.expValue);
+    vsEl.innerHTML  = '<span class="vs-cell ' + v.cls + '">' + v.pct + '</span> <span class="badge ' + v.badge + '">' + v.label + '</span>';
+    vsEl.className  = '';
+  } else {
+    priceEl.textContent = '—';
+    priceEl.className   = 'price-cell gray';
+    vsEl.textContent    = '—';
+  }
+  if (CHAIN_STOCKS.indexOf(s.id) !== -1) {
+    var cpEl = document.getElementById('cp-' + s.id);
+    var cvEl = document.getElementById('cv-' + s.id);
+    if (cpEl && cvEl) {
+      if (price !== null) {
+        cpEl.textContent = price.toLocaleString();
+        var v2 = vsInfo(price, s.fairValue, s.expValue);
+        cvEl.textContent = v2.pct;
+        cvEl.className   = 'mc-vs-val ' + v2.cls;
+      } else {
+        cpEl.textContent = '—';
+        cpEl.style.color = '#334155';
+        cvEl.textContent = '—';
       }
     }
-  }));
+  }
+  return fresh;
+}
+
+async function fetchAllPrices() {
+  // 被封鎖時指數退避：整輪全失敗就跳過接下來 1、2、4、8 次自動更新，
+  // 避免開著頁面每分鐘持續打請求讓封鎖一直不解除
+  if (SKIP_TICKS > 0) {
+    SKIP_TICKS--;
+    document.getElementById('lastUpdate').textContent = '來源暫時限流，稍後自動重試…';
+    return;
+  }
+  document.getElementById('lastUpdate').textContent = '更新中...';
+  var BATCH = 4, freshCount = 0;
+  for (var i = 0; i < STOCKS.length; i += BATCH) {
+    var results = await Promise.all(STOCKS.slice(i, i + BATCH).map(updateStockCells));
+    freshCount += results.filter(Boolean).length;
+    if (i + BATCH < STOCKS.length) await sleep(1000);
+  }
+  if (freshCount === 0) {
+    BLOCK_ROUNDS++;
+    SKIP_TICKS = Math.min(8, Math.pow(2, BLOCK_ROUNDS - 1));
+    document.getElementById('lastUpdate').textContent = '來源暫時限流，稍後自動重試…';
+    return;
+  }
+  BLOCK_ROUNDS = 0;
   if (typeof updateEtfGrowthCells === 'function') updateEtfGrowthCells();
   var now = new Date();
   document.getElementById('lastUpdate').textContent =
