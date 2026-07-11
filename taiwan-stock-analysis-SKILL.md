@@ -118,6 +118,7 @@ node "C:\Users\USER\goodinfo_scraper.mjs" {代號} div
 | 8046 | 南電 | ABF載板 | PER法 | 8046_analysis.html |
 | 8210 | 勤誠 | AI/機殼 | PER法 | 8210_analysis.html |
 | 1303 | 南亞 | 石化（非AI分頁） | PER法 | 1303_analysis.html |
+| 1513 | 中興電 | 重電/GIS開關（非AI分頁） | PER法 | 1513_analysis.html |
 | 1519 | 華城 | 重電/電力設備（非AI分頁） | PER法 | 1519_analysis.html |
 
 ---
