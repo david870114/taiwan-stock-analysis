@@ -103,6 +103,7 @@ node "C:\Users\USER\goodinfo_scraper.mjs" {代號} div
 | 2345 | 智邦 | AI/網通 | PER法 | 2345_per_analysis_2026.html |
 | 2382 | 廣達 | AI/伺服器 | PER法 | 2382_analysis.html |
 | 2408 | 南亞科 | 記憶體 | PER法 | 2408_analysis.html |
+| 2454 | 聯發科 | AI/IC設計 | PER法 | 2454_analysis.html |
 | 2492 | 華新科 | 被動元件/MLCC | PER法 | 2492_analysis.html |
 | 3017 | 奇鋐 | AI/散熱 | PER法 | 3017_analysis.html |
 | 3037 | 欣興 | ABF載板 | PER法 | 3037_analysis.html |

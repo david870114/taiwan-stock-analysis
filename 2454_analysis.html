@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>聯發科 2454 — 2026 股價推算分析</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #0f1117; color: #e2e8f0; padding: 16px; }
+  h1 { font-size: 18px; font-weight: 700; color: #f8fafc; margin-bottom: 4px; }
+  .subtitle { font-size: 12px; color: #94a3b8; margin-bottom: 16px; }
+  .tabs { display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; }
+  .tab { padding: 6px 14px; border-radius: 20px; font-size: 12px; cursor: pointer; border: 1px solid #334155; color: #94a3b8; background: transparent; transition: all 0.2s; }
+  .tab.active { background: #3b82f6; color: #fff; border-color: #3b82f6; }
+  .tab:hover:not(.active) { border-color: #64748b; color: #e2e8f0; }
+  .panel { display: none; }
+  .panel.active { display: block; }
+  canvas { width: 100% !important; border-radius: 10px; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+  .card { background: #1e2535; border: 1px solid #2d3748; border-radius: 10px; padding: 14px; }
+  .card h3 { font-size: 12px; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
+  .card .val { font-size: 22px; font-weight: 700; }
+  .card .note { font-size: 11px; color: #64748b; margin-top: 4px; }
+  .green { color: #22c55e; } .yellow { color: #eab308; } .red { color: #ef4444; } .blue { color: #3b82f6; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 12px; }
+  th { background: #1e2535; color: #64748b; padding: 8px 10px; text-align: left; font-weight: 600; font-size: 11px; text-transform: uppercase; }
+  td { padding: 8px 10px; border-bottom: 1px solid #1e2535; }
+  tr:hover td { background: #1a2030; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: 600; }
+  .badge-buy { background: #14532d; color: #86efac; }
+  .badge-watch { background: #713f12; color: #fde68a; }
+  .badge-avoid { background: #450a0a; color: #fca5a5; }
+  .scenario-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 12px; }
+  .scenario-card { border-radius: 10px; padding: 14px; text-align: center; }
+  .bear { background: linear-gradient(135deg, #1a0a0a, #2d1010); border: 1px solid #7f1d1d; }
+  .base { background: linear-gradient(135deg, #0a1a0a, #102d10); border: 1px solid #14532d; }
+  .bull { background: linear-gradient(135deg, #0a0f1a, #10182d); border: 1px solid #1d4ed8; }
+  .sc-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.7; margin-bottom: 6px; }
+  .sc-price { font-size: 22px; font-weight: 800; margin: 4px 0; }
+  .sc-detail { font-size: 10px; opacity: 0.65; line-height: 1.6; }
+  .section-title { font-size: 13px; font-weight: 600; color: #cbd5e1; margin: 16px 0 8px; }
+  .buy-signal { background: #0f2a1e; border: 1px solid #166534; border-radius: 10px; padding: 14px; margin-top: 12px; }
+  .buy-signal h3 { color: #86efac; font-size: 13px; margin-bottom: 8px; }
+  .buy-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid #1a3a2a; gap: 8px; }
+  .buy-row:last-child { border-bottom: none; }
+  .current-price-badge { background: #1e3a5f; border: 1px solid #3b82f6; border-radius: 8px; padding: 10px 14px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px; }
+  .back-btn { color: #64748b; font-size: 12px; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; padding: 5px 10px; border: 1px solid #334155; border-radius: 8px; margin-bottom: 12px; transition: all 0.2s; }
+  .back-btn:hover { color: #e2e8f0; border-color: #64748b; }
+</style>
+</head>
+<body>
+
+<a href="index.html" class="back-btn">← 返回總覽</a>
+
+<h1>🔬 聯發科 (2454) — 2026 股價推算分析</h1>
+<p class="subtitle">本益比河流圖 ✦ 三情境估值 ✦ 分批買點建議 ✦ 更新時間：2026年7月11日</p>
+
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('river', this)">📈 PER 河流圖</button>
+  <button class="tab" onclick="switchTab('scenario', this)">🎯 三情境買點</button>
+  <button class="tab" onclick="switchTab('eps', this)">📊 EPS 趨勢</button>
+  <button class="tab" onclick="switchTab('fundamental', this)">🏢 基本面分析</button>
+  <button class="tab" onclick="switchTab('summary', this)">📋 完整摘要</button>
+</div>
+
+<!-- TAB 1: PER River -->
+<div id="tab-river" class="panel active">
+  <div class="current-price-badge">
+    <span style="color:#94a3b8;font-size:12px;">目前股價（即時）</span>
+    <span style="color:#3b82f6;font-size:20px;font-weight:800;" id="live-price">載入中…</span>
+    <span style="color:#ef4444;font-size:12px;" id="live-per">PER ≈ 62.4x（TTM EPS 62.9元）遠超昂貴區</span>
+  </div>
+  <canvas id="riverChart" height="340"></canvas>
+  <p style="font-size:11px;color:#475569;margin-top:8px;text-align:center;">* 河流帶以逐月 TTM EPS × 各本益比倍數繪製；2026/4 起因 ASIC AI 題材股價脫離歷史河流帶（PER 41→68x）</p>
+</div>
+
+<!-- TAB 2: 三情境 -->
+<div id="tab-scenario" class="panel">
+  <div class="grid2">
+    <div class="card"><h3>2025 全年 EPS（實際）</h3><div class="val blue">66.16 元</div><div class="note">YoY -1.1% ｜ 2024年: 66.92元</div></div>
+    <div class="card"><h3>2026 Q1 後 TTM EPS（最新季末）</h3><div class="val yellow">62.90 元</div><div class="note">TTM 小幅下滑，ASIC 貢獻尚未入帳</div></div>
+  </div>
+  <div class="section-title">2026 全年三情境 EPS 與股價推算（基於 TTM EPS 62.9）</div>
+  <div class="scenario-grid">
+    <div class="scenario-card bear">
+      <div class="sc-label">🐻 悲觀</div>
+      <div class="sc-price red">900–1,258</div>
+      <div class="sc-detail">EPS 60元<br>PER 15–20x<br>手機需求疲弱<br>ASIC 訂單遞延、題材退潮</div>
+    </div>
+    <div class="scenario-card base">
+      <div class="sc-label">⚖️ 基本</div>
+      <div class="sc-price green">1,400–1,820</div>
+      <div class="sc-detail">EPS 68–72元<br>PER 20–26x<br>天璣旗艦放量<br>ASIC 開始小量貢獻</div>
+    </div>
+    <div class="scenario-card bull">
+      <div class="sc-label">🚀 樂觀</div>
+      <div class="sc-price" style="color:#60a5fa;">2,400–3,600</div>
+      <div class="sc-detail">EPS 80–90元<br>PER 30–40x<br>資料中心 ASIC 大單放量<br>市場給予 AI 重新評價</div>
+    </div>
+  </div>
+  <div class="buy-signal">
+    <h3>💰 2026 分批建倉買點建議（現價 3,925 遠高於歷史估值帶，等回檔）</h3>
+    <div class="buy-row">
+      <span style="color:#86efac;font-size:13px;font-weight:600;">第一批（40%）</span>
+      <span style="color:#fde68a;font-size:14px;font-weight:700;">1,260–1,450 元</span>
+      <span class="badge badge-buy">積極進場 PER 20–23x</span>
+    </div>
+    <div class="buy-row">
+      <span style="color:#86efac;font-size:13px;font-weight:600;">第二批（40%）</span>
+      <span style="color:#fde68a;font-size:14px;font-weight:700;">1,450–1,700 元</span>
+      <span class="badge badge-buy">主力倉位 PER 23–27x</span>
+    </div>
+    <div class="buy-row">
+      <span style="color:#86efac;font-size:13px;font-weight:600;">第三批（20%）</span>
+      <span style="color:#fde68a;font-size:14px;font-weight:700;">1,700–2,000 元</span>
+      <span class="badge badge-watch">動能追加 PER 27–32x（需 ASIC 訂單確認）</span>
+    </div>
+    <div class="buy-row" style="border-top:1px solid #166534;margin-top:8px;padding-top:10px;">
+      <span style="color:#fca5a5;font-size:12px;">觀望/分批減倉</span>
+      <span style="color:#fca5a5;font-size:13px;font-weight:700;">2,500 元以上</span>
+      <span class="badge badge-avoid">PER &gt; 40x，題材溢價過高</span>
+    </div>
+  </div>
+</div>
+
+<!-- TAB 3: EPS -->
+<div id="tab-eps" class="panel">
+  <canvas id="epsChart" height="300"></canvas>
+  <div class="grid2">
+    <div class="card"><h3>5年EPS 走勢（2020–2025）</h3><div class="val yellow">高原震盪</div><div class="note">2022 高峰 74.59 → 2023 谷底 48.51 → 回穩 66 元附近</div></div>
+    <div class="card"><h3>TTM EPS（2026Q1 後）</h3><div class="val yellow">62.90 元</div><div class="note">較 25M12 的 66.16 小幅下滑</div></div>
+  </div>
+  <div class="section-title">逐月明細（近三年，收盤 / TTM EPS / PER / 各倍數換算價）</div>
+  <div style="overflow-x:auto;">
+    <table id="monthlyTable">
+      <thead>
+        <tr><th>月份</th><th style="text-align:right;">收盤價</th><th style="text-align:right;">TTM EPS</th><th style="text-align:right;">PER</th><th style="text-align:right;">15x 便宜</th><th style="text-align:right;">20x 合理</th><th style="text-align:right;">26x 昂貴</th></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- TAB 4: 基本面分析 -->
+<div id="tab-fundamental" class="panel">
+
+  <div class="section-title">📊 公司營運</div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;">
+    <div class="card"><h3>毛利率（近年約）</h3><div class="val yellow">~48%</div><div class="note">IC 設計（fabless），高於同業平均</div></div>
+    <div class="card"><h3>2025 全年 EPS</h3><div class="val blue">66.16 元</div><div class="note">連兩年維持 66 元以上高原</div></div>
+    <div class="card"><h3>FY2025 配息</h3><div class="val green">53.5 元</div><div class="note">半年配：29 + 24.5，配發率約 81%</div></div>
+  </div>
+  <div style="background:#1e2535;border:1px solid #2d3748;border-radius:10px;padding:14px;margin-bottom:14px;">
+    <div style="font-size:12px;font-weight:700;color:#cbd5e1;margin-bottom:10px;">年度 EPS 與 TTM 趨勢</div>
+    <table style="margin:0;">
+      <thead>
+        <tr><th>期間</th><th style="text-align:right;">EPS（元）</th><th style="text-align:right;">YoY</th><th style="text-align:right;">備註</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>2022 全年</td><td style="text-align:right;color:#22c55e;">74.59</td><td style="text-align:right;color:#22c55e;">+5.7%</td><td style="text-align:right;color:#64748b;">5G 週期高峰</td></tr>
+        <tr><td>2023 全年</td><td style="text-align:right;color:#ef4444;">48.51</td><td style="text-align:right;color:#ef4444;">-35%</td><td style="text-align:right;color:#64748b;">手機庫存調整谷底</td></tr>
+        <tr><td>2024 全年</td><td style="text-align:right;color:#22c55e;">66.92</td><td style="text-align:right;color:#22c55e;">+38%</td><td style="text-align:right;color:#64748b;">天璣 9000 系列回升</td></tr>
+        <tr><td>2025 全年</td><td style="text-align:right;">66.16</td><td style="text-align:right;color:#ef4444;">-1.1%</td><td style="text-align:right;color:#64748b;">高原期，穩定獲利</td></tr>
+        <tr style="background:#0f2a1e;"><td><strong>2026Q1 後 TTM★</strong></td><td style="text-align:right;color:#eab308;"><strong>62.90</strong></td><td style="text-align:right;color:#ef4444;"><strong>-3.9%</strong></td><td style="text-align:right;color:#64748b;">ASIC 貢獻尚未入帳</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section-title">🏗️ 商業模式</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
+    <div class="card">
+      <h3>怎麼賺錢 — IC 設計（Fabless）模式</h3>
+      <div style="font-size:12px;line-height:1.9;color:#cbd5e1;margin-top:4px;">全球最大智慧型手機 SoC 供應商（天璣 Dimensity 系列，市占約四成），另有智慧裝置平台（WiFi/藍牙、電視、Chromebook、車用座艙）與電源管理 IC。晶片設計後委由台積電代工，賺取晶片銷售價差。2026 年最大題材為資料中心 ASIC（AI 加速晶片）設計服務，切入雲端業者自研晶片供應鏈。</div>
+    </div>
+    <div class="card">
+      <h3>護城河評估</h3>
+      <div style="font-size:12px;line-height:1.7;margin-top:4px;">
+        <div style="color:#22c55e;">✅ 手機 SoC 規模第一</div>
+        <div style="color:#64748b;font-size:11px;margin-bottom:6px;">出貨量全球最大，中低階市場難以撼動</div>
+        <div style="color:#22c55e;">✅ 先進製程設計能力</div>
+        <div style="color:#64748b;font-size:11px;margin-bottom:6px;">3nm/2nm 旗艦晶片設計經驗，全球僅少數公司具備</div>
+        <div style="color:#22c55e;">✅ IP 與平台完整</div>
+        <div style="color:#64748b;font-size:11px;margin-bottom:6px;">CPU/GPU/APU/數據機全自研整合能力</div>
+        <div style="color:#eab308;">⚠️ ASIC 業務仍在驗證期</div>
+        <div style="color:#64748b;font-size:11px;">資料中心大單能見度是 2026 股價關鍵變數</div>
+      </div>
+    </div>
+  </div>
+  <div style="background:#1e2535;border:1px solid #2d3748;border-radius:10px;padding:14px;margin-bottom:14px;">
+    <div style="font-size:12px;font-weight:700;color:#cbd5e1;margin-bottom:10px;">主要客戶 與 競爭對手</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+      <div>
+        <div style="font-size:11px;color:#64748b;margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em;">主要客戶 / 市場</div>
+        <div style="display:flex;flex-direction:column;gap:5px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;background:#141b2d;border-radius:6px;padding:7px 10px;"><span style="color:#f8fafc;font-size:12px;font-weight:600;">中國手機品牌</span><span style="font-size:10px;color:#64748b;">OPPO/vivo/小米，天璣主力市場</span></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;background:#141b2d;border-radius:6px;padding:7px 10px;"><span style="color:#f8fafc;font-size:12px;font-weight:600;">三星</span><span style="font-size:10px;color:#64748b;">中階機種採用天璣/Exynos 並行</span></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;background:#141b2d;border-radius:6px;padding:7px 10px;"><span style="color:#f8fafc;font-size:12px;font-weight:600;">雲端業者（ASIC）</span><span style="font-size:10px;color:#64748b;">資料中心自研 AI 晶片設計服務</span></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;background:#141b2d;border-radius:6px;padding:7px 10px;"><span style="color:#f8fafc;font-size:12px;font-weight:600;">網通/電視/車用</span><span style="font-size:10px;color:#64748b;">WiFi 7、智慧座艙 Dimensity Auto</span></div>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:11px;color:#64748b;margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em;">競爭對手</div>
+        <div style="display:flex;flex-direction:column;gap:5px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;background:#141b2d;border-radius:6px;padding:7px 10px;"><span style="color:#f8fafc;font-size:12px;font-weight:600;">Qualcomm</span><span style="font-size:10px;color:#64748b;">旗艦手機 SoC 最大對手</span></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;background:#141b2d;border-radius:6px;padding:7px 10px;"><span style="color:#f8fafc;font-size:12px;font-weight:600;">Broadcom / Marvell</span><span style="font-size:10px;color:#64748b;">資料中心 ASIC 設計服務對手</span></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;background:#141b2d;border-radius:6px;padding:7px 10px;"><span style="color:#f8fafc;font-size:12px;font-weight:600;">紫光展銳</span><span style="font-size:10px;color:#64748b;">中國低階 SoC 價格競爭</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title">🌐 產業地位</div>
+  <div style="background:#1e2535;border:1px solid #2d3748;border-radius:10px;padding:14px;margin-bottom:14px;">
+    <div style="font-size:12px;color:#94a3b8;line-height:1.8;">📌 全球智慧型手機 SoC 出貨量市占第一（約 40%），台灣 IC 設計龍頭、市值僅次於台積電的半導體公司。2026 年起市場焦點從「手機週期股」轉向「資料中心 ASIC 供應商」，股價自 2026/4 起大幅重新評價（PER 由 20x 升至 60x+），惟獲利貢獻尚未反映在財報中。</div>
+  </div>
+
+  <div class="section-title">💰 估值指標</div>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:10px;">
+    <div class="card" style="text-align:center;">
+      <h3>TTM P/E</h3>
+      <div class="val" id="fund-pe-2454" style="color:#f8fafc;">…</div>
+      <div class="note" id="fund-pe-note-2454">TTM EPS 62.9 元</div>
+    </div>
+    <div class="card" style="text-align:center;">
+      <h3>歷史 PER 區間</h3>
+      <div class="val yellow">15–23x</div>
+      <div class="note">近三年（排除 2026 題材段）</div>
+    </div>
+    <div class="card" style="text-align:center;">
+      <h3>現金殖利率</h3>
+      <div class="val" id="fund-yield-2454" style="color:#f97316;">…</div>
+      <div class="note">年配息 53.5 元（半年配）</div>
+    </div>
+    <div class="card" style="text-align:center;">
+      <h3>配發率</h3>
+      <div class="val green">~81%</div>
+      <div class="note">53.5 ÷ 66.16（FY2025）</div>
+    </div>
+  </div>
+  <p style="font-size:10px;color:#475569;margin-top:10px;line-height:1.6;">⚠️ 本分析僅供參考，不構成投資建議。部分數據為估算值，請以公開財報為準。</p>
+</div>
+
+<!-- TAB 5: Summary -->
+<div id="tab-summary" class="panel">
+  <div class="section-title">📌 關鍵基本面數據</div>
+  <table>
+    <thead><tr><th>指標</th><th>數值</th><th>評估</th></tr></thead>
+    <tbody>
+      <tr><td>目前股價（2026/7/11 前收）</td><td style="color:#ef4444;font-weight:700;">3,925 元</td><td><span class="badge badge-avoid">遠超昂貴區</span></td></tr>
+      <tr><td>2025 全年 EPS</td><td style="color:#3b82f6;font-weight:700;">66.16 元（YoY -1.1%）</td><td><span class="badge badge-watch">高原期</span></td></tr>
+      <tr><td>TTM EPS（2026Q1 後）</td><td style="color:#eab308;font-weight:700;">62.90 元</td><td><span class="badge badge-watch">小幅下滑</span></td></tr>
+      <tr><td>目前本益比</td><td style="color:#ef4444;font-weight:700;">~62.4x（歷史區間 15–23x）</td><td><span class="badge badge-avoid">題材溢價極高</span></td></tr>
+      <tr><td>便宜價（15x）</td><td>944 元</td><td><span class="badge badge-buy">歷史低檔區</span></td></tr>
+      <tr><td>合理價（20x）</td><td>1,258 元</td><td><span class="badge badge-watch">三年均值</span></td></tr>
+      <tr><td>昂貴價（26x）</td><td>1,635 元</td><td><span class="badge badge-avoid">現價高出 +140%</span></td></tr>
+      <tr><td>FY2025 配息</td><td style="color:#22c55e;font-weight:700;">53.5 元（半年配 29 + 24.5）</td><td><span class="badge badge-buy">配發率 ~81%</span></td></tr>
+      <tr><td>現價殖利率</td><td>~1.4%</td><td><span class="badge badge-avoid">股價墊高後偏低</span></td></tr>
+      <tr><td>2026/4–5 漲幅</td><td style="color:#ef4444;font-weight:700;">+75.2% / +65.1%（單月）</td><td><span class="badge badge-avoid">ASIC 題材爆發段</span></td></tr>
+    </tbody>
+  </table>
+  <div class="section-title" style="margin-top:20px;">⚡ 催化劑 vs 風險</div>
+  <div class="grid2">
+    <div class="card">
+      <h3>🚀 利多</h3>
+      <div style="font-size:12px;line-height:1.9;color:#86efac;">
+        ✓ 資料中心 ASIC 題材，切入雲端自研 AI 晶片供應鏈<br>
+        ✓ 全球手機 SoC 市占第一，本業現金流穩定<br>
+        ✓ 天璣旗艦晶片持續往 2nm 推進<br>
+        ✓ 半年配 53.5 元，配發率高、股東回報佳<br>
+        ✓ WiFi 7 / 車用座艙等多元成長引擎
+      </div>
+    </div>
+    <div class="card">
+      <h3>⚠️ 風險</h3>
+      <div style="font-size:12px;line-height:1.9;color:#fca5a5;">
+        ✗ PER 62x 遠超歷史區間上緣（23x），估值完全反映題材<br>
+        ✗ TTM EPS 連兩季下滑，獲利與股價背離<br>
+        ✗ ASIC 訂單規模與時程尚未在財報驗證<br>
+        ✗ 手機市場成熟，本業成長有限<br>
+        ✗ Broadcom/Marvell 競爭 ASIC 大單<br>
+        ✗ 題材退潮時回檔幅度可能極大（參考 26M03 單月 -23%）
+      </div>
+    </div>
+  </div>
+  <p style="font-size:10px;color:#475569;margin-top:14px;line-height:1.6;">⚠️ 本分析僅供參考，不構成投資建議。股市有風險，投資前請自行判斷。</p>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<script>
+function switchTab(id, btn) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  btn.classList.add('active');
+  if (id === 'eps' && !window.epsDrawn) drawEPS();
+}
+
+/* 近三年逐月：收盤價 / TTM EPS（GoodInfo 10x 欄 ÷10）/ PER */
+const data = [
+  {m:'23M08',px:705,  eps:46.64, per:15.12},
+  {m:'23M09',px:735,  eps:44.01, per:16.70},
+  {m:'23M10',px:842,  eps:45.51, per:18.50},
+  {m:'23M11',px:945,  eps:47.01, per:20.10},
+  {m:'23M12',px:1015, eps:48.51, per:20.92},
+  {m:'24M01',px:966,  eps:51.57, per:18.73},
+  {m:'24M02',px:1140, eps:54.62, per:20.87},
+  {m:'24M03',px:1195, eps:57.68, per:20.72},
+  {m:'24M04',px:992,  eps:59.73, per:16.61},
+  {m:'24M05',px:1235, eps:61.78, per:19.99},
+  {m:'24M06',px:1400, eps:63.83, per:21.93},
+  {m:'24M07',px:1220, eps:65.26, per:18.69},
+  {m:'24M08',px:1240, eps:66.70, per:18.59},
+  {m:'24M09',px:1175, eps:68.13, per:17.25},
+  {m:'24M10',px:1290, eps:67.73, per:19.05},
+  {m:'24M11',px:1255, eps:67.32, per:18.64},
+  {m:'24M12',px:1415, eps:66.92, per:21.14},
+  {m:'25M01',px:1465, eps:66.44, per:22.05},
+  {m:'25M02',px:1515, eps:65.95, per:22.97},
+  {m:'25M03',px:1390, eps:65.47, per:21.23},
+  {m:'25M04',px:1350, eps:65.91, per:20.48},
+  {m:'25M05',px:1260, eps:66.35, per:18.99},
+  {m:'25M06',px:1250, eps:66.79, per:18.72},
+  {m:'25M07',px:1370, eps:66.76, per:20.52},
+  {m:'25M08',px:1370, eps:66.73, per:20.53},
+  {m:'25M09',px:1315, eps:66.70, per:19.72},
+  {m:'25M10',px:1310, eps:66.52, per:19.69},
+  {m:'25M11',px:1395, eps:66.34, per:21.03},
+  {m:'25M12',px:1430, eps:66.16, per:21.61},
+  {m:'26M01',px:1760, eps:65.07, per:27.05},
+  {m:'26M02',px:1945, eps:63.99, per:30.40},
+  {m:'26M03',px:1490, eps:62.90, per:23.69},
+  {m:'26M04',px:2610, eps:62.90, per:41.49},
+  {m:'26M05',px:4310, eps:62.90, per:68.52},
+  {m:'26M06',px:4245, eps:62.90, per:67.49},
+  {m:'26M07',px:3925, eps:62.90, per:62.40},
+];
+const TTM_EPS = 62.90;
+
+function band(mult) { return data.map(d => +(d.eps * mult).toFixed(0)); }
+
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    const ctx = document.getElementById('riverChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: data.map(d => d.m),
+        datasets: [
+          { label: 'PER 32x（極高）', data: band(32), borderColor:'#ef4444', backgroundColor:'rgba(239,68,68,0.04)', borderWidth:1, borderDash:[5,4], pointRadius:0, fill:false },
+          { label: 'PER 26x（昂貴）', data: band(26), borderColor:'#f97316', backgroundColor:'rgba(249,115,22,0.06)', borderWidth:1.5, pointRadius:0, fill:'-1' },
+          { label: 'PER 20x（合理）', data: band(20), borderColor:'#eab308', backgroundColor:'rgba(234,179,8,0.07)', borderWidth:1.5, pointRadius:0, fill:'-1' },
+          { label: 'PER 15x（便宜）', data: band(15), borderColor:'#22c55e', backgroundColor:'rgba(34,197,94,0.07)', borderWidth:1.5, pointRadius:0, fill:'-1' },
+          { label: 'PER 10x（底部）', data: band(10), borderColor:'#3b82f6', backgroundColor:'rgba(59,130,246,0.04)', borderWidth:1, borderDash:[5,4], pointRadius:0, fill:'-1' },
+          { label: '實際收盤價', data: data.map(d => d.px), borderColor:'#ffffff', borderWidth:2.5, pointRadius:3, pointBackgroundColor:'#fff', fill:false, tension:0.3, spanGaps:true },
+        ]
+      },
+      options: {
+        responsive:true, interaction:{ mode:'index', intersect:false },
+        plugins: {
+          legend:{ labels:{ color:'#94a3b8', font:{size:11}, boxWidth:18 } },
+          tooltip:{ backgroundColor:'#1e2535', titleColor:'#f8fafc', bodyColor:'#94a3b8', borderColor:'#334155', borderWidth:1 }
+        },
+        scales: {
+          x:{ ticks:{ color:'#64748b', font:{size:10}, maxRotation:45 }, grid:{ color:'rgba(30,37,53,0.8)' } },
+          y:{ ticks:{ color:'#64748b', font:{size:10}, callback: v => v.toLocaleString() }, grid:{ color:'rgba(30,37,53,0.8)' } }
+        }
+      }
+    });
+
+    /* 逐月明細表 */
+    const tbody = document.querySelector('#monthlyTable tbody');
+    [...data].reverse().forEach(d => {
+      const tr = document.createElement('tr');
+      const perColor = d.per > 26 ? '#ef4444' : d.per < 15 ? '#22c55e' : '#e2e8f0';
+      tr.innerHTML = '<td>' + d.m + '</td>' +
+        '<td style="text-align:right;font-weight:600;">' + d.px.toLocaleString() + '</td>' +
+        '<td style="text-align:right;">' + d.eps.toFixed(2) + '</td>' +
+        '<td style="text-align:right;color:' + perColor + ';font-weight:600;">' + d.per.toFixed(2) + '</td>' +
+        '<td style="text-align:right;color:#22c55e;">' + Math.round(d.eps*15).toLocaleString() + '</td>' +
+        '<td style="text-align:right;color:#eab308;">' + Math.round(d.eps*20).toLocaleString() + '</td>' +
+        '<td style="text-align:right;color:#f97316;">' + Math.round(d.eps*26).toLocaleString() + '</td>';
+      tbody.appendChild(tr);
+    });
+  }, 200);
+});
+
+function drawEPS() {
+  window.epsDrawn = true;
+  const ctx2 = document.getElementById('epsChart').getContext('2d');
+  const years = ['2020','2021','2022','2023','2024','2025','TTM(26Q1)'];
+  const eps   = [26.01, 70.56, 74.59, 48.51, 66.92, 66.16, 62.90];
+  new Chart(ctx2, {
+    type: 'bar',
+    data: {
+      labels: years,
+      datasets: [{
+        label: '年度 EPS（元）',
+        data: eps,
+        backgroundColor: eps.map((v,i) => i===6?'rgba(59,130,246,0.7)':'rgba(34,197,94,0.7)'),
+        borderColor: eps.map((v,i) => i===6?'#3b82f6':'#22c55e'),
+        borderWidth:1.5, borderRadius:6
+      }]
+    },
+    options: {
+      responsive:true,
+      plugins:{ legend:{ labels:{ color:'#94a3b8' } }, tooltip:{ backgroundColor:'#1e2535', bodyColor:'#94a3b8' } },
+      scales: {
+        x:{ ticks:{ color:'#64748b' }, grid:{ color:'rgba(30,37,53,0.8)' } },
+        y:{ ticks:{ color:'#64748b', callback: v => v+'元' }, grid:{ color:'rgba(30,37,53,0.8)' } }
+      }
+    }
+  });
+}
+
+async function updateLive_2454() {
+  try {
+    const res = await fetch('https://taiwan-stock-price.david870114.workers.dev/?id=2454', { cache: 'no-cache' });
+    const d = JSON.parse(await res.text());
+    const price = parseFloat(d.price);
+    if (price && !isNaN(price)) {
+      const el = document.getElementById('live-price');
+      if (el) el.textContent = price.toLocaleString();
+      const pe = (price / TTM_EPS).toFixed(1);
+      const perEl = document.getElementById('live-per');
+      if (perEl) {
+        perEl.textContent = 'PER ≈ ' + pe + 'x（TTM EPS 62.9元）' + (pe > 26 ? '超越昂貴區' : pe > 20 ? '合理偏高' : '');
+        perEl.style.color = pe > 32 ? '#ef4444' : pe > 22 ? '#eab308' : '#22c55e';
+      }
+      const fEl = document.getElementById('fund-pe-2454');
+      const fNote = document.getElementById('fund-pe-note-2454');
+      if (fEl) { fEl.textContent = pe + 'x'; fEl.style.color = pe > 32 ? '#ef4444' : pe > 22 ? '#eab308' : '#22c55e'; }
+      if (fNote) fNote.textContent = '股價 ' + price.toLocaleString() + ' ｜ TTM EPS 62.9';
+      const yEl = document.getElementById('fund-yield-2454');
+      if (yEl) yEl.textContent = (53.5 / price * 100).toFixed(2) + '%';
+    }
+  } catch(e) {}
+}
+window.addEventListener('load', updateLive_2454);
+</script>
+</body>
+</html>
