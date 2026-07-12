@@ -4,6 +4,7 @@
   {
    "id": "0050",
    "name": "元大台灣50",
+   "tier": "core",
    "cheap": 46,
    "fair": 64,
    "expensive": 107,
@@ -13,6 +14,7 @@
   {
    "id": "006208",
    "name": "富邦台50",
+   "tier": "core",
    "cheap": 107,
    "fair": 148,
    "expensive": 248,
@@ -22,6 +24,7 @@
   {
    "id": "0056",
    "name": "元大高股息",
+   "tier": "core",
    "cheap": 45,
    "fair": 51,
    "expensive": 58,
@@ -31,6 +34,7 @@
   {
    "id": "00878",
    "name": "國泰永續高股息",
+   "tier": "core",
    "cheap": 21,
    "fair": 27,
    "expensive": 34,
@@ -40,6 +44,7 @@
   {
    "id": "00919",
    "name": "群益台灣精選高息",
+   "tier": "core",
    "cheap": 24,
    "fair": 29,
    "expensive": 36,
@@ -49,6 +54,7 @@
   {
    "id": "00981A",
    "name": "主動統一台股增長",
+   "tier": "core",
    "cheap": 25,
    "fair": 32,
    "expensive": 42,
@@ -58,6 +64,7 @@
   {
    "id": "00991A",
    "name": "主動復華未來50",
+   "tier": "core",
    "cheap": 14,
    "fair": 19,
    "expensive": 25,
@@ -67,6 +74,7 @@
   {
    "id": "00631L",
    "name": "元大台灣50正2",
+   "tier": "spec",
    "cheap": 25,
    "fair": 32,
    "expensive": 42,
@@ -76,6 +84,7 @@
   {
    "id": "2330",
    "name": "台積電",
+   "tier": "growth",
    "cheap": 1265,
    "fair": 1637,
    "expensive": 2083,
@@ -85,6 +94,7 @@
   {
    "id": "2454",
    "name": "聯發科",
+   "tier": "growth",
    "cheap": 944,
    "fair": 1258,
    "expensive": 1635,
@@ -94,6 +104,7 @@
   {
    "id": "2303",
    "name": "聯電",
+   "tier": "spec",
    "cheap": 48,
    "fair": 72,
    "expensive": 128,
@@ -103,6 +114,7 @@
   {
    "id": "6239",
    "name": "力成",
+   "tier": "spec",
    "cheap": 93,
    "fair": 126,
    "expensive": 185,
@@ -112,6 +124,7 @@
   {
    "id": "2308",
    "name": "台達電",
+   "tier": "growth",
    "cheap": 596,
    "fair": 732,
    "expensive": 867,
@@ -121,6 +134,7 @@
   {
    "id": "2382",
    "name": "廣達",
+   "tier": "growth",
    "cheap": 253,
    "fair": 350,
    "expensive": 506,
@@ -130,6 +144,7 @@
   {
    "id": "3231",
    "name": "緯創",
+   "tier": "growth",
    "cheap": 101,
    "fair": 181,
    "expensive": 302,
@@ -139,6 +154,7 @@
   {
    "id": "2345",
    "name": "智邦",
+   "tier": "growth",
    "cheap": 1110,
    "fair": 1375,
    "expensive": 1692,
@@ -148,6 +164,7 @@
   {
    "id": "3017",
    "name": "奇鋐",
+   "tier": "growth",
    "cheap": 1096,
    "fair": 1583,
    "expensive": 2070,
@@ -157,6 +174,7 @@
   {
    "id": "3324",
    "name": "雙鴻",
+   "tier": "growth",
    "cheap": 699,
    "fair": 978,
    "expensive": 1258,
@@ -166,6 +184,7 @@
   {
    "id": "2327",
    "name": "國巨",
+   "tier": "growth",
    "cheap": 204,
    "fair": 255,
    "expensive": 318,
@@ -175,6 +194,7 @@
   {
    "id": "2492",
    "name": "華新科",
+   "tier": "spec",
    "cheap": 73,
    "fair": 115,
    "expensive": 157,
@@ -184,6 +204,7 @@
   {
    "id": "1519",
    "name": "華城",
+   "tier": "growth",
    "cheap": 510,
    "fair": 700,
    "expensive": 903,
@@ -193,6 +214,7 @@
   {
    "id": "1513",
    "name": "中興電",
+   "tier": "growth",
    "cheap": 149,
    "fair": 169,
    "expensive": 198,
@@ -202,6 +224,7 @@
   {
    "id": "6669",
    "name": "緯穎",
+   "tier": "spec",
    "cheap": 3281,
    "fair": 4475,
    "expensive": 5966,
@@ -211,6 +234,7 @@
   {
    "id": "2301",
    "name": "光寶科",
+   "tier": "spec",
    "cheap": 102,
    "fair": 136,
    "expensive": 177,
@@ -220,6 +244,7 @@
   {
    "id": "3596",
    "name": "智易",
+   "tier": "spec",
    "cheap": 126,
    "fair": 177,
    "expensive": 278,
@@ -229,6 +254,7 @@
   {
    "id": "8210",
    "name": "勤誠",
+   "tier": "spec",
    "cheap": 475,
    "fair": 747,
    "expensive": 1019,
@@ -238,6 +264,7 @@
   {
    "id": "3037",
    "name": "欣興",
+   "tier": "spec",
    "cheap": 84,
    "fair": 141,
    "expensive": 211,
@@ -247,6 +274,7 @@
   {
    "id": "8046",
    "name": "南電",
+   "tier": "spec",
    "cheap": 79,
    "fair": 119,
    "expensive": 198,
@@ -256,6 +284,7 @@
   {
    "id": "3481",
    "name": "群創",
+   "tier": "spec",
    "cheap": 15,
    "fair": 30,
    "expensive": 50,
@@ -265,6 +294,7 @@
   {
    "id": "2337",
    "name": "旺宏",
+   "tier": "spec",
    "cheap": 109,
    "fair": 163,
    "expensive": 218,
@@ -274,6 +304,7 @@
   {
    "id": "2344",
    "name": "華邦電",
+   "tier": "spec",
    "cheap": 67,
    "fair": 88,
    "expensive": 115,
@@ -283,6 +314,7 @@
   {
    "id": "3260",
    "name": "威剛",
+   "tier": "spec",
    "cheap": 514,
    "fair": 719,
    "expensive": 925,
@@ -292,6 +324,7 @@
   {
    "id": "2408",
    "name": "南亞科",
+   "tier": "spec",
    "cheap": 167,
    "fair": 279,
    "expensive": 391,
@@ -301,6 +334,7 @@
   {
    "id": "6770",
    "name": "力積電",
+   "tier": "spec",
    "cheap": 27,
    "fair": 44,
    "expensive": 62,
@@ -310,6 +344,7 @@
   {
    "id": "1303",
    "name": "南亞",
+   "tier": "spec",
    "cheap": 58,
    "fair": 81,
    "expensive": 116,

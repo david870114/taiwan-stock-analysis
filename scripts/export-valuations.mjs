@@ -21,6 +21,7 @@ const out = {
   stocks: TRACKED.map(s => ({
     id: s.id,
     name: s.name,
+    tier: s.tier || null,
     cheap: s.cheapValue ?? null,
     fair: s.fairValue ?? null,
     expensive: s.expValue ?? null,

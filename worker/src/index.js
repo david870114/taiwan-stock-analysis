@@ -135,7 +135,7 @@ async function handleRequest(request, env) {
 
   if (path === '/api/portfolio' && request.method === 'GET') {
     const raw = await env.KV.get('portfolio:' + account);
-    return json(raw ? JSON.parse(raw) : { holdings: [], watchlist: [], alerts: { enabled: false, lineUserId: '', custom: {} } });
+    return json(raw ? JSON.parse(raw) : { holdings: [], watchlist: [], realized: [], allocTarget: null, alerts: { enabled: false, lineUserId: '', custom: {}, perStock: {} } });
   }
 
   if (path === '/api/portfolio' && request.method === 'PUT') {
@@ -146,7 +146,9 @@ async function handleRequest(request, env) {
     const portfolio = {
       holdings: body.holdings.slice(0, 100),
       watchlist: body.watchlist.slice(0, 100),
-      alerts: body.alerts || { enabled: false, lineUserId: '', custom: {} },
+      realized: Array.isArray(body.realized) ? body.realized.slice(0, 500) : [],
+      allocTarget: body.allocTarget || null,
+      alerts: body.alerts || { enabled: false, lineUserId: '', custom: {}, perStock: {} },
       updatedAt: Date.now(),
     };
     await env.KV.put('portfolio:' + account, JSON.stringify(portfolio));
@@ -201,9 +203,10 @@ async function checkAlerts(env) {
     await new Promise(r => setTimeout(r, 300));
   }
 
-  // 4. 判斷區間、去重、推播
+  // 4. 依每檔的提醒設定判斷條件、去重（只在條件「新成立」時通知）、推播
   for (const { acct, p, ids } of users) {
     const msgs = [];
+    const perStock = p.alerts.perStock || {};
     for (const id of ids) {
       const px = prices[id];
       if (!px) continue;
@@ -213,25 +216,35 @@ async function checkAlerts(env) {
       const expensive = custom.expensive ?? v.expensive;
       const cheap = custom.cheap ?? v.cheap;
       const name = v.name || (p.holdings.find(h => h.id === id) || {}).name || id;
-      if (fair == null && expensive == null) continue;
+      const cfg = perStock[id] || { exp: true, fair: true }; // 預設：昂貴價 + 合理價10%內
 
-      // 狀態判斷：昂貴價以上 → expensive；合理價 +10% 以內（含跌破）→ nearfair
-      let state = 'none';
-      if (expensive != null && px >= expensive) state = 'expensive';
-      else if (fair != null && px <= fair * 1.10) state = 'nearfair';
+      // 目前成立的條件集合
+      const active = [];
+      if (cfg.exp && expensive != null && px >= expensive) active.push('exp');
+      if (cfg.fair && fair != null && px <= fair * 1.10) active.push('fair');
+      if (cfg.cheap && cheap != null && px <= cheap) active.push('cheap');
+      if (cfg.above != null && px >= cfg.above) active.push('above');
+      if (cfg.below != null && px <= cfg.below) active.push('below');
 
       const stateKey = 'alertstate:' + acct + ':' + id;
-      const prev = (await env.KV.get(stateKey)) || 'none';
-      if (state !== prev) {
-        await env.KV.put(stateKey, state, { expirationTtl: 60 * 60 * 24 * 90 });
-        if (state === 'expensive') {
-          msgs.push('🔴 ' + name + '（' + id + '）現價 ' + px + ' 已達昂貴價 ' + expensive + '，可考慮分批獲利了結。');
-        } else if (state === 'nearfair') {
-          const tag = (cheap != null && px <= cheap)
-            ? '已跌破便宜價 ' + cheap + '，進入超值區'
-            : '已跌到合理價 ' + fair + ' 的 10% 範圍內';
-          msgs.push('🟢 ' + name + '（' + id + '）現價 ' + px + ' ' + tag + '，可留意買點。');
-        }
+      const prevRaw = await env.KV.get(stateKey);
+      let prev = [];
+      try { prev = JSON.parse(prevRaw) || []; } catch (e) {
+        // 相容舊格式（單一字串）
+        if (prevRaw === 'expensive') prev = ['exp'];
+        else if (prevRaw === 'nearfair') prev = ['fair'];
+      }
+
+      const newly = active.filter(c => prev.indexOf(c) < 0);
+      if (newly.length || active.length !== prev.length) {
+        await env.KV.put(stateKey, JSON.stringify(active), { expirationTtl: 60 * 60 * 24 * 90 });
+      }
+      for (const c of newly) {
+        if (c === 'exp')   msgs.push('🔴 ' + name + '（' + id + '）現價 ' + px + ' 已達昂貴價 ' + expensive + '，可考慮分批獲利了結。');
+        if (c === 'fair')  msgs.push('🟡 ' + name + '（' + id + '）現價 ' + px + ' 已跌到合理價 ' + fair + ' 的 10% 範圍內，可留意買點。');
+        if (c === 'cheap') msgs.push('🟢 ' + name + '（' + id + '）現價 ' + px + ' 已跌破便宜價 ' + cheap + '，進入超值區。');
+        if (c === 'above') msgs.push('📈 ' + name + '（' + id + '）現價 ' + px + ' 已漲到你設定的目標價 ' + cfg.above + ' 以上。');
+        if (c === 'below') msgs.push('📉 ' + name + '（' + id + '）現價 ' + px + ' 已跌到你設定的目標價 ' + cfg.below + ' 以下。');
       }
     }
     if (msgs.length) {

@@ -12,8 +12,25 @@ body {
   background:#0f1117; color:#e2e8f0; padding:24px; max-width:1200px; margin:0 auto;
 }
 a { color:#7db8f7; }
-.back-link { display:inline-block; margin-bottom:16px; font-size:13px; text-decoration:none; color:#64748b; }
-.back-link:hover { color:#7db8f7; }
+
+/* ── 分頁列（與 index.html 一致）── */
+.tab-bar {
+  display:flex; gap:4px; margin-bottom:20px;
+  border-bottom:1px solid #1e2535; padding-bottom:0;
+}
+.tab-nav {
+  display:inline-block; text-decoration:none;
+  background:transparent; color:#94a3b8;
+  font-size:13px; font-weight:600;
+  padding:10px 18px 11px;
+  border-bottom:2px solid transparent;
+  margin-bottom:-1px; border-radius:6px 6px 0 0;
+  transition:color .15s, background .15s; white-space:nowrap;
+}
+.tab-nav:hover { color:#93c5fd; background:#131920; }
+.tab-nav.active { color:#3b82f6; border-bottom-color:#3b82f6; background:#0f1117; }
+@media(max-width:800px){ .tab-bar { overflow-x:auto; } }
+
 h1 { font-size:24px; margin-bottom:4px; }
 .meta { color:#64748b; font-size:13px; margin-bottom:20px; }
 .card {
@@ -46,6 +63,7 @@ h1 { font-size:24px; margin-bottom:4px; }
 .btn.full { width:100%; }
 .btn.ghost { background:#141b2d; border:1px solid #2a3450; color:#94a3b8; }
 .btn.green { background:#16a34a; }
+.btn.red { background:#dc2626; }
 .btn.sm { padding:6px 12px; font-size:12px; }
 .err { color:#f87171; font-size:13px; margin-top:10px; min-height:18px; }
 .hint { color:#64748b; font-size:11px; margin-top:12px; line-height:1.6; }
@@ -56,18 +74,16 @@ h1 { font-size:24px; margin-bottom:4px; }
 .topbar .who { font-size:13px; color:#94a3b8; }
 .topbar .who b { color:#e2e8f0; }
 
-.stat-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:12px; margin-bottom:20px; }
-.stat {
-  background:#1e2535; border:1px solid #2a3450; border-radius:14px; padding:16px 18px;
-}
+.stat-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; margin-bottom:20px; }
+.stat { background:#1e2535; border:1px solid #2a3450; border-radius:14px; padding:16px 18px; }
 .stat .lb { font-size:11px; color:#64748b; margin-bottom:6px; }
-.stat .val { font-size:22px; font-weight:800; font-family:monospace; }
+.stat .val { font-size:21px; font-weight:800; font-family:monospace; }
 .stat .val.green { color:#22c55e; } .stat .val.red { color:#ef4444; }
 
 table { width:100%; border-collapse:collapse; font-size:13px; }
-th { text-align:right; color:#64748b; font-size:11px; font-weight:700; padding:8px 10px; border-bottom:1px solid #2a3450; white-space:nowrap; }
+th { text-align:right; color:#64748b; font-size:11px; font-weight:700; padding:8px 8px; border-bottom:1px solid #2a3450; white-space:nowrap; }
 th:first-child, th:nth-child(2) { text-align:left; }
-td { padding:8px 10px; border-bottom:1px solid #1a2236; text-align:right; font-family:monospace; white-space:nowrap; }
+td { padding:8px 8px; border-bottom:1px solid #1a2236; text-align:right; font-family:monospace; white-space:nowrap; }
 td:first-child, td:nth-child(2) { text-align:left; }
 tr:last-child td { border-bottom:none; }
 td input {
@@ -75,7 +91,8 @@ td input {
   padding:6px 8px; font-size:13px; font-family:monospace; text-align:right;
 }
 td input.code-in { width:78px; text-align:left; }
-td input.num-in { width:92px; }
+td input.name-in { width:110px; text-align:left; font-family:inherit; }
+td input.num-in { width:88px; }
 .name-cell { color:#cbd5e1; font-family:inherit; }
 .pl-pos { color:#22c55e; } .pl-neg { color:#ef4444; }
 .badge { display:inline-block; padding:2px 9px; border-radius:20px; font-size:11px; font-weight:700; font-family:inherit; cursor:pointer; }
@@ -84,8 +101,15 @@ td input.num-in { width:92px; }
 .badge.near  { background:rgba(34,197,94,.12);  color:#4ade80; }
 .badge.cheap { background:rgba(34,197,94,.25);  color:#22c55e; }
 .badge.none  { background:#141b2d; color:#475569; }
+.badge.alert-on  { background:rgba(59,130,246,.15); color:#7db8f7; }
+.badge.alert-off { background:#141b2d; color:#475569; }
 .del-btn { background:none; border:none; color:#475569; cursor:pointer; font-size:15px; }
 .del-btn:hover { color:#ef4444; }
+.sell-btn {
+  background:rgba(245,158,11,.12); border:1px solid rgba(245,158,11,.3); color:#fbbf24;
+  border-radius:8px; padding:3px 10px; font-size:11px; font-weight:700; cursor:pointer; font-family:inherit;
+}
+.sell-btn:hover { background:rgba(245,158,11,.25); }
 .table-wrap { overflow-x:auto; }
 
 /* 估值位置條 */
@@ -101,6 +125,26 @@ td input.num-in { width:92px; }
 @media(max-width:800px){ .charts-grid { grid-template-columns:1fr; } }
 .chart-box { position:relative; height:280px; }
 
+/* 資產配置目標 */
+.preset-row { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:14px; }
+.preset-btn {
+  background:#141b2d; border:1px solid #2a3450; color:#94a3b8;
+  font-size:12px; font-weight:600; padding:8px 14px; border-radius:10px; cursor:pointer;
+}
+.preset-btn.sel { background:#1e3050; border-color:#3b82f6; color:#93c5fd; }
+.alloc-inputs { display:flex; gap:12px; flex-wrap:wrap; margin-bottom:14px; align-items:flex-end; }
+.alloc-inputs .ai-field { display:flex; flex-direction:column; gap:4px; }
+.alloc-inputs label { font-size:11px; color:#64748b; }
+.alloc-inputs input {
+  width:90px; padding:7px 10px; border-radius:8px; border:1px solid #2a3450;
+  background:#141b2d; color:#e2e8f0; font-size:13px; font-family:monospace; text-align:right;
+}
+.alloc-inputs input.wide { width:130px; }
+.pct-warn { font-size:11px; color:#f87171; min-height:16px; margin-bottom:8px; }
+.diff-buy { color:#22c55e; font-weight:700; }
+.diff-sell { color:#f59e0b; font-weight:700; }
+.diff-ok { color:#64748b; }
+
 /* 通知設定 */
 .switch-row { display:flex; align-items:center; gap:10px; margin-bottom:14px; font-size:14px; }
 .switch-row input[type=checkbox] { width:18px; height:18px; accent-color:#3b82f6; cursor:pointer; }
@@ -109,6 +153,28 @@ details { margin-top:14px; font-size:13px; color:#94a3b8; }
 details summary { cursor:pointer; color:#7db8f7; font-weight:600; margin-bottom:8px; }
 details ol { margin:10px 0 10px 22px; line-height:2; }
 details code { background:#141b2d; padding:2px 6px; border-radius:6px; font-size:12px; color:#fbbf24; }
+
+/* Modal */
+.modal-overlay {
+  display:none; position:fixed; inset:0; background:rgba(6,10,20,.7);
+  z-index:100; align-items:center; justify-content:center; backdrop-filter:blur(3px);
+}
+.modal-overlay.show { display:flex; }
+.modal {
+  background:#1e2535; border:1px solid #2a3450; border-radius:16px;
+  padding:24px; width:min(420px, calc(100vw - 40px)); max-height:85vh; overflow-y:auto;
+}
+.modal h3 { font-size:16px; color:#93c5fd; margin-bottom:16px; }
+.modal .m-row { display:flex; align-items:center; gap:10px; margin-bottom:12px; font-size:13px; }
+.modal .m-row input[type=checkbox] { width:16px; height:16px; accent-color:#3b82f6; cursor:pointer; }
+.modal .m-row .thr { color:#64748b; font-size:12px; font-family:monospace; margin-left:auto; }
+.modal .m-num {
+  width:100px; padding:7px 10px; border-radius:8px; border:1px solid #2a3450;
+  background:#141b2d; color:#e2e8f0; font-size:13px; font-family:monospace; text-align:right;
+}
+.modal .m-actions { display:flex; gap:10px; justify-content:flex-end; margin-top:20px; }
+.modal .m-sec { border-top:1px solid #2a3450; margin:14px 0; padding-top:14px; font-size:12px; color:#64748b; }
+.modal .m-info { font-size:12px; color:#94a3b8; margin-bottom:14px; line-height:1.7; }
 
 /* 儲存列 */
 .save-bar {
@@ -124,7 +190,15 @@ details code { background:#141b2d; padding:2px 6px; border-radius:6px; font-size
 </head>
 <body>
 
-<a href="index.html" class="back-link">← 返回總覽</a>
+<!-- ── 分頁列（其他分頁連回總覽頁） ── -->
+<div class="tab-bar">
+  <a class="tab-nav" href="index.html#watchlist">📊 AI 產業鏈</a>
+  <a class="tab-nav" href="index.html#nonai">🏭 其他追蹤清單</a>
+  <a class="tab-nav" href="index.html#etf">📈 ETF 追蹤與配息試算</a>
+  <a class="tab-nav" href="index.html#allocator">💰 資金配置試算</a>
+  <a class="tab-nav" href="index.html#institutional">🏛 法人動態</a>
+  <a class="tab-nav active" href="my-stocks.html">👤 我的股票</a>
+</div>
 
 <!-- ══ 登入畫面 ══ -->
 <div id="authView">
@@ -170,16 +244,17 @@ details code { background:#141b2d; padding:2px 6px; border-radius:6px; font-size
     <div class="stat"><div class="lb">總成本</div><div class="val" id="statCost">—</div></div>
     <div class="stat"><div class="lb">未實現損益</div><div class="val" id="statPL">—</div></div>
     <div class="stat"><div class="lb">報酬率</div><div class="val" id="statRet">—</div></div>
+    <div class="stat"><div class="lb">今年實現損益</div><div class="val" id="statRealized">—</div></div>
   </div>
 
   <!-- 持股 -->
   <div class="card">
-    <h2>💼 我的持股 <span class="sub">代號輸入後自動帶入名稱；點「估值」欄可自訂便宜/合理/昂貴價</span></h2>
+    <h2>💼 我的持股 <span class="sub">點「估值」可自訂三價；點「提醒」欄設定每檔通知條件；「賣出」會記錄實現損益</span></h2>
     <div class="table-wrap">
     <table id="holdingsTable">
       <thead><tr>
         <th>代號</th><th>名稱</th><th>股數</th><th>平均成本</th><th>現價</th>
-        <th>市值</th><th>損益</th><th>報酬%</th><th>估值</th><th></th>
+        <th>市值</th><th>損益</th><th>報酬%</th><th>估值</th><th>提醒</th><th>賣出</th><th></th>
       </tr></thead>
       <tbody id="holdingsBody"></tbody>
     </table>
@@ -192,17 +267,53 @@ details code { background:#141b2d; padding:2px 6px; border-radius:6px; font-size
     <h2>⭐ 想追蹤的標的 <span class="sub">未持有但想收到到價通知的股票</span></h2>
     <div class="table-wrap">
     <table>
-      <thead><tr><th>代號</th><th>名稱</th><th>現價</th><th>便宜價</th><th>合理價</th><th>昂貴價</th><th>估值</th><th></th></tr></thead>
+      <thead><tr><th>代號</th><th>名稱</th><th>現價</th><th>便宜價</th><th>合理價</th><th>昂貴價</th><th>估值</th><th>提醒</th><th></th></tr></thead>
       <tbody id="watchBody"></tbody>
     </table>
     </div>
     <button class="btn ghost sm add-row-btn" onclick="addWatch()">＋ 新增追蹤</button>
   </div>
 
+  <!-- 今年實現損益 -->
+  <div class="card">
+    <h2>💰 實現損益紀錄 <span class="sub">由「賣出」功能自動記錄，統計卡顯示今年合計</span></h2>
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th>日期</th><th>股票</th><th>股數</th><th>成本</th><th>賣價</th><th>實現損益</th><th></th></tr></thead>
+      <tbody id="realizedBody"></tbody>
+    </table>
+    </div>
+  </div>
+
   <!-- 圖表 -->
   <div class="charts-grid">
     <div class="card"><h2>🥧 資產配置</h2><div class="chart-box"><canvas id="allocChart"></canvas></div></div>
     <div class="card"><h2>📊 個股損益</h2><div class="chart-box"><canvas id="plChart"></canvas></div></div>
+  </div>
+
+  <!-- 資產配置目標 -->
+  <div class="card">
+    <h2>🧭 資產配置目標 <span class="sub">與總覽頁「資金配置試算」相同的三種配置；比對目前持股層級，算出還差多少</span></h2>
+    <div class="preset-row">
+      <button class="preset-btn" data-preset="conservative" onclick="applyPreset('conservative', this)">🛡 保守 80/15/0/5</button>
+      <button class="preset-btn" data-preset="balanced" onclick="applyPreset('balanced', this)">⚖️ 均衡 60/30/5/5</button>
+      <button class="preset-btn" data-preset="growth" onclick="applyPreset('growth', this)">🚀 成長 50/35/10/5</button>
+    </div>
+    <div class="alloc-inputs">
+      <div class="ai-field"><label>核心 %</label><input id="tgCore" type="number" min="0" max="100" oninput="allocEdited()"></div>
+      <div class="ai-field"><label>成長 %</label><input id="tgGrowth" type="number" min="0" max="100" oninput="allocEdited()"></div>
+      <div class="ai-field"><label>高風險 %</label><input id="tgSpec" type="number" min="0" max="100" oninput="allocEdited()"></div>
+      <div class="ai-field"><label>現金 %</label><input id="tgCash" type="number" min="0" max="100" oninput="allocEdited()"></div>
+      <div class="ai-field"><label>目前現金部位（元）</label><input id="cashAmount" class="wide" type="number" min="0" oninput="allocEdited()"></div>
+    </div>
+    <div class="pct-warn" id="pctWarn"></div>
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th>層級</th><th>目前金額</th><th>目前占比</th><th>目標占比</th><th>目標金額</th><th>差額 / 建議動作</th></tr></thead>
+      <tbody id="allocTargetBody"></tbody>
+    </table>
+    </div>
+    <div class="chart-box" style="height:240px; margin-top:16px"><canvas id="targetChart"></canvas></div>
   </div>
 
   <!-- 估值位置 -->
@@ -216,10 +327,10 @@ details code { background:#141b2d; padding:2px 6px; border-radius:6px; font-size
     <h2>🔔 LINE 到價通知</h2>
     <div class="switch-row">
       <input type="checkbox" id="alertEnabled" onchange="markDirty()">
-      <label for="alertEnabled">開啟通知（交易時段每 30 分鐘檢查：<b style="color:#f87171">到達昂貴價</b> 或 <b style="color:#4ade80">跌到合理價 10% 內</b> 時推播）</label>
+      <label for="alertEnabled">開啟通知總開關（交易時段每 30 分鐘檢查；各股票的通知條件在上方表格「提醒」欄設定）</label>
     </div>
     <div class="field" style="max-width:460px">
-      <label>LINE User ID（加官方帳號好友後，傳任意訊息即會回覆你的 ID）</label>
+      <label>LINE User ID（加官方帳號 <b>@809tvapv</b> 好友後，傳任意訊息即會回覆你的 ID）</label>
       <input id="lineUserId" type="text" placeholder="Uxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" oninput="markDirty()">
     </div>
     <div style="display:flex; gap:10px; margin-top:10px">
@@ -227,14 +338,11 @@ details code { background:#141b2d; padding:2px 6px; border-radius:6px; font-size
       <span id="testResult" style="align-self:center;font-size:12px;color:#94a3b8"></span>
     </div>
     <details>
-      <summary>📖 首次設定教學（約 10 分鐘）</summary>
+      <summary>📖 LINE 設定教學</summary>
       <ol>
-        <li>到 <a href="https://developers.line.biz/console/" target="_blank">LINE Developers Console</a> 用你的 LINE 帳號登入</li>
-        <li>建立 Provider → 建立 <b>Messaging API</b> channel（名稱隨意，例如「台股到價通知」）</li>
-        <li>在 channel 的 <b>Messaging API</b> 分頁最下方，發行 <code>Channel access token</code>（交給管理者設定到伺服器）</li>
-        <li>用手機 LINE 掃描該分頁的 QR code，把官方帳號加為好友</li>
-        <li>Webhook URL 設為 <code>https://my-stocks-api.david870114.workers.dev/line-webhook</code> 並開啟「Use webhook」</li>
-        <li>對官方帳號傳任意訊息，它會回覆你的 <b>LINE User ID</b>，貼到上面欄位並儲存即完成</li>
+        <li>手機 LINE 搜尋 ID <code>@809tvapv</code>（台股到價通知），加為好友</li>
+        <li>對它傳任意訊息，它會回覆你的 <b>LINE User ID</b></li>
+        <li>把 ID 貼到上方欄位 → 勾選開啟 → 💾 儲存 → 按「發送測試通知」確認</li>
       </ol>
     </details>
   </div>
@@ -247,20 +355,61 @@ details code { background:#141b2d; padding:2px 6px; border-radius:6px; font-size
   </div>
 </div>
 
+<!-- ══ 提醒設定 Modal ══ -->
+<div class="modal-overlay" id="alertModal">
+  <div class="modal">
+    <h3 id="alertModalTitle">🔔 提醒設定</h3>
+    <div class="m-info" id="alertModalInfo"></div>
+    <div class="m-row"><input type="checkbox" id="amExp"><label for="amExp">🔴 到達<b>昂貴價</b>時通知</label><span class="thr" id="amExpThr"></span></div>
+    <div class="m-row"><input type="checkbox" id="amFair"><label for="amFair">🟡 跌到<b>合理價 10% 內</b>時通知</label><span class="thr" id="amFairThr"></span></div>
+    <div class="m-row"><input type="checkbox" id="amCheap"><label for="amCheap">🟢 跌破<b>便宜價</b>時通知</label><span class="thr" id="amCheapThr"></span></div>
+    <div class="m-sec">自訂目標價（留空 = 不設定）</div>
+    <div class="m-row"><label>📈 漲到 ≥</label><input class="m-num" id="amAbove" type="number" step="0.01" placeholder="—"><label>元時通知</label></div>
+    <div class="m-row"><label>📉 跌到 ≤</label><input class="m-num" id="amBelow" type="number" step="0.01" placeholder="—"><label>元時通知</label></div>
+    <div class="m-actions">
+      <button class="btn ghost sm" onclick="closeModal('alertModal')">取消</button>
+      <button class="btn sm" onclick="saveAlertModal()">確定</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 賣出 Modal ══ -->
+<div class="modal-overlay" id="sellModal">
+  <div class="modal">
+    <h3 id="sellModalTitle">💰 賣出</h3>
+    <div class="m-info" id="sellModalInfo"></div>
+    <div class="m-row"><label style="width:70px">賣出股數</label><input class="m-num" id="smShares" type="number" min="1"></div>
+    <div class="m-row"><label style="width:70px">賣出價格</label><input class="m-num" id="smPrice" type="number" min="0" step="0.01"></div>
+    <div class="m-row"><label style="width:70px">日期</label><input class="m-num" id="smDate" type="date" style="width:150px"></div>
+    <div class="m-info" id="smPreview" style="margin-top:6px"></div>
+    <div class="m-actions">
+      <button class="btn ghost sm" onclick="closeModal('sellModal')">取消</button>
+      <button class="btn red sm" onclick="confirmSell()">確認賣出</button>
+    </div>
+  </div>
+</div>
+
 <datalist id="stockList"></datalist>
 
 <script>
 var API_BASE = 'https://my-stocks-api.david870114.workers.dev';
 var PRICE_API = 'https://taiwan-stock-price.david870114.workers.dev/?id=';
+var PRESETS = {
+  conservative: { core:80, growth:15, spec:0,  cash:5 },
+  balanced:     { core:60, growth:30, spec:5,  cash:5 },
+  growth:       { core:50, growth:35, spec:10, cash:5 }
+};
+var TIER_LABEL = { core:'🛡 核心', growth:'📈 成長', spec:'⚡ 高風險', cash:'💵 現金', other:'❓ 未分類' };
 
 var token = localStorage.getItem('mystocks_token') || '';
 var account = localStorage.getItem('mystocks_account') || '';
 var authMode = 'login';
-var portfolio = { holdings: [], watchlist: [], alerts: { enabled: false, lineUserId: '', custom: {} } };
-var VAL = {};            // id → {name, cheap, fair, expensive}
+var portfolio = { holdings: [], watchlist: [], realized: [], alerts: { enabled:false, lineUserId:'', custom:{}, perStock:{} }, allocTarget: null };
+var VAL = {};            // id → {name, tier, cheap, fair, expensive}
 var prices = {};         // id → 現價
 var dirty = false;
-var allocChart = null, plChart = null;
+var allocChart = null, plChart = null, targetChart = null;
+var modalStockId = null, sellIndex = null;
 
 // ── 估值資料（與總覽頁共用 valuations.json）──
 async function loadValuations() {
@@ -303,7 +452,7 @@ async function doAuth() {
     localStorage.setItem('mystocks_account', account);
     enterMain();
   } catch (e) {
-    errEl.textContent = '無法連線到伺服器（Worker 尚未部署或網路異常）';
+    errEl.textContent = '無法連線到伺服器，請稍後再試';
   } finally {
     document.getElementById('authBtn').disabled = false;
   }
@@ -322,11 +471,15 @@ async function enterMain() {
     var res = await fetch(API_BASE + '/api/portfolio', { headers: { 'Authorization': 'Bearer ' + token } });
     if (res.status === 401) { logout(); return; }
     portfolio = await res.json();
-    if (!portfolio.alerts) portfolio.alerts = { enabled: false, lineUserId: '', custom: {} };
-    if (!portfolio.alerts.custom) portfolio.alerts.custom = {};
   } catch (e) { /* 使用空白組合 */ }
+  if (!portfolio.alerts) portfolio.alerts = { enabled:false, lineUserId:'', custom:{}, perStock:{} };
+  if (!portfolio.alerts.custom) portfolio.alerts.custom = {};
+  if (!portfolio.alerts.perStock) portfolio.alerts.perStock = {};
+  if (!portfolio.realized) portfolio.realized = [];
+  if (!portfolio.allocTarget) portfolio.allocTarget = { preset:'balanced', core:60, growth:30, spec:5, cash:5, cashAmount:0 };
   document.getElementById('alertEnabled').checked = !!portfolio.alerts.enabled;
   document.getElementById('lineUserId').value = portfolio.alerts.lineUserId || '';
+  loadAllocInputs();
   renderAll();
   refreshPrices();
   setInterval(refreshPrices, 60000);
@@ -366,6 +519,10 @@ function updateWatch(i, value) {
 }
 function delHolding(i) { portfolio.holdings.splice(i, 1); markDirty(); renderAll(); }
 function delWatch(i) { portfolio.watchlist.splice(i, 1); markDirty(); renderAll(); }
+function delRealized(i) {
+  if (!confirm('刪除這筆實現損益紀錄？')) return;
+  portfolio.realized.splice(i, 1); markDirty(); renderAll();
+}
 
 function editCustomVal(id) {
   var cur = portfolio.alerts.custom[id] || VAL[id] || {};
@@ -413,6 +570,101 @@ function valBadge(id) {
   return '<span class="badge ' + cls + '" onclick="editCustomVal(\'' + id + '\')" title="點擊自訂估值">' + txt + star + '</span>';
 }
 
+// ── 提醒設定 ──
+function getAlertCfg(id) {
+  return portfolio.alerts.perStock[id] || { exp: true, fair: true, cheap: false, above: null, below: null };
+}
+function alertBadge(id) {
+  if (!id) return '';
+  var cfg = getAlertCfg(id);
+  var parts = [];
+  if (cfg.exp) parts.push('昂');
+  if (cfg.fair) parts.push('合');
+  if (cfg.cheap) parts.push('便');
+  if (cfg.above != null) parts.push('≥' + cfg.above);
+  if (cfg.below != null) parts.push('≤' + cfg.below);
+  var txt = parts.length ? '🔔 ' + parts.join('·') : '🔕 關閉';
+  var cls = parts.length ? 'alert-on' : 'alert-off';
+  return '<span class="badge ' + cls + '" onclick="openAlertModal(\'' + id + '\')" title="點擊設定通知條件">' + txt + '</span>';
+}
+function openAlertModal(id) {
+  modalStockId = id;
+  var cfg = getAlertCfg(id);
+  var v = getVal(id);
+  var name = (VAL[id] || {}).name || '';
+  document.getElementById('alertModalTitle').textContent = '🔔 ' + (name || id) + '（' + id + '）提醒設定';
+  document.getElementById('alertModalInfo').textContent = prices[id] ? ('現價 ' + prices[id]) : '';
+  document.getElementById('amExp').checked = !!cfg.exp;
+  document.getElementById('amFair').checked = !!cfg.fair;
+  document.getElementById('amCheap').checked = !!cfg.cheap;
+  document.getElementById('amAbove').value = cfg.above != null ? cfg.above : '';
+  document.getElementById('amBelow').value = cfg.below != null ? cfg.below : '';
+  document.getElementById('amExpThr').textContent = v.expensive != null ? v.expensive : '未設定';
+  document.getElementById('amFairThr').textContent = v.fair != null ? '≤' + (v.fair * 1.1).toFixed(1) : '未設定';
+  document.getElementById('amCheapThr').textContent = v.cheap != null ? v.cheap : '未設定';
+  document.getElementById('alertModal').classList.add('show');
+}
+function saveAlertModal() {
+  var above = parseFloat(document.getElementById('amAbove').value);
+  var below = parseFloat(document.getElementById('amBelow').value);
+  portfolio.alerts.perStock[modalStockId] = {
+    exp: document.getElementById('amExp').checked,
+    fair: document.getElementById('amFair').checked,
+    cheap: document.getElementById('amCheap').checked,
+    above: isNaN(above) ? null : above,
+    below: isNaN(below) ? null : below
+  };
+  closeModal('alertModal');
+  markDirty(); renderAll();
+}
+function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+
+// ── 賣出 ──
+function openSellModal(i) {
+  sellIndex = i;
+  var h = portfolio.holdings[i];
+  if (!h || !h.id) return;
+  document.getElementById('sellModalTitle').textContent = '💰 賣出 ' + (h.name || h.id) + '（' + h.id + '）';
+  document.getElementById('sellModalInfo').textContent = '持有 ' + h.shares + ' 股，平均成本 ' + h.cost;
+  document.getElementById('smShares').value = h.shares;
+  document.getElementById('smShares').max = h.shares;
+  document.getElementById('smPrice').value = prices[h.id] || '';
+  document.getElementById('smDate').value = new Date().toISOString().slice(0, 10);
+  updateSellPreview();
+  document.getElementById('smShares').oninput = updateSellPreview;
+  document.getElementById('smPrice').oninput = updateSellPreview;
+  document.getElementById('sellModal').classList.add('show');
+}
+function updateSellPreview() {
+  var h = portfolio.holdings[sellIndex];
+  if (!h) return;
+  var sh = parseFloat(document.getElementById('smShares').value) || 0;
+  var px = parseFloat(document.getElementById('smPrice').value) || 0;
+  var pl = (px - h.cost) * sh;
+  var el = document.getElementById('smPreview');
+  el.innerHTML = sh > 0 && px > 0
+    ? '預估實現損益：<b style="color:' + (pl >= 0 ? '#22c55e' : '#ef4444') + '">' + (pl > 0 ? '+' : '') + Math.round(pl).toLocaleString() + ' 元</b>（未含手續費與證交稅）'
+    : '';
+}
+function confirmSell() {
+  var h = portfolio.holdings[sellIndex];
+  if (!h) return;
+  var sh = parseFloat(document.getElementById('smShares').value) || 0;
+  var px = parseFloat(document.getElementById('smPrice').value) || 0;
+  var date = document.getElementById('smDate').value || new Date().toISOString().slice(0, 10);
+  if (sh <= 0 || sh > h.shares) { alert('賣出股數需在 1 ~ ' + h.shares + ' 之間'); return; }
+  if (px <= 0) { alert('請輸入賣出價格'); return; }
+  portfolio.realized.push({
+    date: date, id: h.id, name: h.name || h.id,
+    shares: sh, cost: h.cost, price: px,
+    pl: Math.round((px - h.cost) * sh)
+  });
+  h.shares -= sh;
+  if (h.shares <= 0) portfolio.holdings.splice(sellIndex, 1);
+  closeModal('sellModal');
+  markDirty(); renderAll();
+}
+
 // ── 渲染 ──
 function fmt(n, dec) {
   if (n == null || isNaN(n)) return '—';
@@ -426,8 +678,10 @@ function pxCell(id) {
 function renderAll() {
   renderHoldings();
   renderWatch();
+  renderRealized();
   renderStats();
   renderCharts();
+  renderAllocTarget();
   renderValuationBars();
 }
 
@@ -442,7 +696,7 @@ function renderHoldings() {
     var plCls = pl > 0 ? 'pl-pos' : pl < 0 ? 'pl-neg' : '';
     return '<tr>' +
       '<td><input class="code-in" list="stockList" value="' + h.id + '" onchange="updateHolding(' + i + ',\'id\',this.value)"></td>' +
-      '<td class="name-cell"><input class="code-in" style="text-align:left;font-family:inherit" value="' + (h.name || '') + '" onchange="updateHolding(' + i + ',\'name\',this.value)"></td>' +
+      '<td class="name-cell"><input class="name-in" value="' + (h.name || '') + '" onchange="updateHolding(' + i + ',\'name\',this.value)"></td>' +
       '<td><input class="num-in" type="number" min="0" value="' + h.shares + '" onchange="updateHolding(' + i + ',\'shares\',this.value)"></td>' +
       '<td><input class="num-in" type="number" min="0" step="0.01" value="' + h.cost + '" onchange="updateHolding(' + i + ',\'cost\',this.value)"></td>' +
       '<td>' + pxCell(h.id) + '</td>' +
@@ -450,9 +704,11 @@ function renderHoldings() {
       '<td class="' + plCls + '">' + (pl != null ? (pl > 0 ? '+' : '') + fmt(pl) : '—') + '</td>' +
       '<td class="' + plCls + '">' + (ret != null ? (ret > 0 ? '+' : '') + ret.toFixed(1) + '%' : '—') + '</td>' +
       '<td>' + valBadge(h.id) + '</td>' +
+      '<td>' + alertBadge(h.id) + '</td>' +
+      '<td>' + (h.id && h.shares > 0 ? '<button class="sell-btn" onclick="openSellModal(' + i + ')">賣出</button>' : '') + '</td>' +
       '<td><button class="del-btn" onclick="delHolding(' + i + ')" title="刪除">✕</button></td>' +
     '</tr>';
-  }).join('') || '<tr><td colspan="10" style="text-align:center;color:#475569;padding:20px">尚無持股，點下方「＋ 新增持股」開始</td></tr>';
+  }).join('') || '<tr><td colspan="12" style="text-align:center;color:#475569;padding:20px">尚無持股，點下方「＋ 新增持股」開始</td></tr>';
 }
 
 function renderWatch() {
@@ -468,9 +724,28 @@ function renderWatch() {
       '<td>' + fmt(v.fair, 1) + '</td>' +
       '<td>' + fmt(v.expensive, 1) + '</td>' +
       '<td>' + valBadge(id) + '</td>' +
+      '<td>' + alertBadge(id) + '</td>' +
       '<td><button class="del-btn" onclick="delWatch(' + i + ')" title="刪除">✕</button></td>' +
     '</tr>';
-  }).join('') || '<tr><td colspan="8" style="text-align:center;color:#475569;padding:20px">尚無追蹤標的</td></tr>';
+  }).join('') || '<tr><td colspan="9" style="text-align:center;color:#475569;padding:20px">尚無追蹤標的</td></tr>';
+}
+
+function renderRealized() {
+  var tb = document.getElementById('realizedBody');
+  var rows = portfolio.realized.slice().sort(function(a, b){ return b.date.localeCompare(a.date); });
+  tb.innerHTML = rows.map(function(r) {
+    var origIdx = portfolio.realized.indexOf(r);
+    var plCls = r.pl > 0 ? 'pl-pos' : r.pl < 0 ? 'pl-neg' : '';
+    return '<tr>' +
+      '<td>' + r.date + '</td>' +
+      '<td class="name-cell">' + (r.name || r.id) + '（' + r.id + '）</td>' +
+      '<td>' + fmt(r.shares) + '</td>' +
+      '<td>' + fmt(r.cost, 2) + '</td>' +
+      '<td>' + fmt(r.price, 2) + '</td>' +
+      '<td class="' + plCls + '">' + (r.pl > 0 ? '+' : '') + fmt(r.pl) + '</td>' +
+      '<td><button class="del-btn" onclick="delRealized(' + origIdx + ')" title="刪除">✕</button></td>' +
+    '</tr>';
+  }).join('') || '<tr><td colspan="7" style="text-align:center;color:#475569;padding:20px">尚無賣出紀錄，在持股表按「賣出」即會記錄</td></tr>';
 }
 
 function renderStats() {
@@ -494,6 +769,15 @@ function renderStats() {
   var retEl = document.getElementById('statRet');
   retEl.textContent = costWithPx > 0 ? ((pl > 0 ? '+' : '') + (pl / costWithPx * 100).toFixed(2) + '%') : '—';
   retEl.className = plEl.className;
+
+  // 今年實現損益
+  var year = String(new Date().getFullYear());
+  var realized = portfolio.realized
+    .filter(function(r){ return (r.date || '').slice(0, 4) === year; })
+    .reduce(function(sum, r){ return sum + (r.pl || 0); }, 0);
+  var rEl = document.getElementById('statRealized');
+  rEl.textContent = (realized > 0 ? '+' : '') + fmt(realized);
+  rEl.className = 'val ' + (realized > 0 ? 'green' : realized < 0 ? 'red' : '');
 }
 
 var PALETTE = ['#3b82f6','#22c55e','#f59e0b','#ec4899','#a855f7','#06b6d4','#ef4444','#14b8a6','#eab308','#f97316','#8b5cf6','#10b981'];
@@ -502,7 +786,6 @@ function renderCharts() {
   var rows = portfolio.holdings.filter(function(h){ return h.id && h.shares > 0 && prices[h.id]; });
   var labels = rows.map(function(h){ return h.name || h.id; });
 
-  // 資產配置
   var mvs = rows.map(function(h){ return Math.round(prices[h.id] * h.shares); });
   if (allocChart) allocChart.destroy();
   allocChart = new Chart(document.getElementById('allocChart'), {
@@ -512,7 +795,6 @@ function renderCharts() {
       plugins: { legend: { position: 'right', labels: { color: '#94a3b8', font: { size: 11 }, boxWidth: 12 } } } }
   });
 
-  // 個股損益
   var pls = rows.map(function(h){ return Math.round((prices[h.id] - h.cost) * h.shares); });
   if (plChart) plChart.destroy();
   plChart = new Chart(document.getElementById('plChart'), {
@@ -524,6 +806,113 @@ function renderCharts() {
       plugins: { legend: { display: false } },
       scales: {
         x: { ticks: { color: '#94a3b8', font: { size: 10 } }, grid: { display: false } },
+        y: { ticks: { color: '#64748b', font: { size: 10 } }, grid: { color: '#1a2236' } }
+      } }
+  });
+}
+
+// ── 資產配置目標 ──
+function loadAllocInputs() {
+  var t = portfolio.allocTarget;
+  document.getElementById('tgCore').value = t.core;
+  document.getElementById('tgGrowth').value = t.growth;
+  document.getElementById('tgSpec').value = t.spec;
+  document.getElementById('tgCash').value = t.cash;
+  document.getElementById('cashAmount').value = t.cashAmount || 0;
+  document.querySelectorAll('.preset-btn').forEach(function(b) {
+    b.classList.toggle('sel', b.getAttribute('data-preset') === t.preset);
+  });
+}
+function applyPreset(name, btn) {
+  var p = PRESETS[name];
+  portfolio.allocTarget.preset = name;
+  portfolio.allocTarget.core = p.core;
+  portfolio.allocTarget.growth = p.growth;
+  portfolio.allocTarget.spec = p.spec;
+  portfolio.allocTarget.cash = p.cash;
+  loadAllocInputs();
+  markDirty(); renderAllocTarget();
+}
+function allocEdited() {
+  var t = portfolio.allocTarget;
+  t.core = parseFloat(document.getElementById('tgCore').value) || 0;
+  t.growth = parseFloat(document.getElementById('tgGrowth').value) || 0;
+  t.spec = parseFloat(document.getElementById('tgSpec').value) || 0;
+  t.cash = parseFloat(document.getElementById('tgCash').value) || 0;
+  t.cashAmount = parseFloat(document.getElementById('cashAmount').value) || 0;
+  // 手動改過 % 就取消 preset 標記（除非剛好等於某 preset）
+  t.preset = null;
+  for (var k in PRESETS) {
+    if (PRESETS[k].core === t.core && PRESETS[k].growth === t.growth && PRESETS[k].spec === t.spec && PRESETS[k].cash === t.cash) t.preset = k;
+  }
+  document.querySelectorAll('.preset-btn').forEach(function(b) {
+    b.classList.toggle('sel', b.getAttribute('data-preset') === t.preset);
+  });
+  markDirty(); renderAllocTarget();
+}
+function getTier(id) {
+  return (VAL[id] || {}).tier || 'other';
+}
+function renderAllocTarget() {
+  var t = portfolio.allocTarget;
+  if (!t) return;
+  var sum = t.core + t.growth + t.spec + t.cash;
+  document.getElementById('pctWarn').textContent = sum !== 100 ? ('⚠ 目標占比合計 ' + sum + '%，不等於 100%') : '';
+
+  // 目前各層級市值
+  var cur = { core: 0, growth: 0, spec: 0, cash: t.cashAmount || 0, other: 0 };
+  var missing = false;
+  portfolio.holdings.forEach(function(h) {
+    if (!h.id || h.shares <= 0) return;
+    if (!prices[h.id]) { missing = true; return; }
+    cur[getTier(h.id)] += prices[h.id] * h.shares;
+  });
+  var total = cur.core + cur.growth + cur.spec + cur.cash + cur.other;
+
+  var tiers = ['core', 'growth', 'spec', 'cash'];
+  if (cur.other > 0) tiers.push('other');
+  var rows = tiers.map(function(k) {
+    var curAmt = cur[k];
+    var curPct = total > 0 ? curAmt / total * 100 : 0;
+    var tgtPct = k === 'other' ? null : t[k];
+    var tgtAmt = tgtPct != null ? total * tgtPct / 100 : null;
+    var diff = tgtAmt != null ? tgtAmt - curAmt : null;
+    var action;
+    if (diff == null) action = '<span class="diff-ok">未在追蹤清單，不列入目標</span>';
+    else if (Math.abs(diff) < total * 0.01 || Math.abs(diff) < 1000) action = '<span class="diff-ok">✓ 已達標</span>';
+    else if (diff > 0) action = '<span class="diff-buy">＋再' + (k === 'cash' ? '保留' : '買入') + ' ' + fmt(diff) + '</span>';
+    else action = '<span class="diff-sell">－減碼 ' + fmt(-diff) + '</span>';
+    return '<tr>' +
+      '<td class="name-cell">' + TIER_LABEL[k] + '</td>' +
+      '<td>' + fmt(curAmt) + '</td>' +
+      '<td>' + curPct.toFixed(1) + '%</td>' +
+      '<td>' + (tgtPct != null ? tgtPct + '%' : '—') + '</td>' +
+      '<td>' + (tgtAmt != null ? fmt(tgtAmt) : '—') + '</td>' +
+      '<td style="text-align:right">' + action + '</td>' +
+    '</tr>';
+  });
+  document.getElementById('allocTargetBody').innerHTML = rows.join('') +
+    '<tr><td class="name-cell" style="font-weight:800">合計' + (missing ? '（部分股價載入中）' : '') + '</td>' +
+    '<td style="font-weight:800">' + fmt(total) + '</td><td>100%</td><td>' + sum + '%</td><td>' + fmt(total) + '</td><td></td></tr>';
+
+  // 目前 vs 目標 grouped bar
+  var chartTiers = ['core', 'growth', 'spec', 'cash'];
+  var curData = chartTiers.map(function(k){ return Math.round(cur[k]); });
+  var tgtData = chartTiers.map(function(k){ return Math.round(total * t[k] / 100); });
+  if (targetChart) targetChart.destroy();
+  targetChart = new Chart(document.getElementById('targetChart'), {
+    type: 'bar',
+    data: {
+      labels: chartTiers.map(function(k){ return TIER_LABEL[k]; }),
+      datasets: [
+        { label: '目前', data: curData, backgroundColor: 'rgba(59,130,246,.7)', borderRadius: 4 },
+        { label: '目標', data: tgtData, backgroundColor: 'rgba(148,163,184,.4)', borderRadius: 4 }
+      ]
+    },
+    options: { responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { labels: { color: '#94a3b8', font: { size: 11 }, boxWidth: 12 } } },
+      scales: {
+        x: { ticks: { color: '#94a3b8', font: { size: 11 } }, grid: { display: false } },
         y: { ticks: { color: '#64748b', font: { size: 10 } }, grid: { color: '#1a2236' } }
       } }
   });

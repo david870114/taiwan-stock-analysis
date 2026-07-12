@@ -2085,6 +2085,12 @@ document.addEventListener('DOMContentLoaded', function() {
       this.classList.add('active');
     });
   });
+  // 支援 #hash 直接開啟指定分頁（my-stocks.html 分頁列連回用）
+  var hashTab = location.hash.replace('#', '');
+  if (hashTab) {
+    var hb = document.querySelector('.tab-btn[data-tab="' + hashTab + '"]');
+    if (hb) hb.click();
+  }
 });
 
 /* ══════════════════════════════════════
