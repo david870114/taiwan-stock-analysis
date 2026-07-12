@@ -93,6 +93,7 @@ td input {
 td input.code-in { width:78px; text-align:left; }
 td input.name-in { width:110px; text-align:left; font-family:inherit; }
 td input.num-in { width:88px; }
+td input.date-in { width:132px; text-align:left; color-scheme:dark; }
 .name-cell { color:#cbd5e1; font-family:inherit; }
 .pl-pos { color:#22c55e; } .pl-neg { color:#ef4444; }
 .badge { display:inline-block; padding:2px 9px; border-radius:20px; font-size:11px; font-weight:700; font-family:inherit; cursor:pointer; }
@@ -111,15 +112,6 @@ td input.num-in { width:88px; }
 }
 .sell-btn:hover { background:rgba(245,158,11,.25); }
 .table-wrap { overflow-x:auto; }
-
-/* 估值位置條 */
-.vrow { display:flex; align-items:center; gap:12px; margin-bottom:12px; }
-.vrow .vname { width:150px; flex:0 0 150px; font-size:12px; color:#cbd5e1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.vbar { flex:1; height:14px; border-radius:7px; position:relative;
-  background:linear-gradient(90deg,#16a34a 0%,#16a34a 25%,#3b82f6 45%,#f59e0b 75%,#ef4444 100%); opacity:.9; }
-.vmark { position:absolute; top:-4px; width:3px; height:22px; background:#fff; border-radius:2px; box-shadow:0 0 6px rgba(255,255,255,.7); }
-.vlabels { flex:0 0 190px; font-size:10px; color:#64748b; font-family:monospace; text-align:left; }
-@media(max-width:640px){ .vrow .vname{width:90px;flex-basis:90px;} .vlabels{flex-basis:130px;} }
 
 .charts-grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
 @media(max-width:800px){ .charts-grid { grid-template-columns:1fr; } }
@@ -253,7 +245,7 @@ details code { background:#141b2d; padding:2px 6px; border-radius:6px; font-size
     <div class="table-wrap">
     <table id="holdingsTable">
       <thead><tr>
-        <th>代號</th><th>名稱</th><th>股數</th><th>平均成本</th><th>現價</th>
+        <th>代號</th><th>名稱</th><th>股數</th><th>平均成本</th><th>買入日期</th><th>現價</th>
         <th>市值</th><th>損益</th><th>報酬%</th><th>估值</th><th>提醒</th><th>賣出</th><th></th>
       </tr></thead>
       <tbody id="holdingsBody"></tbody>
@@ -288,12 +280,12 @@ details code { background:#141b2d; padding:2px 6px; border-radius:6px; font-size
   <!-- 圖表 -->
   <div class="charts-grid">
     <div class="card"><h2>🥧 資產配置</h2><div class="chart-box"><canvas id="allocChart"></canvas></div></div>
-    <div class="card"><h2>📊 個股損益</h2><div class="chart-box"><canvas id="plChart"></canvas></div></div>
+    <div class="card"><h2>📈 個股損益走勢 <span class="sub" id="plHint"></span></h2><div class="chart-box"><canvas id="plChart"></canvas></div></div>
   </div>
 
   <!-- 資產配置目標 -->
   <div class="card">
-    <h2>🧭 資產配置目標 <span class="sub">與總覽頁「資金配置試算」相同的三種配置；比對目前持股層級，算出還差多少</span></h2>
+    <h2>🧭 資產配置目標 <span class="sub">輸入想投入的總資金與目標占比，扣掉既有持股，算出每個層級還差多少</span></h2>
     <div class="preset-row">
       <button class="preset-btn" data-preset="conservative" onclick="applyPreset('conservative', this)">🛡 保守 80/15/0/5</button>
       <button class="preset-btn" data-preset="balanced" onclick="applyPreset('balanced', this)">⚖️ 均衡 60/30/5/5</button>
@@ -304,6 +296,7 @@ details code { background:#141b2d; padding:2px 6px; border-radius:6px; font-size
       <div class="ai-field"><label>成長 %</label><input id="tgGrowth" type="number" min="0" max="100" oninput="allocEdited()"></div>
       <div class="ai-field"><label>高風險 %</label><input id="tgSpec" type="number" min="0" max="100" oninput="allocEdited()"></div>
       <div class="ai-field"><label>現金 %</label><input id="tgCash" type="number" min="0" max="100" oninput="allocEdited()"></div>
+      <div class="ai-field"><label>💰 目標投入資金（元）</label><input id="tgTotal" class="wide" type="number" min="0" placeholder="未填＝目前總資產" oninput="allocEdited()"></div>
       <div class="ai-field"><label>目前現金部位（元）</label><input id="cashAmount" class="wide" type="number" min="0" oninput="allocEdited()"></div>
     </div>
     <div class="pct-warn" id="pctWarn"></div>
@@ -314,12 +307,6 @@ details code { background:#141b2d; padding:2px 6px; border-radius:6px; font-size
     </table>
     </div>
     <div class="chart-box" style="height:240px; margin-top:16px"><canvas id="targetChart"></canvas></div>
-  </div>
-
-  <!-- 估值位置 -->
-  <div class="card">
-    <h2>🎯 估值位置 <span class="sub">白線 = 現價在「便宜 → 昂貴」區間中的位置</span></h2>
-    <div id="valuationBars"></div>
   </div>
 
   <!-- 通知設定 -->
@@ -360,9 +347,10 @@ details code { background:#141b2d; padding:2px 6px; border-radius:6px; font-size
   <div class="modal">
     <h3 id="alertModalTitle">🔔 提醒設定</h3>
     <div class="m-info" id="alertModalInfo"></div>
-    <div class="m-row"><input type="checkbox" id="amExp"><label for="amExp">🔴 到達<b>昂貴價</b>時通知</label><span class="thr" id="amExpThr"></span></div>
-    <div class="m-row"><input type="checkbox" id="amFair"><label for="amFair">🟡 跌到<b>合理價 10% 內</b>時通知</label><span class="thr" id="amFairThr"></span></div>
-    <div class="m-row"><input type="checkbox" id="amCheap"><label for="amCheap">🟢 跌破<b>便宜價</b>時通知</label><span class="thr" id="amCheapThr"></span></div>
+    <div class="m-sec" style="border-top:none;margin-top:0;padding-top:0">三價位接近提醒（% = 距該價多少範圍內就通知，0% = 剛好到價）</div>
+    <div class="m-row"><input type="checkbox" id="amCheapOn"><label for="amCheapOn">🟢 到達<b>便宜價</b></label><input class="m-num" id="amCheapPct" type="number" min="0" max="50" step="1" style="width:64px" oninput="updateAlertThr()"><label>% 內通知</label><span class="thr" id="amCheapThr"></span></div>
+    <div class="m-row"><input type="checkbox" id="amFairOn"><label for="amFairOn">🟡 到達<b>合理價</b></label><input class="m-num" id="amFairPct" type="number" min="0" max="50" step="1" style="width:64px" oninput="updateAlertThr()"><label>% 內通知</label><span class="thr" id="amFairThr"></span></div>
+    <div class="m-row"><input type="checkbox" id="amExpOn"><label for="amExpOn">🔴 到達<b>昂貴價</b></label><input class="m-num" id="amExpPct" type="number" min="0" max="50" step="1" style="width:64px" oninput="updateAlertThr()"><label>% 內通知</label><span class="thr" id="amExpThr"></span></div>
     <div class="m-sec">自訂目標價（留空 = 不設定）</div>
     <div class="m-row"><label>📈 漲到 ≥</label><input class="m-num" id="amAbove" type="number" step="0.01" placeholder="—"><label>元時通知</label></div>
     <div class="m-row"><label>📉 跌到 ≤</label><input class="m-num" id="amBelow" type="number" step="0.01" placeholder="—"><label>元時通知</label></div>
@@ -476,7 +464,7 @@ async function enterMain() {
   if (!portfolio.alerts.custom) portfolio.alerts.custom = {};
   if (!portfolio.alerts.perStock) portfolio.alerts.perStock = {};
   if (!portfolio.realized) portfolio.realized = [];
-  if (!portfolio.allocTarget) portfolio.allocTarget = { preset:'balanced', core:60, growth:30, spec:5, cash:5, cashAmount:0 };
+  if (!portfolio.allocTarget) portfolio.allocTarget = { preset:'balanced', core:60, growth:30, spec:5, cash:5, cashAmount:0, totalTarget:0 };
   document.getElementById('alertEnabled').checked = !!portfolio.alerts.enabled;
   document.getElementById('lineUserId').value = portfolio.alerts.lineUserId || '';
   loadAllocInputs();
@@ -492,7 +480,7 @@ function markDirty() {
   document.getElementById('savedMsg').style.display = 'none';
 }
 function addHolding() {
-  portfolio.holdings.push({ id: '', name: '', shares: 0, cost: 0 });
+  portfolio.holdings.push({ id: '', name: '', shares: 0, cost: 0, date: '' });
   markDirty(); renderAll();
 }
 function addWatch() {
@@ -507,6 +495,8 @@ function updateHolding(i, field, value) {
     fetchPrice(h.id).then(renderAll);
   } else if (field === 'name') {
     h.name = value.trim();
+  } else if (field === 'date') {
+    h.date = value;
   } else {
     h[field] = parseFloat(value) || 0;
   }
@@ -571,46 +561,73 @@ function valBadge(id) {
 }
 
 // ── 提醒設定 ──
+// 新格式：{ cheap:{on,pct}, fair:{on,pct}, exp:{on,pct}, above, below }
+// 舊格式（布林）自動升級：exp:true→0%、fair:true→10%、cheap:true→0%
+function normAlertPart(v, defOn, defPct) {
+  if (v && typeof v === 'object') {
+    var p = parseFloat(v.pct);
+    return { on: !!v.on, pct: isFinite(p) && p >= 0 ? p : defPct };
+  }
+  if (v === true) return { on: true, pct: defPct };
+  if (v === false) return { on: false, pct: defPct };
+  return { on: defOn, pct: defPct };
+}
 function getAlertCfg(id) {
-  return portfolio.alerts.perStock[id] || { exp: true, fair: true, cheap: false, above: null, below: null };
+  var raw = portfolio.alerts.perStock[id];
+  return {
+    exp:   normAlertPart(raw && raw.exp,   !raw, 0),
+    fair:  normAlertPart(raw && raw.fair,  !raw, 10),
+    cheap: normAlertPart(raw && raw.cheap, false, 0),
+    above: raw && raw.above != null ? raw.above : null,
+    below: raw && raw.below != null ? raw.below : null
+  };
 }
 function alertBadge(id) {
   if (!id) return '';
   var cfg = getAlertCfg(id);
   var parts = [];
-  if (cfg.exp) parts.push('昂');
-  if (cfg.fair) parts.push('合');
-  if (cfg.cheap) parts.push('便');
+  if (cfg.cheap.on) parts.push('便' + (cfg.cheap.pct > 0 ? cfg.cheap.pct + '%' : ''));
+  if (cfg.fair.on) parts.push('合' + (cfg.fair.pct > 0 ? cfg.fair.pct + '%' : ''));
+  if (cfg.exp.on) parts.push('昂' + (cfg.exp.pct > 0 ? cfg.exp.pct + '%' : ''));
   if (cfg.above != null) parts.push('≥' + cfg.above);
   if (cfg.below != null) parts.push('≤' + cfg.below);
   var txt = parts.length ? '🔔 ' + parts.join('·') : '🔕 關閉';
   var cls = parts.length ? 'alert-on' : 'alert-off';
   return '<span class="badge ' + cls + '" onclick="openAlertModal(\'' + id + '\')" title="點擊設定通知條件">' + txt + '</span>';
 }
+function updateAlertThr() {
+  var v = getVal(modalStockId);
+  var cheapPct = parseFloat(document.getElementById('amCheapPct').value) || 0;
+  var fairPct = parseFloat(document.getElementById('amFairPct').value) || 0;
+  var expPct = parseFloat(document.getElementById('amExpPct').value) || 0;
+  document.getElementById('amCheapThr').textContent = v.cheap != null ? '≤' + (v.cheap * (1 + cheapPct / 100)).toFixed(1) : '未設定';
+  document.getElementById('amFairThr').textContent = v.fair != null ? '≤' + (v.fair * (1 + fairPct / 100)).toFixed(1) : '未設定';
+  document.getElementById('amExpThr').textContent = v.expensive != null ? '≥' + (v.expensive * (1 - expPct / 100)).toFixed(1) : '未設定';
+}
 function openAlertModal(id) {
   modalStockId = id;
   var cfg = getAlertCfg(id);
-  var v = getVal(id);
   var name = (VAL[id] || {}).name || '';
   document.getElementById('alertModalTitle').textContent = '🔔 ' + (name || id) + '（' + id + '）提醒設定';
   document.getElementById('alertModalInfo').textContent = prices[id] ? ('現價 ' + prices[id]) : '';
-  document.getElementById('amExp').checked = !!cfg.exp;
-  document.getElementById('amFair').checked = !!cfg.fair;
-  document.getElementById('amCheap').checked = !!cfg.cheap;
+  document.getElementById('amCheapOn').checked = cfg.cheap.on;
+  document.getElementById('amCheapPct').value = cfg.cheap.pct;
+  document.getElementById('amFairOn').checked = cfg.fair.on;
+  document.getElementById('amFairPct').value = cfg.fair.pct;
+  document.getElementById('amExpOn').checked = cfg.exp.on;
+  document.getElementById('amExpPct').value = cfg.exp.pct;
   document.getElementById('amAbove').value = cfg.above != null ? cfg.above : '';
   document.getElementById('amBelow').value = cfg.below != null ? cfg.below : '';
-  document.getElementById('amExpThr').textContent = v.expensive != null ? v.expensive : '未設定';
-  document.getElementById('amFairThr').textContent = v.fair != null ? '≤' + (v.fair * 1.1).toFixed(1) : '未設定';
-  document.getElementById('amCheapThr').textContent = v.cheap != null ? v.cheap : '未設定';
+  updateAlertThr();
   document.getElementById('alertModal').classList.add('show');
 }
 function saveAlertModal() {
   var above = parseFloat(document.getElementById('amAbove').value);
   var below = parseFloat(document.getElementById('amBelow').value);
   portfolio.alerts.perStock[modalStockId] = {
-    exp: document.getElementById('amExp').checked,
-    fair: document.getElementById('amFair').checked,
-    cheap: document.getElementById('amCheap').checked,
+    cheap: { on: document.getElementById('amCheapOn').checked, pct: parseFloat(document.getElementById('amCheapPct').value) || 0 },
+    fair:  { on: document.getElementById('amFairOn').checked,  pct: parseFloat(document.getElementById('amFairPct').value) || 0 },
+    exp:   { on: document.getElementById('amExpOn').checked,   pct: parseFloat(document.getElementById('amExpPct').value) || 0 },
     above: isNaN(above) ? null : above,
     below: isNaN(below) ? null : below
   };
@@ -682,7 +699,6 @@ function renderAll() {
   renderStats();
   renderCharts();
   renderAllocTarget();
-  renderValuationBars();
 }
 
 function renderHoldings() {
@@ -699,6 +715,7 @@ function renderHoldings() {
       '<td class="name-cell"><input class="name-in" value="' + (h.name || '') + '" onchange="updateHolding(' + i + ',\'name\',this.value)"></td>' +
       '<td><input class="num-in" type="number" min="0" value="' + h.shares + '" onchange="updateHolding(' + i + ',\'shares\',this.value)"></td>' +
       '<td><input class="num-in" type="number" min="0" step="0.01" value="' + h.cost + '" onchange="updateHolding(' + i + ',\'cost\',this.value)"></td>' +
+      '<td><input class="date-in" type="date" value="' + (h.date || '') + '" onchange="updateHolding(' + i + ',\'date\',this.value)"></td>' +
       '<td>' + pxCell(h.id) + '</td>' +
       '<td>' + fmt(mv) + '</td>' +
       '<td class="' + plCls + '">' + (pl != null ? (pl > 0 ? '+' : '') + fmt(pl) : '—') + '</td>' +
@@ -708,7 +725,7 @@ function renderHoldings() {
       '<td>' + (h.id && h.shares > 0 ? '<button class="sell-btn" onclick="openSellModal(' + i + ')">賣出</button>' : '') + '</td>' +
       '<td><button class="del-btn" onclick="delHolding(' + i + ')" title="刪除">✕</button></td>' +
     '</tr>';
-  }).join('') || '<tr><td colspan="12" style="text-align:center;color:#475569;padding:20px">尚無持股，點下方「＋ 新增持股」開始</td></tr>';
+  }).join('') || '<tr><td colspan="13" style="text-align:center;color:#475569;padding:20px">尚無持股，點下方「＋ 新增持股」開始</td></tr>';
 }
 
 function renderWatch() {
@@ -792,23 +809,134 @@ function renderCharts() {
     type: 'doughnut',
     data: { labels: labels, datasets: [{ data: mvs, backgroundColor: PALETTE, borderColor: '#1e2535', borderWidth: 2 }] },
     options: { responsive: true, maintainAspectRatio: false,
-      plugins: { legend: { position: 'right', labels: { color: '#94a3b8', font: { size: 11 }, boxWidth: 12 } } } }
+      plugins: {
+        legend: { position: 'right', labels: { color: '#94a3b8', font: { size: 11 }, boxWidth: 12,
+          generateLabels: function(chart) {
+            var base = Chart.overrides.doughnut.plugins.legend.labels.generateLabels(chart);
+            var data = chart.data.datasets[0].data;
+            var total = data.reduce(function(a, b){ return a + b; }, 0);
+            base.forEach(function(l, i) {
+              if (total > 0) l.text += '　' + (data[i] / total * 100).toFixed(1) + '%';
+            });
+            return base;
+          } } },
+        tooltip: { callbacks: { label: function(ctx) {
+          var total = ctx.dataset.data.reduce(function(a, b){ return a + b; }, 0);
+          var pct = total > 0 ? (ctx.parsed / total * 100).toFixed(1) : 0;
+          return ' ' + fmt(ctx.parsed) + ' 元（' + pct + '%）';
+        } } }
+      } }
   });
 
-  var pls = rows.map(function(h){ return Math.round((prices[h.id] - h.cost) * h.shares); });
-  if (plChart) plChart.destroy();
+  renderPlChart();
+}
+
+// ── 個股損益走勢折線圖（需買入日期；歷史收盤價來自 FinMind 免費 API）──
+var HIST_API = 'https://api.finmindtrade.com/api/v4/data?dataset=TaiwanStockPrice';
+var histCache = {};      // id → { start:'YYYY-MM-DD', map:{date→close} }
+var histLoading = false;
+
+function plLineHoldings() {
+  return portfolio.holdings.filter(function(h){ return h.id && h.shares > 0 && h.date; });
+}
+
+function renderPlChart() {
+  var lineRows = plLineHoldings();
+  var hint = document.getElementById('plHint');
+  if (plChart) { plChart.destroy(); plChart = null; }
+
+  if (!lineRows.length) {
+    // 尚未填任何買入日期 → 顯示目前損益長條圖
+    hint.textContent = '在持股表填「買入日期」即可看損益時間走勢';
+    var rows = portfolio.holdings.filter(function(h){ return h.id && h.shares > 0 && prices[h.id]; });
+    plChart = new Chart(document.getElementById('plChart'), {
+      type: 'bar',
+      data: { labels: rows.map(function(h){ return h.name || h.id; }),
+        datasets: [{ data: rows.map(function(h){ return Math.round((prices[h.id] - h.cost) * h.shares); }),
+          backgroundColor: rows.map(function(h){ return (prices[h.id] - h.cost) >= 0 ? 'rgba(34,197,94,.7)' : 'rgba(239,68,68,.7)'; }),
+          borderRadius: 4 }] },
+      options: { responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { ticks: { color: '#94a3b8', font: { size: 10 } }, grid: { display: false } },
+          y: { ticks: { color: '#64748b', font: { size: 10 } }, grid: { color: '#1a2236' } }
+        } }
+    });
+    return;
+  }
+
+  var loaded = lineRows.filter(function(h){ return histCache[h.id]; });
+  hint.textContent = loaded.length < lineRows.length ? '歷史股價載入中…' : '自買入日起的累計損益';
+
+  // 所有日期聯集（只取各檔買入日之後）
+  var dateSet = {};
+  loaded.forEach(function(h) {
+    for (var d in histCache[h.id].map) { if (d >= h.date) dateSet[d] = 1; }
+  });
+  var labels = Object.keys(dateSet).sort();
+
+  var datasets = loaded.map(function(h, i) {
+    var map = histCache[h.id].map;
+    var today = new Date().toISOString().slice(0, 10);
+    var data = labels.map(function(d) {
+      if (d < h.date) return null;
+      var c = map[d];
+      if (c == null && d === today && prices[h.id]) c = prices[h.id];  // 今日盤中用即時價
+      return c != null ? Math.round((c - h.cost) * h.shares) : null;
+    });
+    var color = PALETTE[i % PALETTE.length];
+    return { label: (h.name || h.id) + '（' + h.id + '）', data: data,
+      borderColor: color, backgroundColor: color, borderWidth: 2,
+      pointRadius: 0, pointHoverRadius: 3, tension: .2, spanGaps: true };
+  });
+
   plChart = new Chart(document.getElementById('plChart'), {
-    type: 'bar',
-    data: { labels: labels, datasets: [{ data: pls,
-      backgroundColor: pls.map(function(v){ return v >= 0 ? 'rgba(34,197,94,.7)' : 'rgba(239,68,68,.7)'; }),
-      borderRadius: 4 }] },
+    type: 'line',
+    data: { labels: labels, datasets: datasets },
     options: { responsive: true, maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { labels: { color: '#94a3b8', font: { size: 11 }, boxWidth: 12 } },
+        tooltip: { callbacks: { label: function(ctx) {
+          var v = ctx.parsed.y;
+          return ' ' + ctx.dataset.label + '：' + (v > 0 ? '+' : '') + fmt(v);
+        } } }
+      },
       scales: {
-        x: { ticks: { color: '#94a3b8', font: { size: 10 } }, grid: { display: false } },
+        x: { ticks: { color: '#94a3b8', font: { size: 10 }, maxTicksLimit: 8, maxRotation: 0 }, grid: { display: false } },
         y: { ticks: { color: '#64748b', font: { size: 10 } }, grid: { color: '#1a2236' } }
       } }
   });
+
+  loadPlHistories();
+}
+
+async function loadPlHistories() {
+  if (histLoading) return;
+  var need = plLineHoldings().filter(function(h) {
+    return !histCache[h.id] || histCache[h.id].start > h.date;
+  });
+  if (!need.length) return;
+  histLoading = true;
+  var got = false;
+  for (var i = 0; i < need.length; i++) {
+    var h = need[i];
+    try {
+      var res = await fetch(HIST_API + '&data_id=' + encodeURIComponent(h.id) + '&start_date=' + h.date);
+      var data = await res.json();
+      if (data && Array.isArray(data.data) && data.data.length) {
+        var map = {};
+        data.data.forEach(function(r){ if (r.close > 0) map[r.date] = r.close; });
+        histCache[h.id] = { start: h.date, map: map };
+        got = true;
+      }
+    } catch (e) { /* 單檔失敗跳過，下次 renderAll 再試 */ }
+  }
+  histLoading = false;
+  if (got) renderPlChart();
+  else if (plLineHoldings().some(function(h){ return !histCache[h.id]; })) {
+    document.getElementById('plHint').textContent = '歷史股價暫時抓不到，稍後會自動重試';
+  }
 }
 
 // ── 資產配置目標 ──
@@ -818,6 +946,7 @@ function loadAllocInputs() {
   document.getElementById('tgGrowth').value = t.growth;
   document.getElementById('tgSpec').value = t.spec;
   document.getElementById('tgCash').value = t.cash;
+  document.getElementById('tgTotal').value = t.totalTarget || '';
   document.getElementById('cashAmount').value = t.cashAmount || 0;
   document.querySelectorAll('.preset-btn').forEach(function(b) {
     b.classList.toggle('sel', b.getAttribute('data-preset') === t.preset);
@@ -839,6 +968,7 @@ function allocEdited() {
   t.growth = parseFloat(document.getElementById('tgGrowth').value) || 0;
   t.spec = parseFloat(document.getElementById('tgSpec').value) || 0;
   t.cash = parseFloat(document.getElementById('tgCash').value) || 0;
+  t.totalTarget = parseFloat(document.getElementById('tgTotal').value) || 0;
   t.cashAmount = parseFloat(document.getElementById('cashAmount').value) || 0;
   // 手動改過 % 就取消 preset 標記（除非剛好等於某 preset）
   t.preset = null;
@@ -868,6 +998,8 @@ function renderAllocTarget() {
     cur[getTier(h.id)] += prices[h.id] * h.shares;
   });
   var total = cur.core + cur.growth + cur.spec + cur.cash + cur.other;
+  // 目標基準金額：使用者設定的目標投入資金；未填則以目前總資產計
+  var base = t.totalTarget > 0 ? t.totalTarget : total;
 
   var tiers = ['core', 'growth', 'spec', 'cash'];
   if (cur.other > 0) tiers.push('other');
@@ -875,11 +1007,11 @@ function renderAllocTarget() {
     var curAmt = cur[k];
     var curPct = total > 0 ? curAmt / total * 100 : 0;
     var tgtPct = k === 'other' ? null : t[k];
-    var tgtAmt = tgtPct != null ? total * tgtPct / 100 : null;
+    var tgtAmt = tgtPct != null ? base * tgtPct / 100 : null;
     var diff = tgtAmt != null ? tgtAmt - curAmt : null;
     var action;
     if (diff == null) action = '<span class="diff-ok">未在追蹤清單，不列入目標</span>';
-    else if (Math.abs(diff) < total * 0.01 || Math.abs(diff) < 1000) action = '<span class="diff-ok">✓ 已達標</span>';
+    else if (Math.abs(diff) < base * 0.01 || Math.abs(diff) < 1000) action = '<span class="diff-ok">✓ 已達標</span>';
     else if (diff > 0) action = '<span class="diff-buy">＋再' + (k === 'cash' ? '保留' : '買入') + ' ' + fmt(diff) + '</span>';
     else action = '<span class="diff-sell">－減碼 ' + fmt(-diff) + '</span>';
     return '<tr>' +
@@ -891,14 +1023,23 @@ function renderAllocTarget() {
       '<td style="text-align:right">' + action + '</td>' +
     '</tr>';
   });
+  // 合計列：目標投入資金 vs 目前總資產，算出還可投入多少
+  var remainCell = '';
+  if (t.totalTarget > 0) {
+    var remain = t.totalTarget - total;
+    if (remain > 1000) remainCell = '<span class="diff-buy">還可投入 ' + fmt(remain) + '</span>';
+    else if (remain < -1000) remainCell = '<span class="diff-sell">已超出目標 ' + fmt(-remain) + '</span>';
+    else remainCell = '<span class="diff-ok">✓ 已達目標資金</span>';
+  }
   document.getElementById('allocTargetBody').innerHTML = rows.join('') +
     '<tr><td class="name-cell" style="font-weight:800">合計' + (missing ? '（部分股價載入中）' : '') + '</td>' +
-    '<td style="font-weight:800">' + fmt(total) + '</td><td>100%</td><td>' + sum + '%</td><td>' + fmt(total) + '</td><td></td></tr>';
+    '<td style="font-weight:800">' + fmt(total) + '</td><td>100%</td><td>' + sum + '%</td><td>' + fmt(base) + '</td>' +
+    '<td style="text-align:right">' + remainCell + '</td></tr>';
 
   // 目前 vs 目標 grouped bar
   var chartTiers = ['core', 'growth', 'spec', 'cash'];
   var curData = chartTiers.map(function(k){ return Math.round(cur[k]); });
-  var tgtData = chartTiers.map(function(k){ return Math.round(total * t[k] / 100); });
+  var tgtData = chartTiers.map(function(k){ return Math.round(base * t[k] / 100); });
   if (targetChart) targetChart.destroy();
   targetChart = new Chart(document.getElementById('targetChart'), {
     type: 'bar',
@@ -916,26 +1057,6 @@ function renderAllocTarget() {
         y: { ticks: { color: '#64748b', font: { size: 10 } }, grid: { color: '#1a2236' } }
       } }
   });
-}
-
-function renderValuationBars() {
-  var ids = [];
-  portfolio.holdings.forEach(function(h){ if (h.id && ids.indexOf(h.id) < 0) ids.push(h.id); });
-  portfolio.watchlist.forEach(function(id){ if (id && ids.indexOf(id) < 0) ids.push(id); });
-  var html = ids.map(function(id) {
-    var v = getVal(id);
-    var px = prices[id];
-    if (!px || v.cheap == null || v.expensive == null) return '';
-    var pct = Math.max(0, Math.min(100, (px - v.cheap) / (v.expensive - v.cheap) * 100));
-    var name = (VAL[id] || {}).name || id;
-    return '<div class="vrow">' +
-      '<div class="vname">' + name + '（' + id + '）</div>' +
-      '<div class="vbar"><div class="vmark" style="left:' + pct.toFixed(1) + '%"></div></div>' +
-      '<div class="vlabels">' + fmt(v.cheap,0) + ' / ' + fmt(v.fair,0) + ' / ' + fmt(v.expensive,0) + '　現價 ' + fmt(px,1) + '</div>' +
-    '</div>';
-  }).join('');
-  document.getElementById('valuationBars').innerHTML =
-    html || '<div style="color:#475569;font-size:13px">新增持股或追蹤標的後，這裡會顯示每檔的估值位置</div>';
 }
 
 // ── 即時股價（Worker 有限流：逐一發送，間隔 ≥250ms）──

@@ -1,6 +1,6 @@
 // my-stocks-api — 「我的股票」後端
 // 功能：帳號註冊/登入（PBKDF2 雜湊）、資產組合儲存（KV）、
-//       交易時段排程檢查到價（昂貴價 / 合理價+10%內）並以 LINE Messaging API 推播
+//       交易時段排程檢查到價（便宜/合理/昂貴價 X% 內、自訂目標價）並以 LINE Messaging API 推播
 //
 // KV key 結構：
 //   user:{account}            → { salt, hash, createdAt }
@@ -160,7 +160,7 @@ async function handleRequest(request, env) {
     const p = raw ? JSON.parse(raw) : null;
     const lineUserId = p && p.alerts && p.alerts.lineUserId;
     if (!lineUserId) return json({ error: '尚未設定 LINE User ID，請先儲存' }, 400);
-    const ok = await linePush(env, lineUserId, '📈 測試通知成功！\n台股到價提醒已就緒，之後股價觸及昂貴價或跌到合理價 10% 內時會通知你。');
+    const ok = await linePush(env, lineUserId, '📈 測試通知成功！\n台股到價提醒已就緒，之後股價觸及你設定的提醒條件（便宜/合理/昂貴價 X% 內或自訂目標價）時會通知你。');
     return json(ok ? { ok: true } : { error: 'LINE 推播失敗，請確認 Channel Token 與 User ID' }, ok ? 200 : 500);
   }
 
@@ -168,6 +168,17 @@ async function handleRequest(request, env) {
 }
 
 // ── 排程到價檢查 ─────────────────────────────────────────
+// 提醒條件正規化：新格式 {on,pct} 直接用；舊布林 true/false 升級（exp→0%、fair→10%、cheap→0%）
+function normAlertPart(v, defOn, defPct) {
+  if (v && typeof v === 'object') {
+    const p = parseFloat(v.pct);
+    return { on: !!v.on, pct: Number.isFinite(p) && p >= 0 ? p : defPct };
+  }
+  if (v === true) return { on: true, pct: defPct };
+  if (v === false) return { on: false, pct: defPct };
+  return { on: defOn, pct: defPct };
+}
+
 async function checkAlerts(env) {
   // 1. 取估值表
   const valRes = await fetch(VALUATIONS_URL, { cf: { cacheTtl: 300 } });
@@ -216,13 +227,25 @@ async function checkAlerts(env) {
       const expensive = custom.expensive ?? v.expensive;
       const cheap = custom.cheap ?? v.cheap;
       const name = v.name || (p.holdings.find(h => h.id === id) || {}).name || id;
-      const cfg = perStock[id] || { exp: true, fair: true }; // 預設：昂貴價 + 合理價10%內
+      // 新格式 {cheap:{on,pct}, fair:{on,pct}, exp:{on,pct}}；舊布林格式自動升級
+      // 預設（未設定過）：昂貴價 0% + 合理價 10% 內
+      const raw = perStock[id];
+      const cfg = {
+        exp:   normAlertPart(raw && raw.exp,   !raw, 0),
+        fair:  normAlertPart(raw && raw.fair,  !raw, 10),
+        cheap: normAlertPart(raw && raw.cheap, false, 0),
+        above: raw && raw.above != null ? raw.above : null,
+        below: raw && raw.below != null ? raw.below : null,
+      };
+      const expThr   = expensive != null ? expensive * (1 - cfg.exp.pct / 100) : null;
+      const fairThr  = fair != null ? fair * (1 + cfg.fair.pct / 100) : null;
+      const cheapThr = cheap != null ? cheap * (1 + cfg.cheap.pct / 100) : null;
 
       // 目前成立的條件集合
       const active = [];
-      if (cfg.exp && expensive != null && px >= expensive) active.push('exp');
-      if (cfg.fair && fair != null && px <= fair * 1.10) active.push('fair');
-      if (cfg.cheap && cheap != null && px <= cheap) active.push('cheap');
+      if (cfg.exp.on && expThr != null && px >= expThr) active.push('exp');
+      if (cfg.fair.on && fairThr != null && px <= fairThr) active.push('fair');
+      if (cfg.cheap.on && cheapThr != null && px <= cheapThr) active.push('cheap');
       if (cfg.above != null && px >= cfg.above) active.push('above');
       if (cfg.below != null && px <= cfg.below) active.push('below');
 
@@ -240,9 +263,15 @@ async function checkAlerts(env) {
         await env.KV.put(stateKey, JSON.stringify(active), { expirationTtl: 60 * 60 * 24 * 90 });
       }
       for (const c of newly) {
-        if (c === 'exp')   msgs.push('🔴 ' + name + '（' + id + '）現價 ' + px + ' 已達昂貴價 ' + expensive + '，可考慮分批獲利了結。');
-        if (c === 'fair')  msgs.push('🟡 ' + name + '（' + id + '）現價 ' + px + ' 已跌到合理價 ' + fair + ' 的 10% 範圍內，可留意買點。');
-        if (c === 'cheap') msgs.push('🟢 ' + name + '（' + id + '）現價 ' + px + ' 已跌破便宜價 ' + cheap + '，進入超值區。');
+        if (c === 'exp')   msgs.push('🔴 ' + name + '（' + id + '）現價 ' + px + (cfg.exp.pct > 0
+          ? ' 已進入昂貴價 ' + expensive + ' 的 ' + cfg.exp.pct + '% 範圍內（≥' + expThr.toFixed(1) + '），可考慮分批獲利了結。'
+          : ' 已達昂貴價 ' + expensive + '，可考慮分批獲利了結。'));
+        if (c === 'fair')  msgs.push('🟡 ' + name + '（' + id + '）現價 ' + px + (cfg.fair.pct > 0
+          ? ' 已跌到合理價 ' + fair + ' 的 ' + cfg.fair.pct + '% 範圍內（≤' + fairThr.toFixed(1) + '），可留意買點。'
+          : ' 已跌到合理價 ' + fair + '，可留意買點。'));
+        if (c === 'cheap') msgs.push('🟢 ' + name + '（' + id + '）現價 ' + px + (cfg.cheap.pct > 0
+          ? ' 已跌到便宜價 ' + cheap + ' 的 ' + cfg.cheap.pct + '% 範圍內（≤' + cheapThr.toFixed(1) + '），接近超值區。'
+          : ' 已跌破便宜價 ' + cheap + '，進入超值區。'));
         if (c === 'above') msgs.push('📈 ' + name + '（' + id + '）現價 ' + px + ' 已漲到你設定的目標價 ' + cfg.above + ' 以上。');
         if (c === 'below') msgs.push('📉 ' + name + '（' + id + '）現價 ' + px + ' 已跌到你設定的目標價 ' + cfg.below + ' 以下。');
       }

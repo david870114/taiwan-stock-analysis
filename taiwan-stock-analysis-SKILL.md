@@ -361,14 +361,15 @@ window.addEventListener('load', updateLiveMetric);
 
 | 元件 | 位置 | 說明 |
 |------|------|------|
-| my-stocks.html | repo 根目錄 | 前端：登入/註冊、持股與追蹤清單編輯、資產配置/損益圖、估值位置條、通知設定 |
+| my-stocks.html | repo 根目錄 | 前端：登入/註冊、持股（含買入日期）與追蹤清單編輯、資產配置環形圖（含%）、個股損益走勢折線圖（FinMind 歷史收盤）、資產配置目標（目標投入資金）、通知設定 |
 | my-stocks-api | `worker/`（Cloudflare Worker） | 帳號（PBKDF2 雜湊）、組合儲存（KV）、排程到價檢查、LINE 推播、LINE webhook |
 | valuations.json | repo 根目錄 | 到價門檻來源，由 `node scripts/export-valuations.mjs` 從 index.html 的 TRACKED 產生 |
 
 ### 通知規則（Worker cron：平日 UTC 1–5 點每 30 分，即台北交易時段）
 
-- 現價 ≥ 昂貴價 → 🔴 推播「已達昂貴價」
-- 現價 ≤ 合理價 × 1.10 → 🟢 推播「跌到合理價 10% 內」（跌破便宜價會標註超值區）
+- 每檔在提醒 Modal 設定三價位「X% 內」與自訂目標價，perStock 格式 `{cheap:{on,pct}, fair:{on,pct}, exp:{on,pct}, above, below}`（舊布林格式自動升級：exp→0%、fair→10%、cheap→0%）
+- 🔴 昂貴：現價 ≥ 昂貴價 × (1−pct%)　🟡 合理：現價 ≤ 合理價 × (1+pct%)　🟢 便宜：現價 ≤ 便宜價 × (1+pct%)　📈/📉 自訂：現價 ≥ above / ≤ below
+- 預設（未設定過）：昂貴 0% + 合理 10% 內
 - 狀態去重：同一狀態只通知一次，離開區間後重置（KV `alertstate:` key）
 - 抓價**逐檔間隔 300ms**（股價 Worker 限流，數秒內 25+ 請求會 520）
 
