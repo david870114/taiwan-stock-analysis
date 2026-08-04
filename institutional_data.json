@@ -1,11 +1,11 @@
 {
-  "lastUpdated": "2026/08/03",
+  "lastUpdated": "2026/08/04",
   "market": {
-    "foreign": 187,
-    "investment_trust": 233,
-    "dealer": -207,
-    "total": 213,
-    "date": "2026/08/03"
+    "foreign": 57,
+    "investment_trust": 253,
+    "dealer": -194,
+    "total": 116,
+    "date": "2026/08/04"
   },
   "topBuyers": [
     {
@@ -176,6 +176,16 @@
   ],
   "history": [
     {
+      "date": "2026/08/03",
+      "market": {
+        "foreign": 187,
+        "investment_trust": 233,
+        "dealer": -207,
+        "total": 213,
+        "date": "2026/08/03"
+      }
+    },
+    {
       "date": "2026/07/31",
       "market": {
         "foreign": 676,
@@ -233,16 +243,6 @@
         "dealer": -112,
         "total": 554,
         "date": "2026/07/24"
-      }
-    },
-    {
-      "date": "2026/07/23",
-      "market": {
-        "foreign": 69,
-        "investment_trust": 53,
-        "dealer": 41,
-        "total": 163,
-        "date": "2026/07/23"
       }
     }
   ]
