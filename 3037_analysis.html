@@ -52,7 +52,7 @@
   <a href="index.html" style="color:#64748b;font-size:12px;text-decoration:none;display:inline-flex;align-items:center;gap:4px;padding:5px 10px;border:1px solid #334155;border-radius:8px;transition:all 0.2s;" onmouseover="this.style.color='#e2e8f0';this.style.borderColor='#64748b'" onmouseout="this.style.color='#64748b';this.style.borderColor='#334155'">← 返回總覽</a>
 </div>
 <h1>🖥️ 欣興電子 (3037) — 2026 股價推算分析</h1>
-<p class="subtitle">本益比河流圖 ✦ 三情境估值 ✦ ABF 載板復甦週期 ✦ 更新時間：2026年5月24日</p>
+<p class="subtitle">本益比河流圖 ✦ 三情境估值 ✦ ABF 載板復甦週期 ✦ 更新時間：2026年8月9日</p>
 
 <div class="tabs">
   <button class="tab active" onclick="switchTab('river', this)">📈 PER 河流圖</button>
@@ -71,7 +71,7 @@
   <div class="current-price-badge">
     <span style="color:#94a3b8;font-size:12px;">目前股價（即時）</span>
     <span style="color:#3b82f6;font-size:20px;font-weight:800;" id="live-price">載入中…</span>
-    <span style="color:#ef4444;font-size:12px;" id="curPer">PER ≈ 138x（TTM EPS 7.03元）遠高於昂貴價 211 元</span>
+    <span style="color:#ef4444;font-size:12px;" id="curPer">PER ≈ 138x（TTM EPS 7.03元）遠高於昂貴價 462 元</span>
   </div>
   <canvas id="riverChart" height="360"></canvas>
   <p style="font-size:11px;color:#475569;margin-top:8px;text-align:center;">* 河流圖基於歷史 EPS 與 PER 倍數；股價已遠超所有歷史河流帶（Y軸截斷顯示）</p>
@@ -344,9 +344,9 @@
       <tr><td>目前股價（2026/5/24）</td><td style="color:#ef4444;font-weight:700;">970 元</td><td><span class="badge badge-avoid">嚴重高估</span></td></tr>
       <tr><td>TTM EPS（26Q1）</td><td style="color:#eab308;font-weight:700;">7.03 元</td><td><span class="badge badge-watch">復甦初期</span></td></tr>
       <tr><td>目前本益比</td><td style="color:#ef4444;font-weight:700;">~138x</td><td><span class="badge badge-avoid">題材炒作</span></td></tr>
-      <tr><td>歷史 PER 低端</td><td>12x</td><td><span class="badge badge-buy">對應合理股價 84 元</span></td></tr>
-      <tr><td>歷史 PER 均值</td><td>20x</td><td><span class="badge badge-watch">對應合理股價 141 元</span></td></tr>
-      <tr><td>歷史 PER 高端</td><td>30x</td><td><span class="badge badge-avoid">對應合理股價 211 元</span></td></tr>
+      <tr><td>歷史 PER 低端</td><td>12x</td><td><span class="badge badge-buy">對應合理股價 185 元</span></td></tr>
+      <tr><td>歷史 PER 均值</td><td>20x</td><td><span class="badge badge-watch">對應合理股價 308 元</span></td></tr>
+      <tr><td>歷史 PER 高端</td><td>30x</td><td><span class="badge badge-avoid">對應合理股價 462 元</span></td></tr>
       <tr><td>EPS 近一年趨勢</td><td style="color:#22c55e;font-weight:700;">1.31 → 7.03（復甦中）</td><td><span class="badge badge-buy">方向向上</span></td></tr>
       <tr><td>產業：ABF 載板</td><td>PCB 上游高階載板</td><td><span class="badge badge-watch">景氣循環股</span></td></tr>
     </tbody>
@@ -379,7 +379,7 @@
   <div style="background:#1e2535;border:1px solid #2d3748;border-radius:10px;padding:12px;margin-top:14px;font-size:11px;color:#64748b;line-height:1.8;">
     📌 <strong style="color:#94a3b8;">欣興屬景氣循環股</strong>，EPS 高低落差極大（2022 高峰 ~18元 vs 2025 低谷 1.3元）。
     目前股價完全由「AI ABF 復甦」題材驅動，超前反映未來 2–3 年的樂觀情境。
-    若以歷史 PER 20x × EPS 7.03元計算，合理股價僅 141 元，目前溢價約 6.9 倍。
+    若以歷史 PER 20x × EPS 7.03元計算，合理股價僅 308 元，目前溢價約 6.9 倍。
     投資人需自行判斷是否相信 AI 加速期能將 EPS 快速拉回 30–50 元以上的水準。
   </div>
   <p style="font-size:10px;color:#475569;margin-top:14px;line-height:1.6;">⚠️ 本分析僅供參考，不構成投資建議。股市有風險，請自行判斷。</p>
@@ -454,6 +454,7 @@ const rawData = [
   { m:'26M04', px:883,   eps:7.03,  per:125.6 },
   { m:'26M05', px:1055,   eps:7.03,  per:150.07   },
   { m:'26M06', px:1070,   eps:7.03,  per:152.2   },
+  { m:'26M07', px:787,   eps:15.39,  per:51.14   },
 ];
 
 const labels = rawData.map(d => d.m);
@@ -471,7 +472,7 @@ window.addEventListener('load', () => {
         document.getElementById('curPrice').textContent = p.toLocaleString();
         const latestEps = 7.03;
         const per = (p / latestEps).toFixed(1);
-        document.getElementById('curPer').textContent = `PER ≈ ${per}x（TTM EPS ${latestEps}元）遠高於昂貴價 211 元`;
+        document.getElementById('curPer').textContent = `PER ≈ ${per}x（TTM EPS ${latestEps}元）遠高於昂貴價 462 元`;
       }
     }).catch(() => {});
 

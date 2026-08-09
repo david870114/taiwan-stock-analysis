@@ -57,7 +57,7 @@
   <a href="index.html" style="color:#64748b;font-size:12px;text-decoration:none;display:inline-flex;align-items:center;gap:4px;padding:5px 10px;border:1px solid #334155;border-radius:8px;transition:all 0.2s;" onmouseover="this.style.color='#e2e8f0';this.style.borderColor='#64748b'" onmouseout="this.style.color='#64748b';this.style.borderColor='#334155'">← 返回總覽</a>
 </div>
 <h1>📈 元大台灣50 (0050) — 殖利率分析</h1>
-<p class="subtitle">殖利率河流圖 ✦ 三情境買點 ✦ 配息趨勢 ✦ 持股資訊 ✦ 基本面分析 ✦ 更新時間：2026年6月11日</p>
+<p class="subtitle">殖利率河流圖 ✦ 三情境買點 ✦ 配息趨勢 ✦ 持股資訊 ✦ 基本面分析 ✦ 更新時間：2026年8月9日</p>
 
 <div class="tabs">
   <button class="tab active" onclick="switchTab('river', this)">📈 殖利率河流圖</button>
@@ -302,7 +302,8 @@
   <div style="background:#1e2535;border-radius:10px;padding:14px;margin-top:14px;">
     <div style="font-size:12px;font-weight:700;color:#cbd5e1;margin-bottom:8px;">估值解讀</div>
     <div style="font-size:12px;color:#94a3b8;line-height:1.8;">
-      目前股價 ~108 元，殖利率（TTM 1.6元）約 1.5%，低於歷史均值 2.5–3.5%，屬於殖利率歷史低位。這反映的是台積電帶動台灣大盤估值重評，而非基本面惡化。<br><br>
+      目前股價 ~102.9 元，殖利率（TTM 1.6元）約 1.6%，低於歷史均值 2.5–3.5%，屬於殖利率歷史低位。這反映的是台積電帶動台灣大盤估值重評，而非基本面惡化。<br><br>
+      <strong style="color:#f97316;">2026年7月回檔：</strong>7月收 102.85 元、單月 −4.6%（6月高點 107.8 元），為 4–6 月急漲後的獲利了結修正；8月初止跌持平。殖利率僅回升至 1.6%，仍未進入合理帶。<br><br>
       若以 <strong style="color:#e2e8f0;">2026年預估配息 2.0元</strong> 計算，殖利率約 2.0%，仍偏低，顯示 AI 多頭溢價明顯。<br><br>
       <strong style="color:#3b82f6;">長期定期定額：</strong>不需擇時，持續扣款，享受台灣科技股長期複利。<br>
       <strong style="color:#eab308;">一次性買入：</strong>可等待大盤修正（回到 70–80 元），殖利率回到 2% 以上再加碼。
@@ -341,7 +342,7 @@
   <table>
     <thead><tr><th>指標</th><th>數值</th><th>評估</th></tr></thead>
     <tbody>
-      <tr><td>目前股價</td><td style="color:#3b82f6;font-weight:700;" id="summary-price">~107.8 元（2026/6/30）</td><td><span class="badge badge-avoid">TTM 殖利率 1.5%，歷史低位</span></td></tr>
+      <tr><td>目前股價</td><td style="color:#3b82f6;font-weight:700;" id="summary-price">~102.85 元（2026/7/31）</td><td><span class="badge badge-avoid">TTM 殖利率 1.6%，歷史低位</span></td></tr>
       <tr><td>近四季年化配息（TTM）</td><td style="color:#22c55e;font-weight:700;">1.6 元</td><td><span class="badge badge-watch">H2-2025 1.0 + H1-2026 0.6</span></td></tr>
       <tr><td>2026E 年化配息</td><td style="color:#3b82f6;">1.8～2.1 元</td><td><span class="badge badge-watch">依台積電配息成長估算</span></td></tr>
       <tr><td>便宜價（殖利率 3.5%）</td><td>46 元</td><td><span class="badge badge-buy">熊市積極建倉帶</span></td></tr>
@@ -381,6 +382,7 @@ const data = [
   { m:'25M10', px:64.8  }, { m:'25M11', px:62.4  }, { m:'25M12', px:65.6  },
   { m:'26M01', px:72.6  }, { m:'26M02', px:81.2  }, { m:'26M03', px:72.4  },
   { m:'26M04', px:90.5  }, { m:'26M05', px:105.4 }, { m:'26M06', px:107.8 },
+  { m:'26M07', px:102.85 },
 ];
 
 const labels = data.map(d => d.m);

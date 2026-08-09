@@ -57,7 +57,7 @@
   <a href="index.html" style="color:#64748b;font-size:12px;text-decoration:none;display:inline-flex;align-items:center;gap:4px;padding:5px 10px;border:1px solid #334155;border-radius:8px;transition:all 0.2s;" onmouseover="this.style.color='#e2e8f0';this.style.borderColor='#64748b'" onmouseout="this.style.color='#64748b';this.style.borderColor='#334155'">← 返回總覽</a>
 </div>
 <h1>📈 主動統一台股增長 (00981A) — 殖利率分析</h1>
-<p class="subtitle">殖利率河流圖 ✦ 三情境買點 ✦ 配息趨勢 ✦ 持股資訊 ✦ 基本面分析 ✦ 更新時間：2026年6月12日</p>
+<p class="subtitle">殖利率河流圖 ✦ 三情境買點 ✦ 配息趨勢 ✦ 持股資訊 ✦ 基本面分析 ✦ 更新時間：2026年8月9日</p>
 
 <div class="tabs">
   <button class="tab active" onclick="switchTab('river', this)">📈 殖利率河流圖</button>
@@ -317,7 +317,8 @@
   <div style="background:#1e2535;border-radius:10px;padding:14px;margin-top:14px;">
     <div style="font-size:12px;font-weight:700;color:#cbd5e1;margin-bottom:8px;">估值解讀</div>
     <div style="font-size:12px;color:#94a3b8;line-height:1.8;">
-      目前股價約 30.6 元，以年化配息 2.52 元計算，殖利率約 8.2%，接近「合理帶」上緣。<br><br>
+      目前股價約 28.0 元，以年化配息 2.52 元計算，殖利率約 9.0%，落在「合理帶」內。<br><br>
+      <strong style="color:#f97316;">2026年7月大幅回檔：</strong>7月收 26.13 元、單月 −16.5%，跌幅遠大於 0050 的 −4.6%，凸顯主動式 ETF 高集中度、高 Beta 的特性——4月 +45.2% 的漲幅同樣遠超大盤。8月初反彈至 28.03 元（+7.3%）。這種雙向放大的波動是選擇主動式 ETF 必須承受的代價。<br><br>
       相較被動型 ETF（0050 殖利率~1.4%），00981A 配息率高得多，但這部分源自其<strong style="color:#e2e8f0;">主動選股帶來的超額報酬</strong>，而非單純的高股息策略。<br><br>
       <strong style="color:#3b82f6;">長期投資：</strong>主動 ETF 費用率較高，長期能否持續超越指數是關鍵考量。<br>
       <strong style="color:#eab308;">短中期：</strong>台股 AI 行情若持續，00981A 有望維持高績效；若行情降溫，需注意回檔風險（已從 IPO 10元飆漲至30元，漲幅逾200%）。
@@ -357,7 +358,7 @@
   <table>
     <thead><tr><th>指標</th><th>數值</th><th>評估</th></tr></thead>
     <tbody>
-      <tr><td>目前股價</td><td style="color:#3b82f6;font-weight:700;" id="summary-price">~30.6 元（2026/06/12）</td><td><span class="badge badge-watch">殖利率~8.2%，接近合理帶</span></td></tr>
+      <tr><td>目前股價</td><td style="color:#3b82f6;font-weight:700;" id="summary-price">~28.03 元（2026/8/7）</td><td><span class="badge badge-watch">殖利率~9.0%，落在合理帶</span></td></tr>
       <tr><td>IPO 價格</td><td>~10 元（2025/04）</td><td><span class="badge badge-avoid">上市以來漲逾200%</span></td></tr>
       <tr><td>已知配息（25Q4）</td><td style="color:#22c55e;font-weight:700;">0.41 元</td><td><span class="badge badge-buy">首次配息，除息當日填息</span></td></tr>
       <tr><td>即將配息（26Q1）</td><td style="color:#22c55e;font-weight:700;">0.63 元（6/16除息）</td><td><span class="badge badge-buy">較上季+54%，年化配息率~8%</span></td></tr>
@@ -398,6 +399,7 @@ const data = [
   { m:'26M04', px:28.28 },
   { m:'26M05', px:31.54 },
   { m:'26M06', px:31.28},
+  { m:'26M07', px:26.13 },
 ];
 
 const labels = data.map(d => d.m);

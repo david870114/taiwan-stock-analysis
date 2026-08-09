@@ -53,7 +53,7 @@
 <a href="index.html" class="back-btn">← 返回總覽</a>
 
 <h1>🔬 聯發科 (2454) — 2026 股價推算分析</h1>
-<p class="subtitle">本益比河流圖 ✦ 三情境估值 ✦ 分批買點建議 ✦ 更新時間：2026年7月11日</p>
+<p class="subtitle">本益比河流圖 ✦ 三情境估值 ✦ 分批買點建議 ✦ 更新時間：2026年8月9日</p>
 
 <div class="tabs">
   <button class="tab active" onclick="switchTab('river', this)">📈 PER 河流圖</button>
@@ -68,7 +68,7 @@
   <div class="current-price-badge">
     <span style="color:#94a3b8;font-size:12px;">目前股價（即時）</span>
     <span style="color:#3b82f6;font-size:20px;font-weight:800;" id="live-price">載入中…</span>
-    <span style="color:#ef4444;font-size:12px;" id="live-per">PER ≈ 62.4x（TTM EPS 62.9元）遠超昂貴區</span>
+    <span style="color:#ef4444;font-size:12px;" id="live-per">PER ≈ 62.4x（TTM EPS 60.66元）遠超昂貴區</span>
   </div>
   <canvas id="riverChart" height="340"></canvas>
   <p style="font-size:11px;color:#475569;margin-top:8px;text-align:center;">* 河流帶以逐月 TTM EPS × 各本益比倍數繪製；2026/4 起因 ASIC AI 題材股價脫離歷史河流帶（PER 41→68x）</p>
@@ -78,9 +78,9 @@
 <div id="tab-scenario" class="panel">
   <div class="grid2">
     <div class="card"><h3>2025 全年 EPS（實際）</h3><div class="val blue">66.16 元</div><div class="note">YoY -1.1% ｜ 2024年: 66.92元</div></div>
-    <div class="card"><h3>2026 Q1 後 TTM EPS（最新季末）</h3><div class="val yellow">62.90 元</div><div class="note">TTM 小幅下滑，ASIC 貢獻尚未入帳</div></div>
+    <div class="card"><h3>2026 Q1 後 TTM EPS（最新季末）</h3><div class="val yellow">60.66 元</div><div class="note">TTM 小幅下滑，ASIC 貢獻尚未入帳</div></div>
   </div>
-  <div class="section-title">2026 全年三情境 EPS 與股價推算（基於 TTM EPS 62.9）</div>
+  <div class="section-title">2026 全年三情境 EPS 與股價推算（基於 TTM EPS 60.66）</div>
   <div class="scenario-grid">
     <div class="scenario-card bear">
       <div class="sc-label">🐻 悲觀</div>
@@ -128,7 +128,7 @@
   <canvas id="epsChart" height="300"></canvas>
   <div class="grid2">
     <div class="card"><h3>5年EPS 走勢（2020–2025）</h3><div class="val yellow">高原震盪</div><div class="note">2022 高峰 74.59 → 2023 谷底 48.51 → 回穩 66 元附近</div></div>
-    <div class="card"><h3>TTM EPS（2026Q1 後）</h3><div class="val yellow">62.90 元</div><div class="note">較 25M12 的 66.16 小幅下滑</div></div>
+    <div class="card"><h3>TTM EPS（2026Q1 後）</h3><div class="val yellow">60.66 元</div><div class="note">較 25M12 的 66.16 小幅下滑</div></div>
   </div>
   <div class="section-title">逐月明細（近三年，收盤 / TTM EPS / PER / 各倍數換算價）</div>
   <div style="overflow-x:auto;">
@@ -219,7 +219,7 @@
     <div class="card" style="text-align:center;">
       <h3>TTM P/E</h3>
       <div class="val" id="fund-pe-2454" style="color:#f8fafc;">…</div>
-      <div class="note" id="fund-pe-note-2454">TTM EPS 62.9 元</div>
+      <div class="note" id="fund-pe-note-2454">TTM EPS 60.66 元</div>
     </div>
     <div class="card" style="text-align:center;">
       <h3>歷史 PER 區間</h3>
@@ -248,11 +248,11 @@
     <tbody>
       <tr><td>目前股價（2026/7/11 前收）</td><td style="color:#ef4444;font-weight:700;">3,925 元</td><td><span class="badge badge-avoid">遠超昂貴區</span></td></tr>
       <tr><td>2025 全年 EPS</td><td style="color:#3b82f6;font-weight:700;">66.16 元（YoY -1.1%）</td><td><span class="badge badge-watch">高原期</span></td></tr>
-      <tr><td>TTM EPS（2026Q1 後）</td><td style="color:#eab308;font-weight:700;">62.90 元</td><td><span class="badge badge-watch">小幅下滑</span></td></tr>
+      <tr><td>TTM EPS（2026Q1 後）</td><td style="color:#eab308;font-weight:700;">60.66 元</td><td><span class="badge badge-watch">小幅下滑</span></td></tr>
       <tr><td>目前本益比</td><td style="color:#ef4444;font-weight:700;">~62.4x（歷史區間 15–23x）</td><td><span class="badge badge-avoid">題材溢價極高</span></td></tr>
-      <tr><td>便宜價（15x）</td><td>944 元</td><td><span class="badge badge-buy">歷史低檔區</span></td></tr>
-      <tr><td>合理價（20x）</td><td>1,258 元</td><td><span class="badge badge-watch">三年均值</span></td></tr>
-      <tr><td>昂貴價（26x）</td><td>1,635 元</td><td><span class="badge badge-avoid">現價高出 +140%</span></td></tr>
+      <tr><td>便宜價（15x）</td><td>910 元</td><td><span class="badge badge-buy">歷史低檔區</span></td></tr>
+      <tr><td>合理價（20x）</td><td>1,213 元</td><td><span class="badge badge-watch">三年均值</span></td></tr>
+      <tr><td>昂貴價（26x）</td><td>1,577 元</td><td><span class="badge badge-avoid">現價高出 +140%</span></td></tr>
       <tr><td>FY2025 配息</td><td style="color:#22c55e;font-weight:700;">53.5 元（半年配 29 + 24.5）</td><td><span class="badge badge-buy">配發率 ~81%</span></td></tr>
       <tr><td>現價殖利率</td><td>~1.4%</td><td><span class="badge badge-avoid">股價墊高後偏低</span></td></tr>
       <tr><td>2026/4–5 漲幅</td><td style="color:#ef4444;font-weight:700;">+75.2% / +65.1%（單月）</td><td><span class="badge badge-avoid">ASIC 題材爆發段</span></td></tr>
@@ -329,12 +329,12 @@ const data = [
   {m:'26M01',px:1760, eps:65.07, per:27.05},
   {m:'26M02',px:1945, eps:63.99, per:30.40},
   {m:'26M03',px:1490, eps:62.90, per:23.69},
-  {m:'26M04',px:2610, eps:62.90, per:41.49},
-  {m:'26M05',px:4310, eps:62.90, per:68.52},
-  {m:'26M06',px:4245, eps:62.90, per:67.49},
-  {m:'26M07',px:3925, eps:62.90, per:62.40},
+  {m:'26M04',px:2610, eps:62.15, per:41.99},
+  {m:'26M05',px:4310, eps:61.41, per:70.19},
+  {m:'26M06',px:4245, eps:60.66, per:69.98},
+  {m:'26M07',px:3555, eps:60.66, per:58.61},
 ];
-const TTM_EPS = 62.90;
+const TTM_EPS = 60.66;
 
 function band(mult) { return data.map(d => +(d.eps * mult).toFixed(0)); }
 
@@ -423,13 +423,13 @@ async function updateLive_2454() {
       const pe = (price / TTM_EPS).toFixed(1);
       const perEl = document.getElementById('live-per');
       if (perEl) {
-        perEl.textContent = 'PER ≈ ' + pe + 'x（TTM EPS 62.9元）' + (pe > 26 ? '超越昂貴區' : pe > 20 ? '合理偏高' : '');
+        perEl.textContent = 'PER ≈ ' + pe + 'x（TTM EPS 60.66元）' + (pe > 26 ? '超越昂貴區' : pe > 20 ? '合理偏高' : '');
         perEl.style.color = pe > 32 ? '#ef4444' : pe > 22 ? '#eab308' : '#22c55e';
       }
       const fEl = document.getElementById('fund-pe-2454');
       const fNote = document.getElementById('fund-pe-note-2454');
       if (fEl) { fEl.textContent = pe + 'x'; fEl.style.color = pe > 32 ? '#ef4444' : pe > 22 ? '#eab308' : '#22c55e'; }
-      if (fNote) fNote.textContent = '股價 ' + price.toLocaleString() + ' ｜ TTM EPS 62.9';
+      if (fNote) fNote.textContent = '股價 ' + price.toLocaleString() + ' ｜ TTM EPS 60.66';
       const yEl = document.getElementById('fund-yield-2454');
       if (yEl) yEl.textContent = (53.5 / price * 100).toFixed(2) + '%';
     }

@@ -51,7 +51,7 @@
   <a href="index.html" style="color:#64748b;font-size:12px;text-decoration:none;display:inline-flex;align-items:center;gap:4px;padding:5px 10px;border:1px solid #334155;border-radius:8px;transition:all 0.2s;" onmouseover="this.style.color='#e2e8f0';this.style.borderColor='#64748b'" onmouseout="this.style.color='#64748b';this.style.borderColor='#334155'">← 返回總覽</a>
 </div>
 <h1>🔌 智邦科技 (2345) — 2026 股價推算分析</h1>
-<p class="subtitle">本益比河流圖 ✦ 三情境估值 ✦ 分批買點建議 ✦ 更新時間：2026年5月16日</p>
+<p class="subtitle">本益比河流圖 ✦ 三情境估值 ✦ 分批買點建議 ✦ 更新時間：2026年8月9日</p>
 
 <div class="tabs">
   <button class="tab active" onclick="switchTab('river', this)">📈 PER 河流圖</button>
@@ -66,17 +66,17 @@
   <div class="current-price-badge">
     <span style="color:#94a3b8;font-size:12px;">目前股價（即時）</span>
     <span style="color:#3b82f6;font-size:20px;font-weight:800;" id="live-price">載入中…</span>
-    <span style="color:#ef4444;font-size:12px;">PER ≈ 47x（TTM EPS 52.87元）大幅高於昂貴價</span>
+    <span style="color:#ef4444;font-size:12px;">PER ≈ 34.8x（TTM EPS 63.65元）介於合理與昂貴之間</span>
   </div>
   <canvas id="riverChart" height="340"></canvas>
-  <p style="font-size:11px;color:#475569;margin-top:8px;text-align:center;">* 2026Q1後為預估數值（EPS年化約70–80元），河流帶代表不同本益比倍數估值</p>
+  <p style="font-size:11px;color:#475569;margin-top:8px;text-align:center;">* 26Q2 為實際值（TTM 63.65元），26Q3 起為預估；河流帶代表不同本益比倍數估值</p>
 </div>
 
 <!-- TAB 2: 三情境 -->
 <div id="tab-scenario" class="panel">
   <div class="grid2">
     <div class="card"><h3>2025 全年 EPS（實際）</h3><div class="val blue">47.13 元</div><div class="note">YoY +119% ｜ 2024年: 21.49元</div></div>
-    <div class="card"><h3>2026 Q1 EPS（最新）</h3><div class="val green">14.92 元</div><div class="note">YoY +63% ｜ 年化 ≈ 70–80元</div></div>
+    <div class="card"><h3>近四季 EPS（TTM，26Q2）</h3><div class="val green">63.65 元</div><div class="note">前季 TTM 52.87 → +20.4% ｜ 2026全年年化 ≈ 72–80元</div></div>
   </div>
   <div class="section-title">2026 全年三情境 EPS 與股價推算</div>
   <div class="scenario-grid">
@@ -314,7 +314,7 @@
     <div class="card" style="text-align:center;">
       <h3>本益比 P/E</h3>
       <div class="val" id="fund-pe" style="color:#f8fafc;">計算中…</div>
-      <div class="note" id="fund-pe-note">TTM EPS 52.87 元</div>
+      <div class="note" id="fund-pe-note">TTM EPS 63.65 元</div>
     </div>
     <div class="card" style="text-align:center;">
       <h3>前瞻 P/E（2026E）</h3>
@@ -352,9 +352,9 @@ function switchTab(id, btn) {
   if (id === 'eps' && !window.epsDrawn) drawEPS();
 }
 
-const quarters = ['22Q1','22Q2','22Q3','22Q4','23Q1','23Q2','23Q3','23Q4','24Q1','24Q2','24Q3','24Q4','25Q1','25Q2','25Q3','25Q4','26Q1','26Q2E','26Q3E','26Q4E'];
-const ttmEPS =   [9.5, 12.3, 14.6, 14.64, 15.2, 15.5, 16.2, 15.99, 16.8, 17.5, 18.0, 21.49, 27.0, 32.5, 38.0, 47.13, 52.87, 60, 68, 76];
-const closePx =  [250, 238, 247, 248, 279, 300, 345, 392, 505, 495, 505, 538, 703, 679, 768, 1185, 2505, 2495, null, null];
+const quarters = ['22Q1','22Q2','22Q3','22Q4','23Q1','23Q2','23Q3','23Q4','24Q1','24Q2','24Q3','24Q4','25Q1','25Q2','25Q3','25Q4','26Q1','26Q2','26Q3E','26Q4E'];
+const ttmEPS =   [9.5, 12.3, 14.6, 14.64, 15.2, 15.5, 16.2, 15.99, 16.8, 17.5, 18.0, 21.49, 27.0, 32.5, 38.0, 47.13, 52.87, 63.65, 72, 80];
+const closePx =  [250, 238, 247, 248, 279, 300, 345, 392, 505, 495, 505, 538, 703, 679, 768, 1185, 2505, 2495, 2215, null];
 
 function makeRiverBand(epsArr, mult) { return epsArr.map(e => +(e * mult).toFixed(0)); }
 
@@ -366,7 +366,7 @@ async function updateFundamentalPE() {
     const data = JSON.parse(await res.text());
     const price = parseFloat(data.price);
     if (price && !isNaN(price)) {
-      const ttmEPS = 52.87;
+      const ttmEPS = 63.65;
       const pe = (price / ttmEPS).toFixed(1);
       const el = document.getElementById('fund-pe');
       const noteEl = document.getElementById('fund-pe-note');
@@ -374,7 +374,7 @@ async function updateFundamentalPE() {
         el.textContent = pe + 'x';
         el.style.color = pe > 40 ? '#ef4444' : pe > 30 ? '#eab308' : '#22c55e';
       }
-      if (noteEl) noteEl.textContent = '股價 ' + price.toLocaleString() + ' ｜ TTM EPS 52.87';
+      if (noteEl) noteEl.textContent = '股價 ' + price.toLocaleString() + ' ｜ TTM EPS 63.65';
     }
   } catch(e) {}
 }
@@ -448,10 +448,10 @@ async function updateLivePrice_2345() {
     if (price && !isNaN(price)) {
       const el = document.getElementById('live-price');
       if (el) el.textContent = price.toLocaleString();
-      const pe = (price / 52.87).toFixed(1);
+      const pe = (price / 63.65).toFixed(1);
       const perEl = document.getElementById('live-per');
       if (perEl) {
-        perEl.textContent = 'PER ≈ ' + pe + 'x（TTM EPS 52.87元）';
+        perEl.textContent = 'PER ≈ ' + pe + 'x（TTM EPS 63.65元）';
         perEl.style.color = pe > 40 ? '#ef4444' : pe > 25 ? '#eab308' : '#22c55e';
       }
     }
