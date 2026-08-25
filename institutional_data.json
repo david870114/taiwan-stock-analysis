@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026/08/24",
+  "lastUpdated": "2026/08/25",
   "market": {
     "foreign": null,
     "investment_trust": null,
@@ -176,6 +176,16 @@
   ],
   "history": [
     {
+      "date": "2026/08/24",
+      "market": {
+        "foreign": null,
+        "investment_trust": null,
+        "dealer": null,
+        "total": null,
+        "date": null
+      }
+    },
+    {
       "date": "2026/08/21",
       "market": {
         "foreign": null,
@@ -233,16 +243,6 @@
         "dealer": -16,
         "total": 509,
         "date": "2026/08/14"
-      }
-    },
-    {
-      "date": "2026/08/13",
-      "market": {
-        "foreign": 757,
-        "investment_trust": 96,
-        "dealer": 151,
-        "total": 1004,
-        "date": "2026/08/13"
       }
     }
   ]
