@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026/09/01",
+  "lastUpdated": "2026/09/02",
   "market": {
     "foreign": null,
     "investment_trust": null,
@@ -176,6 +176,16 @@
   ],
   "history": [
     {
+      "date": "2026/09/01",
+      "market": {
+        "foreign": null,
+        "investment_trust": null,
+        "dealer": null,
+        "total": null,
+        "date": null
+      }
+    },
+    {
       "date": "2026/08/29",
       "market": {
         "foreign": null,
@@ -227,16 +237,6 @@
     },
     {
       "date": "2026/08/21",
-      "market": {
-        "foreign": null,
-        "investment_trust": null,
-        "dealer": null,
-        "total": null,
-        "date": null
-      }
-    },
-    {
-      "date": "2026/08/20",
       "market": {
         "foreign": null,
         "investment_trust": null,
