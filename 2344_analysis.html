@@ -54,7 +54,7 @@
   <a href="index.html" style="color:#64748b;font-size:12px;text-decoration:none;display:inline-flex;align-items:center;gap:4px;padding:5px 10px;border:1px solid #334155;border-radius:8px;transition:all 0.2s;" onmouseover="this.style.color='#e2e8f0';this.style.borderColor='#64748b'" onmouseout="this.style.color='#64748b';this.style.borderColor='#334155'">← 返回總覽</a>
 </div>
 <h1>💾 華邦電子 (2344) — 股價推算分析</h1>
-<p class="subtitle">本益比河流圖 ✦ 三情境估值 ✦ 分批買點建議 ✦ 更新時間：2026年6月7日</p>
+<p class="subtitle">本益比河流圖 ✦ 三情境估值 ✦ 分批買點建議 ✦ 更新時間：2026年9月17日</p>
 
 <div class="warn-box">
   ⚠️ <strong>景氣循環股特別說明：</strong>華邦電為 NOR Flash/DRAM 記憶體廠，EPS 受存貨週期影響大。2023–2025Q2 長期虧損，近四季 EPS 至 26M03 才正式轉為 +3.37 元。PER 在低 EPS 期間會嚴重失真（出現 100–500x），本分析以 EPS 實質轉正後（26M03–04）的 26–27x 為基礎，搭配恢復期歷史 20–34x 區間估值。
@@ -73,7 +73,7 @@
   <div class="current-price-badge">
     <span style="color:#94a3b8;font-size:12px;">目前股價（即時）</span>
     <span style="color:#3b82f6;font-size:20px;font-weight:800;" id="live-price">載入中…</span>
-    <span style="color:#eab308;font-size:12px;" id="live-per">TTM EPS 3.37元（26Q1）</span>
+    <span style="color:#eab308;font-size:12px;" id="live-per">TTM EPS 9.06元（26Q2）</span>
   </div>
   <canvas id="riverChart" height="360"></canvas>
   <p style="font-size:11px;color:#475569;margin-top:8px;text-align:center;">* 河流圖 EPS 來源：goodinfo 10x換算欄÷10，季中月為前後季線性插值。虧損期（23M01–25M08）PER帶不顯示。</p>
@@ -82,8 +82,8 @@
 <!-- TAB 2: 三情境 -->
 <div id="tab-scenario" class="panel">
   <div class="grid2">
-    <div class="card"><h3>最新季末 TTM EPS（26Q1）</h3><div class="val blue">3.37 元</div><div class="note">YoY 轉正｜2025年全年 EPS ≈ -0.02元（虧損）</div></div>
-    <div class="card"><h3>26M06 即時股價</h3><div class="val" id="sc-live-price" style="color:#f8fafc;">載入中…</div><div class="note">目前 PER 約 <span id="sc-live-per">—</span>x（TTM EPS 3.37元）</div></div>
+    <div class="card"><h3>最新季末 TTM EPS（26Q2）</h3><div class="val blue">9.06 元</div><div class="note">YoY 轉正｜2025年全年 EPS ≈ -0.02元（虧損）</div></div>
+    <div class="card"><h3>26M06 即時股價</h3><div class="val" id="sc-live-price" style="color:#f8fafc;">載入中…</div><div class="note">目前 PER 約 <span id="sc-live-per">—</span>x（TTM EPS 9.06元，26Q2）</div></div>
   </div>
 
   <div class="warn-box" style="margin-top:14px;">
@@ -171,7 +171,7 @@
     <div class="card">
       <h3>26Q1 單季 EPS</h3>
       <div class="val green">~1.0 元</div>
-      <div class="note">近四季 TTM EPS 3.37元</div>
+      <div class="note">近四季 TTM EPS 9.06元（26Q2；估值帶仍以 26Q1 3.37 元正常化推算）</div>
     </div>
     <div class="card">
       <h3>26Q1 毛利率</h3>
@@ -304,7 +304,7 @@
     <div class="card" style="text-align:center;">
       <h3>本益比 P/E</h3>
       <div class="val" id="fund-pe" style="color:#f8fafc;">計算中…</div>
-      <div class="note" id="fund-pe-note">TTM EPS 3.37 元（26Q1）</div>
+      <div class="note" id="fund-pe-note">TTM EPS 9.06 元（26Q2）</div>
     </div>
     <div class="card" style="text-align:center;">
       <h3>前瞻 P/E（2026E）</h3>
@@ -338,7 +338,7 @@
     <thead><tr><th>指標</th><th>數值</th><th>評估</th></tr></thead>
     <tbody>
       <tr><td>目前股價（2026/6/7）</td><td style="color:#3b82f6;font-weight:700;" id="sum-price">載入中…</td><td><span class="badge badge-avoid">題材溢價偏貴</span></td></tr>
-      <tr><td>26Q1 TTM EPS（最新季末）</td><td style="color:#22c55e;font-weight:700;">3.37 元</td><td><span class="badge badge-buy">由虧轉盈</span></td></tr>
+      <tr><td>26Q2 TTM EPS（最新季末）</td><td style="color:#22c55e;font-weight:700;">9.06 元（26Q1 3.37）</td><td><span class="badge badge-buy">由虧轉盈</span></td></tr>
       <tr><td>歷史 PER 合理區間</td><td>20–34x（排除虧損期失真值）</td><td><span class="badge badge-watch">復甦期估值</span></td></tr>
       <tr><td>便宜價 / 合理價 / 昂貴價</td><td style="color:#22c55e;font-weight:700;">67 / 88 / 115 元</td><td><span class="badge badge-watch">以 26Q1 EPS 估算</span></td></tr>
       <tr><td>26M06 目前 PER</td><td style="color:#ef4444;font-weight:700;" id="sum-per">~48x（股價 162元）</td><td><span class="badge badge-avoid">題材溢價</span></td></tr>
@@ -414,6 +414,7 @@ const DATA = [
   { m:'26M05', px:158,   eps:3.37,  per:46.88 },
   { m:'26M06', px:207.5,   eps:3.37,  per:61.57 },
   { m:'26M07', px:130,   eps:9.06,  per:14.35 },
+  { m:'26M08', px:182.5,   eps:9.06,  per:20.14 },
 ];
 
 function buildDetailTable() {
@@ -445,7 +446,7 @@ async function updateLivePrice() {
     const data = JSON.parse(await res.text());
     const price = parseFloat(data.price);
     if (price && !isNaN(price)) {
-      const ttm = 3.37;
+      const ttm = 9.06; // 26Q2 TTM（記憶體循環高峰，估值帶維持不動）
       const pe = (price / ttm).toFixed(1);
       const lp = document.getElementById('live-price');
       if (lp) lp.textContent = price.toLocaleString();

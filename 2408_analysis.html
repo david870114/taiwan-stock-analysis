@@ -58,7 +58,7 @@
   <a href="index.html" style="color:#64748b;font-size:12px;text-decoration:none;display:inline-flex;align-items:center;gap:4px;padding:5px 10px;border:1px solid #334155;border-radius:8px;transition:all 0.2s;" onmouseover="this.style.color='#e2e8f0';this.style.borderColor='#64748b'" onmouseout="this.style.color='#64748b';this.style.borderColor='#334155'">← 返回總覽</a>
 </div>
 <h1>💾 南亞科技 (2408) — 2026 股價推算分析</h1>
-<p class="subtitle">本益比河流圖 ✦ 三情境估值 ✦ 分批買點建議 ✦ 更新時間：2026年5月24日</p>
+<p class="subtitle">本益比河流圖 ✦ 三情境估值 ✦ 分批買點建議 ✦ 更新時間：2026年9月17日</p>
 
 <div class="tabs">
   <button class="tab active" onclick="switchTab('river', this)">📈 PER 河流圖</button>
@@ -82,7 +82,7 @@
 <!-- TAB 2: 三情境 -->
 <div id="tab-scenario" class="panel">
   <div class="grid2">
-    <div class="card"><h3>最新 TTM EPS（26Q1）</h3><div class="val blue">11.17 元</div><div class="note">Q1 EPS 推估約 5–6元（QoQ大幅回升）</div></div>
+    <div class="card"><h3>最新 TTM EPS（26Q2）</h3><div class="val blue">27.26 元</div><div class="note">26Q1 11.17 → 26Q2 27.26（+144%，記憶體循環高峰；估值帶維持以正常化 EPS 推算）</div></div>
     <div class="card"><h3>EPS 轉折點</h3><div class="val green">25Q4</div><div class="note">25Q4 TTM 首度轉正（EPS 2.13元）→ 26Q1 跳升至 11.17元</div></div>
   </div>
   <div class="warn-box">
@@ -213,7 +213,7 @@
     <div class="card">
       <h3>本益比 P/E（即時）</h3>
       <div class="val" id="fund-pe" style="color:#eab308;">計算中</div>
-      <div class="note" id="fund-pe-note">TTM EPS = 11.17元</div>
+      <div class="note" id="fund-pe-note">TTM EPS = 27.26元（26Q2）</div>
     </div>
     <div class="card">
       <h3>前瞻 P/E（2026E）</h3>
@@ -313,6 +313,7 @@ const data = [
   { m:'26M05', px:347, eps:11.17,  per:31.07  },
   { m:'26M06', px:452.5, eps:11.17,  per:40.51  },
   { m:'26M07', px:360.5, eps:27.26,  per:13.22  },
+  { m:'26M08', px:543, eps:27.26,  per:19.92  },
 ];
 
 // 只取轉盈後的資料做河流圖（25M10 以後），虧損期另外處理
@@ -451,7 +452,7 @@ async function loadLivePrice() {
     const price = parseFloat(d.price);
     if (price && !isNaN(price)) {
       document.getElementById('live-price').textContent = '$ ' + price.toLocaleString();
-      const ttmEPS = 11.17;
+      const ttmEPS = 27.26; // 26Q2 TTM（記憶體循環高峰，估值帶維持不動）
       const pe = (price / ttmEPS).toFixed(1);
       document.getElementById('live-per').textContent = `PER ≈ ${pe}x（TTM EPS ${ttmEPS}元）`;
       document.getElementById('live-per').style.color = pe > 35 ? '#ef4444' : pe > 25 ? '#eab308' : '#22c55e';

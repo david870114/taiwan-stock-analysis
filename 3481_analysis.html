@@ -55,7 +55,7 @@
   <a href="index.html" style="color:#64748b;font-size:12px;text-decoration:none;display:inline-flex;align-items:center;gap:4px;padding:5px 10px;border:1px solid #334155;border-radius:8px;transition:all 0.2s;" onmouseover="this.style.color='#e2e8f0';this.style.borderColor='#64748b'" onmouseout="this.style.color='#64748b';this.style.borderColor='#334155'">← 返回總覽</a>
 </div>
 <h1>🖥️ 群創光電 (3481) — 2026 股價推算分析</h1>
-<p class="subtitle">本益比河流圖 ✦ 三情境估值 ✦ 面板景氣分析 ✦ 更新時間：2026年5月20日</p>
+<p class="subtitle">本益比河流圖 ✦ 三情境估值 ✦ 面板景氣分析 ✦ 更新時間：2026年9月17日</p>
 
 <div class="warn-box">
   <h4>⚠️ 特別說明：景氣循環股，EPS 波動極大</h4>
@@ -75,7 +75,7 @@
   <div class="current-price-badge">
     <span style="color:#94a3b8;font-size:12px;">目前股價（即時）</span>
     <span style="color:#3b82f6;font-size:20px;font-weight:800;" id="live-price">載入中…</span>
-    <span style="color:#ef4444;font-size:12px;">TTM EPS 0.11元，PER ≈ 336x（估值失效，面板谷底）</span>
+    <span style="color:#ef4444;font-size:12px;">TTM EPS 0.78元（26Q2），PER ≈ 62x（估值仍失效，面板谷底回升中）</span>
   </div>
   <canvas id="riverChart" height="340"></canvas>
   <p style="font-size:11px;color:#475569;margin-top:8px;text-align:center;">* 河流帶以歷史有效 EPS 區間為基礎（2025Q1–2025Q2 峰值 TTM EPS 1.44元）繪製｜虛線代表估值參考，非當前有效價格帶</p>
@@ -85,7 +85,7 @@
 <div id="tab-scenario" class="panel">
   <div class="grid2">
     <div class="card"><h3>2025 景氣峰值 TTM EPS</h3><div class="val yellow">1.44 元</div><div class="note">25Q1 季末（3/6/9/12月）確認值</div></div>
-    <div class="card"><h3>2026 Q1 TTM EPS（最新）</h3><div class="val red">0.11 元</div><div class="note">YoY 急速衰退，面板景氣下行</div></div>
+    <div class="card"><h3>2026 Q2 TTM EPS（最新）</h3><div class="val yellow">0.78 元</div><div class="note">26Q1 0.11 → 26Q2 0.78（單季 0.57 元），谷底回升但仍低於峰值 1.44</div></div>
   </div>
   <div class="section-title">面板景氣情境分析（以 EPS 復原速度估算）</div>
   <div class="scenario-grid">
@@ -157,7 +157,7 @@
     <thead><tr><th>指標</th><th>數值</th><th>評估</th></tr></thead>
     <tbody>
       <tr><td>目前股價（2026/5/20）</td><td style="color:#3b82f6;font-weight:700;">36.95 元</td><td><span class="badge badge-avoid">估值失效</span></td></tr>
-      <tr><td>目前 TTM EPS</td><td style="color:#ef4444;font-weight:700;">0.11 元</td><td><span class="badge badge-avoid">急速衰退</span></td></tr>
+      <tr><td>目前 TTM EPS（26Q2）</td><td style="color:#eab308;font-weight:700;">0.78 元</td><td><span class="badge badge-watch">谷底回升</span></td></tr>
       <tr><td>目前本益比</td><td style="color:#ef4444;font-weight:700;">336x（失效）</td><td><span class="badge badge-avoid">景氣谷底</span></td></tr>
       <tr><td>景氣峰值 EPS（2025 Q1）</td><td style="color:#eab308;font-weight:700;">1.44 元</td><td><span class="badge badge-watch">已過峰值</span></td></tr>
       <tr><td>峰值時 PER 區間</td><td>8x–19x（25M06–25M10）</td><td><span class="badge badge-neutral">景氣循環合理</span></td></tr>
@@ -303,7 +303,7 @@
     <div class="card" style="text-align:center;">
       <h3>TTM P/E</h3>
       <div class="val" id="fund-pe-3481" style="color:#f8fafc;">…</div>
-      <div class="note" id="fund-pe-note-3481">TTM EPS 0.11 元</div>
+      <div class="note" id="fund-pe-note-3481">TTM EPS 0.78 元（26Q2）</div>
     </div>
     <div class="card" style="text-align:center;">
       <h3>前瞻 P/E</h3>
@@ -355,7 +355,8 @@ const monthData = [
   { m:'26M04', px:23.95, eps:0.11,   per:217.7 },
   { m:'26M05', px:51, eps:0.11,   per:463.64 },
   { m:'26M06', px:68.7, eps:0.11,   per:624.55 },
-  { m:'26M07', px:45.5, eps:0.11,   per:413.6 },
+  { m:'26M07', px:45.5, eps:0.78,   per:58.3 },
+  { m:'26M08', px:49.85, eps:0.78,   per:63.9 },
 ];
 
 const labels = monthData.map(d => d.m);
@@ -371,7 +372,7 @@ async function updateFundamentalPE_3481() {
     const data = JSON.parse(await res.text());
     const price = parseFloat(data.price);
     if (price && !isNaN(price)) {
-      const ttm = 0.11;
+      const ttm = 0.78;
       const pe = (price / ttm).toFixed(1);
       const el = document.getElementById('fund-pe-3481');
       const noteEl = document.getElementById('fund-pe-note-3481');
@@ -379,7 +380,7 @@ async function updateFundamentalPE_3481() {
         el.textContent = pe + 'x';
         el.style.color = pe > 40 ? '#ef4444' : pe > 25 ? '#eab308' : '#22c55e';
       }
-      if (noteEl) noteEl.textContent = '股價 ' + price.toLocaleString() + ' ｜ TTM EPS 0.11';
+      if (noteEl) noteEl.textContent = '股價 ' + price.toLocaleString() + ' ｜ TTM EPS 0.78';
     }
   } catch(e) {}
 }
@@ -471,10 +472,10 @@ async function updateLivePrice_3481() {
     if (price && !isNaN(price)) {
       const el = document.getElementById('live-price');
       if (el) el.textContent = price.toLocaleString();
-      const pe = (price / 0.11).toFixed(1);
+      const pe = (price / 0.78).toFixed(1);
       const perEl = document.getElementById('live-per');
       if (perEl) {
-        perEl.textContent = 'PER ≈ ' + pe + 'x（TTM EPS 0.11元）';
+        perEl.textContent = 'PER ≈ ' + pe + 'x（TTM EPS 0.78元）';
         perEl.style.color = pe > 40 ? '#ef4444' : pe > 25 ? '#eab308' : '#22c55e';
       }
     }

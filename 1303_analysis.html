@@ -52,7 +52,7 @@
   <a href="index.html" style="color:#64748b;font-size:12px;text-decoration:none;display:inline-flex;align-items:center;gap:4px;padding:5px 10px;border:1px solid #334155;border-radius:8px;transition:all 0.2s;" onmouseover="this.style.color='#e2e8f0';this.style.borderColor='#64748b'" onmouseout="this.style.color='#64748b';this.style.borderColor='#334155'">← 返回總覽</a>
 </div>
 <h1>🏭 南亞塑膠 (1303) — 2026 股價推算分析</h1>
-<p class="subtitle">本益比河流圖 ✦ 三情境估值 ✦ 分批買點建議 ✦ 更新時間：2026年5月24日</p>
+<p class="subtitle">本益比河流圖 ✦ 三情境估值 ✦ 分批買點建議 ✦ 更新時間：2026年9月17日</p>
 
 <div class="tabs">
   <button class="tab active" onclick="switchTab('river', this)">📈 PER 河流圖</button>
@@ -70,7 +70,7 @@
   <div class="current-price-badge">
     <span style="color:#94a3b8;font-size:12px;">目前股價（即時）</span>
     <span style="color:#3b82f6;font-size:20px;font-weight:800;" id="live-price">載入中…</span>
-    <span style="color:#eab308;font-size:12px;" id="live-per-note">TTM EPS 2.31元（26Q1）</span>
+    <span style="color:#eab308;font-size:12px;" id="live-per-note">TTM EPS 6.2元（26Q2）</span>
   </div>
   <canvas id="riverChart" height="340"></canvas>
   <p style="font-size:11px;color:#475569;margin-top:8px;text-align:center;">* EPS 為負期間（25Q1–25Q3）河流帶無意義，以虛線標示。PER 倍數依景氣循環歷史峰谷設定：底部25x／合理35x／昂貴50x</p>
@@ -80,7 +80,7 @@
 <div id="tab-scenario" class="panel">
   <div class="grid2">
     <div class="card"><h3>2025 全年 EPS（實際）</h3><div class="val red">-0.03 元</div><div class="note">谷底年，ABF 載板需求低迷</div></div>
-    <div class="card"><h3>2026 Q1 TTM EPS（最新）</h3><div class="val green">2.31 元</div><div class="note">YoY 大幅轉正，26Q1 單季估 ≈1.54元</div></div>
+    <div class="card"><h3>2026 Q2 TTM EPS（最新）</h3><div class="val green">6.20 元</div><div class="note">26Q1 2.31 → 26Q2 6.20（單季 3.37元，+87%）；估值帶維持不動</div></div>
   </div>
   <div class="section-title">2026 全年三情境 EPS 與股價推算</div>
   <div class="scenario-grid">
@@ -291,7 +291,7 @@
     <div class="card" style="text-align:center;">
       <h3>本益比 P/E</h3>
       <div class="val" id="fund-pe" style="color:#f8fafc;">計算中…</div>
-      <div class="note" id="fund-pe-note">TTM EPS 2.31 元</div>
+      <div class="note" id="fund-pe-note">TTM EPS 6.20 元（26Q2）</div>
     </div>
     <div class="card" style="text-align:center;">
       <h3>前瞻 P/E（2026E）</h3>
@@ -329,7 +329,7 @@
     <thead><tr><th>指標</th><th>數值</th><th>評估</th></tr></thead>
     <tbody>
       <tr><td>目前股價（即時）</td><td style="color:#3b82f6;font-weight:700;" id="summary-price">載入中…</td><td><span class="badge badge-watch" id="summary-badge">—</span></td></tr>
-      <tr><td>2026 Q1 TTM EPS</td><td style="color:#22c55e;font-weight:700;">2.31 元</td><td><span class="badge badge-buy">強勁回升</span></td></tr>
+      <tr><td>2026 Q2 TTM EPS</td><td style="color:#22c55e;font-weight:700;">6.20 元（26Q1 2.31）</td><td><span class="badge badge-buy">強勁回升</span></td></tr>
       <tr><td>EPS 谷底（25Q2 TTM）</td><td style="color:#ef4444;font-weight:700;">-0.41 元</td><td><span class="badge badge-avoid">景氣低谷</span></td></tr>
       <tr><td>2026F EPS 估算</td><td>2.5–4.0 元（依ABF復甦速度）</td><td><span class="badge badge-watch">觀察中</span></td></tr>
       <tr><td>目前本益比（TTM）</td><td id="summary-per">—</td><td><span class="badge badge-watch">合理偏貴區</span></td></tr>
@@ -403,10 +403,11 @@ const DATA = [
   { m:'26M04', px:89.6,  eps:2.31,  per:38.79  },
   { m:'26M05', px:98.1,  eps:2.31,  per:42.47  },
   { m:'26M06', px:166.5,  eps:2.31,  per:72.08  },
-  { m:'26M07', px:159.5,  eps:2.31,  per:69.05  },
+  { m:'26M07', px:159.5,  eps:6.2,  per:25.73  },
+  { m:'26M08', px:242.5,  eps:6.2,  per:39.11  },
 ];
 
-const TTM_EPS = 2.31; // 最新季末
+const TTM_EPS = 6.2; // 26Q2 最新（單季 +87% 觸發循環股檢核，估值帶維持不動）
 
 // Build EPS table
 window.addEventListener('DOMContentLoaded', () => {
@@ -448,7 +449,7 @@ async function fetchLivePrice() {
         el.style.color = per > 50 ? '#ef4444' : per > 35 ? '#eab308' : '#22c55e';
       }
       const noteEl = document.getElementById('fund-pe-note');
-      if (noteEl) noteEl.textContent = '股價 ' + price.toLocaleString() + ' ｜ TTM EPS 2.31';
+      if (noteEl) noteEl.textContent = '股價 ' + price.toLocaleString() + ' ｜ TTM EPS 6.2';
 
       // Summary
       const sp = document.getElementById('summary-price');

@@ -76,7 +76,7 @@
   <a href="index.html" style="color:#64748b;font-size:12px;text-decoration:none;display:inline-flex;align-items:center;gap:4px;padding:5px 10px;border:1px solid #334155;border-radius:8px;transition:all 0.2s;" onmouseover="this.style.color='#e2e8f0';this.style.borderColor='#64748b'" onmouseout="this.style.color='#64748b';this.style.borderColor='#334155'">← 返回總覽</a>
 </div>
 <h1>💾 力積電 (6770) — 2026 股價推算分析</h1>
-<p class="subtitle">前瞻PER估值 ✦ 三情境試算 ✦ 景氣循環股 ✦ 更新時間：2026年6月7日</p>
+<p class="subtitle">前瞻PER估值 ✦ 三情境試算 ✦ 景氣循環股 ✦ 更新時間：2026年9月17日</p>
 
 <div class="tabs">
   <button class="tab active" onclick="switchTab('river', this)">📈 PER 河流圖</button>
@@ -418,7 +418,8 @@ const data = [
   { m:'26M04', px:51.9,  eps:1.77,  per:29.32 },
   { m:'26M05', px:88.7,  eps:1.77,  per:50.11 },
   { m:'26M06', px:79.7,  eps:1.77,  per:45.03 },
-  { m:'26M07', px:54.5,  eps:1.77,  per:30.79 },
+  { m:'26M07', px:54.5,  eps:3.32,  per:16.42 },
+  { m:'26M08', px:73,  eps:3.32,  per:21.99 },
 ];
 
 const labels = data.map(d => d.m);
@@ -578,9 +579,9 @@ async function updateLivePrice() {
     const price = parseFloat(d.price);
     if (price && !isNaN(price)) {
       document.getElementById('live-price').textContent = 'NT$ ' + price.toLocaleString();
-      const ttmEPS = 1.77;
+      const ttmEPS = 3.32; // 26Q2 TTM（26Q1 含一次性收益，估值帶維持以 1.77 元推算）
       const pe = (price / ttmEPS).toFixed(1);
-      document.getElementById('live-per-note').textContent = `TTM PER ≈ ${pe}x（EPS 1.77元）${price > 61.95 ? '｜⚠️ 超過昂貴價，前瞻溢價' : price > 44.25 ? '｜🟡 合理~偏高' : '｜✅ 合理區間'}`;
+      document.getElementById('live-per-note').textContent = `TTM PER ≈ ${pe}x（26Q2 TTM EPS 3.32元）${price > 61.95 ? '｜⚠️ 超過昂貴價，前瞻溢價' : price > 44.25 ? '｜🟡 合理~偏高' : '｜✅ 合理區間'}`;
       document.getElementById('live-per-note').style.color = price > 61.95 ? '#ef4444' : price > 44.25 ? '#eab308' : '#22c55e';
     }
   } catch(e) {}
@@ -592,7 +593,7 @@ async function updateFundamentalPE() {
     const d = JSON.parse(await res.text());
     const price = parseFloat(d.price);
     if (price && !isNaN(price)) {
-      const ttmEPS = 1.77;
+      const ttmEPS = 3.32; // 26Q2 TTM（26Q1 含一次性收益，估值帶維持以 1.77 元推算）
       const pe = (price / ttmEPS).toFixed(1);
       const el = document.getElementById('fund-pe');
       if (el) {
@@ -600,7 +601,7 @@ async function updateFundamentalPE() {
         el.style.color = pe > 40 ? '#ef4444' : pe > 30 ? '#eab308' : '#22c55e';
       }
       const note = document.getElementById('fund-pe-note');
-      if (note) note.textContent = `TTM EPS = 1.77元 ｜ 股價 ${price}`;
+      if (note) note.textContent = `TTM EPS = 3.32元（26Q2） ｜ 股價 ${price}`;
     }
   } catch(e) {}
 }

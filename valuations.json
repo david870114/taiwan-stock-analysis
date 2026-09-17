@@ -1,5 +1,5 @@
 {
- "updated": "2026-08-09",
+ "updated": "2026-09-17",
  "stocks": [
   {
    "id": "0050",
@@ -35,20 +35,20 @@
    "id": "00878",
    "name": "國泰永續高股息",
    "tier": "core",
-   "cheap": 21,
-   "fair": 27,
-   "expensive": 34,
-   "annualDiv": 1.88,
+   "cheap": 28,
+   "fair": 36,
+   "expensive": 45,
+   "annualDiv": 2.49,
    "url": "00878_analysis.html"
   },
   {
    "id": "00919",
    "name": "群益台灣精選高息",
    "tier": "core",
-   "cheap": 24,
-   "fair": 29,
-   "expensive": 36,
-   "annualDiv": 2.86,
+   "cheap": 29,
+   "fair": 34,
+   "expensive": 43,
+   "annualDiv": 3.42,
    "url": "00919_analysis.html"
   },
   {
@@ -85,9 +85,9 @@
    "id": "2330",
    "name": "台積電",
    "tier": "growth",
-   "cheap": 1265,
-   "fair": 1637,
-   "expensive": 2083,
+   "cheap": 1467,
+   "fair": 1898,
+   "expensive": 2416,
    "annualDiv": 24,
    "url": "2330_analysis.html"
   },
@@ -135,9 +135,9 @@
    "id": "2382",
    "name": "廣達",
    "tier": "growth",
-   "cheap": 259,
-   "fair": 358,
-   "expensive": 517,
+   "cheap": 298,
+   "fair": 413,
+   "expensive": 596,
    "annualDiv": 15.6,
    "url": "2382_analysis.html"
   },
@@ -165,10 +165,10 @@
    "id": "3017",
    "name": "奇鋐",
    "tier": "growth",
-   "cheap": 1096,
-   "fair": 1583,
-   "expensive": 2070,
-   "annualDiv": 18,
+   "cheap": 1352,
+   "fair": 1953,
+   "expensive": 2554,
+   "annualDiv": 20.9,
    "url": "3017_analysis.html"
   },
   {
@@ -185,9 +185,9 @@
    "id": "2327",
    "name": "國巨",
    "tier": "growth",
-   "cheap": 204,
-   "fair": 255,
-   "expensive": 318,
+   "cheap": 238,
+   "fair": 298,
+   "expensive": 372,
    "annualDiv": 6,
    "url": "2327_analysis.html"
   },
@@ -205,9 +205,9 @@
    "id": "1519",
    "name": "華城",
    "tier": "growth",
-   "cheap": 510,
-   "fair": 700,
-   "expensive": 903,
+   "cheap": 535,
+   "fair": 733,
+   "expensive": 947,
    "annualDiv": 11,
    "url": "1519_analysis.html"
   },
@@ -215,9 +215,9 @@
    "id": "1513",
    "name": "中興電",
    "tier": "growth",
-   "cheap": 149,
-   "fair": 169,
-   "expensive": 198,
+   "cheap": 160,
+   "fair": 182,
+   "expensive": 213,
    "annualDiv": 6,
    "url": "1513_analysis.html"
   },
@@ -225,10 +225,10 @@
    "id": "6669",
    "name": "緯穎",
    "tier": "spec",
-   "cheap": 3447,
-   "fair": 4701,
-   "expensive": 6268,
-   "annualDiv": 144.4,
+   "cheap": 1156,
+   "fair": 1577,
+   "expensive": 2102,
+   "annualDiv": 48.4,
    "url": "6669_analysis.html"
   },
   {
@@ -238,7 +238,7 @@
    "cheap": 128,
    "fair": 171,
    "expensive": 222,
-   "annualDiv": 5,
+   "annualDiv": 5.5,
    "url": "2301_analysis.html"
   },
   {
@@ -248,7 +248,7 @@
    "cheap": 130,
    "fair": 182,
    "expensive": 286,
-   "annualDiv": 8,
+   "annualDiv": 9,
    "url": "3596_analysis.html"
   },
   {
@@ -318,7 +318,7 @@
    "cheap": 514,
    "fair": 719,
    "expensive": 925,
-   "annualDiv": 17,
+   "annualDiv": 35,
    "url": "3260_analysis.html"
   },
   {
@@ -338,7 +338,7 @@
    "cheap": 27,
    "fair": 44,
    "expensive": 62,
-   "annualDiv": 0,
+   "annualDiv": 0.23,
    "url": "6770_analysis.html"
   },
   {

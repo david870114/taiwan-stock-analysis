@@ -55,7 +55,7 @@
   <a href="index.html" style="color:#64748b;font-size:12px;text-decoration:none;display:inline-flex;align-items:center;gap:4px;padding:5px 10px;border:1px solid #334155;border-radius:8px;transition:all 0.2s;" onmouseover="this.style.color='#e2e8f0';this.style.borderColor='#64748b'" onmouseout="this.style.color='#64748b';this.style.borderColor='#334155'">← 返回總覽</a>
 </div>
 <h1>💾 威剛科技 (3260) — 2026 股價推算分析</h1>
-<p class="subtitle">本益比河流圖 ✦ 三情境估值 ✦ 分批買點建議 ✦ 更新時間：2026年5月20日</p>
+<p class="subtitle">本益比河流圖 ✦ 三情境估值 ✦ 分批買點建議 ✦ 更新時間：2026年9月17日</p>
 
 <div class="tabs">
   <button class="tab active" onclick="switchTab('river', this)">📈 PER 河流圖</button>
@@ -70,7 +70,7 @@
   <div class="current-price-badge">
     <span style="color:#94a3b8;font-size:12px;">目前股價（即時）</span>
     <span style="color:#3b82f6;font-size:20px;font-weight:800;" id="live-price">載入中…</span>
-    <span style="color:#22c55e;font-size:12px;">PER ≈ 7.89x（TTM EPS 51.38元）位於便宜帶以下</span>
+    <span style="color:#22c55e;font-size:12px;" id="live-per">PER ≈ 4.9x（TTM EPS 80.91元，記憶體循環高峰）</span>
   </div>
   <canvas id="riverChart" height="340"></canvas>
   <p style="font-size:11px;color:#475569;margin-top:8px;text-align:center;">* 河流帶以逐月正確 EPS（10x欄÷10）計算，各倍數代表歷史 PER 估值區間</p>
@@ -79,7 +79,7 @@
 <!-- TAB 2 -->
 <div id="tab-scenario" class="panel">
   <div class="grid2">
-    <div class="card"><h3>最新 TTM EPS（26Q1）</h3><div class="val green">51.38 元</div><div class="note">EPS 歷史新高，YoY 大幅成長</div></div>
+    <div class="card"><h3>最新 TTM EPS（26Q2）</h3><div class="val green">80.91 元</div><div class="note">前季 51.38 → +58%，記憶體循環高峰；估值帶仍以 51.38 元正常化推算</div></div>
     <div class="card"><h3>目前 PER（26M05）</h3><div class="val yellow">7.89x</div><div class="note">低於歷史便宜帶（10x），深度折價</div></div>
   </div>
   <div class="section-title">三情境估值（基於 TTM EPS 51.38 元）</div>
@@ -144,7 +144,7 @@
     <thead><tr><th>指標</th><th>數值</th><th>評估</th></tr></thead>
     <tbody>
       <tr><td>目前股價（2026/5/20）</td><td style="color:#3b82f6;font-weight:700;">405.5 元</td><td><span class="badge badge-buy">深度折價</span></td></tr>
-      <tr><td>TTM EPS（26Q1）</td><td style="color:#22c55e;font-weight:700;">51.38 元</td><td><span class="badge badge-buy">歷史新高</span></td></tr>
+      <tr><td>TTM EPS（26Q2）</td><td style="color:#22c55e;font-weight:700;">80.91 元（26Q1 51.38）</td><td><span class="badge badge-buy">歷史新高</span></td></tr>
       <tr><td>目前 PER</td><td style="color:#22c55e;font-weight:700;">7.89x</td><td><span class="badge badge-buy">低於便宜帶</span></td></tr>
       <tr><td>EPS 成長（vs 23Q2 低點）</td><td>2.34 → 51.38 元</td><td><span class="badge badge-buy">+2095%</span></td></tr>
       <tr><td>便宜帶（10x）</td><td>514 元</td><td><span class="badge badge-buy">低估帶</span></td></tr>
@@ -303,7 +303,7 @@
     <div class="card" style="text-align:center;">
       <h3>TTM P/E</h3>
       <div class="val" id="fund-pe-3260" style="color:#f8fafc;">…</div>
-      <div class="note" id="fund-pe-note-3260">TTM EPS 51.38 元</div>
+      <div class="note" id="fund-pe-note-3260">TTM EPS 80.91 元（26Q2）</div>
     </div>
     <div class="card" style="text-align:center;">
       <h3>前瞻 P/E</h3>
@@ -373,6 +373,7 @@ const data = [
   { m:'26M05', px:415, eps:51.38, per:8.08,  x10:513.8, x14:719.3, x18:924.8, x22:1130,   x26:1336,  x30:1541  },
   { m:'26M06', px:409, eps:51.38, per:7.96,  x10:513.8, x14:719.3, x18:924.8, x22:1130,   x26:1336,  x30:1541  },
   { m:'26M07', px:398.5, eps:80.91, per:4.93,  x10:809.1, x14:1133,  x18:1456,  x22:1780,   x26:2104,  x30:2427  },
+  { m:'26M08', px:413.5, eps:80.91, per:5.11,  x10:809.1, x14:1133,  x18:1456,  x22:1780,   x26:2104,  x30:2427  },
 ];
 
 const labels = data.map(d => d.m);
@@ -384,7 +385,7 @@ async function updateFundamentalPE_3260() {
     const data = JSON.parse(await res.text());
     const price = parseFloat(data.price);
     if (price && !isNaN(price)) {
-      const ttm = 51.38;
+      const ttm = 80.91;
       const pe = (price / ttm).toFixed(1);
       const el = document.getElementById('fund-pe-3260');
       const noteEl = document.getElementById('fund-pe-note-3260');
@@ -392,7 +393,7 @@ async function updateFundamentalPE_3260() {
         el.textContent = pe + 'x';
         el.style.color = pe > 40 ? '#ef4444' : pe > 25 ? '#eab308' : '#22c55e';
       }
-      if (noteEl) noteEl.textContent = '股價 ' + price.toLocaleString() + ' ｜ TTM EPS 51.38';
+      if (noteEl) noteEl.textContent = '股價 ' + price.toLocaleString() + ' ｜ TTM EPS 80.91';
     }
   } catch(e) {}
 }
@@ -474,10 +475,10 @@ async function updateLivePrice_3260() {
     if (price && !isNaN(price)) {
       const el = document.getElementById('live-price');
       if (el) el.textContent = price.toLocaleString();
-      const pe = (price / 51.38).toFixed(1);
+      const pe = (price / 80.91).toFixed(1);
       const perEl = document.getElementById('live-per');
       if (perEl) {
-        perEl.textContent = 'PER ≈ ' + pe + 'x（TTM EPS 51.38元）';
+        perEl.textContent = 'PER ≈ ' + pe + 'x（TTM EPS 80.91元）';
         perEl.style.color = pe > 40 ? '#ef4444' : pe > 25 ? '#eab308' : '#22c55e';
       }
     }

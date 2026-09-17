@@ -52,7 +52,7 @@
   <a href="index.html" style="color:#64748b;font-size:12px;text-decoration:none;display:inline-flex;align-items:center;gap:4px;padding:5px 10px;border:1px solid #334155;border-radius:8px;transition:all 0.2s;" onmouseover="this.style.color='#e2e8f0';this.style.borderColor='#64748b'" onmouseout="this.style.color='#64748b';this.style.borderColor='#334155'">← 返回總覽</a>
 </div>
 <h1>🔌 國巨科技 (2327) — 2026 股價推算分析</h1>
-<p class="subtitle">本益比河流圖 ✦ 三情境估值 ✦ 分批買點建議 ✦ 更新時間：2026年6月3日</p>
+<p class="subtitle">本益比河流圖 ✦ 三情境估值 ✦ 分批買點建議 ✦ 更新時間：2026年9月17日</p>
 
 <div class="tabs">
   <button class="tab active" onclick="switchTab('river', this)">📈 PER 河流圖</button>
@@ -65,67 +65,67 @@
 <!-- TAB 1: PER River -->
 <div id="tab-river" class="panel active">
   <div class="warning-box">
-    ⚠️ <strong>重要提醒：</strong>國巨於 2025年 進行大額減資／除息，導致股價從 530 元降至 139.5 元（-73.7%）、TTM EPS 從 ~39 元驟降至 ~10 元。圖表以新基期（EPS ~12.73 元）建立河流帶。26M05-06 股價 738→820 元（PER 58-64x）為主題行情，已遠超昂貴帶。
+    ⚠️ <strong>重要提醒：</strong>國巨於 2025年 進行大額減資／除息，導致股價從 530 元降至 139.5 元（-73.7%）、TTM EPS 從 ~39 元驟降至 ~10 元。圖表以新基期建立河流帶，最新 26Q2 TTM EPS 14.88 元。26M05-06 股價 738→1,140 元（PER 58-90x）為主題行情，26M07 回落至 502 元（−56%），26M08 收 545 元，仍高於昂貴帶。
   </div>
   <div class="current-price-badge">
     <span style="color:#94a3b8;font-size:12px;">目前股價（即時）</span>
     <span style="color:#3b82f6;font-size:20px;font-weight:800;" id="live-price">載入中…</span>
-    <span style="color:#ef4444;font-size:12px;">PER ≈ 64x（TTM EPS 12.73元）大幅高於昂貴價</span>
+    <span style="color:#ef4444;font-size:12px;">PER ≈ 36x（TTM EPS 14.88元）高於昂貴價</span>
   </div>
   <canvas id="riverChart" height="360"></canvas>
-  <p style="font-size:11px;color:#475569;margin-top:8px;text-align:center;">* 25M07-08 因大額減資除息造成股價大幅調整，新基期 EPS ≈ 12.73 元（26Q1 TTM）。河流帶以新基期為準。</p>
+  <p style="font-size:11px;color:#475569;margin-top:8px;text-align:center;">* 25M07-08 因大額減資除息造成股價大幅調整，新基期 EPS 26Q1 12.73 元 → 26Q2 14.88 元（26M07 起）。河流帶以新基期為準。</p>
 </div>
 
 <!-- TAB 2: 三情境 -->
 <div id="tab-scenario" class="panel">
   <div class="grid2">
     <div class="card"><h3>2025 全年 EPS（新基期後）</h3><div class="val blue">~10–11.5 元</div><div class="note">減資後新基期，EPS 逐季回升中</div></div>
-    <div class="card"><h3>2026 Q1 TTM EPS（最新）</h3><div class="val green">12.73 元</div><div class="note">YoY 穩定成長中 ｜ 年化 ≈ 13–15 元</div></div>
+    <div class="card"><h3>2026 Q2 TTM EPS（最新）</h3><div class="val green">14.88 元</div><div class="note">Q2 單季 4.59元（Q1 3.90，+18%）｜ 前季 TTM 12.73</div></div>
   </div>
   <div class="section-title">2026 全年三情境 EPS 與股價推算（新基期）</div>
   <div class="scenario-grid">
     <div class="scenario-card bear">
       <div class="sc-label">🐻 悲觀</div>
-      <div class="sc-price red">160–220</div>
-      <div class="sc-detail">EPS 10–12元<br>PER 16–18x<br>獲利未見成長<br>資金撤出主題</div>
+      <div class="sc-price red">210–250</div>
+      <div class="sc-detail">EPS 13–14元<br>PER 16–18x<br>獲利未見成長<br>資金撤出主題</div>
     </div>
     <div class="scenario-card base">
       <div class="sc-label">⚖️ 基本</div>
-      <div class="sc-price green">230–320</div>
-      <div class="sc-detail">EPS 12–14元<br>PER 18–23x<br>穩健復甦<br>MLCC需求回溫</div>
+      <div class="sc-price green">270–370</div>
+      <div class="sc-detail">EPS 15–16元<br>PER 18–23x<br>穩健復甦<br>MLCC需求回溫</div>
     </div>
     <div class="scenario-card bull">
       <div class="sc-label">🚀 樂觀</div>
-      <div class="sc-price" style="color:#60a5fa;">350–500</div>
-      <div class="sc-detail">EPS 15–18元<br>PER 23–28x<br>AI被動元件需求爆發<br>高頻高壓新品放量</div>
+      <div class="sc-price" style="color:#60a5fa;">400–560</div>
+      <div class="sc-detail">EPS 17–20元<br>PER 23–28x<br>AI被動元件需求爆發<br>高頻高壓新品放量</div>
     </div>
   </div>
   <div class="buy-signal">
-    <h3>💰 分批建倉買點建議（以新基期合理價254元為錨）</h3>
+    <h3>💰 分批建倉買點建議（以 26Q2 新基期合理價 298 元為錨）</h3>
     <div class="buy-row">
       <span style="color:#86efac;font-size:13px;font-weight:600;">第一批（40%）</span>
-      <span style="color:#fde68a;font-size:14px;font-weight:700;">200–230 元</span>
+      <span style="color:#fde68a;font-size:14px;font-weight:700;">240–270 元</span>
       <span class="badge badge-buy">積極進場 PER 16–18x</span>
     </div>
     <div class="buy-row">
       <span style="color:#86efac;font-size:13px;font-weight:600;">第二批（40%）</span>
-      <span style="color:#fde68a;font-size:14px;font-weight:700;">230–280 元</span>
+      <span style="color:#fde68a;font-size:14px;font-weight:700;">270–330 元</span>
       <span class="badge badge-buy">主力倉位 PER 18–22x</span>
     </div>
     <div class="buy-row">
       <span style="color:#86efac;font-size:13px;font-weight:600;">第三批（20%）</span>
-      <span style="color:#fde68a;font-size:14px;font-weight:700;">280–320 元</span>
+      <span style="color:#fde68a;font-size:14px;font-weight:700;">330–370 元</span>
       <span class="badge badge-watch">追蹤 PER 22–25x</span>
     </div>
     <div class="buy-row" style="border-top:1px solid #166534;margin-top:8px;padding-top:10px;">
       <span style="color:#fca5a5;font-size:12px;">觀望/分批減倉</span>
-      <span style="color:#fca5a5;font-size:13px;font-weight:700;">350 元以上</span>
+      <span style="color:#fca5a5;font-size:13px;font-weight:700;">400 元以上</span>
       <span class="badge badge-avoid">PER > 27x 過熱</span>
     </div>
     <div class="buy-row">
-      <span style="color:#fca5a5;font-size:12px;">嚴重高估，避免追高</span>
-      <span style="color:#fca5a5;font-size:13px;font-weight:700;">目前 820 元（PER 64x）</span>
-      <span class="badge badge-avoid">⚠️ 嚴重泡沫風險</span>
+      <span style="color:#fca5a5;font-size:12px;">高估，避免追高</span>
+      <span style="color:#fca5a5;font-size:13px;font-weight:700;">目前 ~529 元（PER 36x）</span>
+      <span class="badge badge-avoid">⚠️ 題材退燒中，估值仍高</span>
     </div>
   </div>
 </div>
@@ -135,7 +135,7 @@
   <canvas id="epsChart" height="300"></canvas>
   <div class="grid2" style="margin-top:16px;">
     <div class="card"><h3>舊基期 TTM EPS（23-25M06）</h3><div class="val yellow">38–47 元</div><div class="note">減資前高水準，歷史低 PER 10-12x</div></div>
-    <div class="card"><h3>新基期 TTM EPS（25M09後）</h3><div class="val green">10–12.73 元</div><div class="note">減資後新基準，正常 PER 16-25x</div></div>
+    <div class="card"><h3>新基期 TTM EPS（25M09後）</h3><div class="val green">10–14.88 元</div><div class="note">減資後新基準（26Q2 已達 14.88），正常 PER 16-25x</div></div>
   </div>
   <div class="section-title">📋 逐月數據明細表</div>
   <table>
@@ -176,7 +176,9 @@
       <tr><td>26M03</td><td>243.5</td><td>12.73</td><td>19.13</td><td>127.3</td><td>203.7</td><td>254.6</td><td>318.3</td></tr>
       <tr><td>26M04</td><td>317</td><td>12.73</td><td>24.9</td><td>127.3</td><td>203.7</td><td>254.6</td><td>318.3</td></tr>
       <tr style="background:#2d1010;"><td>26M05 ⚠️題材</td><td>738</td><td>12.73</td><td>57.97</td><td>127.3</td><td>203.7</td><td>254.6</td><td>318.3</td></tr>
-      <tr style="background:#2d1010;"><td>26M06 ⚠️題材</td><td>820</td><td>12.73</td><td>64.41</td><td>127.3</td><td>203.7</td><td>254.6</td><td>318.3</td></tr>
+      <tr style="background:#2d1010;"><td>26M06 ⚠️題材</td><td>1140</td><td>12.73</td><td>89.55</td><td>127.3</td><td>203.7</td><td>254.6</td><td>318.3</td></tr>
+      <tr><td>26M07</td><td>502</td><td>14.88</td><td>33.74</td><td>148.8</td><td>238.1</td><td>297.6</td><td>372</td></tr>
+      <tr><td>26M08</td><td>545</td><td>14.88</td><td>36.63</td><td>148.8</td><td>238.1</td><td>297.6</td><td>372</td></tr>
     </tbody>
   </table>
 </div>
@@ -199,8 +201,8 @@
     </div>
     <div class="card" style="text-align:center;">
       <h3>新基期 TTM EPS</h3>
-      <div class="val yellow">12.73 元</div>
-      <div class="note">26Q1（截至 26M03）</div>
+      <div class="val yellow">14.88 元</div>
+      <div class="note">26Q2（截至 26M06）</div>
     </div>
   </div>
 
@@ -211,8 +213,9 @@
       <tr><td>25M06</td><td>38.7 元</td><td>12.5x</td><td>485</td><td>減資前舊基期高點</td></tr>
       <tr><td>25M09</td><td>10.03 元</td><td>16.9x</td><td>170</td><td>新基期確立</td></tr>
       <tr><td>25M12</td><td>11.51 元</td><td>20.1x</td><td>231</td><td>EPS 逐季回升</td></tr>
-      <tr style="background:#0f2a1e;"><td>26M03 ★</td><td style="color:#22c55e;font-weight:700;">12.73 元</td><td>19.1x</td><td>243.5</td><td>最新季末，EPS 穩定向上</td></tr>
-      <tr style="background:#2d1010;"><td>26M06 ⚠️</td><td>12.73 元</td><td style="color:#ef4444;font-weight:700;">64.4x</td><td>820</td><td>主題炒作，PER嚴重泡沫</td></tr>
+      <tr><td>26M03</td><td>12.73 元</td><td>19.1x</td><td>243.5</td><td>EPS 穩定向上</td></tr>
+      <tr style="background:#2d1010;"><td>26M06 ⚠️</td><td>12.73 元</td><td style="color:#ef4444;font-weight:700;">89.6x</td><td>1,140</td><td>主題炒作，PER嚴重泡沫</td></tr>
+      <tr style="background:#0f2a1e;"><td>26M08 ★</td><td style="color:#22c55e;font-weight:700;">14.88 元</td><td>36.6x</td><td>545</td><td>26Q2 TTM，7月題材退燒股價腰斬</td></tr>
     </tbody>
   </table>
   <p style="font-size:11px;color:#64748b;margin-top:8px;">* 毛利率趨勢及具體季度細節請參考最新公開財報。</p>
@@ -288,12 +291,12 @@
     <div class="card" style="text-align:center;">
       <h3>本益比 P/E</h3>
       <div class="val" id="fund-pe" style="color:#f8fafc;">計算中…</div>
-      <div class="note" id="fund-pe-note">TTM EPS 12.73 元</div>
+      <div class="note" id="fund-pe-note">TTM EPS 14.88 元</div>
     </div>
     <div class="card" style="text-align:center;">
       <h3>前瞻 P/E（2026E）</h3>
-      <div class="val red">~55–65x</div>
-      <div class="note">法人EPS共識 ~13–15元</div>
+      <div class="val red">~32–35x</div>
+      <div class="note">2026E EPS ~15–17元</div>
     </div>
     <div class="card" style="text-align:center;">
       <h3>股價淨值比 P/B</h3>
@@ -308,7 +311,7 @@
   </div>
   <div style="background:#1e2535;border:1px solid #2d3748;border-radius:10px;padding:12px;font-size:11px;color:#64748b;line-height:1.8;">
     📌 <strong style="color:#94a3b8;">估值解讀：</strong>
-    目前 PER 64x 已遠超任何歷史正常估值區間（新基期正常區間 16–25x）。2026年 5–6 月股價飆升主要由 AI 被動元件題材炒作驅動，非基本面支撐。EPS 12.73 元對應合理股價約 254 元，昂貴價約 318 元。目前 820 元相當於昂貴價的 2.6 倍，具有極高的估值回歸風險。
+    2026年 5–6 月股價飆升至 1,140 元（PER 90x）主要由 AI 被動元件題材炒作驅動，7 月已回落至 502 元（−56%）。以 26Q2 TTM EPS 14.88 元計，合理價約 298 元、昂貴價約 372 元；目前約 529 元（PER 36x）仍為昂貴價的 1.4 倍，估值回歸風險仍在。
   </div>
 
   <p style="font-size:10px;color:#334155;margin-top:14px;line-height:1.6;">⚠️ 本分析僅供參考，不構成投資建議。國巨 2025年 曾進行大額減資，股本結構已改變，歷史舊基期 PER 不可與新基期直接比較。</p>
@@ -318,40 +321,40 @@
 <div id="tab-summary" class="panel">
   <div class="warning-box">
     ⚠️ <strong>特別提醒：國巨 2025年減資事件</strong><br>
-    2025年7-8月發生大額減資/除息，股價從 530 元崩至 139.5 元（-73.7%），EPS 從 ~39 元降至 ~10 元。此後進入「新基期」，舊有 PER 歷史區間（10–18x）已失效，應以新基期 EPS 12.73 元、新 PER 區間（16–25x）重新評估。
+    2025年7-8月發生大額減資/除息，股價從 530 元崩至 139.5 元（-73.7%），EPS 從 ~39 元降至 ~10 元。此後進入「新基期」，舊有 PER 歷史區間（10–18x）已失效，應以新基期 EPS（26Q2 TTM 14.88 元）、新 PER 區間（16–25x）重新評估。
   </div>
   <div class="section-title">📌 關鍵數據摘要</div>
   <table>
     <thead><tr><th>指標</th><th>數值</th><th>評估</th></tr></thead>
     <tbody>
-      <tr><td>目前股價（2026/6）</td><td style="color:#ef4444;font-weight:700;">820 元</td><td><span class="badge badge-avoid">嚴重高估</span></td></tr>
-      <tr><td>TTM EPS（26Q1）</td><td style="color:#22c55e;font-weight:700;">12.73 元</td><td><span class="badge badge-watch">新基期穩升中</span></td></tr>
-      <tr><td>目前 PER</td><td style="color:#ef4444;font-weight:700;">64.4x</td><td><span class="badge badge-avoid">遠超昂貴帶</span></td></tr>
-      <tr><td>便宜價（16x）</td><td>203.7 元</td><td><span class="badge badge-buy">合理進場區</span></td></tr>
-      <tr><td>合理價（20x）</td><td>254.6 元</td><td><span class="badge badge-watch">合理估值中線</span></td></tr>
-      <tr><td>昂貴價（25x）</td><td>318.3 元</td><td><span class="badge badge-avoid">估值上限</span></td></tr>
-      <tr><td>目前股價 vs 合理價</td><td style="color:#ef4444;font-weight:700;">+222%（高出 3.2 倍）</td><td><span class="badge badge-avoid">極度泡沫</span></td></tr>
+      <tr><td>目前股價（2026/9/17）</td><td style="color:#ef4444;font-weight:700;">529 元</td><td><span class="badge badge-avoid">高於昂貴價</span></td></tr>
+      <tr><td>TTM EPS（26Q2）</td><td style="color:#22c55e;font-weight:700;">14.88 元</td><td><span class="badge badge-watch">新基期穩升中</span></td></tr>
+      <tr><td>目前 PER</td><td style="color:#ef4444;font-weight:700;">35.6x</td><td><span class="badge badge-avoid">遠超昂貴帶</span></td></tr>
+      <tr><td>便宜價（16x）</td><td>238 元</td><td><span class="badge badge-buy">合理進場區</span></td></tr>
+      <tr><td>合理價（20x）</td><td>298 元</td><td><span class="badge badge-watch">合理估值中線</span></td></tr>
+      <tr><td>昂貴價（25x）</td><td>372 元</td><td><span class="badge badge-avoid">估值上限</span></td></tr>
+      <tr><td>目前股價 vs 合理價</td><td style="color:#ef4444;font-weight:700;">+78%（高出 1.8 倍）</td><td><span class="badge badge-avoid">偏貴</span></td></tr>
       <tr><td>舊基期 PER（減資前）</td><td>10–18x（EPS 38–47 元）</td><td><span class="badge badge-watch">已失效，不可套用</span></td></tr>
-      <tr><td>EPS 成長趨勢</td><td>25M09: 10.03 → 26M03: 12.73</td><td><span class="badge badge-buy">穩定向上</span></td></tr>
+      <tr><td>EPS 成長趨勢</td><td>25M09: 10.03 → 26M03: 12.73 → 26M06: 14.88</td><td><span class="badge badge-buy">穩定向上</span></td></tr>
       <tr><td>主要驅動力</td><td>AI 被動元件、EV 車用、高壓 MLCC</td><td><span class="badge badge-buy">長線正向</span></td></tr>
     </tbody>
   </table>
-  <div class="section-title" style="margin-top:20px;">📐 PER 河流帶參考（新基期 EPS 12.73 元）</div>
+  <div class="section-title" style="margin-top:20px;">📐 PER 河流帶參考（新基期 26Q2 TTM EPS 14.88 元）</div>
   <table>
     <thead><tr><th>估值帶</th><th>PER</th><th>對應股價</th><th>說明</th></tr></thead>
     <tbody>
-      <tr><td style="color:#22c55e;font-weight:600;">便宜帶</td><td>16x</td><td style="color:#22c55e;font-weight:700;">203.7 元</td><td>新基期後歷史低點 PER</td></tr>
-      <tr><td style="color:#eab308;font-weight:600;">合理帶</td><td>20x</td><td style="color:#eab308;font-weight:700;">254.6 元</td><td>新基期正常均值</td></tr>
-      <tr><td style="color:#f97316;font-weight:600;">昂貴帶</td><td>25x</td><td style="color:#f97316;font-weight:700;">318.3 元</td><td>新基期高點 PER</td></tr>
-      <tr><td style="color:#ef4444;font-weight:600;">危險帶（題材）</td><td>35x+</td><td style="color:#ef4444;font-weight:700;">445+ 元</td><td>市場炒作，無基本面支撐</td></tr>
-      <tr style="background:#2d1010;"><td style="color:#ef4444;font-weight:600;">⚠️ 目前市場</td><td style="color:#ef4444;">64x</td><td style="color:#ef4444;font-weight:700;">820 元</td><td>嚴重泡沫，高估值回歸風險</td></tr>
+      <tr><td style="color:#22c55e;font-weight:600;">便宜帶</td><td>16x</td><td style="color:#22c55e;font-weight:700;">238 元</td><td>新基期後歷史低點 PER</td></tr>
+      <tr><td style="color:#eab308;font-weight:600;">合理帶</td><td>20x</td><td style="color:#eab308;font-weight:700;">298 元</td><td>新基期正常均值</td></tr>
+      <tr><td style="color:#f97316;font-weight:600;">昂貴帶</td><td>25x</td><td style="color:#f97316;font-weight:700;">372 元</td><td>新基期高點 PER</td></tr>
+      <tr><td style="color:#ef4444;font-weight:600;">危險帶（題材）</td><td>35x+</td><td style="color:#ef4444;font-weight:700;">521+ 元</td><td>市場炒作，無基本面支撐</td></tr>
+      <tr style="background:#2d1010;"><td style="color:#ef4444;font-weight:600;">⚠️ 目前市場</td><td style="color:#ef4444;">36x</td><td style="color:#ef4444;font-weight:700;">529 元</td><td>仍在題材帶，自高點 1,140 元已回落 54%</td></tr>
     </tbody>
   </table>
   <div style="background:#1e2535;border:1px solid #2d3748;border-radius:10px;padding:14px;margin-top:16px;font-size:12px;color:#94a3b8;line-height:1.9;">
     <strong style="color:#f8fafc;">📌 投資結論（僅供參考）：</strong><br>
     國巨長期基本面穩健，為全球被動元件龍頭，受惠 AI 伺服器與 EV 車用長線成長。<br>
-    然而 2026年5-6月股價飆升至 820 元（PER 64x），已脫離任何合理估值區間，屬純題材炒作。<br>
-    <span style="color:#ef4444;">目前不宜追高。待回調至 250–320 元區間（PER 20–25x）再評估進場機會。</span><br>
+    2026年5-6月股價飆升至 1,140 元（PER 90x）屬純題材炒作，7月已腰斬至 502 元；目前 ~529 元（26Q2 TTM PER 36x）仍高於昂貴價 372 元。<br>
+    <span style="color:#ef4444;">目前不宜追高。待回調至 300–370 元區間（PER 20–25x）再評估進場機會。</span><br>
     若 EPS 未來成長至 18–20 元，合理股價上看 360–500 元，可作為中期目標。
   </div>
   <p style="font-size:10px;color:#334155;margin-top:14px;line-height:1.6;">⚠️ 本分析僅供參考，不構成投資建議。股市有風險，請自行判斷。</p>
@@ -374,7 +377,8 @@ const months = [
   '24M07','24M08','24M09','24M10','24M11','24M12',
   '25M01','25M02','25M03','25M04','25M05','25M06',
   '25M07','25M08','25M09','25M10','25M11','25M12',
-  '26M01','26M02','26M03','26M04','26M05','26M06'
+  '26M01','26M02','26M03','26M04','26M05','26M06',
+  '26M07','26M08'
 ];
 
 // EPS (10x欄÷10)
@@ -384,7 +388,8 @@ const epsArr = [
   44.65,42.47,40.3,39.58,38.85,38.13,
   38.6,39.06,39.53,39.25,38.98,38.7,
   29.14,19.59,10.03,10.52,11.02,11.51,
-  11.92,12.32,12.73,12.73,12.73,12.73
+  11.92,12.32,12.73,12.73,12.73,12.73,
+  14.88,14.88
 ];
 
 // 收盤價
@@ -394,7 +399,8 @@ const closePx = [
   792,657,623,558,514,541,
   537,566,481,459,490,485,
   530,139.5,170,249,235,231,
-  277.5,298,243.5,317,738,1140
+  277.5,298,243.5,317,738,1140,
+  502,545
 ];
 
 function band(mult) { return epsArr.map(e => +(e * mult).toFixed(1)); }
@@ -417,7 +423,7 @@ async function updateFundamentalPE() {
     const data = JSON.parse(await res.text());
     const price = parseFloat(data.price);
     if (price && !isNaN(price)) {
-      const ttmEPS = 12.73;
+      const ttmEPS = 14.88;
       const pe = (price / ttmEPS).toFixed(1);
       const el = document.getElementById('fund-pe');
       const noteEl = document.getElementById('fund-pe-note');
@@ -425,7 +431,7 @@ async function updateFundamentalPE() {
         el.textContent = pe + 'x';
         el.style.color = pe > 40 ? '#ef4444' : pe > 25 ? '#eab308' : '#22c55e';
       }
-      if (noteEl) noteEl.textContent = '股價 ' + price.toLocaleString() + ' ｜ TTM EPS 12.73';
+      if (noteEl) noteEl.textContent = '股價 ' + price.toLocaleString() + ' ｜ TTM EPS 14.88';
     }
   } catch(e) {}
 }
@@ -467,8 +473,8 @@ window.addEventListener('load', () => {
 function drawEPS() {
   window.epsDrawn = true;
   const ctx2 = document.getElementById('epsChart').getContext('2d');
-  const labels = ['22年','23年','24年(舊)','25H1(舊)','25M09後','26Q1'];
-  const eps =    [28,    41.7,  38.13,     38.7,       10.03,   12.73];
+  const labels = ['22年','23年','24年(舊)','25H1(舊)','25M09後','26Q2'];
+  const eps =    [28,    41.7,  38.13,     38.7,       10.03,   14.88];
   new Chart(ctx2, {
     type: 'bar',
     data: {

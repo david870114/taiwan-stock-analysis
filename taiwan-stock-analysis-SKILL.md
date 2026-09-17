@@ -82,7 +82,7 @@ navigate → https://goodinfo.tw/tw/ShowK_ChartFlow.asp?RPT_CAT=PER&STOCK_ID={�
 - 單季 EPS 變動 > ±50%
 - EPS ≤ 0
 
-命中任一項就**維持原估值帶（以正常化 EPS 為錨）**，並在 TRACKED 該列註記原因，不要自動改。2026/08 已如此處理：3481 群創、2408 南亞科、2337 旺宏、2344 華邦電、3260 威剛。
+命中任一項就**維持原估值帶（以正常化 EPS 為錨）**，並在 TRACKED 該列註記原因，不要自動改。2026/08 已如此處理：3481 群創、2408 南亞科、2337 旺宏、2344 華邦電、3260 威剛；2026/09 再加 6770 力積電（單季 −77%）、1303 南亞（單季 +87%）。頁面上的 TTM EPS 顯示與即時 PER 仍改用最新實際值，只有估值帶不動。
 
 ### 月線陣列只放「已收盤的完整月份」
 
@@ -116,7 +116,7 @@ node "C:\Users\USER\goodinfo_scraper.mjs" {代號} div
 | 00878 | 國泰永續高股息 | ETF | 殖利率法 | 00878_analysis.html |
 | 00919 | 群益台灣精選高息 | ETF | 殖利率法 | 00919_analysis.html |
 | 00981A | 主動統一台股增長 | ETF | 殖利率法（季配 0.63×4）| 00981A_analysis.html |
-| 00991A | 主動復華未來50 | ETF | 價格追蹤（無配息）| 00991A_analysis.html |
+| 00991A | 主動復華未來50 | ETF | 價格追蹤（26/07/21 首次配息 0.77，累積兩次後改殖利率法）| 00991A_analysis.html |
 | 00631L | 元大台灣50正2 | ETF（單日正向2倍槓桿） | 價格追蹤（不配息，1拆22還原）| 00631L_analysis.html |
 | 2301 | 光寶科 | 電源/EMS | PER法 | 2301_analysis.html |
 | 2303 | 聯電 | AI/半導體 | PER法 | 2303_analysis.html |
@@ -371,6 +371,12 @@ window.addEventListener('load', updateLiveMetric);
 - **ETF 的 PER 頁面 EPS 欄全是「-」**，這是正常的，收盤價欄仍完整可用
 - Puppeteer MCP 雖設定但工具不會出現（Windows 已知問題），改用 PowerShell 執行 scraper
 - **StockBenefitConsistency.asp 和 StockPER.asp 已 404**，不要使用
+- **2026/09 起 GoodInfo 全站加上 Cloudflare 人機驗證**（headless scraper 與內建瀏覽器都卡在「正在執行安全驗證」勾選框），不可代為點選驗證。改用 **FinMind 公開 API**（免 token，約 300 次/小時）：
+  - 月收盤：`https://api.finmindtrade.com/api/v4/data?dataset=TaiwanStockPrice&data_id={代號}&start_date=YYYY-MM-DD` → 取每月最後交易日 `close`（已驗證 26M07 與 GoodInfo 月收一致）
+  - 單季 EPS：`dataset=TaiwanStockFinancialStatements` 取 `type=EPS`，近四季加總 = TTM（與 GoodInfo「近四季EPS」欄誤差 <1%，已套用的舊值不必為此微調）
+  - 配息：`dataset=TaiwanStockDividend`（`CashEarningsDistribution`、`CashExDividendTradingDate`）；除權息參考價：`dataset=TaiwanStockDividendResult`
+- **除權（股票股利）要還原**：看 `TaiwanStockDividendResult` 的 `before_price ÷ after_price` 得股數倍率 R。分析頁月線 px/eps 全部 ÷R、估值帶用 TTM EPS ÷R 重算、`annualDiv` 也 ÷R（同 00631L 分割還原）。2026/09/02 緯穎 6669 除權 R=2.9828（7,800→2,615），已全面還原。
+- **分析頁寫死的價位門檻**（如 `if (price < 1156)`、ETF 的 `d.px < 28.6`）改估值時要一起改；ETF 盡量寫成 `annualDiv/0.10` 形式。千分位逗號不可寫進 JS 數字（`price < 3,447` 是逗號運算子，條件恆真）。
 - git push 由 Claude 自動執行，不需使用者手動操作
 
 ---
