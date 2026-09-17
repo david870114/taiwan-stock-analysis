@@ -376,6 +376,8 @@ window.addEventListener('load', updateLiveMetric);
   - 單季 EPS：`dataset=TaiwanStockFinancialStatements` 取 `type=EPS`，近四季加總 = TTM（與 GoodInfo「近四季EPS」欄誤差 <1%，已套用的舊值不必為此微調）
   - 配息：`dataset=TaiwanStockDividend`（`CashEarningsDistribution`、`CashExDividendTradingDate`）；除權息參考價：`dataset=TaiwanStockDividendResult`
 - **除權（股票股利）要還原**：看 `TaiwanStockDividendResult` 的 `before_price ÷ after_price` 得股數倍率 R。分析頁月線 px/eps 全部 ÷R、估值帶用 TTM EPS ÷R 重算、`annualDiv` 也 ÷R（同 00631L 分割還原）。2026/09/02 緯穎 6669 除權 R=2.9828（7,800→2,615），已全面還原。
+- **法人動態（institutional_data.json）**：市場三大法人買賣超自 2026/09 起改抓證交所 BFI82U（單位億元，每次重建近 7 個交易日，備援 FinMind）；個股買超前 15 名仍先抓 GoodInfo，被擋時改用證交所 T86＋MI_INDEX 補股價。GoodInfo 版市場資料 2026/08/19–09/16 全為 null。
+- **月線陣列不只一種格式**：除了 `{ m:'26M07', px, eps, per }`，還有平行陣列（`const months/epsArr/closePx/perArr`，如 2301、2327、2492）、`const quarters/ttmEPS/closePx`（2330、2303、2345、2382、3596、2337）與靜態 `<tr>` 明細表。每月更新要逐一補，並同步更新各頁「目前股價」、TTM EPS 文字與 JS 內即時 PER 常數（`price / 27.1` 這類寫死值）。
 - **分析頁寫死的價位門檻**（如 `if (price < 1156)`、ETF 的 `d.px < 28.6`）改估值時要一起改；ETF 盡量寫成 `annualDiv/0.10` 形式。千分位逗號不可寫進 JS 數字（`price < 3,447` 是逗號運算子，條件恆真）。
 - git push 由 Claude 自動執行，不需使用者手動操作
 

@@ -70,7 +70,109 @@ function wait(ms) {
   return new Promise(r => setTimeout(r, ms));
 }
 
-// ── 從 goodinfo index.asp 抓三大法人市場整體買賣超 ──
+// ── 三大法人市場整體買賣超：證交所 BFI82U（官方 JSON，單位：億元）──
+// GoodInfo index.asp 自 2026/08/19 起解析失敗（全為 null），且原解析結果單位不明，改用官方資料。
+// 每次重建最近 7 個交易日，不依賴前一天的 JSON。
+const toYi = (v) => Math.round(parseInt(String(v).replace(/,/g, ''), 10) / 1e6) / 100; // 元 → 億元（2 位小數）
+
+async function fetchTwseMarketDay(ymd) {
+  const url = `https://www.twse.com.tw/rwd/zh/fund/BFI82U?type=day&dayDate=${ymd}&response=json`;
+  const res = await fetch(url, { headers: { 'User-Agent': 'Mozilla/5.0' } });
+  if (!res.ok) throw new Error(`TWSE BFI82U HTTP ${res.status}`);
+  const j = await res.json();
+  if (j.stat !== 'OK' || !Array.isArray(j.data)) return null; // 非交易日
+  const row = (prefix) => j.data.find(r => r[0].startsWith(prefix));
+  const net = (prefix) => { const r = row(prefix); return r ? toYi(r[3]) : null; };
+  const dealerSelf = net('自營商(自行買賣)'), dealerHedge = net('自營商(避險)');
+  return {
+    foreign: net('外資及陸資'),
+    investment_trust: net('投信'),
+    dealer: dealerSelf === null && dealerHedge === null ? null : Math.round(((dealerSelf || 0) + (dealerHedge || 0)) * 100) / 100,
+    total: net('合計'),
+    date: `${ymd.slice(0, 4)}/${ymd.slice(4, 6)}/${ymd.slice(6, 8)}`,
+    unit: '億元',
+  };
+}
+
+// 備援：FinMind TaiwanStockTotalInstitutionalInvestors（一次取多日）
+async function fetchFinmindMarketDays(startDate) {
+  const url = `https://api.finmindtrade.com/api/v4/data?dataset=TaiwanStockTotalInstitutionalInvestors&start_date=${startDate}`;
+  const j = await (await fetch(url)).json();
+  if (j.status !== 200) throw new Error(`FinMind ${j.msg}`);
+  const byDate = {};
+  for (const r of j.data) (byDate[r.date] ||= {})[r.name] = r.buy - r.sell;
+  return Object.keys(byDate).sort().reverse().map(d => {
+    const x = byDate[d], yi = (v) => (v == null ? null : Math.round(v / 1e6) / 100);
+    return {
+      foreign: yi(x.Foreign_Investor), investment_trust: yi(x.Investment_Trust),
+      dealer: yi((x.Dealer_self || 0) + (x.Dealer_Hedging || 0)), total: yi(x.total),
+      date: d.replace(/-/g, '/'), unit: '億元',
+    };
+  });
+}
+
+async function fetchMarketHistory(days = 7) {
+  const out = [];
+  try {
+    const now = new Date(Date.now() + 8 * 3600e3); // 台北時間
+    for (let back = 0; back < 20 && out.length < days; back++) {
+      const d = new Date(now.getTime() - back * 86400e3);
+      if (d.getUTCDay() === 0 || d.getUTCDay() === 6) continue;
+      const ymd = d.toISOString().slice(0, 10).replace(/-/g, '');
+      const m = await fetchTwseMarketDay(ymd);
+      if (m) out.push(m);
+      await wait(1500); // 證交所限流
+    }
+    if (out.length) return out;
+  } catch (e) {
+    console.error('[scrape] TWSE 市場資料失敗，改用 FinMind：', e.message);
+  }
+  const start = new Date(Date.now() - 20 * 86400e3).toISOString().slice(0, 10);
+  return (await fetchFinmindMarketDays(start)).slice(0, days);
+}
+
+// ── 個股買超前 15 名備援：證交所 T86（僅上市，無股價）──
+async function fetchTwseTopBuyers(ymd) {
+  const url = `https://www.twse.com.tw/rwd/zh/fund/T86?date=${ymd}&selectType=ALLBUT0999&response=json`;
+  const j = await (await fetch(url, { headers: { 'User-Agent': 'Mozilla/5.0' } })).json();
+  if (j.stat !== 'OK') return [];
+  const lots = (v) => Math.round(parseInt(String(v).replace(/,/g, ''), 10) / 1000);
+  return j.data
+    .map(r => ({ code: r[0].trim(), name: r[1].trim(), price: null, change: '', changePct: '',
+      foreignNet: lots(r[4]), trustNet: lots(r[10]), dealerNet: lots(r[11]), totalNet: lots(r[18]) }))
+    .sort((a, b) => b.totalNet - a.totalNet)
+    .slice(0, 15)
+    .map(s => s); // 股價於 fillTwsePrices 補上
+}
+
+// 用證交所 MI_INDEX（當日每日收盤行情）補收盤價與漲跌
+async function fillTwsePrices(stocks, ymd) {
+  try {
+    const url = `https://www.twse.com.tw/rwd/zh/afterTrading/MI_INDEX?date=${ymd}&type=ALLBUT0999&response=json`;
+    const j = await (await fetch(url, { headers: { 'User-Agent': 'Mozilla/5.0' } })).json();
+    const t = (j.tables || []).find(t => Array.isArray(t.fields) && t.fields.includes('證券代號') && t.fields.includes('收盤價'));
+    if (!t) return stocks;
+    const f = (name) => t.fields.indexOf(name);
+    const map = new Map(t.data.map(r => [r[f('證券代號')].trim(), r]));
+    for (const s of stocks) {
+      const r = map.get(s.code);
+      if (!r) continue;
+      const close = parseFloat(String(r[f('收盤價')]).replace(/,/g, ''));
+      const diff = parseFloat(String(r[f('漲跌價差')]).replace(/,/g, '')) || 0;
+      const sign = /-/.test(r[f('漲跌(+/-)')]) ? -1 : 1;
+      if (isNaN(close)) continue;
+      const chg = sign * diff, prev = close - chg;
+      s.price = close;
+      s.change = (chg > 0 ? '+' : '') + (+chg.toFixed(2));
+      s.changePct = prev > 0 ? (chg >= 0 ? '+' : '') + (chg / prev * 100).toFixed(2) : '';
+    }
+  } catch (e) {
+    console.error('[scrape] MI_INDEX 股價補值失敗：', e.message);
+  }
+  return stocks;
+}
+
+// ── （舊）從 goodinfo index.asp 抓三大法人市場整體買賣超，已停用 ──
 async function scrapeMarket(browser) {
   const page = await setupPage(browser);
   try {
@@ -276,39 +378,45 @@ async function main() {
     }
   }
 
-  const browser = await launchBrowser();
-  let marketData = null;
-  let topBuyers = [];
-
+  // 抓市場整體（證交所官方，最近 7 個交易日）
+  console.error('[scrape] 抓取市場整體法人買賣超（TWSE）...');
+  let marketDays = [];
   try {
-    // 抓市場整體
-    console.error('[scrape] 抓取市場整體法人買賣超...');
-    marketData = await scrapeMarket(browser);
-    console.error('[scrape] 市場資料：', JSON.stringify(marketData));
-
-    await wait(5000); // 避免流量限制
-
-    // 抓個股前十名
-    console.error('[scrape] 抓取個股法人買超前十名...');
-    topBuyers = await scrapeTopBuyers(browser);
-    console.error(`[scrape] 取得 ${topBuyers.length} 筆個股資料`);
-
-  } finally {
-    await browser.close();
+    marketDays = await fetchMarketHistory(7);
+    console.error('[scrape] 市場資料：', JSON.stringify(marketDays[0]));
+  } catch (e) {
+    console.error('[scrape] 市場資料全部失敗：', e.message);
   }
 
-  // 更新歷史（保留最近 30 天）
-  const history = existing.history || [];
-  if (existing.market && existing.lastUpdated !== today) {
-    history.unshift({ date: existing.lastUpdated, market: existing.market });
-    if (history.length > 7) history.length = 7;
+  // 抓個股前 15 名（GoodInfo 為主，被擋時改用證交所 T86）
+  let topBuyers = [];
+  try {
+    const browser = await launchBrowser();
+    try {
+      console.error('[scrape] 抓取個股法人買超前15名（GoodInfo）...');
+      topBuyers = await scrapeTopBuyers(browser);
+    } finally {
+      await browser.close();
+    }
+  } catch (e) {
+    console.error('[scrape] GoodInfo 失敗：', e.message);
   }
+  if (topBuyers.length === 0 && marketDays[0]) {
+    console.error('[scrape] GoodInfo 無資料，改用 TWSE T86');
+    try {
+      const ymd = marketDays[0].date.replace(/\//g, '');
+      topBuyers = await fillTwsePrices(await fetchTwseTopBuyers(ymd), ymd);
+    } catch (e) { console.error('[scrape] T86 失敗：', e.message); }
+  }
+  console.error(`[scrape] 取得 ${topBuyers.length} 筆個股資料`);
 
+  const latest = marketDays[0] || null;
   const output = {
-    lastUpdated: today,
-    market: marketData || existing.market,
+    lastUpdated: latest ? latest.date : today,
+    market: latest || existing.market,
+    marketUnit: '億元',
     topBuyers: topBuyers.length > 0 ? topBuyers : existing.topBuyers,
-    history,
+    history: marketDays.length ? marketDays.slice(1).map(m => ({ date: m.date, market: m })) : (existing.history || []),
   };
 
   writeFileSync(OUTPUT_PATH, JSON.stringify(output, null, 2), 'utf8');

@@ -51,7 +51,7 @@
   <a href="index.html" style="color:#64748b;font-size:12px;text-decoration:none;display:inline-flex;align-items:center;gap:4px;padding:5px 10px;border:1px solid #334155;border-radius:8px;transition:all 0.2s;" onmouseover="this.style.color='#e2e8f0';this.style.borderColor='#64748b'" onmouseout="this.style.color='#64748b';this.style.borderColor='#334155'">← 返回總覽</a>
 </div>
 <h1>🔌 智邦科技 (2345) — 2026 股價推算分析</h1>
-<p class="subtitle">本益比河流圖 ✦ 三情境估值 ✦ 分批買點建議 ✦ 更新時間：2026年8月9日</p>
+<p class="subtitle">本益比河流圖 ✦ 三情境估值 ✦ 分批買點建議 ✦ 更新時間：2026年9月17日</p>
 
 <div class="tabs">
   <button class="tab active" onclick="switchTab('river', this)">📈 PER 河流圖</button>
@@ -66,33 +66,33 @@
   <div class="current-price-badge">
     <span style="color:#94a3b8;font-size:12px;">目前股價（即時）</span>
     <span style="color:#3b82f6;font-size:20px;font-weight:800;" id="live-price">載入中…</span>
-    <span style="color:#ef4444;font-size:12px;">PER ≈ 34.8x（TTM EPS 63.65元）介於合理與昂貴之間</span>
+    <span style="color:#eab308;font-size:12px;" id="live-per">PER ≈ 28.3x（TTM EPS 63.65元）介於合理與昂貴之間</span>
   </div>
   <canvas id="riverChart" height="340"></canvas>
-  <p style="font-size:11px;color:#475569;margin-top:8px;text-align:center;">* 26Q2 為實際值（TTM 63.65元），26Q3 起為預估；河流帶代表不同本益比倍數估值</p>
+  <p style="font-size:11px;color:#475569;margin-top:8px;text-align:center;">* 26Q2 為實際值（TTM 63.65元），26Q3 起為預估（26Q3E 白線為 9/17 現價 1,800 元）；河流帶代表不同本益比倍數估值</p>
 </div>
 
 <!-- TAB 2: 三情境 -->
 <div id="tab-scenario" class="panel">
   <div class="grid2">
     <div class="card"><h3>2025 全年 EPS（實際）</h3><div class="val blue">47.13 元</div><div class="note">YoY +119% ｜ 2024年: 21.49元</div></div>
-    <div class="card"><h3>近四季 EPS（TTM，26Q2）</h3><div class="val green">63.65 元</div><div class="note">前季 TTM 52.87 → +20.4% ｜ 2026全年年化 ≈ 72–80元</div></div>
+    <div class="card"><h3>近四季 EPS（TTM，26Q2）</h3><div class="val green">63.65 元</div><div class="note">Q2 單季 19.78元 YoY +120%｜前季 TTM 52.87 → +20.4%｜2026E ≈ 72–80元</div></div>
   </div>
   <div class="section-title">2026 全年三情境 EPS 與股價推算</div>
   <div class="scenario-grid">
     <div class="scenario-card bear">
       <div class="sc-label">🐻 悲觀</div>
-      <div class="sc-price red">900–1,300</div>
-      <div class="sc-detail">EPS 55–65元<br>PER 15–20x<br>AI泡沫修正<br>大盤系統性下跌</div>
+      <div class="sc-price red">1,020–1,440</div>
+      <div class="sc-detail">EPS 68–72元<br>PER 15–20x<br>AI泡沫修正<br>大盤系統性下跌</div>
     </div>
     <div class="scenario-card base">
       <div class="sc-label">⚖️ 基本</div>
-      <div class="sc-price green">1,600–2,400</div>
+      <div class="sc-price green">1,580–2,400</div>
       <div class="sc-detail">EPS 70–80元<br>PER 22–30x<br>800G持續放量<br>第二客戶貢獻15%</div>
     </div>
     <div class="scenario-card bull">
       <div class="sc-label">🚀 樂觀</div>
-      <div class="sc-price" style="color:#60a5fa;">2,500–3,500</div>
+      <div class="sc-price" style="color:#60a5fa;">2,550–4,000</div>
       <div class="sc-detail">EPS 85–100元<br>PER 30–40x<br>1.6T提前出貨<br>OCS光交換新訂單</div>
     </div>
   </div>
@@ -100,22 +100,22 @@
     <h3>💰 2026 分批建倉買點建議（基本～樂觀情境）</h3>
     <div class="buy-row">
       <span style="color:#86efac;font-size:13px;font-weight:600;">第一批（30%）</span>
-      <span style="color:#fde68a;font-size:14px;font-weight:700;">1,600–1,900 元</span>
-      <span class="badge badge-buy">積極進場 PER 20–24x</span>
+      <span style="color:#fde68a;font-size:14px;font-weight:700;">1,337–1,530 元</span>
+      <span class="badge badge-buy">積極進場 PER 21–24x（便宜價 1,337）</span>
     </div>
     <div class="buy-row">
       <span style="color:#86efac;font-size:13px;font-weight:600;">第二批（40%）</span>
-      <span style="color:#fde68a;font-size:14px;font-weight:700;">1,900–2,200 元</span>
-      <span class="badge badge-buy">主力倉位 PER 24–28x</span>
+      <span style="color:#fde68a;font-size:14px;font-weight:700;">1,530–1,780 元</span>
+      <span class="badge badge-buy">主力倉位 PER 24–28x（合理價 1,655）</span>
     </div>
     <div class="buy-row">
       <span style="color:#86efac;font-size:13px;font-weight:600;">第三批（30%）</span>
-      <span style="color:#fde68a;font-size:14px;font-weight:700;">2,200–2,600 元</span>
-      <span class="badge badge-watch">動能追加 PER 28–33x</span>
+      <span style="color:#fde68a;font-size:14px;font-weight:700;">1,780–2,037 元</span>
+      <span class="badge badge-watch">動能追加 PER 28–32x（昂貴價 2,037）</span>
     </div>
     <div class="buy-row" style="border-top:1px solid #166534;margin-top:8px;padding-top:10px;">
       <span style="color:#fca5a5;font-size:12px;">觀望/分批減倉</span>
-      <span style="color:#fca5a5;font-size:13px;font-weight:700;">2,800 元以上</span>
+      <span style="color:#fca5a5;font-size:13px;font-weight:700;">2,230 元以上</span>
       <span class="badge badge-avoid">PER > 35x</span>
     </div>
   </div>
@@ -136,11 +136,12 @@
   <table>
     <thead><tr><th>指標</th><th>數值</th><th>評估</th></tr></thead>
     <tbody>
-      <tr><td>目前股價（2026/5/10）</td><td style="color:#3b82f6;font-weight:700;">2,375 元</td><td><span class="badge badge-watch">觀察區</span></td></tr>
+      <tr><td>目前股價（2026/9/17）</td><td style="color:#3b82f6;font-weight:700;">1,800 元</td><td><span class="badge badge-watch">合理～昂貴之間</span></td></tr>
       <tr><td>2025 全年 EPS</td><td style="color:#22c55e;font-weight:700;">47.13 元</td><td><span class="badge badge-buy">超預期</span></td></tr>
-      <tr><td>2026 Q1 EPS</td><td style="color:#22c55e;font-weight:700;">14.92 元（年增63%）</td><td><span class="badge badge-buy">強勁</span></td></tr>
+      <tr><td>2026 Q2 EPS</td><td style="color:#22c55e;font-weight:700;">19.78 元（年增120%）</td><td><span class="badge badge-buy">強勁</span></td></tr>
       <tr><td>2026F 法人EPS預估</td><td>66–92 元（大和資本）</td><td><span class="badge badge-buy">持續上修</span></td></tr>
-      <tr><td>目前本益比</td><td>~30x（近四季EPS ~79元）</td><td><span class="badge badge-watch">合理偏高</span></td></tr>
+      <tr><td>目前本益比</td><td>~28.3x（TTM EPS 63.65元）</td><td><span class="badge badge-watch">合理偏高</span></td></tr>
+      <tr><td>便宜 / 合理 / 昂貴</td><td>1,337 / 1,655 / 2,037 元</td><td><span class="badge badge-watch">21x / 26x / 32x</span></td></tr>
       <tr><td>大和資本目標價</td><td style="color:#3b82f6;font-weight:700;">3,222 元（最高目標）</td><td><span class="badge badge-buy">買進</span></td></tr>
       <tr><td>ROE</td><td style="color:#22c55e;font-weight:700;">48.79%</td><td><span class="badge badge-buy">極優</span></td></tr>
       <tr><td>PEG 比率</td><td style="color:#22c55e;font-weight:700;">0.89（< 1 低估）</td><td><span class="badge badge-buy">吸引</span></td></tr>
@@ -155,7 +156,7 @@
     </div>
     <div class="card">
       <h3>⚠️ 風險</h3>
-      <div style="font-size:12px;line-height:1.9;color:#fca5a5;">✗ PER >30x，回調空間大<br>✗ 美中關稅不確定性<br>✗ AI CSP 資本支出若縮減<br>✗ 1.6T 出貨若延後至2027<br>✗ 大盤系統性修正<br>✗ 殖利率僅 0.5% 護城低</div>
+      <div style="font-size:12px;line-height:1.9;color:#fca5a5;">✗ 26M06 高點 2,495 元後回落至 1,800 元（−28%），波動大<br>✗ 美中關稅不確定性<br>✗ AI CSP 資本支出若縮減<br>✗ 1.6T 出貨若延後至2027<br>✗ 大盤系統性修正<br>✗ 殖利率僅 0.5% 護城低</div>
     </div>
   </div>
   <p style="font-size:10px;color:#475569;margin-top:14px;line-height:1.6;">⚠️ 本分析僅供參考，不構成投資建議。股市有風險，投資前請自行判斷。</p>
@@ -319,7 +320,7 @@
     <div class="card" style="text-align:center;">
       <h3>前瞻 P/E（2026E）</h3>
       <div class="val yellow">~35x</div>
-      <div class="note">法人EPS共識 ~70元</div>
+      <div class="note">2026E EPS ~72–80元（上半年 34.70）</div>
     </div>
     <div class="card" style="text-align:center;">
       <h3>股價淨值比 P/B</h3>
@@ -354,7 +355,7 @@ function switchTab(id, btn) {
 
 const quarters = ['22Q1','22Q2','22Q3','22Q4','23Q1','23Q2','23Q3','23Q4','24Q1','24Q2','24Q3','24Q4','25Q1','25Q2','25Q3','25Q4','26Q1','26Q2','26Q3E','26Q4E'];
 const ttmEPS =   [9.5, 12.3, 14.6, 14.64, 15.2, 15.5, 16.2, 15.99, 16.8, 17.5, 18.0, 21.49, 27.0, 32.5, 38.0, 47.13, 52.87, 63.65, 72, 80];
-const closePx =  [250, 238, 247, 248, 279, 300, 345, 392, 505, 495, 505, 538, 703, 679, 768, 1185, 2505, 2495, 2215, null];
+const closePx =  [250, 238, 247, 248, 279, 300, 345, 392, 505, 495, 505, 538, 703, 679, 768, 1185, 2505, 2495, 1800, null];
 
 function makeRiverBand(epsArr, mult) { return epsArr.map(e => +(e * mult).toFixed(0)); }
 

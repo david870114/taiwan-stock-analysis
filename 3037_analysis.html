@@ -65,13 +65,13 @@
 <!-- TAB 1: PER River -->
 <div id="tab-river" class="panel active">
   <div class="warn-box">
-    ⚠️ <strong>目前股價嚴重偏離歷史 PER 區間</strong>：股價 970 元 / TTM EPS 7.03 元 → PER ≈ 138x。
+    ⚠️ <strong>目前股價嚴重偏離歷史 PER 區間</strong>：股價 940 元（9/17）/ 26Q2 TTM EPS 15.39 元 → PER ≈ 61x（26Q1 時為 138x，EPS 回升後大幅收斂）。
     歷史正常 PER 區間為 12–30x（EPS 高峰期 2023–2024）。市場已充分反映 AI/ABF 復甦預期，估值泡沫風險極高。
   </div>
   <div class="current-price-badge">
     <span style="color:#94a3b8;font-size:12px;">目前股價（即時）</span>
     <span style="color:#3b82f6;font-size:20px;font-weight:800;" id="live-price">載入中…</span>
-    <span style="color:#ef4444;font-size:12px;" id="curPer">PER ≈ 138x（TTM EPS 7.03元）遠高於昂貴價 462 元</span>
+    <span style="color:#ef4444;font-size:12px;" id="curPer">PER ≈ 61x（TTM EPS 15.39元）遠高於昂貴價 462 元</span>
   </div>
   <canvas id="riverChart" height="360"></canvas>
   <p style="font-size:11px;color:#475569;margin-top:8px;text-align:center;">* 河流圖基於歷史 EPS 與 PER 倍數；股價已遠超所有歷史河流帶（Y軸截斷顯示）</p>
@@ -80,58 +80,58 @@
 <!-- TAB 2: 三情境 -->
 <div id="tab-scenario" class="panel">
   <div class="grid2">
-    <div class="card"><h3>最新季末 EPS（26Q1 TTM）</h3><div class="val blue">7.03 元</div><div class="note">近四季累積，EPS 正在從谷底復甦</div></div>
+    <div class="card"><h3>最新季末 EPS（26Q2 TTM）</h3><div class="val blue">15.39 元</div><div class="note">Q2 單季 8.45元（Q1 3.28），TTM 由 7.03 翻倍，復甦加速</div></div>
     <div class="card"><h3>EPS 高峰（2022–2023）</h3><div class="val yellow">14.76 元</div><div class="note">23M06 季末，ABF 載板超級循環頂點</div></div>
   </div>
   <div class="section-title">2026–2027 三情境 EPS 與股價推算（歷史 PER 基礎）</div>
   <div style="background:#1e2535;border:1px solid #2d3748;border-radius:10px;padding:12px;margin-bottom:12px;font-size:11px;color:#94a3b8;line-height:1.8;">
     📌 <strong style="color:#cbd5e1;">PER 歷史區間（正常 EPS 時期 23M06–24M04）：</strong>
     低端 <span class="green" style="font-weight:700;">12x</span> ／ 均值 <span class="yellow" style="font-weight:700;">20x</span> ／ 高端 <span style="color:#f97316;font-weight:700;">30x</span>
-    <br>⚠️ 2025M07–26M05 期間因 EPS 極低（1.3–7x），目前 PER 138x 已嚴重失真，屬題材炒作。
+    <br>⚠️ 2025M07–26M06 期間因 EPS 極低（1.3–7 元）PER 嚴重失真；26Q2 EPS 跳升後 PER 降至約 61x，仍遠高於歷史區間。
   </div>
   <div class="scenario-grid">
     <div class="scenario-card bear">
       <div class="sc-label">🐻 悲觀</div>
-      <div class="sc-price red">100–170</div>
-      <div class="sc-detail">EPS 8–10元<br>PER 12–17x<br>ABF 復甦不如預期<br>AI 資本支出縮減</div>
+      <div class="sc-price red">260–440</div>
+      <div class="sc-detail">EPS 22–26元<br>PER 12–17x<br>ABF 復甦不如預期<br>AI 資本支出縮減</div>
     </div>
     <div class="scenario-card base">
       <div class="sc-label">⚖️ 基本</div>
-      <div class="sc-price green">200–350</div>
-      <div class="sc-detail">EPS 12–14元<br>PER 18–25x<br>ABF 穩健復甦<br>AI 伺服器需求持續</div>
+      <div class="sc-price green">500–800</div>
+      <div class="sc-detail">EPS 28–32元<br>PER 18–25x<br>ABF 穩健復甦<br>AI 伺服器需求持續</div>
     </div>
     <div class="scenario-card bull">
       <div class="sc-label">🚀 樂觀</div>
-      <div class="sc-price" style="color:#60a5fa;">400–600</div>
-      <div class="sc-detail">EPS 15–18元<br>PER 28–35x<br>ABF 新高峰<br>CoWoS 大量出貨</div>
+      <div class="sc-price" style="color:#60a5fa;">950–1,400</div>
+      <div class="sc-detail">EPS 34–40元<br>PER 28–35x<br>ABF 新高峰<br>CoWoS 大量出貨</div>
     </div>
   </div>
   <div class="buy-signal">
     <h3>💰 基本面合理買點建議（歷史 PER 還原後）</h3>
     <div class="buy-row">
       <span style="color:#86efac;font-size:13px;font-weight:600;">積極進場（30%）</span>
-      <span style="color:#fde68a;font-size:14px;font-weight:700;">120–160 元</span>
+      <span style="color:#fde68a;font-size:14px;font-weight:700;">185–250 元</span>
       <span class="badge badge-buy">PER 約 12–16x 低估帶</span>
     </div>
     <div class="buy-row">
       <span style="color:#86efac;font-size:13px;font-weight:600;">主力倉位（40%）</span>
-      <span style="color:#fde68a;font-size:14px;font-weight:700;">160–220 元</span>
+      <span style="color:#fde68a;font-size:14px;font-weight:700;">250–340 元</span>
       <span class="badge badge-buy">PER 約 16–22x 合理帶</span>
     </div>
     <div class="buy-row">
       <span style="color:#86efac;font-size:13px;font-weight:600;">動能追加（30%）</span>
-      <span style="color:#fde68a;font-size:14px;font-weight:700;">220–320 元</span>
+      <span style="color:#fde68a;font-size:14px;font-weight:700;">340–462 元</span>
       <span class="badge badge-watch">PER 約 22–30x 偏貴帶</span>
     </div>
     <div class="buy-row" style="border-top:1px solid #166534;margin-top:8px;padding-top:10px;">
       <span style="color:#fca5a5;font-size:12px;">觀望 / 分批減倉</span>
-      <span style="color:#fca5a5;font-size:13px;font-weight:700;">400 元以上</span>
+      <span style="color:#fca5a5;font-size:13px;font-weight:700;">540 元以上</span>
       <span class="badge badge-avoid">PER > 35x，題材已過熱</span>
     </div>
   </div>
   <div style="background:#1a1a2e;border:1px solid #4a4a8a;border-radius:8px;padding:12px;margin-top:12px;font-size:11px;color:#94a3b8;line-height:1.8;">
-    ⚠️ <strong style="color:#fde68a;">重要警示</strong>：目前股價 970 元遠超歷史估值所有合理區間。
-    若 EPS 在 2026–2027 無法回升至 15 元以上且市場給予 60x+ PER，則股價難以持守高位。
+    ⚠️ <strong style="color:#fde68a;">重要警示</strong>：目前股價 940 元（9/17；8月收 999 元）遠超歷史估值所有合理區間。
+     26Q2 TTM EPS 已回升至 15.39 元，若 2026 全年 EPS 能達 28–32 元，前瞻 PER 約 30x；若 EPS 回升中斷，股價難以持守高位。
     純以基本面角度，目前不具合理安全邊際，純粹是題材/動能行情。
   </div>
 </div>
@@ -307,12 +307,12 @@
     <div class="card" style="text-align:center;">
       <h3>本益比 P/E</h3>
       <div class="val" id="fund-pe" style="color:#ef4444;">計算中…</div>
-      <div class="note" id="fund-pe-note">TTM EPS 7.03 元</div>
+      <div class="note" id="fund-pe-note">TTM EPS 15.39 元（26Q2）</div>
     </div>
     <div class="card" style="text-align:center;">
       <h3>前瞻 P/E（2026E）</h3>
-      <div class="val yellow">~70–90x</div>
-      <div class="note">法人 EPS 估 10–14元（復甦假設）</div>
+      <div class="val yellow">~30–34x</div>
+      <div class="note">2026E EPS 估 28–32元（上半年 11.73）</div>
     </div>
     <div class="card" style="text-align:center;">
       <h3>股價淨值比 P/B</h3>
@@ -327,9 +327,9 @@
   </div>
   <div style="background:#1e2535;border:1px solid #2d3748;border-radius:10px;padding:12px;font-size:11px;color:#64748b;line-height:1.8;">
     📌 <strong style="color:#94a3b8;">估值解讀：</strong>
-    欣興屬景氣循環股，傳統 PER 估值在 EPS 低谷時完全失效（138x 僅反映題材，非基本面）。
-    更適合的觀察指標是：① EPS 是否回升至 10 元以上；② P/B 是否回落至 3–4x 合理帶；③ ROE 是否重回 20%+。
-    目前三項均未達標，股價完全是 AI/ABF 復甦故事的溢價定價，高度依賴未來 EPS 兌現。
+    欣興屬景氣循環股，傳統 PER 估值在 EPS 低谷時完全失效（26Q1 的 138x 僅反映題材，26Q2 EPS 回升後降至 61x）。
+    更適合的觀察指標是：① EPS 是否回升至 10 元以上（26Q2 TTM 15.39 元，已達標）；② P/B 是否回落至 3–4x 合理帶；③ ROE 是否重回 20%+。
+    目前 EPS 已達標、P/B 與 ROE 仍待確認，股價仍含大幅 AI/ABF 復甦溢價，高度依賴後續 EPS 兌現。
   </div>
 
   <p style="font-size:10px;color:#334155;margin-top:14px;line-height:1.6;">⚠️ 本分析僅供參考，不構成投資建議。財務數據依公開財報推估，部分為近似值，請以公司正式公告為準。</p>
@@ -341,13 +341,13 @@
   <table>
     <thead><tr><th>指標</th><th>數值</th><th>評估</th></tr></thead>
     <tbody>
-      <tr><td>目前股價（2026/5/24）</td><td style="color:#ef4444;font-weight:700;">970 元</td><td><span class="badge badge-avoid">嚴重高估</span></td></tr>
-      <tr><td>TTM EPS（26Q1）</td><td style="color:#eab308;font-weight:700;">7.03 元</td><td><span class="badge badge-watch">復甦初期</span></td></tr>
-      <tr><td>目前本益比</td><td style="color:#ef4444;font-weight:700;">~138x</td><td><span class="badge badge-avoid">題材炒作</span></td></tr>
+      <tr><td>目前股價（2026/9/17）</td><td style="color:#ef4444;font-weight:700;">940 元</td><td><span class="badge badge-avoid">嚴重高估</span></td></tr>
+      <tr><td>TTM EPS（26Q2）</td><td style="color:#eab308;font-weight:700;">15.39 元</td><td><span class="badge badge-buy">復甦加速</span></td></tr>
+      <tr><td>目前本益比</td><td style="color:#ef4444;font-weight:700;">~61x</td><td><span class="badge badge-avoid">題材炒作</span></td></tr>
       <tr><td>歷史 PER 低端</td><td>12x</td><td><span class="badge badge-buy">對應合理股價 185 元</span></td></tr>
       <tr><td>歷史 PER 均值</td><td>20x</td><td><span class="badge badge-watch">對應合理股價 308 元</span></td></tr>
       <tr><td>歷史 PER 高端</td><td>30x</td><td><span class="badge badge-avoid">對應合理股價 462 元</span></td></tr>
-      <tr><td>EPS 近一年趨勢</td><td style="color:#22c55e;font-weight:700;">1.31 → 7.03（復甦中）</td><td><span class="badge badge-buy">方向向上</span></td></tr>
+      <tr><td>EPS 近一年趨勢</td><td style="color:#22c55e;font-weight:700;">1.31 → 7.03 → 15.39（復甦中）</td><td><span class="badge badge-buy">方向向上</span></td></tr>
       <tr><td>產業：ABF 載板</td><td>PCB 上游高階載板</td><td><span class="badge badge-watch">景氣循環股</span></td></tr>
     </tbody>
   </table>
@@ -367,7 +367,7 @@
     <div class="card">
       <h3>⚠️ 風險</h3>
       <div style="font-size:12px;line-height:1.9;color:#fca5a5;">
-        ✗ PER 138x，歷史罕見，回調空間大<br>
+        ✗ PER 61x，仍為歷史高端 2 倍，回調空間大<br>
         ✗ 景氣循環股，EPS 波動劇烈<br>
         ✗ ABF 復甦不確定，PC/伺服器需求易波動<br>
         ✗ 日商 Ajinomoto 等競爭者擴產<br>
@@ -379,7 +379,7 @@
   <div style="background:#1e2535;border:1px solid #2d3748;border-radius:10px;padding:12px;margin-top:14px;font-size:11px;color:#64748b;line-height:1.8;">
     📌 <strong style="color:#94a3b8;">欣興屬景氣循環股</strong>，EPS 高低落差極大（2022 高峰 ~18元 vs 2025 低谷 1.3元）。
     目前股價完全由「AI ABF 復甦」題材驅動，超前反映未來 2–3 年的樂觀情境。
-    若以歷史 PER 20x × EPS 7.03元計算，合理股價僅 308 元，目前溢價約 6.9 倍。
+    若以歷史 PER 20x × 26Q2 TTM EPS 15.39 元計算，合理股價約 308 元，目前 940 元溢價約 3 倍。
     投資人需自行判斷是否相信 AI 加速期能將 EPS 快速拉回 30–50 元以上的水準。
   </div>
   <p style="font-size:10px;color:#475569;margin-top:14px;line-height:1.6;">⚠️ 本分析僅供參考，不構成投資建議。股市有風險，請自行判斷。</p>
@@ -401,7 +401,7 @@ async function updateFundamentalPE() {
     const data = JSON.parse(await res.text());
     const price = parseFloat(data.price);
     if (price && !isNaN(price)) {
-      const ttmEPS = 7.03;
+      const ttmEPS = 15.39;
       const pe = (price / ttmEPS).toFixed(1);
       const el = document.getElementById('fund-pe');
       const noteEl = document.getElementById('fund-pe-note');
@@ -409,7 +409,7 @@ async function updateFundamentalPE() {
         el.textContent = pe + 'x';
         el.style.color = pe > 80 ? '#ef4444' : pe > 40 ? '#eab308' : '#22c55e';
       }
-      if (noteEl) noteEl.textContent = '股價 ' + price.toLocaleString() + ' ｜ TTM EPS 7.03';
+      if (noteEl) noteEl.textContent = '股價 ' + price.toLocaleString() + ' ｜ TTM EPS 15.39';
     }
   } catch(e) {}
 }
@@ -471,7 +471,7 @@ window.addEventListener('load', () => {
       const p = parseFloat(data.price);
       if (p && !isNaN(p)) {
         document.getElementById('curPrice').textContent = p.toLocaleString();
-        const latestEps = 7.03;
+        const latestEps = 15.39;
         const per = (p / latestEps).toFixed(1);
         document.getElementById('curPer').textContent = `PER ≈ ${per}x（TTM EPS ${latestEps}元）遠高於昂貴價 462 元`;
       }
@@ -570,10 +570,10 @@ async function updateLivePrice_3037() {
     if (price && !isNaN(price)) {
       const el = document.getElementById('live-price');
       if (el) el.textContent = price.toLocaleString();
-      const pe = (price / 7.03).toFixed(1);
+      const pe = (price / 15.39).toFixed(1);
       const perEl = document.getElementById('live-per');
       if (perEl) {
-        perEl.textContent = 'PER ≈ ' + pe + 'x（TTM EPS 7.03元）';
+        perEl.textContent = 'PER ≈ ' + pe + 'x（TTM EPS 15.39元）';
         perEl.style.color = pe > 40 ? '#ef4444' : pe > 25 ? '#eab308' : '#22c55e';
       }
     }

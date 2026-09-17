@@ -69,7 +69,7 @@
   <div class="current-price-badge">
     <span style="color:#94a3b8;font-size:12px;">目前股價（即時）</span>
     <span style="color:#3b82f6;font-size:20px;font-weight:800;" id="live-price">載入中…</span>
-    <span style="color:#22c55e;font-size:12px;">PER ≈ 13.5x（TTM EPS 10.07元）歷史最低區</span>
+    <span style="color:#22c55e;font-size:12px;" id="live-per">PER ≈ 14.7x（TTM EPS 12.73元）接近歷史低檔</span>
   </div>
   <div class="note-box">
     📌 <strong>河流圖 EPS 說明</strong>：goodinfo.tw 的本益比換算價格，季末月（M03/M06/M09/M12）直接使用當季EPS；季中月（M01/M02等）採線性插值，與截圖換算欄數值完全對應。
@@ -81,8 +81,8 @@
 <!-- TAB 2: 三情境 -->
 <div id="tab-scenario" class="panel">
   <div class="grid2">
-    <div class="card"><h3>TTM EPS（最新）</h3><div class="val blue">10.07 元</div><div class="note">26M03–26M05 穩定，季末確認值</div></div>
-    <div class="card"><h3>目前本益比</h3><div class="val green">13.5x</div><div class="note">26M05 收盤135.5，歷史最低區</div></div>
+    <div class="card"><h3>TTM EPS（26Q2）</h3><div class="val blue">12.73 元</div><div class="note">Q2 單季 4.72元 YoY +115%｜前季 TTM 10.07</div></div>
+    <div class="card"><h3>目前本益比</h3><div class="val green">14.7x</div><div class="note">9/17 收 186.5 元（8月收 178）</div></div>
   </div>
 
   <div class="section-title">歷史 PER 區間（2023M06–2026M05 實際數據）</div>
@@ -90,7 +90,7 @@
     <div class="card">
       <h3>PER 低檔（便宜帶）</h3>
       <div class="val green">14x</div>
-      <div class="note">25M03: 14.27x ／ 25M04: 14.73x ／ 25M08: 14.29x<br>目前13.5x已低於歷史便宜帶</div>
+      <div class="note">25M03: 14.27x ／ 25M04: 14.73x ／ 25M08: 14.29x<br>目前 14.7x 接近歷史低檔（26M05 曾低至 13.5x）</div>
     </div>
     <div class="card">
       <h3>PER 高檔（昂貴帶）</h3>
@@ -103,18 +103,18 @@
   <div class="scenario-grid">
     <div class="scenario-card bear">
       <div class="sc-label">🐻 悲觀</div>
-      <div class="sc-price red">110–140</div>
-      <div class="sc-detail">EPS 9–10元<br>PER 12–14x<br>AI訂單縮減<br>股價維持低谷</div>
+      <div class="sc-price red">170–210</div>
+      <div class="sc-detail">EPS 14–15元<br>PER 12–14x<br>AI訂單縮減<br>股價維持低谷</div>
     </div>
     <div class="scenario-card base">
       <div class="sc-label">⚖️ 基本</div>
-      <div class="sc-price green">160–210</div>
-      <div class="sc-detail">EPS 10–12元<br>PER 16–18x<br>AI伺服器穩定放量<br>PER 均值回歸</div>
+      <div class="sc-price green">250–310</div>
+      <div class="sc-detail">EPS 16–17元<br>PER 16–18x<br>AI伺服器穩定放量<br>PER 均值回歸</div>
     </div>
     <div class="scenario-card bull">
       <div class="sc-label">🚀 樂觀</div>
-      <div class="sc-price" style="color:#60a5fa;">240–310</div>
-      <div class="sc-detail">EPS 12–13元<br>PER 20–26x<br>GB300大量出貨<br>份額超預期提升</div>
+      <div class="sc-price" style="color:#60a5fa;">360–490</div>
+      <div class="sc-detail">EPS 18–19元<br>PER 20–26x<br>GB300大量出貨<br>份額超預期提升</div>
     </div>
   </div>
 
@@ -122,23 +122,23 @@
     <h3>💰 2026 分批建倉買點建議</h3>
     <div class="buy-row">
       <span style="color:#86efac;font-size:13px;font-weight:600;">第一批（40%）</span>
-      <span style="color:#fde68a;font-size:14px;font-weight:700;">120–135 元</span>
-      <span class="badge badge-buy">積極進場 PER 12–13.5x（歷史最低）</span>
+      <span style="color:#fde68a;font-size:14px;font-weight:700;">127–165 元</span>
+      <span class="badge badge-buy">積極進場 PER 10–13x（便宜價 127 以下更佳）</span>
     </div>
     <div class="buy-row">
       <span style="color:#86efac;font-size:13px;font-weight:600;">第二批（40%）</span>
-      <span style="color:#fde68a;font-size:14px;font-weight:700;">135–155 元</span>
-      <span class="badge badge-buy">主力倉位 PER 13.5–15.4x</span>
+      <span style="color:#fde68a;font-size:14px;font-weight:700;">165–200 元</span>
+      <span class="badge badge-buy">主力倉位 PER 13–15.7x</span>
     </div>
     <div class="buy-row">
       <span style="color:#86efac;font-size:13px;font-weight:600;">第三批（20%）</span>
-      <span style="color:#fde68a;font-size:14px;font-weight:700;">155–229 元</span>
-      <span class="badge badge-watch">動能追加 PER 15–18x</span>
+      <span style="color:#fde68a;font-size:14px;font-weight:700;">200–229 元</span>
+      <span class="badge badge-watch">動能追加 PER 15.7–18x（合理價 229）</span>
     </div>
     <div class="buy-row" style="border-top:1px solid #166534;margin-top:8px;padding-top:10px;">
       <span style="color:#fca5a5;font-size:12px;">觀望/分批減倉</span>
-      <span style="color:#fca5a5;font-size:13px;font-weight:700;">262 元以上</span>
-      <span class="badge badge-avoid">PER > 26x（歷史高點）</span>
+      <span style="color:#fca5a5;font-size:13px;font-weight:700;">331 元以上</span>
+      <span class="badge badge-avoid">PER > 26x（歷史一般高點；總覽昂貴價 382 = 30x）</span>
     </div>
   </div>
 </div>
@@ -147,8 +147,8 @@
 <div id="tab-eps" class="panel">
   <canvas id="epsChart" height="300"></canvas>
   <div class="grid2">
-    <div class="card"><h3>TTM EPS 成長（近3年）</h3><div class="val green">+150%</div><div class="note">4.02元（23M06）→ 10.07元（26M05）</div></div>
-    <div class="card"><h3>近一年 EPS 年增率</h3><div class="val blue">+64.8%</div><div class="note">TTM 10.07 vs 去年同期 6.11元</div></div>
+    <div class="card"><h3>TTM EPS 成長（近3年）</h3><div class="val green">+217%</div><div class="note">4.02元（23M06）→ 12.73元（26Q2）</div></div>
+    <div class="card"><h3>近一年 EPS 年增率</h3><div class="val blue">+73%</div><div class="note">TTM 12.73（26Q2）vs 去年同期 7.37元</div></div>
   </div>
 
   <div class="section-title">逐月明細（EPS = goodinfo河流圖換算值，PER 綠色=低於14x）</div>
@@ -168,15 +168,15 @@
   <table>
     <thead><tr><th>指標</th><th>數值</th><th>評估</th></tr></thead>
     <tbody>
-      <tr><td>目前股價（2026/5/16）</td><td style="color:#3b82f6;font-weight:700;">135.5 元</td><td><span class="badge badge-buy">低於便宜帶14x</span></td></tr>
-      <tr><td>TTM EPS（季末確認）</td><td style="color:#22c55e;font-weight:700;">10.07 元</td><td><span class="badge badge-buy">連三個月穩定</span></td></tr>
-      <tr><td>目前本益比</td><td>13.5x</td><td><span class="badge badge-buy">歷史最低區</span></td></tr>
-      <tr><td>歷史 PER 低檔</td><td>~14x（25M03/25M04/25M08）</td><td><span class="badge badge-watch">目前已跌破便宜帶</span></td></tr>
-      <tr><td>歷史 PER 均值</td><td>~18x（2024年主要區間）</td><td><span class="badge badge-watch">均值回歸空間 +33%</span></td></tr>
+      <tr><td>目前股價（2026/9/17）</td><td style="color:#3b82f6;font-weight:700;">186.5 元</td><td><span class="badge badge-buy">低於合理價 229</span></td></tr>
+      <tr><td>TTM EPS（26Q2 季末）</td><td style="color:#22c55e;font-weight:700;">12.73 元</td><td><span class="badge badge-buy">前季 10.07 → +26%</span></td></tr>
+      <tr><td>目前本益比</td><td>14.7x</td><td><span class="badge badge-buy">接近歷史低檔</span></td></tr>
+      <tr><td>歷史 PER 低檔</td><td>~14x（25M03/25M04/25M08）</td><td><span class="badge badge-watch">26M05 曾跌破至 13.5x</span></td></tr>
+      <tr><td>歷史 PER 均值</td><td>~18x（2024年主要區間）</td><td><span class="badge badge-watch">均值回歸空間 +23%</span></td></tr>
       <tr><td>歷史 PER 高點</td><td>34.26x（23M07 異常排除）/ 一般 22–26x</td><td><span class="badge badge-avoid">泡沫區</span></td></tr>
-      <tr><td>便宜價（14x）</td><td style="color:#22c55e;font-weight:700;">141 元</td><td><span class="badge badge-buy">目前低於此價</span></td></tr>
-      <tr><td>合理價（18x）</td><td style="color:#3b82f6;font-weight:700;">229 元</td><td><span class="badge badge-watch">距今 +33%</span></td></tr>
-      <tr><td>昂貴價（26x）</td><td>262 元</td><td><span class="badge badge-avoid">距今 +93%</span></td></tr>
+      <tr><td>便宜價（10x，總覽/到價通知採用）</td><td style="color:#22c55e;font-weight:700;">127 元</td><td><span class="badge badge-buy">歷史低檔 14x 對應 178 元</span></td></tr>
+      <tr><td>合理價（18x）</td><td style="color:#3b82f6;font-weight:700;">229 元</td><td><span class="badge badge-watch">距今 +23%</span></td></tr>
+      <tr><td>昂貴價（30x，總覽/到價通知採用）</td><td>382 元</td><td><span class="badge badge-avoid">歷史一般高點 26x 對應 331 元</span></td></tr>
     </tbody>
   </table>
 
@@ -184,7 +184,7 @@
   <div class="grid2">
     <div class="card">
       <h3>🚀 利多</h3>
-      <div style="font-size:12px;line-height:1.9;color:#86efac;">✓ AI 伺服器（GB200/GB300）出貨放量<br>✓ Meta、Google、AWS 大客戶<br>✓ 目前 PER 創歷史新低，安全邊際極高<br>✓ EPS 近3年成長 150%<br>✓ ODM 彈性產能，快速切換機種<br>✓ 台灣+東南亞產線抗關稅</div>
+      <div style="font-size:12px;line-height:1.9;color:#86efac;">✓ AI 伺服器（GB200/GB300）出貨放量<br>✓ Meta、Google、AWS 大客戶<br>✓ 目前 PER 約 14.7x，接近歷史低檔，安全邊際佳<br>✓ EPS 近3年成長 150%<br>✓ ODM 彈性產能，快速切換機種<br>✓ 台灣+東南亞產線抗關稅</div>
     </div>
     <div class="card">
       <h3>⚠️ 風險</h3>
@@ -314,7 +314,7 @@
     <div class="card" style="text-align:center;">
       <h3>TTM P/E</h3>
       <div class="val" id="fund-pe-3231" style="color:#f8fafc;">…</div>
-      <div class="note" id="fund-pe-note-3231">TTM EPS 10.07 元</div>
+      <div class="note" id="fund-pe-note-3231">TTM EPS 12.73 元</div>
     </div>
     <div class="card" style="text-align:center;">
       <h3>前瞻 P/E</h3>
@@ -405,7 +405,7 @@ async function updateFundamentalPE_3231() {
     const data = JSON.parse(await res.text());
     const price = parseFloat(data.price);
     if (price && !isNaN(price)) {
-      const ttm = 10.07;
+      const ttm = 12.73;
       const pe = (price / ttm).toFixed(1);
       const el = document.getElementById('fund-pe-3231');
       const noteEl = document.getElementById('fund-pe-note-3231');
@@ -413,7 +413,7 @@ async function updateFundamentalPE_3231() {
         el.textContent = pe + 'x';
         el.style.color = pe > 40 ? '#ef4444' : pe > 25 ? '#eab308' : '#22c55e';
       }
-      if (noteEl) noteEl.textContent = '股價 ' + price.toLocaleString() + ' ｜ TTM EPS 10.07';
+      if (noteEl) noteEl.textContent = '股價 ' + price.toLocaleString() + ' ｜ TTM EPS 12.73';
     }
   } catch(e) {}
 }
@@ -511,10 +511,10 @@ async function updateLivePrice_3231() {
     if (price && !isNaN(price)) {
       const el = document.getElementById('live-price');
       if (el) el.textContent = price.toLocaleString();
-      const pe = (price / 10.07).toFixed(1);
+      const pe = (price / 12.73).toFixed(1);
       const perEl = document.getElementById('live-per');
       if (perEl) {
-        perEl.textContent = 'PER ≈ ' + pe + 'x（TTM EPS 10.07元）';
+        perEl.textContent = 'PER ≈ ' + pe + 'x（TTM EPS 12.73元）';
         perEl.style.color = pe > 40 ? '#ef4444' : pe > 25 ? '#eab308' : '#22c55e';
       }
     }

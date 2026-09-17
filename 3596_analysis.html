@@ -53,7 +53,7 @@
 <a href="index.html" class="back-btn">← 返回總覽</a>
 
 <h1>🌐 智易科技 (3596) — 2026 股價推算分析</h1>
-<p class="subtitle">本益比河流圖 ✦ 三情境估值 ✦ 分批買點建議 ✦ 更新時間：2026年8月9日</p>
+<p class="subtitle">本益比河流圖 ✦ 三情境估值 ✦ 分批買點建議 ✦ 更新時間：2026年9月17日</p>
 
 <div class="tabs">
   <button class="tab active" onclick="switchTab('river', this)">📈 PER 河流圖</button>
@@ -68,17 +68,17 @@
   <div class="current-price-badge">
     <span style="color:#94a3b8;font-size:12px;">目前股價（即時）</span>
     <span style="color:#3b82f6;font-size:20px;font-weight:800;" id="live-price">載入中…</span>
-    <span style="color:#22c55e;font-size:12px;">PER ≈ 14.53x（TTM EPS 12.63元）合理偏低區</span>
+    <span style="color:#22c55e;font-size:12px;" id="live-per">PER ≈ 11.8x（TTM EPS 13.00元）低於合理價</span>
   </div>
   <canvas id="riverChart" height="340"></canvas>
-  <p style="font-size:11px;color:#475569;margin-top:8px;text-align:center;">* 2026Q2後為預估數值（年化EPS約13–14元），河流帶代表不同本益比倍數估值</p>
+  <p style="font-size:11px;color:#475569;margin-top:8px;text-align:center;">* 26M06 起採 26Q2 實際 TTM 13.00元，26M09E 起為預估；河流帶代表不同本益比倍數估值</p>
 </div>
 
 <!-- TAB 2: 三情境 -->
 <div id="tab-scenario" class="panel">
   <div class="grid2">
     <div class="card"><h3>2025 全年 EPS（實際）</h3><div class="val blue">12.63 元</div><div class="note">TTM EPS（近四季合計）</div></div>
-    <div class="card"><h3>2026 EPS 預估</h3><div class="val green">13–15 元</div><div class="note">依 AI 網通需求強度而定</div></div>
+    <div class="card"><h3>26Q2 TTM EPS</h3><div class="val green">13.00 元</div><div class="note">Q2 單季 3.38元 YoY +12%｜2026E 約 13–14 元</div></div>
   </div>
   <div class="section-title">2026 全年三情境 EPS 與股價推算</div>
   <div class="scenario-grid">
@@ -102,25 +102,25 @@
     <h3>💰 2026 分批建倉買點建議</h3>
     <div class="buy-row">
       <span style="color:#86efac;font-size:13px;font-weight:600;">第一批（40%）</span>
-      <span style="color:#fde68a;font-size:14px;font-weight:700;">176 – 185 元</span>
-      <span class="badge badge-buy">合理價附近 PER 13.9–14.6x</span>
+      <span style="color:#fde68a;font-size:14px;font-weight:700;">165 – 182 元</span>
+      <span class="badge badge-buy">合理價附近 PER 12.7–14x</span>
     </div>
     <div class="buy-row">
       <span style="color:#86efac;font-size:13px;font-weight:600;">第二批（40%）</span>
-      <span style="color:#fde68a;font-size:14px;font-weight:700;">155 – 165 元</span>
-      <span class="badge badge-buy">低於合理價 PER 12.3–13.1x</span>
+      <span style="color:#fde68a;font-size:14px;font-weight:700;">145 – 165 元</span>
+      <span class="badge badge-buy">低於合理價 PER 11.2–12.7x</span>
     </div>
     <div class="buy-row">
       <span style="color:#86efac;font-size:13px;font-weight:600;">第三批（20%）</span>
-      <span style="color:#fde68a;font-size:14px;font-weight:700;">125 – 135 元</span>
-      <span class="badge badge-watch">底部佈局 PER 9.9–10.7x</span>
+      <span style="color:#fde68a;font-size:14px;font-weight:700;">130 – 145 元</span>
+      <span class="badge badge-watch">底部佈局 PER 10–11.2x</span>
     </div>
     <div class="buy-row" style="border-top:1px solid #166534;margin-top:8px;padding-top:10px;">
       <span style="color:#fca5a5;font-size:12px;">觀望/分批減倉</span>
-      <span style="color:#fca5a5;font-size:13px;font-weight:700;">227 元以上</span>
+      <span style="color:#fca5a5;font-size:13px;font-weight:700;">234 元以上</span>
       <span class="badge badge-avoid">PER > 18x</span>
     </div>
-    <p style="font-size:11px;color:#22c55e;margin-top:10px;">💡 目前股價 183.5元 落在第一批合理價附近，可考慮分批佈局！</p>
+    <p style="font-size:11px;color:#22c55e;margin-top:10px;">💡 目前股價 154元（9/17）落在第二批區間，PER 約 11.8x、低於合理價 182 元。</p>
   </div>
 </div>
 
@@ -128,8 +128,8 @@
 <div id="tab-eps" class="panel">
   <canvas id="epsChart" height="300"></canvas>
   <div class="grid2">
-    <div class="card"><h3>3年EPS CAGR（2023–2026）</h3><div class="val green">+7.1%</div><div class="note">從 10.28元 → 12.63元，穩健成長</div></div>
-    <div class="card"><h3>YoY 增長（26M05 vs 25M05）</h3><div class="val blue">+11.9%</div><div class="note">TTM EPS 12.63元 vs 11.28元</div></div>
+    <div class="card"><h3>3年EPS CAGR（2023–2026）</h3><div class="val green">+7.1%</div><div class="note">從 10.28元 → 13.00元（26Q2），穩健成長</div></div>
+    <div class="card"><h3>YoY 增長（26Q2 vs 25Q2）</h3><div class="val blue">+9.2%</div><div class="note">TTM EPS 13.00元 vs 11.90元</div></div>
   </div>
 </div>
 
@@ -139,16 +139,16 @@
   <table>
     <thead><tr><th>指標</th><th>數值</th><th>評估</th></tr></thead>
     <tbody>
-      <tr><td>目前股價（2026/5/16）</td><td style="color:#22c55e;font-weight:700;">183.5 元</td><td><span class="badge badge-buy">合理偏低</span></td></tr>
-      <tr><td>TTM EPS（近四季）</td><td style="color:#3b82f6;font-weight:700;">12.63 元</td><td><span class="badge badge-buy">持續成長</span></td></tr>
-      <tr><td>EPS 三年成長</td><td>+22.9%（23M06→26M05）</td><td><span class="badge badge-buy">穩健</span></td></tr>
-      <tr><td>目前本益比</td><td style="color:#22c55e;font-weight:700;">14.53x（合理偏低）</td><td><span class="badge badge-buy">吸引</span></td></tr>
+      <tr><td>目前股價（2026/9/17）</td><td style="color:#22c55e;font-weight:700;">154 元</td><td><span class="badge badge-buy">低於合理價</span></td></tr>
+      <tr><td>TTM EPS（26Q2）</td><td style="color:#3b82f6;font-weight:700;">13.00 元</td><td><span class="badge badge-buy">持續成長</span></td></tr>
+      <tr><td>EPS 三年成長</td><td>+26.5%（23M06→26M06）</td><td><span class="badge badge-buy">穩健</span></td></tr>
+      <tr><td>目前本益比</td><td style="color:#22c55e;font-weight:700;">11.8x（低於合理 14x）</td><td><span class="badge badge-buy">吸引</span></td></tr>
       <tr><td>便宜價（10x）</td><td>130 元</td><td><span class="badge badge-watch">參考</span></td></tr>
-      <tr><td>合理價（14x）</td><td style="color:#22c55e;font-weight:700;">176.8 元</td><td><span class="badge badge-buy">基準</span></td></tr>
-      <tr><td>偏貴價（18x）</td><td style="color:#eab308;font-weight:700;">227.3 元</td><td><span class="badge badge-watch">警戒</span></td></tr>
-      <tr><td>昂貴價（22x）</td><td style="color:#ef4444;font-weight:700;">277.9 元</td><td><span class="badge badge-avoid">高估</span></td></tr>
+      <tr><td>合理價（14x）</td><td style="color:#22c55e;font-weight:700;">182 元</td><td><span class="badge badge-buy">基準</span></td></tr>
+      <tr><td>偏貴價（18x）</td><td style="color:#eab308;font-weight:700;">234 元</td><td><span class="badge badge-watch">警戒</span></td></tr>
+      <tr><td>昂貴價（22x）</td><td style="color:#ef4444;font-weight:700;">286 元</td><td><span class="badge badge-avoid">高估</span></td></tr>
       <tr><td>歷史PER區間（2023–2026）</td><td>低11.96x / 均~15x / 高20.24x</td><td><span class="badge badge-watch">參考</span></td></tr>
-      <tr><td>26M03 低點</td><td>152元（PER 12x）恐慌殺盤後已反彈</td><td><span class="badge badge-buy">支撐確認</span></td></tr>
+      <tr><td>26M03 低點</td><td>152元（PER 12x）；9/17 回測至 154 元</td><td><span class="badge badge-watch">測試前低支撐</span></td></tr>
     </tbody>
   </table>
   <div class="section-title" style="margin-top:20px;">⚡ 催化劑 vs 風險</div>
@@ -156,11 +156,11 @@
     <div class="card">
       <h3>🚀 利多</h3>
       <div style="font-size:12px;line-height:1.9;color:#86efac;">
-        ✓ EPS 三年穩定成長 +22.9%<br>
+        ✓ EPS 三年穩定成長 +26.5%<br>
         ✓ AI 網通設備需求持續<br>
         ✓ 400G→800G 世代升級受惠<br>
-        ✓ 目前 PER 14.5x 低於均值 15x<br>
-        ✓ 26M03 恐慌殺盤後已確認支撐<br>
+        ✓ 目前 PER 11.8x 明顯低於均值 15x<br>
+        ✓ 股價回測 26M03 低點 152 元附近<br>
         ✓ TTM EPS 持續上修中
       </div>
     </div>
@@ -299,7 +299,7 @@
     <div class="card" style="text-align:center;">
       <h3>TTM P/E</h3>
       <div class="val" id="fund-pe-3596" style="color:#f8fafc;">…</div>
-      <div class="note" id="fund-pe-note-3596">TTM EPS 12.63 元</div>
+      <div class="note" id="fund-pe-note-3596">TTM EPS 13.00 元</div>
     </div>
     <div class="card" style="text-align:center;">
       <h3>前瞻 P/E</h3>
@@ -330,9 +330,9 @@ function switchTab(id, btn) {
   if (id === 'eps' && !window.epsDrawn) drawEPS();
 }
 
-const quarters = ['23M06','23M07','23M08','23M09','23M10','23M11','23M12','24M01','24M02','24M03','24M04','24M05','24M06','24M07','24M08','24M09','24M10','24M11','25M01','25M02','25M03','25M04','25M05','25M06','25M07','25M08','25M09','25M10','25M11','25M12','26M01','26M02','26M03','26M04','26M05','26M06','26M09E','26M12E'];
-const ttmEPS =   [10.28,10.82,10.82,10.82,10.98,10.98,10.98,11.54,11.54,11.54,11.59,11.59,11.59,11.47,11.47,11.47,11.28,11.28,11.54,11.54,11.54,11.9,11.9,11.9,12.33,12.33,12.33,12.6,12.6,12.6,12.63,12.63,12.63,12.63,12.63,13.0,13.5,14.0];
-const closePx =  [123,145,148.5,161.5,154,163.5,170.5,173,184,191.5,173,167,162,147,146.5,142,158,165.5,179.5,189,225,236,214,200.5,222.5,237,219.5,201.5,183,174,179.5,197,152,159,187.5,192,null,null];
+const quarters = ['23M06','23M07','23M08','23M09','23M10','23M11','23M12','24M01','24M02','24M03','24M04','24M05','24M06','24M07','24M08','24M09','24M10','24M11','25M01','25M02','25M03','25M04','25M05','25M06','25M07','25M08','25M09','25M10','25M11','25M12','26M01','26M02','26M03','26M04','26M05','26M06','26M07','26M08','26M09E','26M12E'];
+const ttmEPS =   [10.28,10.82,10.82,10.82,10.98,10.98,10.98,11.54,11.54,11.54,11.59,11.59,11.59,11.47,11.47,11.47,11.28,11.28,11.54,11.54,11.54,11.9,11.9,11.9,12.33,12.33,12.33,12.6,12.6,12.6,12.63,12.63,12.63,12.63,12.63,13.0,13.0,13.0,13.5,14.0];
+const closePx =  [123,145,148.5,161.5,154,163.5,170.5,173,184,191.5,173,167,162,147,146.5,142,158,165.5,179.5,189,225,236,214,200.5,222.5,237,219.5,201.5,183,174,179.5,197,152,159,187.5,192,172.5,158,null,null];
 
 function makeRiverBand(epsArr, mult) { return epsArr.map(e => +(e * mult).toFixed(1)); }
 
@@ -343,7 +343,7 @@ async function updateFundamentalPE_3596() {
     const data = JSON.parse(await res.text());
     const price = parseFloat(data.price);
     if (price && !isNaN(price)) {
-      const ttm = 12.63;
+      const ttm = 13.0;
       const pe = (price / ttm).toFixed(1);
       const el = document.getElementById('fund-pe-3596');
       const noteEl = document.getElementById('fund-pe-note-3596');
@@ -351,7 +351,7 @@ async function updateFundamentalPE_3596() {
         el.textContent = pe + 'x';
         el.style.color = pe > 40 ? '#ef4444' : pe > 25 ? '#eab308' : '#22c55e';
       }
-      if (noteEl) noteEl.textContent = '股價 ' + price.toLocaleString() + ' ｜ TTM EPS 12.63';
+      if (noteEl) noteEl.textContent = '股價 ' + price.toLocaleString() + ' ｜ TTM EPS 13.00';
     }
   } catch(e) {}
 }
@@ -426,7 +426,7 @@ async function updateLivePrice_3596() {
       const pe = (price / 12.63).toFixed(1);
       const perEl = document.getElementById('live-per');
       if (perEl) {
-        perEl.textContent = 'PER ≈ ' + pe + 'x（TTM EPS 12.63元）';
+        perEl.textContent = 'PER ≈ ' + pe + 'x（TTM EPS 13.00元）';
         perEl.style.color = pe > 40 ? '#ef4444' : pe > 25 ? '#eab308' : '#22c55e';
       }
     }

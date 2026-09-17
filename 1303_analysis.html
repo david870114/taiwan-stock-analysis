@@ -65,7 +65,7 @@
 <!-- TAB 1: PER River -->
 <div id="tab-river" class="panel active">
   <div class="warn-box">
-    ⚠️ <strong>景氣循環股注意事項：</strong>南亞為石化與電子材料景氣循環股，EPS 與 PER 波動極大（EPS 低谷時 PER 可達 200x 以上，失去參考意義）。目前 EPS 自 25Q3 谷底（-0.41元 TTM）快速回升，26Q1 TTM EPS 已達 2.31元，顯示景氣復甦。河流圖僅在 EPS 為正時有意義。
+    ⚠️ <strong>景氣循環股注意事項：</strong>南亞為石化與電子材料景氣循環股，EPS 與 PER 波動極大（EPS 低谷時 PER 可達 200x 以上，失去參考意義）。EPS 自 25Q3 谷底（-0.41元 TTM）快速回升，26Q1 TTM 2.31元 → 26Q2 TTM 6.20元（單季 3.37元，季增 +87%）。<br>📌 <strong>2026/09 更新：</strong>9/17 股價 236 元（8月收 242.5 元，單月 +52%），TTM PER 約 38x。依循環股檢核規則（單季 EPS 變動 &gt; 50%），估值帶<strong>維持以 26Q1 EPS 2.31 元推算（58 / 81 / 116 元）</strong>，不以高峰 EPS 機械式上調；現價已約為昂貴價 2 倍。河流圖僅在 EPS 為正時有意義。
   </div>
   <div class="current-price-badge">
     <span style="color:#94a3b8;font-size:12px;">目前股價（即時）</span>
@@ -311,8 +311,8 @@
   </div>
   <div style="background:#1e2535;border:1px solid #2d3748;border-radius:10px;padding:12px;font-size:11px;color:#64748b;line-height:1.8;">
     📌 <strong style="color:#94a3b8;">估值解讀：</strong>
-    目前 PER（約 37x）反映市場對 EPS 持續回升的期待，但仍屬合理偏貴區間。南亞歷史 PER 變化極大，景氣高峰時 PER 可壓縮至 20–30x（EPS 高），谷底時失真達 200x 以上。
-    目前 EPS 從谷底 (-0.41元) 快速回升至 2.31元，若 ABF 超級週期與石化復甦同步發酵，EPS 有望挑戰 3–5元，估值吸引力將顯著提升。
+    目前 TTM PER 約 38x（236 元 ÷ 26Q2 TTM 6.20 元）反映市場對 EPS 持續回升的期待；以估值帶（26Q1 基準）看，現價已遠超昂貴價 116 元。南亞歷史 PER 變化極大，景氣高峰時 PER 可壓縮至 20–30x（EPS 高），谷底時失真達 200x 以上。
+    EPS 從谷底 (-0.41元) 回升至 26Q2 TTM 6.20 元，已超越先前 3–5 元的預期；需觀察 26Q3 是否延續，若確認為常態獲利，下次更新再評估上調估值帶。
     P/B ~1.2x 偏低，反映景氣低迷期資產被低估，若景氣大幅回升，P/B 有修復空間。
   </div>
 
@@ -416,7 +416,7 @@ window.addEventListener('DOMContentLoaded', () => {
     const epsStr = d.eps !== null ? d.eps.toFixed(3) : '—';
     const perStr = d.per !== null ? d.per.toFixed(1) : '—';
     const e = d.eps;
-    const highlight = d.m === '26M03' || d.m === '26M04' || d.m === '26M05' ? 'background:#0f2a1e;' : '';
+    const highlight = d.m === '26M06' || d.m === '26M07' || d.m === '26M08' ? 'background:#0f2a1e;' : '';
     tbody.innerHTML += `<tr style="${highlight}">
       <td>${d.m}</td>
       <td>${d.px}</td>
@@ -507,8 +507,8 @@ window.addEventListener('load', () => {
 function drawEPS() {
   window.epsDrawn = true;
   const ctx2 = document.getElementById('epsChart').getContext('2d');
-  const years = ['2019','2020','2021','2022','2023','2024','2025','2026Q1(TTM)'];
-  const eps   = [4.2, 2.1, 6.8, 5.3, 0.75, 0.42, -0.03, 2.31];
+  const years = ['2019','2020','2021','2022','2023','2024','2025','2026Q1(TTM)','2026Q2(TTM)'];
+  const eps   = [4.2, 2.1, 6.8, 5.3, 0.75, 0.42, -0.03, 2.31, 6.20];
   new Chart(ctx2, {
     type: 'bar',
     data: {

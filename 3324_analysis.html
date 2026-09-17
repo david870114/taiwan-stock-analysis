@@ -69,7 +69,7 @@
   <div class="current-price-badge">
     <span style="color:#94a3b8;font-size:12px;">目前股價（即時）</span>
     <span style="color:#3b82f6;font-size:20px;font-weight:800;" id="live-price">載入中…</span>
-    <span style="color:#eab308;font-size:12px;">PER ≈ 28.6x（TTM EPS 34.94元）合理偏高區間</span>
+    <span style="color:#eab308;font-size:12px;" id="live-per">PER ≈ 31.8x（TTM EPS 43.54元）合理偏高區間</span>
   </div>
   <canvas id="riverChart" height="340"></canvas>
   <p style="font-size:11px;color:#475569;margin-top:8px;text-align:center;">* 河流帶代表不同本益比倍數估值，白線為實際/目前股價</p>
@@ -79,46 +79,46 @@
 <div id="tab-scenario" class="panel">
   <div class="grid2">
     <div class="card"><h3>2025 全年 EPS（實際）</h3><div class="val blue">28.26 元</div><div class="note">YoY +31% ｜ 2024年: 21.23元</div></div>
-    <div class="card"><h3>2026 Q1 TTM EPS（最新）</h3><div class="val green">34.94 元</div><div class="note">26Q1季末，年化仍強勁成長</div></div>
+    <div class="card"><h3>2026 Q2 TTM EPS（最新）</h3><div class="val green">43.54 元</div><div class="note">Q2 單季 10.41元（Q1 12.61，季減）｜前季 TTM 34.94</div></div>
   </div>
   <div class="section-title">2026 全年三情境 EPS 與股價推算</div>
   <div class="scenario-grid">
     <div class="scenario-card bear">
       <div class="sc-label">🐻 悲觀</div>
-      <div class="sc-price red">560–700</div>
-      <div class="sc-detail">EPS 28–35元<br>PER 18–22x<br>液冷需求放緩<br>大盤系統性下跌</div>
+      <div class="sc-price red">720–970</div>
+      <div class="sc-detail">EPS 40–44元<br>PER 18–22x<br>液冷需求放緩<br>大盤系統性下跌</div>
     </div>
     <div class="scenario-card base">
       <div class="sc-label">⚖️ 基本</div>
-      <div class="sc-price green">840–1,120</div>
-      <div class="sc-detail">EPS 35–42元<br>PER 24–28x<br>AI伺服器液冷持續放量<br>毛利率維持高位</div>
+      <div class="sc-price green">1,060–1,340</div>
+      <div class="sc-detail">EPS 44–48元<br>PER 24–28x<br>AI伺服器液冷持續放量<br>毛利率維持高位</div>
     </div>
     <div class="scenario-card bull">
       <div class="sc-label">🚀 樂觀</div>
-      <div class="sc-price" style="color:#60a5fa;">1,200–1,600</div>
-      <div class="sc-detail">EPS 42–50元<br>PER 28–35x<br>冷板式滲透率大幅提升<br>浸沒式液冷新訂單</div>
+      <div class="sc-price" style="color:#60a5fa;">1,400–1,960</div>
+      <div class="sc-detail">EPS 50–56元<br>PER 28–35x<br>冷板式滲透率大幅提升<br>浸沒式液冷新訂單</div>
     </div>
   </div>
   <div class="buy-signal">
     <h3>💰 2026 分批建倉買點建議（基本～樂觀情境）</h3>
     <div class="buy-row">
       <span style="color:#86efac;font-size:13px;font-weight:600;">第一批（30%）</span>
-      <span style="color:#fde68a;font-size:14px;font-weight:700;">700–840 元</span>
+      <span style="color:#fde68a;font-size:14px;font-weight:700;">871–1,045 元</span>
       <span class="badge badge-buy">積極進場 PER 20–24x</span>
     </div>
     <div class="buy-row">
       <span style="color:#86efac;font-size:13px;font-weight:600;">第二批（40%）</span>
-      <span style="color:#fde68a;font-size:14px;font-weight:700;">840–980 元</span>
+      <span style="color:#fde68a;font-size:14px;font-weight:700;">1,045–1,219 元</span>
       <span class="badge badge-buy">主力倉位 PER 24–28x</span>
     </div>
     <div class="buy-row">
       <span style="color:#86efac;font-size:13px;font-weight:600;">第三批（30%）</span>
-      <span style="color:#fde68a;font-size:14px;font-weight:700;">980–1,100 元</span>
+      <span style="color:#fde68a;font-size:14px;font-weight:700;">1,219–1,390 元</span>
       <span class="badge badge-watch">動能追加 PER 28–32x</span>
     </div>
     <div class="buy-row" style="border-top:1px solid #166534;margin-top:8px;padding-top:10px;">
       <span style="color:#fca5a5;font-size:12px;">觀望/分批減倉</span>
-      <span style="color:#fca5a5;font-size:13px;font-weight:700;">1,260 元以上</span>
+      <span style="color:#fca5a5;font-size:13px;font-weight:700;">1,567 元以上</span>
       <span class="badge badge-avoid">PER > 36x</span>
     </div>
   </div>
@@ -129,7 +129,7 @@
   <canvas id="epsChart" height="260"></canvas>
   <div class="grid2" style="margin-top:16px;">
     <div class="card"><h3>5年EPS CAGR（2020–2025）</h3><div class="val green">強勁成長</div><div class="note">2024: 21.23元 → 2025: 28.26元（+33%）</div></div>
-    <div class="card"><h3>2026Q1 TTM EPS</h3><div class="val blue">34.94 元</div><div class="note">YoY 持續上行，液冷滲透率提升驅動</div></div>
+    <div class="card"><h3>2026Q2 TTM EPS</h3><div class="val blue">43.54 元</div><div class="note">上半年 23.02 元，2026E 約 44–48 元</div></div>
   </div>
 
   <div class="section-title" style="margin-top:20px;">📋 逐月明細表（供截圖驗證）</div>
@@ -149,13 +149,13 @@
   <table>
     <thead><tr><th>指標</th><th>數值</th><th>評估</th></tr></thead>
     <tbody>
-      <tr><td>目前股價（2026/5/21）</td><td style="color:#3b82f6;font-weight:700;">1,000 元</td><td><span class="badge badge-watch">合理偏高</span></td></tr>
+      <tr><td>目前股價（2026/9/17）</td><td style="color:#3b82f6;font-weight:700;">1,385 元</td><td><span class="badge badge-watch">合理偏高</span></td></tr>
       <tr><td>2024 全年 EPS</td><td style="color:#22c55e;font-weight:700;">21.23 元</td><td><span class="badge badge-buy">穩健</span></td></tr>
       <tr><td>2025 全年 EPS</td><td style="color:#22c55e;font-weight:700;">28.26 元（年增+33%）</td><td><span class="badge badge-buy">強勁</span></td></tr>
-      <tr><td>2026 Q1 TTM EPS</td><td style="color:#22c55e;font-weight:700;">34.94 元</td><td><span class="badge badge-buy">持續上行</span></td></tr>
-      <tr><td>目前本益比（26M05）</td><td>~28.6x</td><td><span class="badge badge-watch">合理偏高區</span></td></tr>
+      <tr><td>2026 Q2 TTM EPS</td><td style="color:#22c55e;font-weight:700;">43.54 元（26Q1 34.94）</td><td><span class="badge badge-buy">持續上行</span></td></tr>
+      <tr><td>目前本益比（26/9/17）</td><td>~31.8x</td><td><span class="badge badge-watch">合理偏高區</span></td></tr>
       <tr><td>歷史PER區間</td><td>低20x / 均28x / 高36x</td><td><span class="badge badge-watch">正常範圍</span></td></tr>
-      <tr><td>便宜價 / 合理價 / 昂貴價</td><td style="color:#3b82f6;font-weight:700;">871 / 1,219 / 1,567 元</td><td><span class="badge badge-watch">目前在合理～昂貴之間</span></td></tr>
+      <tr><td>便宜價 / 合理價 / 昂貴價</td><td style="color:#3b82f6;font-weight:700;">871 / 1,219 / 1,567 元</td><td><span class="badge badge-watch">目前 1,385 在合理～昂貴之間</span></td></tr>
       <tr><td>主要產品</td><td>液冷散熱模組、冷板式、浸沒式</td><td><span class="badge badge-buy">AI伺服器核心受益</span></td></tr>
     </tbody>
   </table>
@@ -167,7 +167,7 @@
     </div>
     <div class="card">
       <h3>⚠️ 風險</h3>
-      <div style="font-size:12px;line-height:1.9;color:#fca5a5;">✗ PER 28x，短期回調空間仍大<br>✗ 美中關稅不確定性<br>✗ AI CSP 資本支出若縮減<br>✗ 競爭者（奇鋐、台灣散熱廠）追趕<br>✗ 銅/鋁原料成本上漲壓力<br>✗ 大盤系統性修正</div>
+      <div style="font-size:12px;line-height:1.9;color:#fca5a5;">✗ PER 32x，8月單月 +38.6% 後短期回調空間仍大<br>✗ 美中關稅不確定性<br>✗ AI CSP 資本支出若縮減<br>✗ 競爭者（奇鋐、台灣散熱廠）追趕<br>✗ 銅/鋁原料成本上漲壓力<br>✗ 大盤系統性修正</div>
     </div>
   </div>
   <p style="font-size:10px;color:#475569;margin-top:14px;line-height:1.6;">⚠️ 本分析僅供參考，不構成投資建議。股市有風險，投資前請自行判斷。</p>
@@ -293,7 +293,7 @@
     <div class="card" style="text-align:center;">
       <h3>TTM P/E</h3>
       <div class="val" id="fund-pe-3324" style="color:#f8fafc;">…</div>
-      <div class="note" id="fund-pe-note-3324">TTM EPS 34.94 元</div>
+      <div class="note" id="fund-pe-note-3324">TTM EPS 43.54 元</div>
     </div>
     <div class="card" style="text-align:center;">
       <h3>前瞻 P/E</h3>
@@ -380,7 +380,7 @@ async function updateFundamentalPE_3324() {
     const data = JSON.parse(await res.text());
     const price = parseFloat(data.price);
     if (price && !isNaN(price)) {
-      const ttm = 34.94;
+      const ttm = 43.54;
       const pe = (price / ttm).toFixed(1);
       const el = document.getElementById('fund-pe-3324');
       const noteEl = document.getElementById('fund-pe-note-3324');
@@ -388,7 +388,7 @@ async function updateFundamentalPE_3324() {
         el.textContent = pe + 'x';
         el.style.color = pe > 40 ? '#ef4444' : pe > 25 ? '#eab308' : '#22c55e';
       }
-      if (noteEl) noteEl.textContent = '股價 ' + price.toLocaleString() + ' ｜ TTM EPS 34.94';
+      if (noteEl) noteEl.textContent = '股價 ' + price.toLocaleString() + ' ｜ TTM EPS 43.54';
     }
   } catch(e) {}
 }
@@ -445,7 +445,7 @@ function drawEPS() {
   window.epsDrawn = true;
   const ctx2 = document.getElementById('epsChart').getContext('2d');
   const years = ['2021','2022','2023','2024','2025','2026E'];
-  const epsY  = [null, null, 14.28, 21.23, 28.26, 42];
+  const epsY  = [null, null, 14.28, 21.23, 28.26, 46];
   new Chart(ctx2, {
     type: 'bar',
     data: {
@@ -477,10 +477,10 @@ async function updateLivePrice_3324() {
     if (price && !isNaN(price)) {
       const el = document.getElementById('live-price');
       if (el) el.textContent = price.toLocaleString();
-      const pe = (price / 34.94).toFixed(1);
+      const pe = (price / 43.54).toFixed(1);
       const perEl = document.getElementById('live-per');
       if (perEl) {
-        perEl.textContent = 'PER ≈ ' + pe + 'x（TTM EPS 34.94元）';
+        perEl.textContent = 'PER ≈ ' + pe + 'x（TTM EPS 43.54元）';
         perEl.style.color = pe > 40 ? '#ef4444' : pe > 25 ? '#eab308' : '#22c55e';
       }
     }
