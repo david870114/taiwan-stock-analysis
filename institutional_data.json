@@ -2,9 +2,9 @@
   "lastUpdated": "2026/09/17",
   "market": {
     "foreign": 121.85,
-    "investment_trust": 77.14,
+    "investment_trust": 117.03,
     "dealer": 15.78,
-    "total": 214.77,
+    "total": 254.66,
     "date": "2026/09/17",
     "unit": "億元"
   },
@@ -55,6 +55,17 @@
       "totalNet": 46002
     },
     {
+      "code": "2303",
+      "name": "聯電",
+      "price": 147.5,
+      "change": "+5.5",
+      "changePct": "+3.87",
+      "foreignNet": 8952,
+      "trustNet": 27909,
+      "dealerNet": 3569,
+      "totalNet": 40430
+    },
+    {
       "code": "6770",
       "name": "力積電",
       "price": 71.2,
@@ -64,17 +75,6 @@
       "trustNet": -13,
       "dealerNet": 3410,
       "totalNet": 36050
-    },
-    {
-      "code": "2303",
-      "name": "聯電",
-      "price": 147.5,
-      "change": "+5.5",
-      "changePct": "+3.87",
-      "foreignNet": 8952,
-      "trustNet": 19883,
-      "dealerNet": 3569,
-      "totalNet": 32404
     },
     {
       "code": "2834",
