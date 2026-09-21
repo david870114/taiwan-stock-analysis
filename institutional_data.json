@@ -1,11 +1,11 @@
 {
-  "lastUpdated": "2026/09/18",
+  "lastUpdated": "2026/09/21",
   "market": {
-    "foreign": 869.94,
-    "investment_trust": 81.53,
-    "dealer": 243.04,
-    "total": 1194.51,
-    "date": "2026/09/18",
+    "foreign": 204.79,
+    "investment_trust": 45.96,
+    "dealer": 227.3,
+    "total": 478.05,
+    "date": "2026/09/21",
     "unit": "億元"
   },
   "marketUnit": "億元",
@@ -13,170 +13,181 @@
     {
       "code": "00403A",
       "name": "主動統一升級50",
-      "price": 10.33,
-      "change": "+0.32",
-      "changePct": "+3.20",
-      "foreignNet": 102802,
+      "price": 10.49,
+      "change": "+0.16",
+      "changePct": "+1.55",
+      "foreignNet": 148503,
       "trustNet": 0,
-      "dealerNet": 155587,
-      "totalNet": 258389
+      "dealerNet": 150973,
+      "totalNet": 299475
+    },
+    {
+      "code": "2409",
+      "name": "友達",
+      "price": 33.35,
+      "change": "+3",
+      "changePct": "+9.88",
+      "foreignNet": 235893,
+      "trustNet": -27,
+      "dealerNet": 22413,
+      "totalNet": 258279
     },
     {
       "code": "00685L",
       "name": "群益臺灣加權正2",
-      "price": 12.42,
-      "change": "+0.44",
-      "changePct": "+3.67",
-      "foreignNet": 3012,
+      "price": 12.71,
+      "change": "+0.29",
+      "changePct": "+2.33",
+      "foreignNet": 2632,
       "trustNet": 0,
-      "dealerNet": 126161,
-      "totalNet": 129173
+      "dealerNet": 134263,
+      "totalNet": 136896
     },
     {
       "code": "00631L",
       "name": "元大台灣50正2",
-      "price": 37.65,
-      "change": "+1.24",
-      "changePct": "+3.41",
-      "foreignNet": 24725,
+      "price": 38.45,
+      "change": "+0.8",
+      "changePct": "+2.12",
+      "foreignNet": 17020,
       "trustNet": 0,
-      "dealerNet": 71699,
-      "totalNet": 96424
-    },
-    {
-      "code": "6770",
-      "name": "力積電",
-      "price": 74,
-      "change": "+2.8",
-      "changePct": "+3.93",
-      "foreignNet": 77685,
-      "trustNet": 3803,
-      "dealerNet": 7791,
-      "totalNet": 89280
+      "dealerNet": 106798,
+      "totalNet": 123818
     },
     {
       "code": "00981A",
       "name": "主動統一台股增長",
-      "price": 29.07,
-      "change": "+0.94",
-      "changePct": "+3.34",
-      "foreignNet": 54654,
+      "price": 29.57,
+      "change": "+0.5",
+      "changePct": "+1.72",
+      "foreignNet": 54185,
       "trustNet": 0,
-      "dealerNet": 25562,
-      "totalNet": 80216
+      "dealerNet": 13984,
+      "totalNet": 68169
+    },
+    {
+      "code": "009816",
+      "name": "凱基台灣TOP50",
+      "price": 16.47,
+      "change": "+0.22",
+      "changePct": "+1.35",
+      "foreignNet": 7762,
+      "trustNet": 0,
+      "dealerNet": 33438,
+      "totalNet": 41200
     },
     {
       "code": "00405A",
       "name": "主動富邦台灣龍耀",
-      "price": 8.87,
-      "change": "+0.44",
-      "changePct": "+5.22",
-      "foreignNet": 27276,
+      "price": 8.97,
+      "change": "+0.1",
+      "changePct": "+1.13",
+      "foreignNet": 178,
       "trustNet": 0,
-      "dealerNet": 34189,
-      "totalNet": 61465
+      "dealerNet": 39781,
+      "totalNet": 39959
     },
     {
-      "code": "2344",
-      "name": "華邦電",
-      "price": 179.5,
-      "change": "+9.5",
-      "changePct": "+5.59",
-      "foreignNet": 42774,
-      "trustNet": -209,
-      "dealerNet": 3490,
-      "totalNet": 46055
-    },
-    {
-      "code": "2303",
-      "name": "聯電",
-      "price": 156,
-      "change": "+8.5",
-      "changePct": "+5.76",
-      "foreignNet": 28366,
-      "trustNet": 13630,
-      "dealerNet": 3574,
-      "totalNet": 45570
-    },
-    {
-      "code": "2408",
-      "name": "南亞科",
-      "price": 525,
-      "change": "+37",
-      "changePct": "+7.58",
-      "foreignNet": 32233,
-      "trustNet": 3978,
-      "dealerNet": 1101,
-      "totalNet": 37311
+      "code": "3481",
+      "name": "群創",
+      "price": 50.4,
+      "change": "+2.15",
+      "changePct": "+4.46",
+      "foreignNet": 33145,
+      "trustNet": -4898,
+      "dealerNet": 6988,
+      "totalNet": 35235
     },
     {
       "code": "00407A",
       "name": "主動凱基台灣",
-      "price": 9.7,
-      "change": "+0.35",
-      "changePct": "+3.74",
-      "foreignNet": 15582,
+      "price": 9.84,
+      "change": "+0.14",
+      "changePct": "+1.44",
+      "foreignNet": 3418,
       "trustNet": 0,
-      "dealerNet": 17432,
-      "totalNet": 33013
+      "dealerNet": 30579,
+      "totalNet": 33997
     },
     {
-      "code": "2449",
-      "name": "京元電子",
-      "price": 291.5,
-      "change": "+26.5",
-      "changePct": "+10.00",
-      "foreignNet": 21781,
-      "trustNet": -146,
-      "dealerNet": 3040,
-      "totalNet": 24675
+      "code": "2883",
+      "name": "凱基金",
+      "price": 40.45,
+      "change": "+1.15",
+      "changePct": "+2.93",
+      "foreignNet": 24489,
+      "trustNet": 580,
+      "dealerNet": -316,
+      "totalNet": 24752
     },
     {
-      "code": "00991A",
-      "name": "主動復華未來50",
-      "price": 17.45,
-      "change": "+0.49",
-      "changePct": "+2.89",
-      "foreignNet": 16138,
+      "code": "009820",
+      "name": "元大納斯達克精選",
+      "price": 10.14,
+      "change": "+0.15",
+      "changePct": "+1.50",
+      "foreignNet": 3602,
       "trustNet": 0,
-      "dealerNet": 8273,
-      "totalNet": 24411
+      "dealerNet": 13801,
+      "totalNet": 17403
+    },
+    {
+      "code": "1314",
+      "name": "中石化",
+      "price": 9.18,
+      "change": "+0.22",
+      "changePct": "+2.46",
+      "foreignNet": 15575,
+      "trustNet": 0,
+      "dealerNet": 1485,
+      "totalNet": 17060
+    },
+    {
+      "code": "6116",
+      "name": "彩晶",
+      "price": 14.8,
+      "change": "+0.8",
+      "changePct": "+5.71",
+      "foreignNet": 15096,
+      "trustNet": 0,
+      "dealerNet": 452,
+      "totalNet": 15548
+    },
+    {
+      "code": "8150",
+      "name": "南茂",
+      "price": 103,
+      "change": "+9",
+      "changePct": "+9.57",
+      "foreignNet": 14264,
+      "trustNet": 0,
+      "dealerNet": 996,
+      "totalNet": 15260
     },
     {
       "code": "00400A",
       "name": "主動國泰動能高息",
-      "price": 15,
-      "change": "+0.43",
-      "changePct": "+2.95",
-      "foreignNet": 16537,
+      "price": 15.22,
+      "change": "+0.22",
+      "changePct": "+1.47",
+      "foreignNet": 7864,
       "trustNet": 0,
-      "dealerNet": 4962,
-      "totalNet": 21499
-    },
-    {
-      "code": "00406A",
-      "name": "主動中信台灣收益",
-      "price": 9.59,
-      "change": "+0.28",
-      "changePct": "+3.01",
-      "foreignNet": 10510,
-      "trustNet": 0,
-      "dealerNet": 9321,
-      "totalNet": 19831
-    },
-    {
-      "code": "00929",
-      "name": "復華台灣科技優息",
-      "price": 29.03,
-      "change": "+0.47",
-      "changePct": "+1.65",
-      "foreignNet": 9440,
-      "trustNet": 0,
-      "dealerNet": 9757,
-      "totalNet": 19197
+      "dealerNet": 6892,
+      "totalNet": 14755
     }
   ],
   "history": [
+    {
+      "date": "2026/09/18",
+      "market": {
+        "foreign": 869.94,
+        "investment_trust": 81.53,
+        "dealer": 243.04,
+        "total": 1194.51,
+        "date": "2026/09/18",
+        "unit": "億元"
+      }
+    },
     {
       "date": "2026/09/17",
       "market": {
@@ -229,17 +240,6 @@
         "dealer": -302.01,
         "total": -1112.59,
         "date": "2026/09/11",
-        "unit": "億元"
-      }
-    },
-    {
-      "date": "2026/09/10",
-      "market": {
-        "foreign": -383.34,
-        "investment_trust": 33.51,
-        "dealer": -137.64,
-        "total": -487.47,
-        "date": "2026/09/10",
         "unit": "億元"
       }
     }
