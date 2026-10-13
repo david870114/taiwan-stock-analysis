@@ -1,182 +1,193 @@
 {
-  "lastUpdated": "2026/10/12",
+  "lastUpdated": "2026/10/13",
   "market": {
-    "foreign": -521.98,
-    "investment_trust": 71.41,
-    "dealer": -142.94,
-    "total": -593.51,
-    "date": "2026/10/12",
+    "foreign": -1652.91,
+    "investment_trust": 246.25,
+    "dealer": -569.76,
+    "total": -1976.41,
+    "date": "2026/10/13",
     "unit": "億元"
   },
   "marketUnit": "億元",
   "topBuyers": [
     {
-      "code": "00961",
-      "name": "FT臺灣永續高息",
-      "price": 13.34,
-      "change": "+0.15",
-      "changePct": "+1.14",
-      "foreignNet": 20582,
+      "code": "00632R",
+      "name": "元大台灣50反1",
+      "price": 9.41,
+      "change": "+0.18",
+      "changePct": "+1.95",
+      "foreignNet": 2178,
       "trustNet": 0,
-      "dealerNet": 24909,
-      "totalNet": 45490
+      "dealerNet": 69241,
+      "totalNet": 71419
     },
     {
       "code": "00919",
       "name": "群益台灣精選高息",
-      "price": 32.23,
-      "change": "+0.58",
-      "changePct": "+1.83",
-      "foreignNet": 28161,
+      "price": 32.4,
+      "change": "+0.17",
+      "changePct": "+0.53",
+      "foreignNet": 34488,
       "trustNet": 0,
-      "dealerNet": 16057,
-      "totalNet": 44218
+      "dealerNet": 27038,
+      "totalNet": 61526
     },
     {
-      "code": "1101",
-      "name": "台泥",
-      "price": 27,
-      "change": "+1.3",
-      "changePct": "+5.06",
-      "foreignNet": 36209,
-      "trustNet": 1490,
-      "dealerNet": 3457,
-      "totalNet": 41156
+      "code": "00961",
+      "name": "FT臺灣永續高息",
+      "price": 13.37,
+      "change": "+0.03",
+      "changePct": "+0.22",
+      "foreignNet": 6921,
+      "trustNet": 0,
+      "dealerNet": 34140,
+      "totalNet": 41060
+    },
+    {
+      "code": "2891",
+      "name": "中信金",
+      "price": 71.6,
+      "change": "+1.8",
+      "changePct": "+2.58",
+      "foreignNet": 16613,
+      "trustNet": 11722,
+      "dealerNet": 2241,
+      "totalNet": 30575
+    },
+    {
+      "code": "2885",
+      "name": "元大金",
+      "price": 70.6,
+      "change": "+0.5",
+      "changePct": "+0.71",
+      "foreignNet": 20171,
+      "trustNet": 2338,
+      "dealerNet": 1880,
+      "totalNet": 24389
     },
     {
       "code": "2887",
       "name": "台新新光金",
       "price": 43,
-      "change": "+2",
-      "changePct": "+4.88",
-      "foreignNet": 37213,
-      "trustNet": 361,
-      "dealerNet": 2088,
-      "totalNet": 39662
-    },
-    {
-      "code": "00632R",
-      "name": "元大台灣50反1",
-      "price": 9.23,
-      "change": "-0.01",
-      "changePct": "-0.11",
-      "foreignNet": -83,
-      "trustNet": 0,
-      "dealerNet": 38424,
-      "totalNet": 38341
-    },
-    {
-      "code": "2883",
-      "name": "凱基金",
-      "price": 38.8,
-      "change": "+1.25",
-      "changePct": "+3.33",
-      "foreignNet": 29422,
-      "trustNet": 311,
-      "dealerNet": 1631,
-      "totalNet": 31364
-    },
-    {
-      "code": "2002",
-      "name": "中鋼",
-      "price": 19.2,
-      "change": "+0.25",
-      "changePct": "+1.32",
-      "foreignNet": 29965,
-      "trustNet": -4,
-      "dealerNet": 668,
-      "totalNet": 30629
+      "change": "0",
+      "changePct": "+0.00",
+      "foreignNet": 22311,
+      "trustNet": -413,
+      "dealerNet": 1996,
+      "totalNet": 23894
     },
     {
       "code": "2609",
       "name": "陽明",
-      "price": 63.6,
-      "change": "+3.9",
-      "changePct": "+6.53",
-      "foreignNet": 20078,
-      "trustNet": 4217,
-      "dealerNet": 1419,
-      "totalNet": 25714
+      "price": 64.5,
+      "change": "+0.9",
+      "changePct": "+1.42",
+      "foreignNet": 21906,
+      "trustNet": 1867,
+      "dealerNet": -34,
+      "totalNet": 23738
     },
     {
-      "code": "2891",
-      "name": "中信金",
-      "price": 69.8,
-      "change": "+2.5",
-      "changePct": "+3.71",
-      "foreignNet": 12452,
-      "trustNet": 5980,
-      "dealerNet": 1245,
-      "totalNet": 19677
+      "code": "2603",
+      "name": "長榮",
+      "price": 264,
+      "change": "+8.5",
+      "changePct": "+3.33",
+      "foreignNet": 15863,
+      "trustNet": 4929,
+      "dealerNet": 856,
+      "totalNet": 21648
     },
     {
-      "code": "9105",
-      "name": "泰金寶-DR",
-      "price": 9.05,
-      "change": "+0.42",
-      "changePct": "+4.87",
-      "foreignNet": 16425,
+      "code": "5880",
+      "name": "合庫金",
+      "price": 27.2,
+      "change": "+0.4",
+      "changePct": "+1.49",
+      "foreignNet": 19886,
+      "trustNet": 534,
+      "dealerNet": 724,
+      "totalNet": 21144
+    },
+    {
+      "code": "1312",
+      "name": "國喬",
+      "price": 17.65,
+      "change": "+1.6",
+      "changePct": "+9.97",
+      "foreignNet": 18915,
       "trustNet": 0,
-      "dealerNet": 1691,
-      "totalNet": 18116
+      "dealerNet": 2218,
+      "totalNet": 21133
     },
     {
-      "code": "3481",
-      "name": "群創",
-      "price": 51.3,
-      "change": "+0.3",
-      "changePct": "+0.59",
-      "foreignNet": 15850,
-      "trustNet": -3,
-      "dealerNet": 1602,
-      "totalNet": 17450
-    },
-    {
-      "code": "00403A",
-      "name": "主動統一升級50",
-      "price": 11.29,
-      "change": "0",
-      "changePct": "+0.00",
-      "foreignNet": 17013,
-      "trustNet": 0,
-      "dealerNet": -924,
-      "totalNet": 16089
-    },
-    {
-      "code": "00918",
-      "name": "大華優利高填息30",
-      "price": 34.28,
-      "change": "+0.31",
-      "changePct": "+0.91",
-      "foreignNet": 9433,
-      "trustNet": 0,
-      "dealerNet": 5831,
-      "totalNet": 15264
+      "code": "2618",
+      "name": "長榮航",
+      "price": 43,
+      "change": "+1",
+      "changePct": "+2.38",
+      "foreignNet": 18974,
+      "trustNet": -59,
+      "dealerNet": 629,
+      "totalNet": 19544
     },
     {
       "code": "4938",
       "name": "和碩",
-      "price": 98.6,
-      "change": "+8.9",
-      "changePct": "+9.92",
-      "foreignNet": 14784,
-      "trustNet": -440,
-      "dealerNet": 255,
-      "totalNet": 14599
+      "price": 102.5,
+      "change": "+3.9",
+      "changePct": "+3.96",
+      "foreignNet": 15486,
+      "trustNet": 234,
+      "dealerNet": 1248,
+      "totalNet": 16969
     },
     {
-      "code": "00940",
-      "name": "元大台灣價值高息",
-      "price": 13.34,
-      "change": "+0.13",
-      "changePct": "+0.98",
-      "foreignNet": 5098,
+      "code": "00918",
+      "name": "大華優利高填息30",
+      "price": 34.36,
+      "change": "+0.08",
+      "changePct": "+0.23",
+      "foreignNet": 1196,
       "trustNet": 0,
-      "dealerNet": 9070,
-      "totalNet": 14169
+      "dealerNet": 14480,
+      "totalNet": 15677
+    },
+    {
+      "code": "00953B",
+      "name": "群益優選非投等債",
+      "price": 9.51,
+      "change": "+0.03",
+      "changePct": "+0.32",
+      "foreignNet": 13314,
+      "trustNet": 0,
+      "dealerNet": 2043,
+      "totalNet": 15357
+    },
+    {
+      "code": "1326",
+      "name": "台化",
+      "price": 77.8,
+      "change": "+1",
+      "changePct": "+1.30",
+      "foreignNet": 13109,
+      "trustNet": 54,
+      "dealerNet": 112,
+      "totalNet": 13274
     }
   ],
   "history": [
+    {
+      "date": "2026/10/12",
+      "market": {
+        "foreign": -521.98,
+        "investment_trust": 71.41,
+        "dealer": -142.94,
+        "total": -593.51,
+        "date": "2026/10/12",
+        "unit": "億元"
+      }
+    },
     {
       "date": "2026/10/08",
       "market": {
@@ -229,17 +240,6 @@
         "dealer": 20.26,
         "total": 104.17,
         "date": "2026/10/02",
-        "unit": "億元"
-      }
-    },
-    {
-      "date": "2026/10/01",
-      "market": {
-        "foreign": 219.37,
-        "investment_trust": 58.65,
-        "dealer": 16.59,
-        "total": 294.62,
-        "date": "2026/10/01",
         "unit": "億元"
       }
     }
