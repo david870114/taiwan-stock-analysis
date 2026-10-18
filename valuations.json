@@ -1,5 +1,5 @@
 {
- "updated": "2026-09-17",
+ "updated": "2026-10-18",
  "stocks": [
   {
    "id": "0050",
@@ -340,6 +340,16 @@
    "expensive": 62,
    "annualDiv": 0.23,
    "url": "6770_analysis.html"
+  },
+  {
+   "id": "6488",
+   "name": "環球晶",
+   "tier": "spec",
+   "cheap": 297,
+   "fair": 486,
+   "expensive": 702,
+   "annualDiv": 7.7,
+   "url": "6488_analysis.html"
   },
   {
    "id": "1303",
