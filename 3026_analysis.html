@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>禾伸堂 3026 — 2026 股價推算分析</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #0f1117; color: #e2e8f0; padding: 16px; }
+  h1 { font-size: 18px; font-weight: 700; color: #f8fafc; margin-bottom: 4px; }
+  .subtitle { font-size: 12px; color: #94a3b8; margin-bottom: 16px; }
+  .tabs { display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; }
+  .tab { padding: 6px 14px; border-radius: 20px; font-size: 12px; cursor: pointer; border: 1px solid #334155; color: #94a3b8; background: transparent; transition: all 0.2s; }
+  .tab.active { background: #3b82f6; color: #fff; border-color: #3b82f6; }
+  .tab:hover:not(.active) { border-color: #64748b; color: #e2e8f0; }
+  .panel { display: none; }
+  .panel.active { display: block; }
+  canvas { width: 100% !important; border-radius: 10px; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+  .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-top: 16px; }
+  .grid4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 12px; margin-top: 16px; }
+  @media(max-width:640px){ .grid2,.grid3,.grid4{ grid-template-columns:1fr 1fr; } }
+  @media(max-width:400px){ .grid2,.grid3,.grid4{ grid-template-columns:1fr; } }
+  .card { background: #1e2535; border: 1px solid #2d3748; border-radius: 10px; padding: 14px; }
+  .card h3 { font-size: 12px; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
+  .card .val { font-size: 22px; font-weight: 700; }
+  .card .note { font-size: 11px; color: #64748b; margin-top: 4px; }
+  .green { color: #22c55e; } .yellow { color: #eab308; } .red { color: #ef4444; } .blue { color: #3b82f6; } .purple { color: #a855f7; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 12px; }
+  th { background: #1e2535; color: #64748b; padding: 8px 10px; text-align: left; font-weight: 600; font-size: 11px; text-transform: uppercase; }
+  td { padding: 8px 10px; border-bottom: 1px solid #1e2535; }
+  tr:hover td { background: #1a2030; }
+  tr.highlight td { background: #0f2a1e; }
+  tr.danger td { background: #2d1010; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: 600; }
+  .badge-buy { background: #14532d; color: #86efac; }
+  .badge-watch { background: #713f12; color: #fde68a; }
+  .badge-avoid { background: #450a0a; color: #fca5a5; }
+  .badge-neutral { background: #1e293b; color: #94a3b8; }
+  .scenario-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 12px; }
+  @media(max-width:500px){ .scenario-grid{ grid-template-columns:1fr; } }
+  .scenario-card { border-radius: 10px; padding: 14px; text-align: center; }
+  .bear { background: linear-gradient(135deg, #1a0a0a, #2d1010); border: 1px solid #7f1d1d; }
+  .base { background: linear-gradient(135deg, #0a1a0a, #102d10); border: 1px solid #14532d; }
+  .bull { background: linear-gradient(135deg, #0a0f1a, #10182d); border: 1px solid #1d4ed8; }
+  .sc-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.7; margin-bottom: 6px; }
+  .sc-price { font-size: 22px; font-weight: 800; margin: 4px 0; }
+  .sc-detail { font-size: 10px; opacity: 0.65; line-height: 1.6; }
+  .section-title { font-size: 13px; font-weight: 600; color: #cbd5e1; margin: 16px 0 8px; }
+  .buy-signal { background: #0f2a1e; border: 1px solid #166534; border-radius: 10px; padding: 14px; margin-top: 12px; }
+  .buy-signal h3 { color: #86efac; font-size: 13px; margin-bottom: 8px; }
+  .buy-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid #1a3a2a; gap: 8px; }
+  .buy-row:last-child { border-bottom: none; }
+  .current-price-badge { background: #1e3a5f; border: 1px solid #3b82f6; border-radius: 8px; padding: 10px 14px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px; }
+  .warn-box { background: #2d1010; border: 1px solid #7f1d1d; border-radius: 10px; padding: 14px; margin-top: 12px; }
+  .warn-box h3 { color: #fca5a5; font-size: 13px; margin-bottom: 8px; }
+  .info-box { background: #1e2535; border: 1px solid #2d3748; border-radius: 10px; padding: 14px; margin-top: 12px; font-size: 12px; color: #94a3b8; line-height: 1.8; }
+  .info-box strong { color: #e2e8f0; }
+  .stat-bar { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 12px; }
+  .stat-item { background: #1e2535; border-radius: 10px; padding: 12px 16px; flex: 1; min-width: 120px; }
+  .stat-label { font-size: 10px; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+  .stat-val { font-size: 18px; font-weight: 700; color: #e2e8f0; }
+  .stat-sub { font-size: 10px; color: #64748b; margin-top: 2px; }
+  .client-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; }
+  @media(max-width:500px){ .client-row{ grid-template-columns:1fr; } }
+  .client-block { background: #1e2535; border-radius: 10px; padding: 14px; }
+  .client-block h4 { font-size: 11px; color: #64748b; text-transform: uppercase; margin-bottom: 10px; }
+  .client-item { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid #1a2030; font-size: 12px; }
+  .client-item:last-child { border-bottom: none; }
+  .moat-row { display: flex; align-items: flex-start; gap: 8px; padding: 5px 0; border-bottom: 1px solid #1a2030; font-size: 12px; }
+  .moat-row:last-child { border-bottom: none; }
+  .moat-icon { flex-shrink: 0; }
+</style>
+</head>
+<body>
+
+<div style="margin-bottom:12px;">
+  <a href="index.html" style="color:#64748b;font-size:12px;text-decoration:none;display:inline-flex;align-items:center;gap:4px;padding:5px 10px;border:1px solid #334155;border-radius:8px;transition:all 0.2s;" onmouseover="this.style.color='#e2e8f0';this.style.borderColor='#64748b'" onmouseout="this.style.color='#64748b';this.style.borderColor='#334155'">← 返回總覽</a>
+</div>
+<h1>🔌 禾伸堂 (3026) — 2026 股價推算分析</h1>
+<p class="subtitle">正常化 EPS 估值 ✦ 三情境試算 ✦ 被動元件／電子通路景氣循環股 ✦ 更新時間：2026年10月19日</p>
+
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('river', this)">📈 PER 河流圖</button>
+  <button class="tab" onclick="switchTab('scenario', this)">🎯 三情境買點</button>
+  <button class="tab" onclick="switchTab('eps', this)">📊 EPS 趨勢</button>
+  <button class="tab" onclick="switchTab('fundamental', this)">🏢 基本面分析</button>
+  <button class="tab" onclick="switchTab('summary', this)">📋 完整摘要</button>
+</div>
+
+<!-- ══ TAB 1: PER River ══ -->
+<div id="tab-river" class="panel active">
+  <div class="current-price-badge">
+    <span style="color:#94a3b8;font-size:12px;">目前股價（即時）</span>
+    <span style="color:#3b82f6;font-size:20px;font-weight:800;" id="live-price">載入中…</span>
+    <span style="color:#94a3b8;font-size:12px;" id="live-per-note">計算中…</span>
+  </div>
+  <canvas id="riverChart" height="340"></canvas>
+  <p style="font-size:11px;color:#475569;margin-top:8px;text-align:center;">* 虛線河流帶 = 逐月 TTM EPS × 12x / 17x / 23x（近三年實際 PER 區間，季中月以前後季插值）；紫色水平線 = 正常化 EPS 7.35 元 × 13x = 96 元，為本頁便宜／合理／昂貴價的實際基準。26M09 後 Q3 財報未公告，EPS 沿用 26Q2 的 10.24 元。</p>
+
+  <div class="warn-box" style="margin-top:14px;">
+    <h3>⚠️ 這張圖最右邊發生了什麼</h3>
+    <p style="font-size:12px;color:#fca5a5;line-height:1.8;">
+      2023M10 到 2026M03 這 30 個月，股價一直被關在 78～137.5 元之間，PER 12.5～23.5x，是一檔標準的低波動被動元件股。<br>
+      2026M04 之後完全變了：股價 137.5 → 212.5 → <strong>641</strong> → <strong>842</strong> 元，7 月盤中最高 1,005 元、最低 427.5 元（<strong>單月振幅 57%</strong>），月收 450 元（−47%），8 月又漲回 742 元。10/19 收 735 元。<br>
+      同期 TTM EPS 只從 7.76 走到 10.24 元（+32%），<strong>股價漲了 4.3 倍、獲利只增三成</strong> — 倍數擴張貢獻了絕大部分漲幅。這就是 MLCC 漲價＋AI 被動元件題材的典型價格行為，不是估值重估可以解釋的範圍。
+    </p>
+  </div>
+
+  <div class="info-box">
+    📌 <strong>為什麼估值帶不用最新 TTM EPS：</strong>禾伸堂 25Q4 單季 EPS 1.83 → 26Q1 2.86 元（<strong>+56%</strong>），觸發景氣循環股檢核門檻（單季變動 &gt; ±50%）。被動元件的獲利彈性來自報價與稼動率，循環高峰的 TTM EPS 直接乘回歷史倍數，會把合理價一路灌高、反而在最危險的位置發出「接近合理價」的訊號。因此本頁改以<strong>正常化 EPS 7.35 元</strong>為錨（2021–2025 歸母淨利 ÷ 最新股數後平均）。
+  </div>
+</div>
+
+<!-- ══ TAB 2: 三情境 ══ -->
+<div id="tab-scenario" class="panel">
+  <div class="grid3">
+    <div class="card"><h3>26Q2 TTM EPS（最新季末）</h3><div class="val yellow">10.24 元</div><div class="note">單季 2.86 → 3.87 元<br>⚠️ 25Q4→26Q1 +56%，觸發循環股檢核</div></div>
+    <div class="card"><h3>估值基準：正常化 EPS</h3><div class="val green">7.35 元</div><div class="note">2021–2025 歸母淨利 ÷ 最新股數平均<br>11.77 / 7.42 / 5.13 / 5.87 / 6.58</div></div>
+    <div class="card"><h3>26Q2 獲利組成</h3><div class="val green">本業驅動</div><div class="note">營業利益 6.27 億 ≈ 稅後 6.13 億<br>非一次性業外，與 6488 情況相反</div></div>
+  </div>
+
+  <div class="section-title">三情境估值試算（以正常化 EPS 7.35 元為基準）</div>
+  <div class="scenario-grid">
+    <div class="scenario-card bear">
+      <div class="sc-label">🐻 循環回落</div>
+      <div class="sc-price red">81 元</div>
+      <div class="sc-detail">
+        正常化 EPS 7.35 元<br>
+        × 11x（近三年低標）<br>
+        MLCC 報價回落、庫存去化<br>
+        獲利回到 2023–24 水準
+      </div>
+    </div>
+    <div class="scenario-card base">
+      <div class="sc-label">⚖️ 循環中位</div>
+      <div class="sc-price green">96 元</div>
+      <div class="sc-detail">
+        正常化 EPS 7.35 元<br>
+        × 13x（近三年均值）<br>
+        漲價紅利部分留存<br>
+        <strong>本頁合理價基準</strong>
+      </div>
+    </div>
+    <div class="scenario-card bull">
+      <div class="sc-label">🚀 循環高檔</div>
+      <div class="sc-price" style="color:#60a5fa;">140 元</div>
+      <div class="sc-detail">
+        正常化 EPS 7.35 元<br>
+        × 19x（近三年高標）<br>
+        自製被動元件比重提升<br>
+        市場願給成長股倍數
+      </div>
+    </div>
+  </div>
+
+  <div class="info-box">
+    <strong>PER 倍數怎麼來的：</strong>以正常化 EPS 7.35 元回推近三年逐月「正常化 PER」，區間為 <strong>10.6x（25M06，股價 78）～ 18.7x（26M03，股價 137.5）</strong>，30 個月平均 <strong>13.0x</strong>（已排除 26M04–26M09 題材行情月，該期間正常化 PER 衝到 29～115x）。<br>
+    若改用實際 TTM EPS 計算，同期間 PER 區間是 12.5～23.5x、均值 17.2x — 倍數看起來較高，是因為 2024 年 EPS 落到 4.19 元谷底時股價仍有 96 元（EPS 谷底配高 PER），正是循環股用 TTM 估值會失真的地方。
+  </div>
+
+  <div class="warn-box">
+    <h3>🔥 現價離估值帶有多遠</h3>
+    <p style="font-size:12px;color:#fca5a5;line-height:1.9;">
+      10/19 收 735 元 = 正常化 PER <strong>100x</strong>、TTM PER <strong>72x</strong>、P/B <strong>11.8x</strong>、殖利率 <strong>0.79%</strong>。<br>
+      即使最寬鬆地改用 <strong>2026E EPS 約 15 元</strong>（依 Q3 營收 45.4 億＋26Q2 營益率 15.3% 推估，非法人估值）、再給被動元件史上少見的 20x 倍數，也只到 <strong>300 元</strong>。<br>
+      換個方向看：要讓 735 元落在正常化合理價，EPS 必須長期維持在 <strong>56 元</strong>（735 ÷ 13x）— 是目前 TTM 的 5.5 倍。<br>
+      <strong>結論：現價沒有任何估值基準可以支撐，屬純題材／籌碼行情。</strong>
+    </p>
+  </div>
+
+  <div class="buy-signal">
+    <h3>✅ 分批進場參考區間（正常化 EPS 7.35 元）</h3>
+    <div class="buy-row"><span style="font-size:12px;color:#86efac;">🟢 × 11x（便宜）</span><span style="font-weight:700;color:#86efac;">NT$ 81</span><span class="badge badge-buy">第一批 40%</span></div>
+    <div class="buy-row"><span style="font-size:12px;color:#fde68a;">🟡 × 13x（合理）</span><span style="font-weight:700;color:#fde68a;">NT$ 96</span><span class="badge badge-watch">第二批 40%</span></div>
+    <div class="buy-row"><span style="font-size:12px;color:#fca5a5;">🔴 × 19x（昂貴）</span><span style="font-weight:700;color:#fca5a5;">NT$ 140</span><span class="badge badge-avoid">第三批 20%／上限</span></div>
+    <div class="buy-row" style="border-top:1px solid #166534;margin-top:8px;padding-top:10px;">
+      <span style="font-size:12px;color:#fde68a;">目前股價</span>
+      <span style="font-weight:700;" id="sc-live">載入中…</span>
+      <span class="badge badge-avoid">遠高於昂貴價</span>
+    </div>
+    <p style="font-size:10px;color:#64748b;margin-top:10px;line-height:1.6;">
+      * 被動元件循環股的進場點，歷史上出現在「EPS 還沒起來、股價在 80 元附近、P/B 約 1.3x」的時候 — 2025M06 的 78 元（正常化 PER 10.6x）就是那個位置。<br>
+      * 若 26Q3／26Q4 財報證實毛利率站穩 26% 以上、且 2027 年營益率維持 15%，屆時應以<strong>新的正常化 EPS 重算估值帶</strong>（把 2026 高獲利納入五年平均），而不是現在就用單季外推追價。
+    </p>
+  </div>
+</div>
+
+<!-- ══ TAB 3: EPS 趨勢 ══ -->
+<div id="tab-eps" class="panel">
+  <canvas id="epsChart" height="300"></canvas>
+  <p style="font-size:11px;color:#475569;margin-top:8px;text-align:center;">* 綠 = 高於正常化 7.35 元，黃 = 5.5～7.35 元，紅 = 低於 5.5 元。</p>
+
+  <div class="grid3">
+    <div class="card"><h3>循環高峰（2021）</h3><div class="val yellow">11.77 元</div><div class="note">股本調整後年度 EPS</div></div>
+    <div class="card"><h3>循環谷底（2023）</h3><div class="val red">5.13 元</div><div class="note">23Q4 單季僅 0.45 元</div></div>
+    <div class="card"><h3>最新 TTM（26Q2）</h3><div class="val green">10.24 元</div><div class="note">26Q2 單季 3.87 元創新高</div></div>
+  </div>
+
+  <div class="section-title">📋 逐月數據明細表（近三年，36 個月）</div>
+  <table>
+    <thead><tr><th>月份</th><th>收盤</th><th>10x欄</th><th>河流圖EPS</th><th>TTM PER</th><th>正常化PER</th><th>12x</th><th>17x</th><th>23x</th></tr></thead>
+    <tbody id="eps-table-body"></tbody>
+  </table>
+  <p style="font-size:11px;color:#64748b;margin-top:8px;">* 河流圖 EPS 以季末 TTM 為錨、季中月線性插值（GoodInfo 河流圖同算法）；季末月（M03/M06/M09/M12）等於該季實際 TTM。資料來源：FinMind TaiwanStockPrice／TaiwanStockFinancialStatements。紅底列為正常化 PER &gt; 25x 的題材行情月。</p>
+
+  <div class="section-title">📐 年度 EPS 與正常化計算</div>
+  <table>
+    <thead><tr><th>年度</th><th>歸母淨利（億元）</th><th>原始 EPS</th><th>股本調整後 EPS</th><th>備註</th></tr></thead>
+    <tbody>
+      <tr><td>2021</td><td>19.52</td><td>12.36 元</td><td style="color:#eab308;font-weight:700;">11.77 元</td><td>前一輪被動元件循環高峰</td></tr>
+      <tr><td>2022</td><td>12.31</td><td>7.79 元</td><td>7.42 元</td><td>下半年急墜（Q3 1.17、Q4 1.21）</td></tr>
+      <tr><td>2023</td><td>8.51</td><td>5.24 元</td><td style="color:#ef4444;font-weight:700;">5.13 元</td><td>循環谷底，Q4 僅 0.45 元</td></tr>
+      <tr><td>2024</td><td>9.73</td><td>5.87 元</td><td>5.87 元</td><td>低檔盤整</td></tr>
+      <tr><td>2025</td><td>10.92</td><td>6.58 元</td><td>6.58 元</td><td>緩步回升</td></tr>
+      <tr class="highlight"><td><strong>5 年平均</strong></td><td>12.20</td><td>—</td><td style="color:#22c55e;font-weight:700;">7.35 元</td><td><strong>本頁正常化 EPS 基準</strong></td></tr>
+      <tr class="danger"><td>2026E（推估）</td><td>~24.9</td><td>—</td><td style="color:#ef4444;font-weight:700;">~15 元</td><td>⚠️ 僅供參考，不納入正常化</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:11px;color:#64748b;margin-top:8px;">* 股本調整：以最新股數 1.6589 億股（股本 16.59 億元）換算各年度歸母淨利；2023/07 配股票股利 0.5 元使股數增加約 5%，故 2021–2022 調整後略低於原始 EPS。2026E 為依 26Q3 月營收 45.39 億與 26Q2 營益率 15.3% 推估，非法人共識。</p>
+</div>
+
+<!-- ══ TAB 4: 基本面分析 ══ -->
+<div id="tab-fundamental" class="panel">
+
+  <!-- 1. 公司營運 -->
+  <div class="section-title">🏭 公司營運</div>
+  <div class="grid3" style="margin-top:0;">
+    <div class="card" style="text-align:center;">
+      <h3>2025 全年營收</h3>
+      <div class="val blue">134.3 億</div>
+      <div class="note">YoY +5.0%（2024：127.9 億）</div>
+    </div>
+    <div class="card" style="text-align:center;">
+      <h3>26Q2 單季營收</h3>
+      <div class="val green">40.97 億</div>
+      <div class="note">YoY +25.2%｜QoQ +13.2%</div>
+    </div>
+    <div class="card" style="text-align:center;">
+      <h3>26Q2 毛利率</h3>
+      <div class="val green">26.2%</div>
+      <div class="note">25Q4 17.6% → 26Q1 24.2% → 26Q2 26.2%</div>
+    </div>
+  </div>
+
+  <div class="section-title">📊 近八季財務趨勢</div>
+  <table>
+    <thead><tr><th>期間</th><th>營收（億）</th><th>營收YoY</th><th>毛利率</th><th>營業利益率</th><th>單季EPS</th></tr></thead>
+    <tbody>
+      <tr><td>24Q3</td><td>34.11</td><td>−1.3%</td><td>17.1%</td><td>5.7%</td><td>1.80 元</td></tr>
+      <tr><td>24Q4</td><td>31.96</td><td>+9.3%</td><td>15.1%</td><td>3.5%</td><td>1.38 元</td></tr>
+      <tr><td>25Q1</td><td>34.02</td><td>+15.7%</td><td>19.5%</td><td>9.4%</td><td>1.68 元</td></tr>
+      <tr><td>25Q2</td><td>32.72</td><td>+1.0%</td><td>19.8%</td><td>9.1%</td><td>1.39 元</td></tr>
+      <tr><td>25Q3</td><td>34.33</td><td>+0.6%</td><td>18.2%</td><td>7.8%</td><td>1.68 元</td></tr>
+      <tr><td>25Q4</td><td>33.20</td><td>+3.9%</td><td>17.6%</td><td>5.8%</td><td>1.83 元</td></tr>
+      <tr><td>26Q1</td><td>36.18</td><td>+6.4%</td><td>24.2%</td><td>13.4%</td><td>2.86 元</td></tr>
+      <tr class="highlight"><td><strong>26Q2 ★</strong></td><td><strong>40.97</strong></td><td style="color:#22c55e;font-weight:700;">+25.2%</td><td style="color:#22c55e;font-weight:700;">26.2%</td><td style="color:#22c55e;font-weight:700;">15.3%</td><td style="color:#22c55e;font-weight:700;">3.87 元</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:11px;color:#64748b;margin-top:8px;">
+    * <strong>獲利跳升的來源是毛利率，不是營收。</strong>25Q4 → 26Q2 營收只增 23.5%，毛利率卻從 17.6% 拉到 26.2%、營益率從 5.8% 拉到 15.3%，EPS 因此翻倍有餘 — 典型的被動元件報價循環（漲價直接落到毛利）。這也意味著<strong>報價一旦回頭，EPS 會同樣快速萎縮</strong>。<br>
+    * 26Q3 月營收 7 月 15.01 億、8 月 14.40 億、9 月 15.98 億（單月新高），合計 45.39 億，QoQ +10.8%、YoY +32.2%；Q3 財報預計 11 月中公告。
+  </p>
+
+  <!-- 2. 商業模式 -->
+  <div class="section-title">💡 商業模式</div>
+  <div class="grid2" style="margin-top:0;">
+    <div class="card">
+      <h3>怎麼賺錢</h3>
+      <p style="font-size:12px;color:#94a3b8;line-height:1.8;">
+        禾伸堂為<strong>雙引擎</strong>結構：<br>
+        ① <strong>電子零組件通路</strong> — 代理日系被動元件與 IC，營收比重高但毛利薄，提供穩定現金流與客戶接口。<br>
+        ② <strong>自製被動元件</strong> — MLCC（積層陶瓷電容）、鉭質電容、高頻陶瓷／石英元件，毛利率遠高於通路，是獲利彈性來源。<br>
+        2026 年毛利率由 17.6% 跳到 26.2%，主要是自製元件報價與稼動率同步拉升；通路業務則隨終端需求穩定成長。
+      </p>
+      <p style="font-size:10px;color:#475569;margin-top:8px;">* 兩段業務的營收佔比公司未按季揭露明細（無公開精確數字），上述結構依財報毛利率變化與產業慣例推估。</p>
+    </div>
+    <div class="card">
+      <h3>護城河評估</h3>
+      <div class="moat-row"><span class="moat-icon">✅</span><span>通路＋自製雙軌，循環下行時通路撐住營收</span></div>
+      <div class="moat-row"><span class="moat-icon">✅</span><span>鉭質電容、高頻元件屬利基品，競爭者較少</span></div>
+      <div class="moat-row"><span class="moat-icon">✅</span><span>長期穩定配息（2019–2026 年年配 5～9 元）</span></div>
+      <div class="moat-row"><span class="moat-icon">⚠️</span><span>MLCC 標準品價格競爭激烈，規模遠小於國巨</span></div>
+      <div class="moat-row"><span class="moat-icon">⚠️</span><span>強景氣循環：2023Q4 單季 EPS 曾僅 0.45 元</span></div>
+      <div class="moat-row"><span class="moat-icon">⚠️</span><span>通路業務毛利薄、議價力受原廠與大型通路商夾擊</span></div>
+    </div>
+  </div>
+
+  <div class="client-row">
+    <div class="client-block">
+      <h4>成長驅動</h4>
+      <div class="client-item"><span>MLCC／鉭質電容漲價循環</span><span class="badge badge-buy">報價彈性</span></div>
+      <div class="client-item"><span>AI 伺服器用高容／高壓元件</span><span class="badge badge-buy">AI 需求</span></div>
+      <div class="client-item"><span>車用電子滲透率提升</span><span class="badge badge-watch">長線</span></div>
+      <div class="client-item"><span>消費性電子庫存回補</span><span class="badge badge-watch">循環回溫</span></div>
+      <div class="client-item"><span>自製元件比重拉高 → 結構性升級</span><span class="badge badge-neutral">待財報驗證</span></div>
+    </div>
+    <div class="client-block">
+      <h4>主要競爭對手</h4>
+      <div class="client-item"><span>國巨（2327）</span><span class="badge badge-neutral">台灣龍頭</span></div>
+      <div class="client-item"><span>華新科（2492）</span><span class="badge badge-neutral">台灣第二大</span></div>
+      <div class="client-item"><span>村田／太陽誘電／TDK（日）</span><span class="badge badge-neutral">全球前段</span></div>
+      <div class="client-item"><span>三星電機（韓）</span><span class="badge badge-neutral">高階 MLCC</span></div>
+      <div class="client-item"><span>大聯大／文曄（通路端）</span><span class="badge badge-neutral">通路競爭</span></div>
+    </div>
+  </div>
+
+  <!-- 3. 市場地位 -->
+  <div class="section-title">🌍 市場地位</div>
+  <div class="stat-bar">
+    <div class="stat-item">
+      <div class="stat-label">台灣被動元件</div>
+      <div class="stat-val" style="color:#3b82f6;">中型廠</div>
+      <div class="stat-sub">規模小於國巨、華新科</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-label">利基產品</div>
+      <div class="stat-val" style="color:#22c55e;">鉭質電容</div>
+      <div class="stat-sub">高頻／石英元件為差異化</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-label">獲利彈性</div>
+      <div class="stat-val" style="color:#eab308;">極高</div>
+      <div class="stat-sub">毛利率 15%→26% 僅三季</div>
+    </div>
+  </div>
+  <div style="margin-top:12px;font-size:11px;color:#64748b;border-top:1px solid #2d3748;padding-top:10px;">
+    📌 禾伸堂在被動元件族群裡是「小市值、高彈性」的角色：規模不如國巨／華新科，但因股本僅 16.59 億元（1.66 億股），報價循環一來 EPS 與股價的爆發力更大、回落也更兇。2026 年 7 月單月振幅 57%（1,005 → 427.5 元）就是這個特性的極端展現。
+  </div>
+
+  <!-- 4. 估值指標 -->
+  <div class="section-title">💰 估值指標</div>
+  <div class="grid4" style="margin-top:0;">
+    <div class="card" style="text-align:center;">
+      <h3>本益比 P/E</h3>
+      <div class="val" id="fund-pe" style="color:#f8fafc;">計算中…</div>
+      <div class="note" id="fund-pe-note">TTM EPS 10.24 元（26Q2）</div>
+    </div>
+    <div class="card" style="text-align:center;">
+      <h3>正常化 P/E</h3>
+      <div class="val" id="fund-npe" style="color:#f8fafc;">計算中…</div>
+      <div class="note">正常化 EPS 7.35 元<br>歷史區間 10.6x~18.7x</div>
+    </div>
+    <div class="card" style="text-align:center;">
+      <h3>股價淨值比 P/B</h3>
+      <div class="val" id="fund-pb" style="color:#f8fafc;">計算中…</div>
+      <div class="note">每股淨值 62.28 元<br>26Q2 母公司權益 103.3 億</div>
+    </div>
+    <div class="card" style="text-align:center;">
+      <h3>ROE（TTM）</h3>
+      <div class="val yellow">16.4%</div>
+      <div class="note">2024–25 約 9~11%<br>漲價循環推升</div>
+    </div>
+  </div>
+  <div class="grid4">
+    <div class="card" style="text-align:center;">
+      <h3>前瞻 P/E（2026E）</h3>
+      <div class="val red" id="fund-fpe">~49x</div>
+      <div class="note">2026E EPS ~15 元（推估）</div>
+    </div>
+    <div class="card" style="text-align:center;">
+      <h3>現金股利</h3>
+      <div class="val yellow">5.8 元</div>
+      <div class="note">2026 年配｜26/06/22 除息</div>
+    </div>
+    <div class="card" style="text-align:center;">
+      <h3>殖利率</h3>
+      <div class="val red" id="fund-yield">計算中…</div>
+      <div class="note">配息 5.8 元 ÷ 現價</div>
+    </div>
+    <div class="card" style="text-align:center;">
+      <h3>近三年 PER 區間</h3>
+      <div class="val" style="color:#f97316;">12.5–23.5x</div>
+      <div class="note">排除題材月（44–82x）</div>
+    </div>
+  </div>
+  <div class="info-box">
+    📌 <strong>估值解讀：</strong>
+    禾伸堂的獲利改善是真的 — 毛利率三季內從 17.6% 升到 26.2%、營益率 5.8% → 15.3%，且 26Q2 營業利益 6.27 億幾乎等於稅後 6.13 億，<strong>不是一次性業外</strong>，這一點比單靠業外撐 EPS 的循環股健康得多。<br>
+    但股價反應遠遠超前基本面：現價對應正常化 PER 約 100x、TTM PER 72x、P/B 11.8x、殖利率 0.79%，三項指標全部在歷史最極端。即使採用 2026E EPS 15 元（本頁推估）＋給 20x 高倍數，也只值約 300 元。<br>
+    <strong>估值帶（81／96／140 元）維持以正常化 EPS 為錨</strong>，待 26Q3／26Q4 財報確認毛利率可持續後，再把 2026 的高獲利納入五年平均重算，不在循環高峰用單季外推上修。
+  </div>
+
+  <p style="font-size:10px;color:#334155;margin-top:14px;line-height:1.6;">⚠️ 本分析僅供參考，不構成投資建議。禾伸堂為強景氣循環股，單季高 EPS 不可線性外推，PER 區間需搭配循環位置判讀。2026E EPS 為本頁依月營收與營益率推估，非法人共識。</p>
+</div>
+
+<!-- ══ TAB 5: 完整摘要 ══ -->
+<div id="tab-summary" class="panel">
+  <div class="warn-box" style="margin-top:0;">
+    <h3>⚠️ 特別提醒：被動元件強循環＋極端題材行情</h3>
+    <p style="font-size:12px;color:#fca5a5;line-height:1.8;">
+      禾伸堂年度 EPS 在 2021 高峰 11.77 元、2023 谷底 5.13 元之間擺盪（股本調整後），2026 年因 MLCC／鉭質電容漲價，TTM EPS 回到 10.24 元。<br>
+      但股價自 26M03 的 137.5 元在三個月內飆到 842 元、7 月腰斬到 450 元、8 月又回 742 元 — 正常化 PER 一度達 115x。<strong>請勿以單季高 EPS 線性外推追高</strong>；本頁估值帶刻意維持在正常化基準，就是為了避免在循環高峰發出錯誤的「接近合理價」訊號。
+    </p>
+  </div>
+
+  <div class="section-title">📌 關鍵數據摘要</div>
+  <table>
+    <thead><tr><th>指標</th><th>數值</th><th>評估</th></tr></thead>
+    <tbody>
+      <tr><td>目前股價（2026/10/19）</td><td style="color:#ef4444;font-weight:700;">735 元</td><td><span class="badge badge-avoid">遠高於昂貴價</span></td></tr>
+      <tr><td>TTM EPS（26Q2）</td><td style="color:#22c55e;font-weight:700;">10.24 元</td><td><span class="badge badge-buy">單季 3.87 元創高</span></td></tr>
+      <tr><td>正常化 EPS（估值基準）</td><td style="color:#22c55e;font-weight:700;">7.35 元</td><td><span class="badge badge-neutral">2021–25 五年平均</span></td></tr>
+      <tr><td>TTM PER</td><td style="color:#ef4444;font-weight:700;">71.8x</td><td><span class="badge badge-avoid">歷史區間 12.5–23.5x</span></td></tr>
+      <tr><td>正常化 PER</td><td style="color:#ef4444;font-weight:700;">100x</td><td><span class="badge badge-avoid">歷史區間 10.6–18.7x</span></td></tr>
+      <tr><td>便宜價（11x）</td><td style="color:#22c55e;">81 元</td><td><span class="badge badge-buy">循環底部參考</span></td></tr>
+      <tr><td>合理價（13x）</td><td style="color:#eab308;">96 元</td><td><span class="badge badge-watch">正常化中線</span></td></tr>
+      <tr><td>昂貴價（19x）</td><td style="color:#f97316;">140 元</td><td><span class="badge badge-avoid">估值上限</span></td></tr>
+      <tr><td>目前股價 vs 合理價</td><td style="color:#ef4444;font-weight:700;">+666%</td><td><span class="badge badge-avoid">極度偏貴</span></td></tr>
+      <tr><td>P/B</td><td style="color:#ef4444;font-weight:700;">11.8x</td><td><span class="badge badge-avoid">淨值 62.28 元</span></td></tr>
+      <tr><td>殖利率</td><td style="color:#ef4444;font-weight:700;">0.79%</td><td><span class="badge badge-avoid">配息 5.8 元</span></td></tr>
+      <tr><td>26Q2 毛利率／營益率</td><td style="color:#22c55e;font-weight:700;">26.2%／15.3%</td><td><span class="badge badge-buy">本業實質改善</span></td></tr>
+      <tr><td>26Q3 月營收合計</td><td style="color:#22c55e;font-weight:700;">45.39 億（+10.8% QoQ）</td><td><span class="badge badge-buy">動能延續</span></td></tr>
+      <tr><td>單月振幅（26M07）</td><td style="color:#ef4444;font-weight:700;">1,005 → 427.5 元</td><td><span class="badge badge-avoid">波動極端</span></td></tr>
+    </tbody>
+  </table>
+
+  <div class="section-title" style="margin-top:20px;">📐 估值帶對照（正常化 EPS 7.35 元）</div>
+  <table>
+    <thead><tr><th>估值帶</th><th>正常化 PER</th><th>對應股價</th><th>說明</th></tr></thead>
+    <tbody>
+      <tr><td style="color:#22c55e;font-weight:600;">便宜帶</td><td>11x</td><td style="color:#22c55e;font-weight:700;">81 元</td><td>近三年低點 10.6x（25M06 收 78 元）</td></tr>
+      <tr><td style="color:#eab308;font-weight:600;">合理帶</td><td>13x</td><td style="color:#eab308;font-weight:700;">96 元</td><td>近三年均值 13.0x（30 個月）</td></tr>
+      <tr><td style="color:#f97316;font-weight:600;">昂貴帶</td><td>19x</td><td style="color:#f97316;font-weight:700;">140 元</td><td>近三年高點 18.7x（26M03 收 137.5 元）</td></tr>
+      <tr><td style="color:#ef4444;font-weight:600;">題材帶</td><td>25x+</td><td style="color:#ef4444;font-weight:700;">184+ 元</td><td>26M04 起進入，無基本面支撐</td></tr>
+      <tr class="danger"><td style="color:#ef4444;font-weight:600;">⚠️ 目前市場</td><td style="color:#ef4444;font-weight:700;">100x</td><td style="color:#ef4444;font-weight:700;">735 元</td><td>自 26M06 高點 842 元回落 13%，仍是昂貴價的 5.3 倍</td></tr>
+    </tbody>
+  </table>
+
+  <div class="section-title" style="margin-top:20px;">🔍 兩種估值基準並列（避免單一視角）</div>
+  <table>
+    <thead><tr><th>基準</th><th>EPS</th><th>便宜／合理／昂貴</th><th>適用情境</th></tr></thead>
+    <tbody>
+      <tr class="highlight"><td><strong>正常化（本頁採用）</strong></td><td>7.35 元</td><td style="font-weight:700;">81 / 96 / 140</td><td>循環股標準做法，不受單季高峰扭曲</td></tr>
+      <tr><td>最新 TTM</td><td>10.24 元</td><td>113 / 133 / 195</td><td>若認定獲利已結構性墊高（需 2~3 季財報驗證）</td></tr>
+      <tr><td>2026E 推估</td><td>~15 元</td><td>165 / 195 / 285</td><td>最樂觀情境；即使成立，現價仍高出 158%</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:11px;color:#64748b;margin-top:8px;">* 總覽頁與 LINE 到價通知採用第一列（正常化）。三種基準的昂貴價上限為 285 元，現價 735 元在任何一種基準下都明顯偏貴。</p>
+
+  <div class="info-box">
+    <strong>📌 投資結論（僅供參考）：</strong><br>
+    禾伸堂的基本面改善是實質的 — 毛利率 17.6% → 26.2%、營益率 5.8% → 15.3%、26Q3 月營收連續走高且 9 月創單月新高，而且獲利來自本業而非一次性業外。這是被動元件漲價循環確實傳導到損益表的證據。<br>
+    問題完全在價格。<span style="color:#ef4444;">735 元對應正常化 PER 100x、P/B 11.8x、殖利率 0.79%，三項都在歷史最極端。</span>股價四個月漲 4.3 倍、同期 EPS 只增三成，倍數擴張佔了絕大部分 — 這是題材與籌碼行情，不是估值重估。7 月單月 1,005 → 427.5 元的振幅，說明這個價位的下行風險有多快。<br>
+    <strong>操作上：</strong>現價不宜追高。要參與這檔，合理做法是等 26Q3／26Q4 財報確認毛利率站穩 26% 以上，屆時以新的正常化 EPS（納入 2026）重算估值帶 — 若 2026 年 EPS 真能站上 15 元，五年平均會推升到 9~10 元，合理價也才 120~130 元。在那之前，81～140 元才是這檔股票有估值依據的區間。
+  </div>
+
+  <p style="font-size:10px;color:#334155;margin-top:14px;line-height:1.6;">⚠️ 本分析僅供參考，不構成投資建議。股市有風險，請自行判斷。資料來源：FinMind 公開 API（股價、財報、配息），截至 2026/10/19。</p>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<script>
+function switchTab(id, btn) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ══ 估值常數 ══
+const TTM_EPS   = 10.24;   // 26Q2 TTM（僅供顯示即時 PER，不作估值基準）
+const NORM_EPS  = 7.35;    // 正常化 EPS：2021–2025 歸母淨利 ÷ 最新股數（1.6589 億股）平均
+const CHEAP     = 81;      // 7.35 × 11x
+const FAIR      = 96;      // 7.35 × 13x
+const EXPENSIVE = 140;     // 7.35 × 19x
+const BVPS      = 62.28;   // 26Q2 母公司權益 10,332M ÷ 165.89M 股
+const ANNUAL_DIV = 5.8;    // 2026 年配（26/06/22 除息）
+const FWD_EPS   = 15.0;    // 2026E 推估
+
+// ══ 數據定義（季末 TTM 為錨、季中月插值） ══
+const data = [
+  { m:'23M10', px:94.9,  eps:5.747,  per:16.51 },
+  { m:'23M11', px:100,   eps:5.493,  per:18.20 },
+  { m:'23M12', px:97,    eps:5.24,   per:18.51 },
+  { m:'24M01', px:94,    eps:4.89,   per:19.22 },
+  { m:'24M02', px:96.9,  eps:4.54,   per:21.34 },
+  { m:'24M03', px:96.5,  eps:4.19,   per:23.03 },
+  { m:'24M04', px:97,    eps:4.203,  per:23.08 },
+  { m:'24M05', px:99,    eps:4.217,  per:23.48 },
+  { m:'24M06', px:93.9,  eps:4.23,   per:22.20 },
+  { m:'24M07', px:89,    eps:4.467,  per:19.92 },
+  { m:'24M08', px:91.2,  eps:4.703,  per:19.39 },
+  { m:'24M09', px:91.3,  eps:4.94,   per:18.48 },
+  { m:'24M10', px:89.4,  eps:5.25,   per:17.03 },
+  { m:'24M11', px:89.7,  eps:5.56,   per:16.13 },
+  { m:'24M12', px:85.6,  eps:5.87,   per:14.58 },
+  { m:'25M01', px:87.1,  eps:5.993,  per:14.53 },
+  { m:'25M02', px:85,    eps:6.117,  per:13.90 },
+  { m:'25M03', px:87.3,  eps:6.24,   per:13.99 },
+  { m:'25M04', px:83.5,  eps:6.243,  per:13.37 },
+  { m:'25M05', px:85.7,  eps:6.247,  per:13.72 },
+  { m:'25M06', px:78,    eps:6.25,   per:12.48 },
+  { m:'25M07', px:80.1,  eps:6.21,   per:12.90 },
+  { m:'25M08', px:85.5,  eps:6.17,   per:13.86 },
+  { m:'25M09', px:97,    eps:6.13,   per:15.82 },
+  { m:'25M10', px:114,   eps:6.28,   per:18.15 },
+  { m:'25M11', px:105,   eps:6.43,   per:16.33 },
+  { m:'25M12', px:102,   eps:6.58,   per:15.50 },
+  { m:'26M01', px:104.5, eps:6.973,  per:14.99 },
+  { m:'26M02', px:119,   eps:7.367,  per:16.15 },
+  { m:'26M03', px:137.5, eps:7.76,   per:17.72 },
+  { m:'26M04', px:212.5, eps:8.587,  per:24.75 },
+  { m:'26M05', px:641,   eps:9.413,  per:68.10 },
+  { m:'26M06', px:842,   eps:10.24,  per:82.23 },
+  { m:'26M07', px:450,   eps:10.24,  per:43.95 },
+  { m:'26M08', px:742,   eps:10.24,  per:72.46 },
+  { m:'26M09', px:791,   eps:10.24,  per:77.25 },
+];
+
+const labels = data.map(d => d.m);
+const prices = data.map(d => d.px);
+
+const r12 = data.map(d => +(d.eps * 12).toFixed(2));
+const r17 = data.map(d => +(d.eps * 17).toFixed(2));
+const r23 = data.map(d => +(d.eps * 23).toFixed(2));
+const normFair = data.map(() => FAIR);
+
+// ══ PER 河流圖 ══
+const ctx1 = document.getElementById('riverChart').getContext('2d');
+new Chart(ctx1, {
+  type: 'line',
+  data: {
+    labels,
+    datasets: [
+      {
+        label: '23x（TTM 高標）',
+        data: r23,
+        borderColor: '#ef4444',
+        backgroundColor: 'rgba(239,68,68,0.08)',
+        borderWidth: 1.5,
+        borderDash: [4,3],
+        pointRadius: 0,
+        fill: false,
+        tension: 0.3,
+      },
+      {
+        label: '17x（TTM 均值）',
+        data: r17,
+        borderColor: '#eab308',
+        backgroundColor: 'rgba(234,179,8,0.08)',
+        borderWidth: 1.5,
+        borderDash: [4,3],
+        pointRadius: 0,
+        fill: false,
+        tension: 0.3,
+      },
+      {
+        label: '12x（TTM 低標）',
+        data: r12,
+        borderColor: '#22c55e',
+        backgroundColor: 'rgba(34,197,94,0.08)',
+        borderWidth: 1.5,
+        borderDash: [4,3],
+        pointRadius: 0,
+        fill: false,
+        tension: 0.3,
+      },
+      {
+        label: '正常化合理價 96（估值基準）',
+        data: normFair,
+        borderColor: '#a855f7',
+        borderWidth: 1.5,
+        borderDash: [2,4],
+        pointRadius: 0,
+        fill: false,
+        tension: 0,
+      },
+      {
+        label: '月收盤價',
+        data: prices,
+        borderColor: '#ffffff',
+        backgroundColor: 'rgba(255,255,255,0.05)',
+        borderWidth: 2.5,
+        pointRadius: 2.5,
+        pointBackgroundColor: '#ffffff',
+        fill: false,
+        spanGaps: true,
+        tension: 0.3,
+        z: 10,
+      },
+    ]
+  },
+  options: {
+    responsive: true,
+    interaction: { mode: 'index', intersect: false },
+    plugins: {
+      legend: { labels: { color: '#94a3b8', font: { size: 11 } } },
+      tooltip: {
+        callbacks: {
+          label: ctx => {
+            if (ctx.dataset.label === '月收盤價') return `收盤：${ctx.parsed.y}`;
+            return `${ctx.dataset.label}：${ctx.parsed.y ?? '—'}`;
+          }
+        }
+      }
+    },
+    scales: {
+      x: { ticks: { color: '#64748b', maxRotation: 45, font: { size: 10 } }, grid: { color: '#1e2535' } },
+      y: { ticks: { color: '#64748b', font: { size: 10 }, callback: v => v.toLocaleString() }, grid: { color: '#1e2535' } }
+    }
+  }
+});
+
+// ══ EPS 趨勢圖 ══
+const ctx2 = document.getElementById('epsChart').getContext('2d');
+new Chart(ctx2, {
+  type: 'bar',
+  data: {
+    labels,
+    datasets: [
+      {
+        label: 'TTM EPS（元）',
+        data: data.map(d => d.eps),
+        backgroundColor: data.map(d => d.eps >= NORM_EPS ? '#22c55e99' : d.eps >= 5.5 ? '#eab30899' : '#ef444499'),
+        borderColor: data.map(d => d.eps >= NORM_EPS ? '#22c55e' : d.eps >= 5.5 ? '#eab308' : '#ef4444'),
+        borderWidth: 1,
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      legend: { labels: { color: '#94a3b8', font: { size: 11 } } },
+      tooltip: {
+        callbacks: {
+          afterLabel: ctx => ctx.parsed.y >= NORM_EPS ? '高於正常化 7.35 元' : '低於正常化 7.35 元'
+        }
+      }
+    },
+    scales: {
+      x: { ticks: { color: '#64748b', maxRotation: 45, font: { size: 10 } }, grid: { color: '#1e2535' } },
+      y: {
+        ticks: { color: '#64748b', font: { size: 10 } },
+        grid: { color: '#1e2535' },
+        title: { display: true, text: 'TTM EPS（元）', color: '#64748b', font: { size: 11 } }
+      }
+    }
+  }
+});
+
+// ══ EPS 表格 ══
+const tbody = document.getElementById('eps-table-body');
+data.forEach(d => {
+  const npe = d.px / NORM_EPS;
+  const rowClass = npe > 25 ? ' class="danger"' : (d.m >= '26M06' ? '' : '');
+  const priceColor = d.px > d.eps * 23 ? 'color:#ef4444' : d.px < d.eps * 12 ? 'color:#22c55e' : 'color:#e2e8f0';
+  tbody.innerHTML += `<tr${rowClass}><td>${d.m}${npe > 25 ? ' ⚠️' : ''}</td><td style="${priceColor}">${d.px}</td><td>${(d.eps * 10).toFixed(1)}</td><td>${d.eps.toFixed(2)}</td><td>${d.per.toFixed(2)}x</td><td style="${npe > 25 ? 'color:#ef4444;font-weight:700' : ''}">${npe.toFixed(1)}x</td><td>${(d.eps * 12).toFixed(1)}</td><td>${(d.eps * 17).toFixed(1)}</td><td>${(d.eps * 23).toFixed(1)}</td></tr>`;
+});
+
+// ══ 即時股價 ══
+async function updateLive() {
+  try {
+    const res = await fetch('https://taiwan-stock-price.david870114.workers.dev/?id=3026', { cache: 'no-cache' });
+    const d = JSON.parse(await res.text());
+    const price = parseFloat(d.price);
+    if (!price || isNaN(price)) return;
+
+    const ttmPE = (price / TTM_EPS).toFixed(1);
+    const normPE = (price / NORM_EPS).toFixed(1);
+    const pb = (price / BVPS).toFixed(2);
+    const yld = (ANNUAL_DIV / price * 100).toFixed(2);
+    const fpe = (price / FWD_EPS).toFixed(1);
+    const state = price >= EXPENSIVE ? '⚠️ 高於昂貴價' : price <= CHEAP ? '✅ 低於便宜價' : price <= FAIR ? '🟢 合理價以下' : '🟡 合理~昂貴之間';
+    const color = price >= EXPENSIVE ? '#ef4444' : price <= CHEAP ? '#22c55e' : price <= FAIR ? '#22c55e' : '#eab308';
+
+    document.getElementById('live-price').textContent = 'NT$ ' + price.toLocaleString();
+
+    const note = document.getElementById('live-per-note');
+    note.textContent = `TTM PER ${ttmPE}x｜正常化 PER ${normPE}x｜${state}`;
+    note.style.color = color;
+
+    const sc = document.getElementById('sc-live');
+    sc.textContent = `NT$ ${price.toLocaleString()}（正常化 PER ${normPE}x）`;
+    sc.style.color = color;
+
+    const pe = document.getElementById('fund-pe');
+    pe.textContent = ttmPE + 'x';
+    pe.style.color = ttmPE > 25 ? '#ef4444' : ttmPE > 17 ? '#eab308' : '#22c55e';
+    document.getElementById('fund-pe-note').textContent = `TTM EPS 10.24 元（26Q2）｜股價 ${price.toLocaleString()}`;
+
+    const npe = document.getElementById('fund-npe');
+    npe.textContent = normPE + 'x';
+    npe.style.color = normPE > 19 ? '#ef4444' : normPE > 13 ? '#eab308' : '#22c55e';
+
+    const pbEl = document.getElementById('fund-pb');
+    pbEl.textContent = pb + 'x';
+    pbEl.style.color = pb > 3 ? '#ef4444' : pb > 2 ? '#eab308' : '#22c55e';
+
+    const fpeEl = document.getElementById('fund-fpe');
+    fpeEl.textContent = '~' + fpe + 'x';
+    fpeEl.style.color = fpe > 25 ? '#ef4444' : fpe > 17 ? '#eab308' : '#22c55e';
+
+    const yldEl = document.getElementById('fund-yield');
+    yldEl.textContent = yld + '%';
+    yldEl.style.color = yld < 1.5 ? '#ef4444' : yld < 3 ? '#eab308' : '#22c55e';
+  } catch(e) {}
+}
+
+window.addEventListener('load', updateLive);
+</script>
+</body>
+</html>

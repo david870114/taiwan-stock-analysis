@@ -1,5 +1,5 @@
 {
- "updated": "2026-10-18",
+ "updated": "2026-10-19",
  "stocks": [
   {
    "id": "0050",
@@ -200,6 +200,16 @@
    "expensive": 267,
    "annualDiv": 2.5,
    "url": "2492_analysis.html"
+  },
+  {
+   "id": "3026",
+   "name": "禾伸堂",
+   "tier": "spec",
+   "cheap": 81,
+   "fair": 96,
+   "expensive": 140,
+   "annualDiv": 5.8,
+   "url": "3026_analysis.html"
   },
   {
    "id": "1519",
