@@ -2033,10 +2033,14 @@ function vsInfo(price, fairValue, expValue) {
 }
 
 // 上游報價來源在瞬間大量請求時會回 error 520（實測約 25-30 個請求/數秒即觸發），因此：
-// 1. 分批請求（每批 4 檔、間隔 1 秒，平均約 3 個請求/秒） 2. 首次載入失敗隔 1 秒重試一次 3. 仍失敗則沿用上一輪價格
+// 1. 逐檔序列請求、每檔間隔 250ms（2026/10 由「每批 4 檔、間隔 1 秒」改成這樣：
+//    4 個併發同時抵達仍會觸發限流，實測 38 檔只有前 19 檔拿得到價）
+// 2. 首次載入失敗隔 1 秒重試一次 3. 仍失敗則沿用上一輪價格
 var LAST_PRICE = {};
 var BLOCK_ROUNDS = 0;  // 連續整輪全失敗的次數（判定已被上游封鎖）
 var SKIP_TICKS = 0;    // 封鎖時跳過的自動更新次數（指數退避）
+var FETCH_GAP = 250;   // 逐檔間隔（ms），低於此值上游會開始回 520
+var FETCHING = false;  // 防止上一輪還沒跑完就被 setInterval 再觸發
 var sleep = function(ms) { return new Promise(function(r) { setTimeout(r, ms); }); };
 
 async function updateStockCells(s) {
@@ -2090,12 +2094,21 @@ async function fetchAllPrices() {
     document.getElementById('lastUpdate').textContent = '來源暫時限流，稍後自動重試…';
     return;
   }
-  document.getElementById('lastUpdate').textContent = '更新中...';
-  var BATCH = 4, freshCount = 0;
-  for (var i = 0; i < STOCKS.length; i += BATCH) {
-    var results = await Promise.all(STOCKS.slice(i, i + BATCH).map(updateStockCells));
-    freshCount += results.filter(Boolean).length;
-    if (i + BATCH < STOCKS.length) await sleep(1000);
+  if (FETCHING) return;   // 上一輪尚未結束（逐檔序列約需 20~30 秒），跳過這次觸發
+  FETCHING = true;
+  var freshCount = 0, missStreak = 0;
+  try {
+    for (var i = 0; i < STOCKS.length; i++) {
+      document.getElementById('lastUpdate').textContent =
+        '更新中... (' + (i + 1) + '/' + STOCKS.length + ')';
+      if (await updateStockCells(STOCKS[i])) { freshCount++; missStreak = 0; }
+      else missStreak++;
+      // 開頭連續 5 檔全失敗＝已被上游擋下，提早收手；繼續打完 38 檔只會讓封鎖更久
+      if (freshCount === 0 && missStreak >= 5) break;
+      if (i < STOCKS.length - 1) await sleep(FETCH_GAP);
+    }
+  } finally {
+    FETCHING = false;
   }
   if (freshCount === 0) {
     BLOCK_ROUNDS++;
