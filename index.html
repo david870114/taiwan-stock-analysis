@@ -412,6 +412,9 @@
   .per-sub { display: inline; font-size: 10px; color: #64748b; font-weight: 400; margin-left: 4px; }
 
   .price-cell { font-size: 14px; font-weight: 700; color: #f8fafc; font-family: monospace; }
+  /* 上游取價失敗時沿用的舊價：維持可讀但調暗，並以 ° 標示非即時 */
+  .price-cell.stale { color: #94a3b8; }
+  .price-cell.stale::after { content: '°'; color: #64748b; font-size: 11px; vertical-align: super; }
   .gray { color: #475569; }
 
   .vs-cell { font-weight: 700; font-size: 13px; }
@@ -2036,29 +2039,55 @@ function vsInfo(price, fairValue, expValue) {
 // 1. 逐檔序列請求、每檔間隔 250ms（2026/10 由「每批 4 檔、間隔 1 秒」改成這樣：
 //    4 個併發同時抵達仍會觸發限流，實測 38 檔只有前 19 檔拿得到價）
 // 2. 首次載入失敗隔 1 秒重試一次 3. 仍失敗則沿用上一輪價格
+// 4. 最後一次成功的價格存進 localStorage，重新整理／剛開頁時先填上去，
+//    上游還沒回應或被限流時就不會出現空白（舊價以 ° 標示並調暗）
 var LAST_PRICE = {};
+var PRICE_CACHE_KEY = 'tw-stock-last-prices';
+var CACHE_TS = null;    // 快取價格的時間（Date），null = 沒有快取
+
+function loadPriceCache() {
+  try {
+    var raw = localStorage.getItem(PRICE_CACHE_KEY);
+    if (!raw) return;
+    var obj = JSON.parse(raw);
+    if (!obj || !obj.prices) return;
+    LAST_PRICE = obj.prices;
+    CACHE_TS = obj.ts ? new Date(obj.ts) : null;
+  } catch (e) {}   // 無痕模式／封鎖 storage 時直接略過
+}
+
+function savePriceCache() {
+  try {
+    localStorage.setItem(PRICE_CACHE_KEY, JSON.stringify({ prices: LAST_PRICE, ts: Date.now() }));
+  } catch (e) {}
+}
+
+function hhmm(d) {
+  return String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
+}
+
+// 被限流時的狀態文字：有舊價就說明畫面上顯示的是哪個時間的價
+function blockedMsg() {
+  return CACHE_TS
+    ? '來源暫時限流，目前顯示 ' + hhmm(CACHE_TS) + ' 的價格，稍後自動重試…'
+    : '來源暫時限流，稍後自動重試…';
+}
+
 var BLOCK_ROUNDS = 0;  // 連續整輪全失敗的次數（判定已被上游封鎖）
 var SKIP_TICKS = 0;    // 封鎖時跳過的自動更新次數（指數退避）
 var FETCH_GAP = 250;   // 逐檔間隔（ms），低於此值上游會開始回 520
 var FETCHING = false;  // 防止上一輪還沒跑完就被 setInterval 再觸發
 var sleep = function(ms) { return new Promise(function(r) { setTimeout(r, ms); }); };
 
-async function updateStockCells(s) {
-  var price = await fetchPrice(s.id);
-  if (price === null && LAST_PRICE[s.id] == null && BLOCK_ROUNDS === 0) {
-    // 只在還沒拿過價格且未偵測到封鎖時重試，避免封鎖期間請求量翻倍
-    await sleep(1000);
-    price = await fetchPrice(s.id);
-  }
-  var fresh = price !== null;
-  if (price !== null) LAST_PRICE[s.id] = price;
-  else if (LAST_PRICE[s.id] != null) price = LAST_PRICE[s.id];
+// 把價格畫進表格列與供應鏈 mini-card；fresh=false 代表沿用的舊價（調暗＋°）
+function renderPrice(s, price, fresh) {
   var priceEl = document.getElementById('price-' + s.id);
   var vsEl    = document.getElementById('vs-'    + s.id);
   if (!priceEl || !vsEl) return fresh;
   if (price !== null) {
     priceEl.textContent = price.toLocaleString();
-    priceEl.className   = 'price-cell td-cur';
+    priceEl.className   = 'price-cell td-cur' + (fresh ? '' : ' stale');
+    priceEl.title       = fresh ? '' : ('非即時：沿用' + (CACHE_TS ? ' ' + hhmm(CACHE_TS) + ' ' : '上次') + '取得的價格');
     var v = vsInfo(price, s.fairValue, s.expValue);
     vsEl.innerHTML  = '<span class="vs-cell ' + v.cls + '">' + v.pct + '</span> <span class="badge ' + v.badge + '">' + v.label + '</span>';
     vsEl.className  = '';
@@ -2072,7 +2101,9 @@ async function updateStockCells(s) {
     var cvEl = document.getElementById('cv-' + s.id);
     if (cpEl && cvEl) {
       if (price !== null) {
-        cpEl.textContent = price.toLocaleString();
+        cpEl.textContent = price.toLocaleString() + (fresh ? '' : '°');
+        cpEl.style.color = fresh ? '' : '#94a3b8';
+        cpEl.title       = fresh ? '' : '非即時：沿用上次取得的價格';
         var v2 = vsInfo(price, s.fairValue, s.expValue);
         cvEl.textContent = v2.pct;
         cvEl.className   = 'mc-vs-val ' + v2.cls;
@@ -2086,12 +2117,32 @@ async function updateStockCells(s) {
   return fresh;
 }
 
+async function updateStockCells(s) {
+  var price = await fetchPrice(s.id);
+  if (price === null && LAST_PRICE[s.id] == null && BLOCK_ROUNDS === 0) {
+    // 只在還沒拿過價格且未偵測到封鎖時重試，避免封鎖期間請求量翻倍
+    await sleep(1000);
+    price = await fetchPrice(s.id);
+  }
+  var fresh = price !== null;
+  if (price !== null) LAST_PRICE[s.id] = price;
+  else if (LAST_PRICE[s.id] != null) price = LAST_PRICE[s.id];
+  return renderPrice(s, price, fresh);
+}
+
+// 開頁／重新整理時先把 localStorage 的舊價填上，避免等上游回應前整欄空白
+function paintCachedPrices() {
+  STOCKS.forEach(function(s) {
+    if (LAST_PRICE[s.id] != null) renderPrice(s, LAST_PRICE[s.id], false);
+  });
+}
+
 async function fetchAllPrices() {
   // 被封鎖時指數退避：整輪全失敗就跳過接下來 1、2、4、8 次自動更新，
   // 避免開著頁面每分鐘持續打請求讓封鎖一直不解除
   if (SKIP_TICKS > 0) {
     SKIP_TICKS--;
-    document.getElementById('lastUpdate').textContent = '來源暫時限流，稍後自動重試…';
+    document.getElementById('lastUpdate').textContent = blockedMsg();
     return;
   }
   if (FETCHING) return;   // 上一輪尚未結束（逐檔序列約需 20~30 秒），跳過這次觸發
@@ -2100,6 +2151,7 @@ async function fetchAllPrices() {
   try {
     for (var i = 0; i < STOCKS.length; i++) {
       document.getElementById('lastUpdate').textContent =
+        (CACHE_TS ? '顯示 ' + hhmm(CACHE_TS) + ' 的價格，' : '') +
         '更新中... (' + (i + 1) + '/' + STOCKS.length + ')';
       if (await updateStockCells(STOCKS[i])) { freshCount++; missStreak = 0; }
       else missStreak++;
@@ -2113,10 +2165,19 @@ async function fetchAllPrices() {
   if (freshCount === 0) {
     BLOCK_ROUNDS++;
     SKIP_TICKS = Math.min(8, Math.pow(2, BLOCK_ROUNDS - 1));
-    document.getElementById('lastUpdate').textContent = '來源暫時限流，稍後自動重試…';
+    // 提早中止時後面幾檔還停在「…」，一併補成舊價或「—」，不要留著轉圈
+    STOCKS.forEach(function(s) {
+      var el = document.getElementById('price-' + s.id);
+      if (el && el.classList.contains('loading')) {
+        renderPrice(s, LAST_PRICE[s.id] != null ? LAST_PRICE[s.id] : null, false);
+      }
+    });
+    document.getElementById('lastUpdate').textContent = blockedMsg();
     return;
   }
   BLOCK_ROUNDS = 0;
+  savePriceCache();   // 這一輪有拿到新價 → 更新快取，供下次開頁先填
+  CACHE_TS = new Date();
   if (typeof updateEtfGrowthCells === 'function') updateEtfGrowthCells();
   var now = new Date();
   document.getElementById('lastUpdate').textContent =
@@ -2165,7 +2226,13 @@ function buildEtfTable() {
 
 document.addEventListener('DOMContentLoaded', buildEtfTable);
 
-window.addEventListener('load', fetchAllPrices);
+window.addEventListener('load', function() {
+  loadPriceCache();       // 讀上次成功取得的價格
+  paintCachedPrices();    // 先填上去（標示為非即時），避免等上游時整欄空白
+  if (CACHE_TS) document.getElementById('lastUpdate').textContent =
+    '顯示 ' + hhmm(CACHE_TS) + ' 的價格，更新中…';
+  fetchAllPrices();
+});
 setInterval(fetchAllPrices, 60000);
 
 /* ══════════════════════════════════════
