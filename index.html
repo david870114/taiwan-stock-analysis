@@ -662,6 +662,18 @@ td.grow-cell.na   { color:#475569; font-weight:400; }
               <div class="mc-vs-val" id="cv-6488">—</div>
             </div>
           </a>
+          <a class="mini-card" href="5483_analysis.html">
+            <div class="mc-left">
+              <span class="mc-code">5483</span>
+              <span class="mc-name">中美晶</span>
+            </div>
+            <div class="mc-right">
+              <div class="mc-price-label">目前股價</div>
+              <div class="mc-price-val" id="cp-5483">…</div>
+              <div class="mc-vs-label">vs 合理價</div>
+              <div class="mc-vs-val" id="cv-5483">—</div>
+            </div>
+          </a>
           <div class="mini-card no-data">
             <div class="mc-left">
               <span class="mc-code">3532</span>
@@ -1099,6 +1111,16 @@ td.grow-cell.na   { color:#475569; font-weight:400; }
         <td class="price-cell loading td-cur" id="price-6488">…</td>
         <td id="vs-6488" class="loading">—</td>
         <td class="td-tp">1,443 <span class="per-sub">FactSet中位 8/05</span></td>
+      </tr>
+      <tr>
+        <td class="code code-wafer">5483</td>
+        <td class="name"><a href="5483_analysis.html">中美晶</a></td>
+        <td>99 <span class="per-sub">9x 正常化</span></td>
+        <td>154 <span class="per-sub">14x 正常化</span></td>
+        <td>220 <span class="per-sub">20x 正常化</span></td>
+        <td class="price-cell loading td-cur" id="price-5483">…</td>
+        <td id="vs-5483" class="loading">—</td>
+        <td class="td-tp">— <span class="per-sub">環球晶母公司</span></td>
       </tr>
     </tbody>
   </table>
@@ -1942,6 +1964,7 @@ var STOCKS = [
   { id:'2303',  fairValue:120,  expValue:214  },
   { id:'6239',  fairValue:152,  expValue:222 },
   { id:'6488',  fairValue:486,  expValue:702 },
+  { id:'5483',  fairValue:154,  expValue:220 },
   { id:'2382',  fairValue:413,  expValue:596 },
   { id:'3231',  fairValue:229,  expValue:331 },
   { id:'6669',  fairValue:1577, expValue:2102 },
@@ -1970,7 +1993,7 @@ var STOCKS = [
   { id:'00631L', fairValue:32, expValue:42 },
 ];
 
-var CHAIN_STOCKS = ['6488','2330','2454','2303','6239','2382','3231','6669','2345','3596','3017','3324','8210','2301','2308','3037','2408','2337','2344','6770','8046','00919','00878','00981A','00991A','00631L'];
+var CHAIN_STOCKS = ['6488','5483','2330','2454','2303','6239','2382','3231','6669','2345','3596','3017','3324','8210','2301','2308','3037','2408','2337','2344','6770','8046','00919','00878','00981A','00991A','00631L'];
 
 async function fetchPrice(id) {
   try {
@@ -2185,6 +2208,7 @@ var TRACKED = [
   { id:'2408', name:'南亞科',     tier:'spec',   fairValue:279,  expValue:391,  fairPER:25, tp:618,  cheapValue:167, annualDiv:1.35 },  // FY2025 配息 1.35元（26/07/07除息）；⚠26Q2 TTM EPS 11.16→27.26元（+144%，記憶體循環高峰），現價457元PER僅16.8x；估值帶維持正常化EPS，勿依高峰EPS機械式重算
   { id:'6770', name:'力積電',     tier:'spec',   fairValue:44,   expValue:62,   fairPER:25, tp:null, cheapValue:27,  annualDiv:0.23 },  // 景氣循環；⚠26Q2 TTM EPS 3.32元，但單季 3.36→0.76（-77%，26Q1 含一次性收益），估值帶維持不動；26H1 配息0.23元（26/08/27除息）
   { id:'6488', name:'環球晶',     tier:'spec',   fairValue:486,  expValue:702,  fairPER:18, tp:1443, cheapValue:297, annualDiv:7.7 },  // 矽晶圓景氣循環；⚠26Q2 TTM EPS 16.22→20.60（單季 3.97→7.90，+99%）觸發循環股檢核，且業外 31.6 億為本業營業利益 14.2 億的 2.2 倍（毛利率反由 25.8%→20.6%），不可用 TTM 機械式重算。估值帶以正常化 EPS 27 元（2021–2025 股本調整後年度 EPS 平均 24.8/32.1/41.3/20.6/15.3）× 11/18/26x；半年配 TTM 7.7元（25/12/31 2元＋26/07/16 5.7元）
+  { id:'5483', name:'中美晶',     tier:'spec',   fairValue:154,  expValue:220,  fairPER:14, tp:null, cheapValue:99,  annualDiv:3.5 },  // 環球晶(6488)母公司、持股約5成；矽晶圓景氣循環：⚠26Q2 TTM EPS 7.35→9.37（單季 1.83→3.19，+74%）觸發循環股檢核，且業外 32.2 億為本業營業利益 22.5 億的 1.4 倍（毛利率 25.3%→22.7%），不可用 TTM 機械式重算。估值帶以正常化 EPS 11.0 元（2021–2025 股本調整後年度 EPS 平均 10.6/13.6/15.5/8.4/6.7）× 9/14/20x；半年配 TTM 3.5元（26/01/08 1元＋26/07/23 2.5元）
   { id:'1303', name:'南亞',       tier:'spec',   fairValue:81,   expValue:116,  fairPER:35, tp:null, cheapValue:58,  annualDiv:0.8  },  // 石化景氣循環；⚠26Q2 TTM EPS 2.31→6.20元（單季 1.8→3.37，+87%），觸發循環股檢核，估值帶維持不動；FY2025配息0.8元（26/07/08除息）
 ];
 

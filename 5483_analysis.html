@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>中美晶 5483 — 2026 股價推算分析</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #0f1117; color: #e2e8f0; padding: 16px; }
+  h1 { font-size: 18px; font-weight: 700; color: #f8fafc; margin-bottom: 4px; }
+  .subtitle { font-size: 12px; color: #94a3b8; margin-bottom: 16px; }
+  .tabs { display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; }
+  .tab { padding: 6px 14px; border-radius: 20px; font-size: 12px; cursor: pointer; border: 1px solid #334155; color: #94a3b8; background: transparent; transition: all 0.2s; }
+  .tab.active { background: #3b82f6; color: #fff; border-color: #3b82f6; }
+  .tab:hover:not(.active) { border-color: #64748b; color: #e2e8f0; }
+  .panel { display: none; }
+  .panel.active { display: block; }
+  canvas { width: 100% !important; border-radius: 10px; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+  .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-top: 16px; }
+  .grid4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 12px; margin-top: 16px; }
+  @media(max-width:640px){ .grid2,.grid3,.grid4{ grid-template-columns:1fr 1fr; } }
+  @media(max-width:400px){ .grid2,.grid3,.grid4{ grid-template-columns:1fr; } }
+  .card { background: #1e2535; border: 1px solid #2d3748; border-radius: 10px; padding: 14px; }
+  .card h3 { font-size: 12px; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
+  .card .val { font-size: 22px; font-weight: 700; }
+  .card .note { font-size: 11px; color: #64748b; margin-top: 4px; }
+  .green { color: #22c55e; } .yellow { color: #eab308; } .red { color: #ef4444; } .blue { color: #3b82f6; } .purple { color: #a855f7; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 12px; }
+  th { background: #1e2535; color: #64748b; padding: 8px 10px; text-align: left; font-weight: 600; font-size: 11px; text-transform: uppercase; }
+  td { padding: 8px 10px; border-bottom: 1px solid #1e2535; }
+  tr:hover td { background: #1a2030; }
+  tr.highlight td { background: #0f2a1e; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: 600; }
+  .badge-buy { background: #14532d; color: #86efac; }
+  .badge-watch { background: #713f12; color: #fde68a; }
+  .badge-avoid { background: #450a0a; color: #fca5a5; }
+  .badge-neutral { background: #1e293b; color: #94a3b8; }
+  .scenario-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 12px; }
+  @media(max-width:500px){ .scenario-grid{ grid-template-columns:1fr; } }
+  .scenario-card { border-radius: 10px; padding: 14px; text-align: center; }
+  .bear { background: linear-gradient(135deg, #1a0a0a, #2d1010); border: 1px solid #7f1d1d; }
+  .base { background: linear-gradient(135deg, #0a1a0a, #102d10); border: 1px solid #14532d; }
+  .bull { background: linear-gradient(135deg, #0a0f1a, #10182d); border: 1px solid #1d4ed8; }
+  .sc-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.7; margin-bottom: 6px; }
+  .sc-price { font-size: 22px; font-weight: 800; margin: 4px 0; }
+  .sc-detail { font-size: 10px; opacity: 0.65; line-height: 1.6; }
+  .section-title { font-size: 13px; font-weight: 600; color: #cbd5e1; margin: 16px 0 8px; }
+  .buy-signal { background: #0f2a1e; border: 1px solid #166534; border-radius: 10px; padding: 14px; margin-top: 12px; }
+  .buy-signal h3 { color: #86efac; font-size: 13px; margin-bottom: 8px; }
+  .buy-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid #1a3a2a; gap: 8px; }
+  .buy-row:last-child { border-bottom: none; }
+  .current-price-badge { background: #1e3a5f; border: 1px solid #3b82f6; border-radius: 8px; padding: 10px 14px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px; }
+  .warn-box { background: #2d1010; border: 1px solid #7f1d1d; border-radius: 10px; padding: 14px; margin-top: 12px; }
+  .warn-box h3 { color: #fca5a5; font-size: 13px; margin-bottom: 8px; }
+  .info-box { background: #1e2535; border: 1px solid #2d3748; border-radius: 10px; padding: 14px; margin-top: 12px; font-size: 12px; color: #94a3b8; line-height: 1.8; }
+  .info-box strong { color: #e2e8f0; }
+  .stat-bar { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 12px; }
+  .stat-item { background: #1e2535; border-radius: 10px; padding: 12px 16px; flex: 1; min-width: 120px; }
+  .stat-label { font-size: 10px; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+  .stat-val { font-size: 18px; font-weight: 700; color: #e2e8f0; }
+  .stat-sub { font-size: 10px; color: #64748b; margin-top: 2px; }
+  .client-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; }
+  .client-block { background: #1e2535; border-radius: 10px; padding: 14px; }
+  .client-block h4 { font-size: 11px; color: #64748b; text-transform: uppercase; margin-bottom: 10px; }
+  .client-item { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid #1a2030; font-size: 12px; }
+  .client-item:last-child { border-bottom: none; }
+  .moat-row { display: flex; align-items: flex-start; gap: 8px; padding: 5px 0; border-bottom: 1px solid #1a2030; font-size: 12px; }
+  .moat-row:last-child { border-bottom: none; }
+  .moat-icon { flex-shrink: 0; }
+</style>
+</head>
+<body>
+
+<div style="margin-bottom:12px;">
+  <a href="index.html" style="color:#64748b;font-size:12px;text-decoration:none;display:inline-flex;align-items:center;gap:4px;padding:5px 10px;border:1px solid #334155;border-radius:8px;transition:all 0.2s;" onmouseover="this.style.color='#e2e8f0';this.style.borderColor='#64748b'" onmouseout="this.style.color='#64748b';this.style.borderColor='#334155'">← 返回總覽</a>
+</div>
+<h1>🔆 中美晶 (5483) — 2026 股價推算分析</h1>
+<p class="subtitle">正常化 EPS 估值 ✦ 三情境試算 ✦ 環球晶母公司／控股折價 ✦ 矽晶圓景氣循環股 ✦ 更新時間：2026年10月18日</p>
+
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('river', this)">📈 PER 河流圖</button>
+  <button class="tab" onclick="switchTab('scenario', this)">🎯 三情境買點</button>
+  <button class="tab" onclick="switchTab('eps', this)">📊 EPS 趨勢</button>
+  <button class="tab" onclick="switchTab('fundamental', this)">🏢 基本面分析</button>
+  <button class="tab" onclick="switchTab('summary', this)">📋 完整摘要</button>
+</div>
+
+<!-- ══ TAB 1: PER River ══ -->
+<div id="tab-river" class="panel active">
+  <div class="current-price-badge">
+    <span style="color:#94a3b8;font-size:12px;">目前股價（即時）</span>
+    <span style="color:#3b82f6;font-size:20px;font-weight:800;" id="live-price">載入中…</span>
+    <span style="color:#94a3b8;font-size:12px;" id="live-per-note">計算中…</span>
+  </div>
+  <canvas id="riverChart" height="340"></canvas>
+  <p style="font-size:11px;color:#475569;margin-top:8px;text-align:center;">* 虛線河流帶 = 逐月 TTM EPS × 9x / 14x / 20x（季中月以前後季插值，GoodInfo 河流圖同算法）；紫色水平線 = 正常化 EPS 11.0 元 × 14x = 154 元，為本頁便宜／合理／昂貴價的實際基準。</p>
+
+  <div class="warn-box" style="margin-top:14px;">
+    <h3>⚠️ 為什麼這張圖的河流帶「反過來」</h3>
+    <p style="font-size:12px;color:#fca5a5;line-height:1.8;">
+      中美晶是矽晶圓景氣循環股（且獲利主要來自子公司環球晶），TTM EPS 從 2023Q3 的 <strong>17.29 元</strong> 一路滑到 2025Q3 的 <strong>4.61 元</strong>（−73%），2026Q2 才回到 9.37 元。
+      結果是：2023 年底股價 183~196 元時 PER 只有 <strong>10.7~11.5x</strong>（看似便宜，實際在循環高點）；2025 年股價跌到 91~116 元時 PER 卻是 <strong>17~25x</strong>（看似昂貴，但 EPS 已在谷底）。<br>
+      這正是傳統 PER 法在循環股上失效的典型圖形 — <strong>EPS 高點配低 PER、EPS 谷底配高 PER</strong>。因此本頁估值帶不用最新 TTM EPS，改以正常化 EPS 11.0 元為錨（見「三情境買點」）。
+    </p>
+  </div>
+
+  <div class="info-box">
+    <strong>⚡ 2026 年 7 月的那根巨量長紅與長黑：</strong>7/13 開始連三天跳空（231.5 → 253 → 278），7/15 盤中最高 <strong>278 元</strong>，隨後十個交易日腰斬式回落至 7/30 的 <strong>152.5 元</strong>（−45%）。月線收盤 157 元因此看起來「平淡」，但實際是極端的題材進出。
+    這段波動不是財報驅動（26Q2 財報 8 月才公告），判讀估值時應以月收盤線為準，不要被單日高點錨定。
+  </div>
+</div>
+
+<!-- ══ TAB 2: 三情境 ══ -->
+<div id="tab-scenario" class="panel">
+  <div class="grid3">
+    <div class="card"><h3>26Q2 TTM EPS（最新季末）</h3><div class="val yellow">9.37 元</div><div class="note">單季 1.83 → 3.19 元（+74%）<br>⚠️ 觸發循環股檢核，不作估值基準</div></div>
+    <div class="card"><h3>估值基準：正常化 EPS</h3><div class="val green">11.0 元</div><div class="note">2021–2025 股本調整後年度 EPS 平均<br>10.6 / 13.6 / 15.5 / 8.4 / 6.7</div></div>
+    <div class="card"><h3>26Q2 業外佔比</h3><div class="val red">業外 32.2 億</div><div class="note">本業營業利益僅 22.5 億<br>EPS 3.19 元近半非本業貢獻</div></div>
+  </div>
+
+  <div class="warn-box">
+    <h3>⚠️ 為何不直接用 TTM EPS 9.37 元估值</h3>
+    <p style="font-size:12px;color:#fca5a5;line-height:1.8;">
+      ① <strong>單季 EPS +74%</strong>（26Q1 1.83 → 26Q2 3.19 元），已命中「單季變動 &gt; ±50%」的循環股檢核條件。<br>
+      ② 這次跳升<strong>不是本業帶動</strong>：26Q2 營業利益 22.5 億（營益率 10.6%，還低於 26Q1 的 11.9%），但業外收支 <strong>+32.2 億</strong>，稅前 54.6 億 — 業外是本業的 1.4 倍。與子公司環球晶 26Q2 的業外 31.6 億（美國 Sherman 新廠補助／匯兌）是同一件事，屬一次性。<br>
+      ③ 毛利率仍在低檔：24Q2 32.0% → 26Q2 <strong>22.7%</strong>，營益率由 21.8% 降至 10.6%。<br>
+      若機械式用 9.37 × 9/14/20 會得到 84 / 131 / 187 元，把一次性業外收益當成常態獲利資本化，對到價通知是雜訊。
+    </p>
+  </div>
+
+  <div class="section-title">三情境估值試算（以正常化 EPS 11.0 元為基準，對照不同循環位置）</div>
+  <div class="scenario-grid">
+    <div class="scenario-card bear">
+      <div class="sc-label">🐻 悲觀情境</div>
+      <div class="sc-price" style="color:#fca5a5;">NT$ 60~110</div>
+      <div class="sc-detail">
+        EPS 回落至 6.5~8 元<br>
+        × PER 9x~14x<br>
+        矽晶圓報價再走弱、太陽能持續虧損<br>
+        回到 2025 年股價區間（91~126）
+      </div>
+    </div>
+    <div class="scenario-card base">
+      <div class="sc-label">📊 基本情境（估值帶）</div>
+      <div class="sc-price" style="color:#86efac;">NT$ 99~220</div>
+      <div class="sc-detail">
+        正常化 EPS 11.0 元<br>
+        × PER 9x~20x<br>
+        跨完整循環的平均獲利水準<br>
+        合理價 154 元（14x）
+      </div>
+    </div>
+    <div class="scenario-card bull">
+      <div class="sc-label">🚀 樂觀情境</div>
+      <div class="sc-price" style="color:#93c5fd;">NT$ 225~340</div>
+      <div class="sc-detail">
+        EPS 回到 15~17 元（2023 水準）<br>
+        × PER 15x~20x<br>
+        12 吋長約重新議價、報價全面上調<br>
+        環球晶獲利回到 2023 年高峰
+      </div>
+    </div>
+  </div>
+
+  <div class="buy-signal">
+    <h3>✅ 合理進場參考區間（正常化 EPS 11.0 元）</h3>
+    <div class="buy-row"><span style="font-size:12px;color:#86efac;">🟢 便宜價（PER 9x）</span><span style="font-weight:700;color:#86efac;">NT$ 99</span></div>
+    <div class="buy-row"><span style="font-size:12px;color:#fde68a;">🟡 合理價（PER 14x）</span><span style="font-weight:700;color:#fde68a;">NT$ 154</span></div>
+    <div class="buy-row"><span style="font-size:12px;color:#fca5a5;">🔴 昂貴價（PER 20x）</span><span style="font-weight:700;color:#fca5a5;">NT$ 220</span></div>
+    <div class="buy-row"><span style="font-size:12px;color:#94a3b8;">⚠️ 目前股價</span><span style="font-weight:700;" id="sc-live">載入中…</span></div>
+  </div>
+
+  <div class="info-box">
+    <strong>PER 倍數怎麼來的：</strong>以正常化 EPS 11.0 元回推近三年逐月「正常化 PER」，區間為 <strong>8.3x（25M06，股價 91.3）～ 19.8x（24M06，股價 217.5）</strong>，36 個月平均 13.8x；2021–2022 年前一輪上升循環（股價 124~236）則在 11~21.5x。
+    故取 <strong>低 9x / 均 14x / 高 20x</strong>。26M09 已回到 18.9x，接近區間上緣。
+  </div>
+
+  <div class="info-box">
+    <strong>⚖️ 第二把尺：控股折價（NAV）法</strong><br>
+    中美晶最大的資產是手上約 <strong>50% 的環球晶（6488）股權</strong>（依合併財報歸屬母公司淨利回推，正式比例請以公司年報為準）。把它當控股公司看：
+    <table style="margin-top:8px;">
+      <thead><tr><th>環球晶股價基準</th><th>持股市值</th><th>換算中美晶每股</th><th>vs 中美晶現價</th></tr></thead>
+      <tbody>
+        <tr><td>現價 902 元</td><td>約 2,158 億</td><td><strong style="color:#86efac;">336 元</strong></td><td style="color:#86efac;">折價約 40%</td></tr>
+        <tr><td>本站合理價 486 元</td><td>約 1,163 億</td><td><strong style="color:#fde68a;">181 元</strong></td><td style="color:#fde68a;">溢價約 10%</td></tr>
+        <tr><td>本站便宜價 297 元</td><td>約 710 億</td><td><strong style="color:#fca5a5;">111 元</strong></td><td style="color:#fca5a5;">溢價約 80%</td></tr>
+      </tbody>
+    </table>
+    <span style="font-size:11px;color:#64748b;">* 環球晶股數 4.784 億股；中美晶股數 6.412 億股。僅計環球晶股權，未計中美晶自有太陽能／藍寶石／特氣事業與淨負債。</span><br><br>
+    <strong>結論：</strong>「中美晶對環球晶折價 40%」聽起來很誘人，但那個折價是建立在<strong>環球晶自己已經超過它的昂貴價（702 元）</strong>之上。若環球晶回到合理價 486 元，中美晶的 NAV 只剩 181 元 — 和本頁合理價 154 元相去不遠。
+    兩把尺指向同一結論：<strong>現價 200 元已反映環球晶的題材行情，不是在反映中美晶的常態獲利。</strong>
+  </div>
+</div>
+
+<!-- ══ TAB 3: EPS 趨勢 ══ -->
+<div id="tab-eps" class="panel">
+  <canvas id="epsChart" height="260"></canvas>
+  <div class="section-title">📋 逐月明細表格（供驗證）</div>
+  <table>
+    <thead>
+      <tr>
+        <th>月份</th><th>收盤價</th><th>10x換算欄</th><th>河流圖EPS</th><th>目前PER</th><th>9x換算</th><th>14x換算</th><th>20x換算</th>
+      </tr>
+    </thead>
+    <tbody id="eps-table-body">
+    </tbody>
+  </table>
+  <p style="font-size:10px;color:#475569;margin-top:8px;">* 河流圖 EPS = 10x換算欄 ÷ 10。季末月（M03/M06/M09/M12）為當季實際 TTM EPS，季中月為前後季線性插值。26M07~09 沿用 26Q2 TTM（26Q3 財報尚未公告）。綠底列為 26Q2 財報後月份。</p>
+
+  <div class="section-title">📉 TTM EPS 循環軌跡</div>
+  <table>
+    <thead><tr><th>季度</th><th>單季 EPS</th><th>TTM EPS</th><th>循環位置</th></tr></thead>
+    <tbody>
+      <tr><td>2023Q3</td><td>4.60</td><td>17.29</td><td><span class="badge badge-avoid">循環高峰</span></td></tr>
+      <tr><td>2023Q4</td><td>4.03</td><td>16.99</td><td><span class="badge badge-avoid">高峰後</span></td></tr>
+      <tr><td>2024Q2</td><td>2.94</td><td>14.97</td><td><span class="badge badge-watch">下行</span></td></tr>
+      <tr><td>2024Q4</td><td>0.54</td><td>9.23</td><td><span class="badge badge-watch">急墜</span></td></tr>
+      <tr><td>2025Q2</td><td>1.17</td><td>5.25</td><td><span class="badge badge-buy">接近谷底</span></td></tr>
+      <tr><td>2025Q3</td><td>1.71</td><td>4.61</td><td><span class="badge badge-buy">TTM 最低點</span></td></tr>
+      <tr><td>2025Q4</td><td>2.64</td><td>6.71</td><td><span class="badge badge-buy">谷底回升</span></td></tr>
+      <tr><td>2026Q1</td><td>1.83</td><td>7.35</td><td><span class="badge badge-neutral">回升中</span></td></tr>
+      <tr class="highlight"><td>2026Q2</td><td>3.19</td><td>9.37</td><td><span class="badge badge-watch">含業外 32.2 億</span></td></tr>
+    </tbody>
+  </table>
+
+  <div class="section-title">📅 年度 EPS 與正常化基準</div>
+  <table>
+    <thead><tr><th>年度</th><th>公告 EPS</th><th>股本調整後</th><th>說明</th></tr></thead>
+    <tbody>
+      <tr><td>2021</td><td>11.62</td><td>10.62</td><td>上升循環</td></tr>
+      <tr><td>2022</td><td>14.88</td><td>13.60</td><td>上升循環</td></tr>
+      <tr><td>2023</td><td>16.99</td><td>15.53</td><td><span class="badge badge-avoid">循環高峰</span></td></tr>
+      <tr><td>2024</td><td>9.23</td><td>8.44</td><td>下行</td></tr>
+      <tr><td>2025</td><td>6.71</td><td>6.71</td><td><span class="badge badge-buy">循環谷底</span></td></tr>
+      <tr class="highlight"><td><strong>5 年平均</strong></td><td>—</td><td><strong style="color:#22c55e;">11.0</strong></td><td><strong>本頁正常化 EPS 基準</strong></td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:10px;color:#475569;margin-top:8px;">* 股本調整：2024/12 股數由 5.862 億股增至 6.412 億股（+9.4%），2021–2024 年度 EPS 乘以 0.9142 還原至最新股數基礎，避免股本變動干擾跨年比較。</p>
+</div>
+
+<!-- ══ TAB 4: 基本面分析 ══ -->
+<div id="tab-fundamental" class="panel">
+
+  <!-- 1. 公司營運 -->
+  <div class="section-title">🏭 公司營運</div>
+  <div class="grid3">
+    <div class="card">
+      <h3>2025 全年營收</h3>
+      <div class="val blue" style="font-size:18px;">781.7 億元</div>
+      <div class="note">YoY −1.9%（2024 年 796.8 億）</div>
+    </div>
+    <div class="card">
+      <h3>26Q3 季度營收（月營收加總）</h3>
+      <div class="val green" style="font-size:18px;">208.8 億元</div>
+      <div class="note">YoY +9.4%，QoQ −1.1%<br>財報尚未公告</div>
+    </div>
+    <div class="card">
+      <h3>26Q2 毛利率</h3>
+      <div class="val red" style="font-size:18px;">22.7%</div>
+      <div class="note">24Q2 為 32.0%，仍在低檔</div>
+    </div>
+  </div>
+
+  <div class="section-title">📊 近八季財報趨勢</div>
+  <table>
+    <thead>
+      <tr><th>期間</th><th>營收（億）</th><th>營收YoY</th><th>毛利率</th><th>營業利益率</th><th>EPS</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>2024Q3</td><td>201.2</td><td style="color:#22c55e;">+2.7%</td><td>28.8%</td><td>17.4%</td><td>2.35</td></tr>
+      <tr><td>2024Q4</td><td>199.7</td><td style="color:#fca5a5;">−5.6%</td><td>29.7%</td><td>19.7%</td><td style="color:#fca5a5;">0.54</td></tr>
+      <tr><td>2025Q1</td><td>193.7</td><td style="color:#fca5a5;">−1.6%</td><td>26.2%</td><td>15.1%</td><td>1.19</td></tr>
+      <tr><td>2025Q2</td><td>202.3</td><td style="color:#22c55e;">+1.7%</td><td>25.3%</td><td>14.0%</td><td>1.17</td></tr>
+      <tr><td>2025Q3</td><td>190.8</td><td style="color:#fca5a5;">−5.2%</td><td style="color:#fca5a5;">20.2%</td><td style="color:#fca5a5;">8.8%</td><td>1.71</td></tr>
+      <tr><td>2025Q4</td><td>194.8</td><td style="color:#fca5a5;">−2.4%</td><td>28.3%</td><td>17.3%</td><td>2.64</td></tr>
+      <tr><td>2026Q1</td><td>193.8</td><td style="color:#94a3b8;">+0.1%</td><td style="color:#eab308;">23.2%</td><td style="color:#eab308;">11.9%</td><td>1.83</td></tr>
+      <tr class="highlight"><td>2026Q2</td><td>211.2</td><td style="color:#22c55e;">+4.4%</td><td style="color:#eab308;">22.7%</td><td style="color:#eab308;">10.6%</td><td style="color:#22c55e;font-weight:700;">3.19 ⚠️</td></tr>
+    </tbody>
+  </table>
+  <div class="info-box" style="margin-top:10px;">
+    <strong>毛利率趨勢說明：</strong>2024 年前毛利率維持 29% 以上，靠的是子公司環球晶 2021–2022 年簽下的<strong>高價長約（LTA）</strong>。隨著舊長約陸續到期、重新議價時點正逢記憶體與消費電子去庫存，加上 12 吋新廠（美國 Sherman、台灣竹南）折舊開始入帳，毛利率在 25Q3 掉到 20.2%、營益率僅 8.8%。<br>
+    26Q1~Q2 毛利率在 22~23% 徘徊、<strong>尚未脫離低檔</strong>，營益率甚至從 11.9% 再降到 10.6%。<br>
+    <strong>⚠️ 26Q2 EPS 3.19 元的組成：</strong>營業利益 22.5 億、業外收支 +32.2 億、稅前 54.6 億、稅後 44.5 億（其中 24.9 億歸屬非控制權益）。<strong>業外是本業的 1.4 倍</strong>，主要來自環球晶美國新廠政府補助（CHIPS Act）及匯兌，屬一次性。<br>
+    <strong>✅ 真正的好消息在營收：</strong>26Q3 月營收加總 208.8 億，YoY <strong>+9.4%</strong>（26/07 +27.7%、26/08 +11.7%、26/09 −5.6%），是近兩年首次出現接近雙位數的季度成長。但要注意 9 月已轉為衰退，動能是否延續要看 26Q3 財報與 10~11 月月營收。
+  </div>
+
+  <!-- 2. 商業模式 -->
+  <div class="section-title">💡 商業模式</div>
+  <div class="grid2">
+    <div class="card">
+      <h3>怎麼賺錢</h3>
+      <div style="font-size:12px;color:#94a3b8;line-height:1.8;margin-top:6px;">
+        中美晶（SAS）本質是<strong>半導體材料集團的控股母公司</strong>，營收與獲利結構：<br>
+        • <strong>環球晶（6488，持股約 5 成）</strong>：2026 上半年合併營收 292 億，佔中美晶 405 億的 <strong>約 72%</strong> — 獲利主要來源<br>
+        • <strong>太陽能事業</strong>：電池／模組已大幅轉型，現以太陽能電站開發與系統工程（中美超能源）為主<br>
+        • <strong>藍寶石基板</strong>（兆遠科技）：LED／光學應用<br>
+        • <strong>化合物半導體</strong>：GaAs 代工（宏捷科）、SiC 基板布局<br>
+        • <strong>特殊氣體</strong>（台特化）、<strong>車用二極體</strong>（朋程）、<strong>綠能</strong>（續升綠能，2026/06 登錄興櫃）<br>
+        因此中美晶的財報 <strong>≈ 環球晶 ＋ 自有材料／綠能事業</strong>，而合併淨利要扣掉約 5 成環球晶的非控制權益後才是歸屬母公司的部分。
+      </div>
+    </div>
+    <div class="card">
+      <h3>護城河評估</h3>
+      <div style="font-size:12px;line-height:1.9;margin-top:6px;">
+        <div class="moat-row"><span class="moat-icon">✅</span><span><strong>間接持有矽晶圓三強之一：</strong>環球晶為全球第三大矽晶圓廠，信越／SUMCO／環球晶合計市占逾 6 成</span></div>
+        <div class="moat-row"><span class="moat-icon">✅</span><span><strong>客戶驗證門檻極高：</strong>晶圓品質直接決定良率，換供應商需數年驗證</span></div>
+        <div class="moat-row"><span class="moat-icon">✅</span><span><strong>集團多角化：</strong>特氣、藍寶石、化合物半導體、綠能分散單一產品循環風險</span></div>
+        <div class="moat-row"><span class="moat-icon">✅</span><span><strong>子公司分拆價值：</strong>環球晶、宏捷科、朋程、續升綠能已／將獨立掛牌，具資產重估空間</span></div>
+        <div class="moat-row"><span class="moat-icon">⚠️</span><span><strong>控股折價結構性存在：</strong>市場對控股公司普遍給 30~50% 折價，不會因為「算得出 NAV」就自動收斂</span></div>
+        <div class="moat-row"><span class="moat-icon">⚠️</span><span><strong>獲利被稀釋：</strong>環球晶賺的錢約一半歸非控制權益，中美晶股東只拿到一半</span></div>
+        <div class="moat-row"><span class="moat-icon">⚠️</span><span><strong>太陽能長期拖累：</strong>中國產能過剩導致模組報價低迷，自有事業難貢獻獲利</span></div>
+        <div class="moat-row"><span class="moat-icon">⚠️</span><span><strong>報價循環劇烈：</strong>TTM EPS 兩年內由 17.3 元掉到 4.6 元，估值難用單一 PER 衡量</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="client-row">
+    <div class="client-block">
+      <h4>集團主要轉投資（依公開資訊）</h4>
+      <div class="client-item"><span>環球晶圓（6488）</span><span class="badge badge-buy">矽晶圓・約5成持股</span></div>
+      <div class="client-item"><span>宏捷科（8086）</span><span class="badge badge-neutral">GaAs 代工</span></div>
+      <div class="client-item"><span>朋程（8255）</span><span class="badge badge-neutral">車用二極體</span></div>
+      <div class="client-item"><span>台特化</span><span class="badge badge-watch">半導體特殊氣體</span></div>
+      <div class="client-item"><span>兆遠科技</span><span class="badge badge-watch">藍寶石基板</span></div>
+      <div class="client-item"><span>續升綠能</span><span class="badge badge-neutral">26/06 登錄興櫃</span></div>
+    </div>
+    <div class="client-block">
+      <h4>主要競爭對手（矽晶圓本業）</h4>
+      <div class="client-item"><span>信越化學（日）</span><span class="badge badge-avoid">全球第一</span></div>
+      <div class="client-item"><span>SUMCO（日）</span><span class="badge badge-avoid">全球第二</span></div>
+      <div class="client-item"><span>SK Siltron（韓）</span><span class="badge badge-watch">韓系整合供應</span></div>
+      <div class="client-item"><span>台勝科（3532）</span><span class="badge badge-neutral">台廠・12吋</span></div>
+      <div class="client-item"><span>合晶（6182）</span><span class="badge badge-neutral">台廠・8吋/磊晶</span></div>
+      <div class="client-item"><span>滬矽產業 / 中環領先（中）</span><span class="badge badge-avoid">政策補貼擴產</span></div>
+    </div>
+  </div>
+
+  <!-- 3. 市場地位 -->
+  <div class="section-title">🌏 市場地位</div>
+  <div class="stat-bar">
+    <div class="stat-item"><div class="stat-label">集團定位</div><div class="stat-val yellow">材料控股</div><div class="stat-sub">環球晶母公司</div></div>
+    <div class="stat-item"><div class="stat-label">環球晶營收佔比</div><div class="stat-val blue">約 72%</div><div class="stat-sub">26H1：292 億 / 405 億</div></div>
+    <div class="stat-item"><div class="stat-label">台灣排名</div><div class="stat-val green">第 1 大</div><div class="stat-sub">矽晶圓集團（含環球晶）</div></div>
+    <div class="stat-item"><div class="stat-label">掛牌市場</div><div class="stat-val purple">上櫃</div><div class="stat-sub">6.412 億股・市值約 1,282 億</div></div>
+  </div>
+  <div class="info-box" style="margin-top:10px;">
+    中美晶 1981 年成立於竹南，原以太陽能與小尺寸矽晶圓為主，2011 年將半導體矽晶圓事業分割成立<strong>環球晶圓</strong>並於 2015 年上櫃，之後透過環球晶併購 SunEdison Semiconductor、Topsil 躋身全球前三。
+    因此中美晶的股價長期與環球晶高度連動，但<strong>連動不是等比</strong> — 2026 年 4~9 月環球晶由 580 漲到 1,035 元（+78%），中美晶由 134 漲到 207.5 元（+55%），折價反而擴大。<br>
+    <strong>另一個觀察點：</strong>集團持續把子公司推向獨立掛牌（宏捷科、朋程已上市櫃，續升綠能 2026/06 登錄興櫃）。分拆雖讓單一子公司價值可見，但也讓中美晶自身的「本體獲利」更薄，控股折價不易消失。
+  </div>
+
+  <!-- 4. 估值指標 -->
+  <div class="section-title">💰 估值指標（即時）</div>
+  <div class="grid4">
+    <div class="card">
+      <h3>本益比 P/E（TTM）</h3>
+      <div class="val red" id="fund-pe">計算中…</div>
+      <div class="note" id="fund-pe-note">TTM EPS = 9.37 元（26Q2）</div>
+    </div>
+    <div class="card">
+      <h3>正常化 P/E</h3>
+      <div class="val yellow" id="fund-npe">計算中…</div>
+      <div class="note">正常化 EPS 11.0 元<br>歷史區間 8.3x~19.8x</div>
+    </div>
+    <div class="card">
+      <h3>股價淨值比 P/B</h3>
+      <div class="val blue" id="fund-pb">計算中…</div>
+      <div class="note">每股淨值 79.7 元<br>（26Q2 母公司權益 511 億 ÷ 6.412 億股）</div>
+    </div>
+    <div class="card">
+      <h3>ROE（TTM）</h3>
+      <div class="val yellow">約 12%</div>
+      <div class="note">TTM 歸母淨利約 60 億<br>2023 年循環高峰曾逾 22%</div>
+    </div>
+  </div>
+
+  <div class="info-box" style="margin-top:12px;">
+    <strong>估值解讀：</strong>現價 200 元對應 TTM PER 約 21x、<strong>正常化 PER 約 18x</strong>，已逼近近三年正常化 PER 區間上緣（19.8x）。
+    P/B 約 2.5x 對一家<strong>ROE 約 12%、毛利率 22.7%</strong> 的資本密集材料控股公司而言不便宜（2025 年中股價 91 元時 P/B 僅約 1.2x）。<br>
+    <strong>注意淨值的陷阱：</strong>合併權益 1,227 億裡有 <strong>716 億是非控制權益</strong>（主要是環球晶的另一半股東），歸屬母公司只有 511 億。用合併淨值算 P/B 會算出約 1.0x 的假便宜，本頁一律用<strong>母公司權益</strong>計算。<br>
+    換句話說，200 元這個價格不是在定價現在的獲利，而是在定價<strong>環球晶 2027 年報價大漲後的獲利</strong>。要支撐目前股價，中美晶 EPS 需回到 13~15 元以上（約 2022~2023 年循環高峰水準）。
+  </div>
+
+  <p style="font-size:10px;color:#475569;margin-top:16px;text-align:center;">⚠️ 本分析僅供參考，不構成投資建議</p>
+</div>
+
+<!-- ══ TAB 5: 完整摘要 ══ -->
+<div id="tab-summary" class="panel">
+  <div class="card" style="margin-bottom:12px;">
+    <h3>📌 中美晶（5483）投資摘要</h3>
+    <div style="font-size:13px;line-height:2.0;margin-top:10px;color:#94a3b8;">
+      <strong style="color:#e2e8f0;">公司性質：</strong>半導體材料集團控股母公司，持有環球晶（6488）約 5 成股權（佔集團營收約 72%），另有太陽能電站、藍寶石、特殊氣體、化合物半導體與綠能事業。上櫃，6.412 億股。<br>
+      <strong style="color:#e2e8f0;">景氣循環：</strong>TTM EPS 由 2023Q3 的 17.29 元滑落至 2025Q3 的 4.61 元（−73%），26Q2 回到 9.37 元。獲利與環球晶高度連動，長約模式使變化落後晶圓代工約一個循環。<br>
+      <strong style="color:#e2e8f0;">估值基準：</strong>以正常化 EPS <strong>11.0 元</strong>（2021–2025 股本調整後平均 10.6／13.6／15.5／8.4／6.7）× 9／14／20x → 便宜 <strong>99</strong>／合理 <strong>154</strong>／昂貴 <strong>220</strong> 元。<br>
+      <strong style="color:#ef4444;">⚠️ 不採最新 TTM EPS：</strong>26Q2 單季 EPS +74%，但業外收支 32.2 億為本業營業利益（22.5 億）的 1.4 倍，屬一次性（環球晶美國新廠補助／匯兌）；毛利率反而由 25.3% 降至 22.7%。觸發循環股檢核，估值帶不依 TTM 機械式重算。<br>
+      <strong style="color:#e2e8f0;">控股折價（第二把尺）：</strong>以環球晶現價 902 元計，持股市值約 2,158 億 → 中美晶每股 336 元，現價 200 元等於折價 40%；但若環球晶回到本站合理價 486 元，NAV 只剩 181 元，與本頁合理價 154 元相近。<strong>折價來自環球晶自己已超漲</strong>，不是中美晶被低估。<br>
+      <strong style="color:#e2e8f0;">法人看法：</strong>目前無收錄 FactSet 目標價（覆蓋度低，法人多以環球晶 6488 為追蹤標的）。<br>
+      <strong style="color:#e2e8f0;">關鍵觀察：</strong>① 環球晶 12 吋長約重新議價的漲價幅度 ② 合併毛利率能否回到 29% 以上 ③ 26Q3 之後月營收成長能否延續（26/09 已轉 −5.6%）④ 太陽能／自有事業是否止血 ⑤ 子公司分拆對控股折價的影響。<br>
+      <strong style="color:#e2e8f0;">類股比較：</strong>與 6488 環球晶、2408 南亞科、2344 華邦電、6770 力積電同屬強循環股 — 共同特徵是 EPS 谷底時 PER 看起來最貴、EPS 高峰時 PER 看起來最便宜。
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <h3>✅ 投資亮點</h3>
+      <div style="font-size:12px;color:#86efac;line-height:2.0;margin-top:8px;">
+        ✅ 間接持有全球第三大矽晶圓廠環球晶約 5 成股權<br>
+        ✅ 對環球晶市值有 40% 控股折價，是較便宜的參與方式<br>
+        ✅ 26Q3 月營收加總 YoY +9.4%，近兩年首見接近雙位數成長<br>
+        ✅ TTM EPS 已自 2025Q3 谷底（4.61）回升至 9.37 元<br>
+        ✅ 集團多角化：特氣、藍寶石、GaAs、綠能分散單一循環風險<br>
+        ✅ 半年配息穩定，TTM 現金股利 3.5 元（26/01 1.0＋26/07 2.5）
+      </div>
+    </div>
+    <div class="card">
+      <h3>⚠️ 主要風險</h3>
+      <div style="font-size:12px;color:#fca5a5;line-height:2.0;margin-top:8px;">
+        🔴 現價 200 元已達昂貴價 220 元附近（正常化 PER 18x）<br>
+        🔴 26Q2 EPS 近半靠業外，本業營益率反降至 10.6%<br>
+        🔴 毛利率 22.7%，距 2024 年前的 29% 以上仍遠<br>
+        🔴 控股折價是結構性的，不會因 NAV 算得出來就收斂<br>
+        🔴 環球晶獲利約一半歸非控制權益，股東實拿被稀釋<br>
+        🔴 太陽能受中國產能過剩拖累，自有事業難貢獻獲利<br>
+        🔴 2026/07 單月自 278 元腰斬至 152.5 元，題材波動極端
+      </div>
+    </div>
+  </div>
+
+  <div class="buy-signal" style="margin-top:12px;">
+    <h3>📊 各情境目標股價區間</h3>
+    <div class="buy-row"><span style="font-size:12px;color:#86efac;">🟢 正常化 EPS 11.0 元 × 9x（便宜）</span><span style="font-weight:700;color:#86efac;">NT$ 99</span></div>
+    <div class="buy-row"><span style="font-size:12px;color:#fde68a;">🟡 正常化 EPS 11.0 元 × 14x（合理）</span><span style="font-weight:700;color:#fde68a;">NT$ 154</span></div>
+    <div class="buy-row"><span style="font-size:12px;color:#fca5a5;">🔴 正常化 EPS 11.0 元 × 20x（昂貴）</span><span style="font-weight:700;color:#fca5a5;">NT$ 220</span></div>
+    <div class="buy-row"><span style="font-size:12px;color:#93c5fd;">🚀 上升循環 EPS 15~17 元 × 15~20x</span><span style="font-weight:700;color:#93c5fd;">NT$ 225~340</span></div>
+    <div class="buy-row"><span style="font-size:12px;color:#a855f7;">🏦 NAV（環球晶現價 902 元 × 約5成持股）</span><span style="font-weight:700;color:#a855f7;">NT$ 336</span></div>
+  </div>
+
+  <div class="info-box" style="margin-top:12px;">
+    <strong>💡 操作建議：</strong><br>
+    矽晶圓循環股的最佳買點，歷史上都出現在「EPS 還在掉、股價已破底、P/B 接近 1.2x」的時候 — 2025 年 6 月股價 91 元（P/B 約 1.2x、正常化 PER 8.3x）就是那個位置。<br>
+    目前 200 元屬於<strong>循環復甦＋環球晶題材的雙重溢價</strong>，正常化 PER 18x、P/B 2.5x 都在歷史高檔。若你是看好矽晶圓上升循環，中美晶的 40% 控股折價確實比直接買環球晶划算；但要清楚這是<strong>「在超漲標的上買折價」</strong>，環球晶回檔時中美晶一樣會跌。<br>
+    若等不到 154 元，至少應該等<strong>合併毛利率回升到 29% 以上、營益率回到 17% 以上</strong>的財報確認，再用新的 EPS 基準重算估值帶。<br>
+    <strong>下次更新時機：</strong>26Q3 財報（約 2026 年 11 月中）— 重點不是 EPS 數字，而是毛利率、業外佔比，以及 10~11 月月營收能否延續 7~8 月的成長動能。
+  </div>
+
+  <p style="font-size:10px;color:#475569;margin-top:16px;text-align:center;">⚠️ 本分析僅供參考，不構成投資建議。股市有風險，請自行判斷。</p>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<script>
+
+// ══ 切 Tab ══
+function switchTab(id, btn) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ══ 估值常數 ══
+const TTM_EPS   = 9.37;    // 26Q2 TTM（含一次性業外，僅供顯示即時 PER）
+const NORM_EPS  = 11.0;    // 正常化 EPS：2021–2025 股本調整後年度 EPS 平均
+const CHEAP     = 99;      // 11.0 × 9x
+const FAIR      = 154;     // 11.0 × 14x
+const EXPENSIVE = 220;     // 11.0 × 20x
+const BVPS      = 79.74;   // 26Q2 母公司權益 51131M ÷ 641.2M 股
+
+// ══ 數據定義（10x欄÷10；季中月為前後季 TTM 插值） ══
+const data = [
+  { m:'23M09', px:157,   eps:17.29, per:9.08  },
+  { m:'23M10', px:163.5, eps:17.19, per:9.51  },
+  { m:'23M11', px:183,   eps:17.09, per:10.71 },
+  { m:'23M12', px:196,   eps:16.99, per:11.54 },
+  { m:'24M01', px:192,   eps:16.72, per:11.48 },
+  { m:'24M02', px:185.5, eps:16.45, per:11.28 },
+  { m:'24M03', px:214.5, eps:16.18, per:13.26 },
+  { m:'24M04', px:195.5, eps:15.78, per:12.39 },
+  { m:'24M05', px:208.5, eps:15.37, per:13.56 },
+  { m:'24M06', px:217.5, eps:14.97, per:14.53 },
+  { m:'24M07', px:192.5, eps:14.22, per:13.54 },
+  { m:'24M08', px:199,   eps:13.47, per:14.77 },
+  { m:'24M09', px:177,   eps:12.72, per:13.92 },
+  { m:'24M10', px:157.5, eps:11.56, per:13.62 },
+  { m:'24M11', px:153.5, eps:10.39, per:14.78 },
+  { m:'24M12', px:134.5, eps:9.23,  per:14.57 },
+  { m:'25M01', px:117.5, eps:8.49,  per:13.84 },
+  { m:'25M02', px:126,   eps:7.76,  per:16.24 },
+  { m:'25M03', px:112.5, eps:7.02,  per:16.03 },
+  { m:'25M04', px:110.5, eps:6.43,  per:17.19 },
+  { m:'25M05', px:113,   eps:5.84,  per:19.35 },
+  { m:'25M06', px:91.3,  eps:5.25,  per:17.39 },
+  { m:'25M07', px:101,   eps:5.04,  per:20.04 },
+  { m:'25M08', px:103.5, eps:4.82,  per:21.47 },
+  { m:'25M09', px:116,   eps:4.61,  per:25.16 },
+  { m:'25M10', px:125,   eps:5.31,  per:23.54 },
+  { m:'25M11', px:105,   eps:6.01,  per:17.47 },
+  { m:'25M12', px:106.5, eps:6.71,  per:15.87 },
+  { m:'26M01', px:120,   eps:6.92,  per:17.34 },
+  { m:'26M02', px:118,   eps:7.14,  per:16.53 },
+  { m:'26M03', px:107.5, eps:7.35,  per:14.63 },
+  { m:'26M04', px:134,   eps:8.02,  per:16.71 },
+  { m:'26M05', px:172,   eps:8.70,  per:19.77 },
+  { m:'26M06', px:180,   eps:9.37,  per:19.21 },
+  { m:'26M07', px:157,   eps:9.37,  per:16.76 },
+  { m:'26M08', px:178,   eps:9.37,  per:19.00 },
+  { m:'26M09', px:207.5, eps:9.37,  per:22.14 },
+];
+
+const labels = data.map(d => d.m);
+const prices = data.map(d => d.px);
+
+const r9  = data.map(d => +(d.eps * 9).toFixed(2));
+const r14 = data.map(d => +(d.eps * 14).toFixed(2));
+const r20 = data.map(d => +(d.eps * 20).toFixed(2));
+const normFair = data.map(() => FAIR);
+
+// ══ PER 河流圖 ══
+const ctx1 = document.getElementById('riverChart').getContext('2d');
+new Chart(ctx1, {
+  type: 'line',
+  data: {
+    labels,
+    datasets: [
+      {
+        label: '20x（昂貴）',
+        data: r20,
+        borderColor: '#ef4444',
+        backgroundColor: 'rgba(239,68,68,0.08)',
+        borderWidth: 1.5,
+        borderDash: [4,3],
+        pointRadius: 0,
+        fill: false,
+        tension: 0.3,
+      },
+      {
+        label: '14x（合理）',
+        data: r14,
+        borderColor: '#eab308',
+        backgroundColor: 'rgba(234,179,8,0.08)',
+        borderWidth: 1.5,
+        borderDash: [4,3],
+        pointRadius: 0,
+        fill: false,
+        tension: 0.3,
+      },
+      {
+        label: '9x（便宜）',
+        data: r9,
+        borderColor: '#22c55e',
+        backgroundColor: 'rgba(34,197,94,0.08)',
+        borderWidth: 1.5,
+        borderDash: [4,3],
+        pointRadius: 0,
+        fill: false,
+        tension: 0.3,
+      },
+      {
+        label: '正常化合理價 154（估值基準）',
+        data: normFair,
+        borderColor: '#a855f7',
+        borderWidth: 1.5,
+        borderDash: [2,4],
+        pointRadius: 0,
+        fill: false,
+        tension: 0,
+      },
+      {
+        label: '月收盤價',
+        data: prices,
+        borderColor: '#ffffff',
+        backgroundColor: 'rgba(255,255,255,0.05)',
+        borderWidth: 2.5,
+        pointRadius: 2.5,
+        pointBackgroundColor: '#ffffff',
+        fill: false,
+        spanGaps: true,
+        tension: 0.3,
+        z: 10,
+      },
+    ]
+  },
+  options: {
+    responsive: true,
+    interaction: { mode: 'index', intersect: false },
+    plugins: {
+      legend: { labels: { color: '#94a3b8', font: { size: 11 } } },
+      tooltip: {
+        callbacks: {
+          label: ctx => {
+            if (ctx.dataset.label === '月收盤價') return `收盤：${ctx.parsed.y}`;
+            return `${ctx.dataset.label}：${ctx.parsed.y ?? '—'}`;
+          }
+        }
+      }
+    },
+    scales: {
+      x: { ticks: { color: '#64748b', maxRotation: 45, font: { size: 10 } }, grid: { color: '#1e2535' } },
+      y: { ticks: { color: '#64748b', font: { size: 10 } }, grid: { color: '#1e2535' } }
+    }
+  }
+});
+
+// ══ EPS 趨勢圖 ══
+const ctx2 = document.getElementById('epsChart').getContext('2d');
+new Chart(ctx2, {
+  type: 'bar',
+  data: {
+    labels,
+    datasets: [
+      {
+        label: 'TTM EPS（元）',
+        data: data.map(d => d.eps),
+        backgroundColor: data.map(d => d.eps >= 11 ? '#22c55e99' : d.eps >= 7 ? '#eab30899' : '#ef444499'),
+        borderColor: data.map(d => d.eps >= 11 ? '#22c55e' : d.eps >= 7 ? '#eab308' : '#ef4444'),
+        borderWidth: 1,
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      legend: { labels: { color: '#94a3b8', font: { size: 11 } } },
+      tooltip: {
+        callbacks: {
+          afterLabel: ctx => ctx.parsed.y >= 11 ? '高於正常化 11.0 元' : '低於正常化 11.0 元'
+        }
+      }
+    },
+    scales: {
+      x: { ticks: { color: '#64748b', maxRotation: 45, font: { size: 10 } }, grid: { color: '#1e2535' } },
+      y: {
+        ticks: { color: '#64748b', font: { size: 10 } },
+        grid: { color: '#1e2535' },
+        title: { display: true, text: 'TTM EPS（元）', color: '#64748b', font: { size: 11 } }
+      }
+    }
+  }
+});
+
+// ══ EPS 表格 ══
+const tbody = document.getElementById('eps-table-body');
+data.forEach(d => {
+  const rowClass = d.m >= '26M06' ? ' class="highlight"' : '';
+  const priceColor = d.px > d.eps * 20 ? 'color:#ef4444' : d.px < d.eps * 9 ? 'color:#22c55e' : 'color:#e2e8f0';
+  tbody.innerHTML += `<tr${rowClass}><td>${d.m}</td><td style="${priceColor}">${d.px}</td><td>${(d.eps * 10).toFixed(1)}</td><td>${d.eps.toFixed(2)}</td><td>${d.per.toFixed(2)}</td><td>${(d.eps * 9).toFixed(1)}</td><td>${(d.eps * 14).toFixed(1)}</td><td>${(d.eps * 20).toFixed(1)}</td></tr>`;
+});
+
+// ══ 即時股價 ══
+async function updateLive() {
+  try {
+    const res = await fetch('https://taiwan-stock-price.david870114.workers.dev/?id=5483', { cache: 'no-cache' });
+    const d = JSON.parse(await res.text());
+    const price = parseFloat(d.price);
+    if (!price || isNaN(price)) return;
+
+    const ttmPE = (price / TTM_EPS).toFixed(1);
+    const normPE = (price / NORM_EPS).toFixed(1);
+    const pb = (price / BVPS).toFixed(2);
+    const state = price >= EXPENSIVE ? '⚠️ 高於昂貴價' : price <= CHEAP ? '✅ 低於便宜價' : price <= FAIR ? '🟢 合理價以下' : '🟡 合理~昂貴之間';
+    const color = price >= EXPENSIVE ? '#ef4444' : price <= CHEAP ? '#22c55e' : price <= FAIR ? '#22c55e' : '#eab308';
+
+    document.getElementById('live-price').textContent = 'NT$ ' + price.toLocaleString();
+
+    const note = document.getElementById('live-per-note');
+    note.textContent = `TTM PER ${ttmPE}x｜正常化 PER ${normPE}x｜${state}`;
+    note.style.color = color;
+
+    const sc = document.getElementById('sc-live');
+    sc.textContent = `NT$ ${price.toLocaleString()}（正常化 PER ${normPE}x）`;
+    sc.style.color = color;
+
+    const pe = document.getElementById('fund-pe');
+    pe.textContent = ttmPE + 'x';
+    pe.style.color = ttmPE > 25 ? '#ef4444' : ttmPE > 18 ? '#eab308' : '#22c55e';
+    document.getElementById('fund-pe-note').textContent = `TTM EPS = 9.37 元（26Q2）｜股價 ${price.toLocaleString()}`;
+
+    const npe = document.getElementById('fund-npe');
+    npe.textContent = normPE + 'x';
+    npe.style.color = normPE > 20 ? '#ef4444' : normPE > 14 ? '#eab308' : '#22c55e';
+
+    const pbEl = document.getElementById('fund-pb');
+    pbEl.textContent = pb + 'x';
+    pbEl.style.color = pb > 3 ? '#ef4444' : pb > 2 ? '#eab308' : '#22c55e';
+  } catch(e) {}
+}
+
+window.addEventListener('load', updateLive);
+
+</script>
+</body>
+</html>

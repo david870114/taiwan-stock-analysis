@@ -352,6 +352,16 @@
    "url": "6488_analysis.html"
   },
   {
+   "id": "5483",
+   "name": "中美晶",
+   "tier": "spec",
+   "cheap": 99,
+   "fair": 154,
+   "expensive": 220,
+   "annualDiv": 3.5,
+   "url": "5483_analysis.html"
+  },
+  {
    "id": "1303",
    "name": "南亞",
    "tier": "spec",
