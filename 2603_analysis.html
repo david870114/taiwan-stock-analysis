@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>長榮 2603 — 2026 股價推算分析</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #0f1117; color: #e2e8f0; padding: 16px; }
+  h1 { font-size: 18px; font-weight: 700; color: #f8fafc; margin-bottom: 4px; }
+  .subtitle { font-size: 12px; color: #94a3b8; margin-bottom: 16px; }
+  .tabs { display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; }
+  .tab { padding: 6px 14px; border-radius: 20px; font-size: 12px; cursor: pointer; border: 1px solid #334155; color: #94a3b8; background: transparent; transition: all 0.2s; }
+  .tab.active { background: #3b82f6; color: #fff; border-color: #3b82f6; }
+  .tab:hover:not(.active) { border-color: #64748b; color: #e2e8f0; }
+  .panel { display: none; }
+  .panel.active { display: block; }
+  canvas { width: 100% !important; border-radius: 10px; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+  .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-top: 16px; }
+  .grid4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 12px; margin-top: 16px; }
+  @media(max-width:640px){ .grid2,.grid3,.grid4{ grid-template-columns:1fr 1fr; } }
+  @media(max-width:400px){ .grid2,.grid3,.grid4{ grid-template-columns:1fr; } }
+  .card { background: #1e2535; border: 1px solid #2d3748; border-radius: 10px; padding: 14px; }
+  .card h3 { font-size: 12px; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
+  .card .val { font-size: 22px; font-weight: 700; }
+  .card .note { font-size: 11px; color: #64748b; margin-top: 4px; }
+  .green { color: #22c55e; } .yellow { color: #eab308; } .red { color: #ef4444; } .blue { color: #3b82f6; } .purple { color: #a855f7; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 12px; }
+  th { background: #1e2535; color: #64748b; padding: 8px 10px; text-align: left; font-weight: 600; font-size: 11px; text-transform: uppercase; }
+  td { padding: 8px 10px; border-bottom: 1px solid #1e2535; }
+  tr:hover td { background: #1a2030; }
+  tr.highlight td { background: #0f2a1e; }
+  tr.danger td { background: #2d1010; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: 600; }
+  .badge-buy { background: #14532d; color: #86efac; }
+  .badge-watch { background: #713f12; color: #fde68a; }
+  .badge-avoid { background: #450a0a; color: #fca5a5; }
+  .badge-neutral { background: #1e293b; color: #94a3b8; }
+  .scenario-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 12px; }
+  @media(max-width:500px){ .scenario-grid{ grid-template-columns:1fr; } }
+  .scenario-card { border-radius: 10px; padding: 14px; text-align: center; }
+  .bear { background: linear-gradient(135deg, #1a0a0a, #2d1010); border: 1px solid #7f1d1d; }
+  .base { background: linear-gradient(135deg, #0a1a0a, #102d10); border: 1px solid #14532d; }
+  .bull { background: linear-gradient(135deg, #0a0f1a, #10182d); border: 1px solid #1d4ed8; }
+  .sc-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.7; margin-bottom: 6px; }
+  .sc-price { font-size: 22px; font-weight: 800; margin: 4px 0; }
+  .sc-detail { font-size: 10px; opacity: 0.65; line-height: 1.6; }
+  .section-title { font-size: 13px; font-weight: 600; color: #cbd5e1; margin: 16px 0 8px; }
+  .buy-signal { background: #0f2a1e; border: 1px solid #166534; border-radius: 10px; padding: 14px; margin-top: 12px; }
+  .buy-signal h3 { color: #86efac; font-size: 13px; margin-bottom: 8px; }
+  .buy-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid #1a3a2a; gap: 8px; }
+  .buy-row:last-child { border-bottom: none; }
+  .current-price-badge { background: #1e3a5f; border: 1px solid #3b82f6; border-radius: 8px; padding: 10px 14px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px; }
+  .warn-box { background: #2d1010; border: 1px solid #7f1d1d; border-radius: 10px; padding: 14px; margin-top: 12px; }
+  .warn-box h3 { color: #fca5a5; font-size: 13px; margin-bottom: 8px; }
+  .info-box { background: #1e2535; border: 1px solid #2d3748; border-radius: 10px; padding: 14px; margin-top: 12px; font-size: 12px; color: #94a3b8; line-height: 1.8; }
+  .info-box strong { color: #e2e8f0; }
+  .stat-bar { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 12px; }
+  .stat-item { background: #1e2535; border-radius: 10px; padding: 12px 16px; flex: 1; min-width: 120px; }
+  .stat-label { font-size: 10px; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+  .stat-val { font-size: 18px; font-weight: 700; color: #e2e8f0; }
+  .stat-sub { font-size: 10px; color: #64748b; margin-top: 2px; }
+  .client-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; }
+  @media(max-width:500px){ .client-row{ grid-template-columns:1fr; } }
+  .client-block { background: #1e2535; border-radius: 10px; padding: 14px; }
+  .client-block h4 { font-size: 11px; color: #64748b; text-transform: uppercase; margin-bottom: 10px; }
+  .client-item { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid #1a2030; font-size: 12px; }
+  .client-item:last-child { border-bottom: none; }
+  .moat-row { display: flex; align-items: flex-start; gap: 8px; padding: 5px 0; border-bottom: 1px solid #1a2030; font-size: 12px; }
+  .moat-row:last-child { border-bottom: none; }
+  .moat-icon { flex-shrink: 0; }
+</style>
+</head>
+<body>
+
+<div style="margin-bottom:12px;">
+  <a href="index.html" style="color:#64748b;font-size:12px;text-decoration:none;display:inline-flex;align-items:center;gap:4px;padding:5px 10px;border:1px solid #334155;border-radius:8px;transition:all 0.2s;" onmouseover="this.style.color='#e2e8f0';this.style.borderColor='#64748b'" onmouseout="this.style.color='#64748b';this.style.borderColor='#334155'">← 返回總覽</a>
+</div>
+<h1>🚢 長榮 (2603) — 2026 股價推算分析</h1>
+<p class="subtitle">正常化 EPS 估值 ✦ 三情境試算 ✦ 貨櫃航運強景氣循環股 ✦ 更新時間：2026年10月20日</p>
+
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('river', this)">📈 PER 河流圖</button>
+  <button class="tab" onclick="switchTab('scenario', this)">🎯 三情境買點</button>
+  <button class="tab" onclick="switchTab('eps', this)">📊 EPS 趨勢</button>
+  <button class="tab" onclick="switchTab('fundamental', this)">🏢 基本面分析</button>
+  <button class="tab" onclick="switchTab('summary', this)">📋 完整摘要</button>
+</div>
+
+<!-- ══ TAB 1: PER River ══ -->
+<div id="tab-river" class="panel active">
+  <div class="current-price-badge">
+    <span style="color:#94a3b8;font-size:12px;">目前股價（即時）</span>
+    <span style="color:#3b82f6;font-size:20px;font-weight:800;" id="live-price">載入中…</span>
+    <span style="color:#94a3b8;font-size:12px;" id="live-per-note">計算中…</span>
+  </div>
+  <canvas id="riverChart" height="340"></canvas>
+  <p style="font-size:11px;color:#475569;margin-top:8px;text-align:center;">* 三條水平線 = 正常化 EPS 31.5 元 × 4x / 6x / 8x（本頁便宜／合理／昂貴價基準）。灰色虛線 = 逐月 TTM EPS × 6x，用來對照「若機械式套用最新 TTM」會得到什麼。26M07 後 26Q3 財報未公告，TTM EPS 沿用 26Q2 的 25.23 元。</p>
+
+  <div class="warn-box" style="margin-top:14px;">
+    <h3>⚠️ 為什麼這檔不能畫傳統 PER 河流圖</h3>
+    <p style="font-size:12px;color:#fca5a5;line-height:1.8;">
+      近三年長榮的 TTM EPS 在 <strong>16.33 元（23Q4 運價谷底）</strong> 與 <strong>69.06 元（25Q1 紅海繞行高峰）</strong> 之間擺盪，整整 <strong>4.2 倍</strong>。<br>
+      同期股價只從 107.5 元走到 239.5 元。結果是 TTM PER 與 EPS <strong>完全反向</strong>：EPS 最高的 25M01（69.06 元）PER 只有 <strong>3.1x</strong>；EPS 最低的 26M03（22.89 元）PER 反而是 <strong>8.7x</strong>。<br>
+      上圖灰色虛線就是這個現象 — 「TTM × 6x」從 24M12 的 387 元一路掉到 26M09 的 151 元，而股價同期是上漲的。<strong>在這種股票上，EPS 乘以歷史倍數畫出來的河流帶會往反方向跑，完全無法當買賣依據。</strong>
+    </p>
+  </div>
+
+  <div class="info-box">
+    📌 <strong>為什麼估值帶不用最新 TTM EPS：</strong>長榮 25Q3 單季 EPS 10.04 → 25Q4 3.94 元（<strong>−61%</strong>）、26Q1 3.84 → 26Q2 7.41 元（<strong>+93%</strong>），兩次觸發景氣循環股檢核門檻（單季變動 &gt; ±50%）。貨櫃航運的成本以船舶折舊、燃油、港埠費為主，<strong>幾乎全是固定成本</strong>，運價一動獲利就被放大數倍 — 這是台股裡營運槓桿最極端的族群之一。因此本頁改以<strong>正常化 EPS 31.5 元</strong>為錨（2023–2025 三個後泡沫完整年度的中位數，已做股本還原）。
+  </div>
+</div>
+
+<!-- ══ TAB 2: 三情境 ══ -->
+<div id="tab-scenario" class="panel">
+  <div class="grid3">
+    <div class="card"><h3>26Q2 TTM EPS（最新季末）</h3><div class="val yellow">25.23 元</div><div class="note">單季 3.84 → 7.41 元<br>⚠️ +93%，觸發循環股檢核</div></div>
+    <div class="card"><h3>估值基準：正常化 EPS</h3><div class="val green">31.5 元</div><div class="note">2023–2025 後泡沫三年中位數<br>16.33 / 64.45 / 31.69（股本還原後）</div></div>
+    <div class="card"><h3>26Q2 獲利組成</h3><div class="val green">本業驅動</div><div class="note">營業利益 194 億 ≫ 業外 15 億<br>非一次性收益，體質健康</div></div>
+  </div>
+
+  <div class="section-title">三情境估值試算（以正常化 EPS 31.5 元為基準）</div>
+  <div class="scenario-grid">
+    <div class="scenario-card bear">
+      <div class="sc-label">🐻 運價回落</div>
+      <div class="sc-price red">126 元</div>
+      <div class="sc-detail">
+        正常化 EPS 31.5 元<br>
+        × 4x（近三年低標）<br>
+        紅海／運河恢復通行<br>
+        新船大量交付壓垮運價
+      </div>
+    </div>
+    <div class="scenario-card base">
+      <div class="sc-label">⚖️ 循環中位</div>
+      <div class="sc-price green">189 元</div>
+      <div class="sc-detail">
+        正常化 EPS 31.5 元<br>
+        × 6x（近三年均值）<br>
+        運價在成本線上方震盪<br>
+        <strong>本頁合理價基準</strong>
+      </div>
+    </div>
+    <div class="scenario-card bull">
+      <div class="sc-label">🚀 運價高檔</div>
+      <div class="sc-price" style="color:#60a5fa;">252 元</div>
+      <div class="sc-detail">
+        正常化 EPS 31.5 元<br>
+        × 8x（近三年高標）<br>
+        繞行續行吸收運力<br>
+        供給過剩被地緣政治抵銷
+      </div>
+    </div>
+  </div>
+
+  <div class="info-box">
+    <strong>PER 倍數怎麼來的：</strong>以正常化 EPS 31.5 元回推近三年（23M10–26M09，36 個月）逐月「正常化 PER」，區間為 <strong>3.41x（23M10，股價 107.5）～ 7.76x（25M05，股價 244.5）</strong>，36 個月平均 <strong>6.11x</strong>。取整為 4 / 6 / 8x。<br>
+    交叉驗證：便宜價 126 / 合理價 189 / 昂貴價 252 元，對應的 36 個月月收盤統計是 <strong>最低 107.5 / 平均 192.4 / 最高 244.5 元</strong> — 合理價幾乎正中三年均價，估值帶與市場實際交易區間高度吻合。<br>
+    若改用實際 TTM EPS 計算，同期 PER 區間是 3.10x～9.49x、且與 EPS 完全反向（見河流圖），無法形成有意義的倍數區間。
+  </div>
+
+  <div class="warn-box">
+    <h3>🔥 現價在估值帶的什麼位置</h3>
+    <p style="font-size:12px;color:#fca5a5;line-height:1.9;">
+      10/20 收 259.5 元 = 正常化 PER <strong>8.24x</strong>、TTM PER <strong>10.29x</strong>、P/B <strong>1.00x</strong>、殖利率 <strong>6.16%</strong>。<br>
+      三個指標同時指向同一件事：<strong>現價已站在近三年的最上緣</strong> — 正常化 PER 8.24x 高於三年最高 7.76x；股價 259.5 元高於三年最高月收盤 244.5 元；P/B 1.00x 是近三年最高（過去兩年區間 0.71–0.86x，長榮在後泡沫時期幾乎沒有站穩過淨值之上）。<br>
+      但這次不是沒有基本面：26Q3 月營收 480.8／489.9／497.1 億，合計 <strong>1,467.8 億（QoQ +39.6%、YoY +51.8%）</strong>，已逼近 2024Q3 紅海繞行高峰的 1,528 億。FactSet 也在 10 月把 2026E EPS 從 33.36 一路上修到 <strong>43.53 元</strong>、目標價 265 元。<br>
+      <strong>結論：現價是「運價反彈已被反映、但還沒進入泡沫」的位置 — 不便宜，但也不是 3026／2492 那種沒有估值依據的題材價。</strong>
+    </p>
+  </div>
+
+  <div class="buy-signal">
+    <h3>✅ 分批進場參考區間（正常化 EPS 31.5 元）</h3>
+    <div class="buy-row"><span style="font-size:12px;color:#86efac;">🟢 × 4x（便宜）</span><span style="font-weight:700;color:#86efac;">NT$ 126</span><span class="badge badge-buy">第一批 40%</span></div>
+    <div class="buy-row"><span style="font-size:12px;color:#fde68a;">🟡 × 6x（合理）</span><span style="font-weight:700;color:#fde68a;">NT$ 189</span><span class="badge badge-watch">第二批 40%</span></div>
+    <div class="buy-row"><span style="font-size:12px;color:#fca5a5;">🔴 × 8x（昂貴）</span><span style="font-weight:700;color:#fca5a5;">NT$ 252</span><span class="badge badge-avoid">第三批 20%／上限</span></div>
+    <div class="buy-row" style="border-top:1px solid #166534;margin-top:8px;padding-top:10px;">
+      <span style="font-size:12px;color:#fde68a;">目前股價</span>
+      <span style="font-weight:700;" id="sc-live">載入中…</span>
+      <span class="badge badge-avoid" id="sc-badge">—</span>
+    </div>
+    <p style="font-size:10px;color:#64748b;margin-top:10px;line-height:1.6;">
+      * 貨櫃航運的歷史最佳進場點，都出現在「運價剛破底、EPS 還在往下修、股價跌到淨值一半以下」的時候 — 2023M10 的 107.5 元（P/B 約 0.48x、正常化 PER 3.41x）就是那個位置。反過來說，<strong>EPS 創高、月營收亮眼的時候通常是賣點而非買點</strong>（25M01 TTM EPS 69 元創高，股價 204.5 元，之後一年沒再創高過）。<br>
+      * 若 26Q3／26Q4 財報確認 2026 年 EPS 真能落在 FactSet 共識的 43.53 元，屆時後泡沫四年（2023–2026）中位數會由 31.5 升到約 <strong>37.6 元</strong>，估值帶可同步上移到 <strong>150 / 226 / 301 元</strong> — 但那要等財報，不是現在就用單季外推上修。
+    </p>
+  </div>
+</div>
+
+<!-- ══ TAB 3: EPS 趨勢 ══ -->
+<div id="tab-eps" class="panel">
+  <canvas id="epsChart" height="300"></canvas>
+  <p style="font-size:11px;color:#475569;margin-top:8px;text-align:center;">* 綠 = 高於正常化 31.5 元，黃 = 20～31.5 元，紅 = 低於 20 元。注意 EPS 高點（25M01）與股價高點並不重合。</p>
+
+  <div class="grid3">
+    <div class="card"><h3>泡沫高峰（2022）</h3><div class="val red">154.45 元</div><div class="note">COVID 塞港，SCFI 峰值 5,109<br>⚠️ 不納入正常化</div></div>
+    <div class="card"><h3>循環谷底（2023）</h3><div class="val red">16.33 元</div><div class="note">23Q4 單季僅 1.52 元</div></div>
+    <div class="card"><h3>最新 TTM（26Q2）</h3><div class="val yellow">25.23 元</div><div class="note">26Q2 單季 7.41 元，運價回升</div></div>
+  </div>
+
+  <div class="section-title">📋 逐月數據明細表（近三年，36 個月）</div>
+  <table>
+    <thead><tr><th>月份</th><th>收盤</th><th>TTM EPS</th><th>TTM PER</th><th>正常化PER</th><th>P/正常化 4x</th><th>6x</th><th>8x</th></tr></thead>
+    <tbody id="eps-table-body"></tbody>
+  </table>
+  <p style="font-size:11px;color:#64748b;margin-top:8px;">* TTM EPS 以季末為錨、季中月線性插值（GoodInfo 河流圖同算法）。所有 EPS 均以<strong>最新股數 21.6382 億股</strong>還原（長榮 2022 年減資 60%，股本 529 億 → 211.6 億），故 2022 年以前的數字與當年公告 EPS 不同。綠底列為正常化 PER &lt; 4x（便宜帶），紅底列為 &gt; 8x（昂貴帶）。資料來源：FinMind TaiwanStockPrice／TaiwanStockFinancialStatements。</p>
+
+  <div class="section-title">📐 年度 EPS 與正常化計算</div>
+  <table>
+    <thead><tr><th>年度</th><th>歸母淨利（億元）</th><th>當年公告 EPS</th><th>股本還原後 EPS</th><th>備註</th></tr></thead>
+    <tbody>
+      <tr class="danger"><td>2021</td><td>2,390.1</td><td>45.47 元</td><td style="color:#ef4444;font-weight:700;">110.46 元</td><td>⚠️ COVID 塞港泡沫，不納入</td></tr>
+      <tr class="danger"><td>2022</td><td>3,342.0</td><td>93.93 元</td><td style="color:#ef4444;font-weight:700;">154.45 元</td><td>⚠️ 泡沫高峰，不納入</td></tr>
+      <tr><td>2023</td><td>353.4</td><td>16.70 元</td><td style="color:#ef4444;font-weight:700;">16.33 元</td><td>運價崩回成本線，循環谷底</td></tr>
+      <tr><td>2024</td><td>1,394.5</td><td>64.78 元</td><td style="color:#22c55e;font-weight:700;">64.45 元</td><td>紅海繞行吸收運力，運價暴衝</td></tr>
+      <tr><td>2025</td><td>685.8</td><td>31.68 元</td><td style="color:#eab308;font-weight:700;">31.69 元</td><td>運價逐季回落，H2 明顯轉弱</td></tr>
+      <tr class="highlight"><td><strong>2023–25 中位數</strong></td><td>—</td><td>—</td><td style="color:#22c55e;font-weight:700;">31.5 元</td><td><strong>本頁正常化 EPS 基準</strong></td></tr>
+      <tr><td>2023–25 平均</td><td>811.2</td><td>—</td><td>37.49 元</td><td>受 2024 繞行紅利拉高</td></tr>
+      <tr class="danger"><td>2021–25 五年平均</td><td>1,633.2</td><td>—</td><td style="color:#ef4444;font-weight:700;">75.48 元</td><td>⚠️ 含泡沫 → 便宜價 302 元 &gt; 現價，假訊號</td></tr>
+      <tr><td>2026 H1（實際）</td><td>243.4</td><td>11.25 元</td><td>11.25 元</td><td>Q1 3.84＋Q2 7.41</td></tr>
+      <tr><td>2026E（FactSet 共識）</td><td>~942</td><td>—</td><td style="color:#eab308;font-weight:700;">43.53 元</td><td>26/10/16 調查；10 月由 33.36 大幅上修</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:11px;color:#64748b;margin-top:8px;">
+    * <strong>為什麼排除 2021–2022：</strong>那兩年是 COVID 港口壅塞吃掉全球約一成以上有效運力造成的物理性供給衝擊（SCFI 由常態約 1,000 衝到 5,109），不是可重複發生的景氣循環高峰。若照一般循環股做法取近五年平均（75.48 元），便宜價會算出 302 元、合理價 453 元 — <strong>便宜價反而高於現價 259.5 元，總覽頁與 LINE 到價通知會立刻推播「便宜」假訊號</strong>，這正是循環股估值最典型的陷阱。<br>
+    * <strong>股本還原：</strong>長榮 2022 年減資 60%（減資基準日 2022/10/06，股本 529.08 億 → 211.63 億，52.9 億股 → 21.16 億股）。本頁一律以最新股數 21.6382 億股換算各年度歸母淨利，故 2021–2022 還原後 EPS 高於當年公告值。2023 年以後股數已穩定在 21.6 億股左右，還原前後幾乎相同。
+  </p>
+</div>
+
+<!-- ══ TAB 4: 基本面分析 ══ -->
+<div id="tab-fundamental" class="panel">
+
+  <!-- 1. 公司營運 -->
+  <div class="section-title">🏭 公司營運</div>
+  <div class="grid3" style="margin-top:0;">
+    <div class="card" style="text-align:center;">
+      <h3>2025 全年營收</h3>
+      <div class="val blue">3,791 億</div>
+      <div class="note">YoY −18.2%（2024：4,635 億）</div>
+    </div>
+    <div class="card" style="text-align:center;">
+      <h3>26Q2 單季營收</h3>
+      <div class="val green">1,052 億</div>
+      <div class="note">YoY +21.6%｜QoQ +21.6%</div>
+    </div>
+    <div class="card" style="text-align:center;">
+      <h3>26Q2 毛利率</h3>
+      <div class="val green">22.8%</div>
+      <div class="note">25Q4 17.9% → 26Q1 15.5% → 26Q2 22.8%</div>
+    </div>
+  </div>
+
+  <div class="section-title">📊 近九季財務趨勢</div>
+  <table>
+    <thead><tr><th>期間</th><th>營收（億）</th><th>營收YoY</th><th>毛利率</th><th>營業利益率</th><th>業外（億）</th><th>單季EPS</th></tr></thead>
+    <tbody>
+      <tr><td>24Q2</td><td>1,063</td><td>+57.7%</td><td>33.7%</td><td>30.7%</td><td>32</td><td>13.70 元</td></tr>
+      <tr><td>24Q3</td><td>1,528</td><td>+109.9%</td><td>52.6%</td><td>50.5%</td><td>46</td><td>28.75 元</td></tr>
+      <tr><td>24Q4</td><td>1,158</td><td>+66.1%</td><td>35.3%</td><td>29.8%</td><td>72</td><td>14.19 元</td></tr>
+      <tr><td>25Q1</td><td>1,100</td><td>+24.2%</td><td>30.3%</td><td>26.7%</td><td>26</td><td>12.64 元</td></tr>
+      <tr><td>25Q2</td><td>865</td><td>−18.6%</td><td>21.6%</td><td>16.7%</td><td>9</td><td>5.06 元</td></tr>
+      <tr><td>25Q3</td><td>969</td><td>−36.6%</td><td>26.1%</td><td>22.7%</td><td>30</td><td>10.04 元</td></tr>
+      <tr><td>25Q4</td><td>857</td><td>−26.0%</td><td>17.9%</td><td>9.7%</td><td>22</td><td style="color:#ef4444;">3.94 元</td></tr>
+      <tr><td>26Q1</td><td>865</td><td>−21.4%</td><td>15.5%</td><td>10.3%</td><td>17</td><td style="color:#ef4444;">3.84 元</td></tr>
+      <tr class="highlight"><td><strong>26Q2 ★</strong></td><td><strong>1,052</strong></td><td style="color:#22c55e;font-weight:700;">+21.6%</td><td style="color:#22c55e;font-weight:700;">22.8%</td><td style="color:#22c55e;font-weight:700;">18.4%</td><td>15</td><td style="color:#22c55e;font-weight:700;">7.41 元</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:11px;color:#64748b;margin-top:8px;">
+    * <strong>看清營運槓桿：</strong>26Q1 → 26Q2 營收只增 21.6%（865 → 1,052 億），毛利率卻從 15.5% 跳到 22.8%、營益率從 10.3% 跳到 18.4%，EPS 直接翻倍（3.84 → 7.41 元）。原因是營業成本只增加約 11%（731 → 812 億）— <strong>增量營收有近六成直接落到營業利益</strong>。船舶折舊、船員、港埠費是固定的，運價漲多少幾乎就賺多少。反向亦同：24Q3 營益率 50.5%，一年後的 25Q4 只剩 9.7%。<br>
+    * <strong>獲利來自本業：</strong>26Q2 營業利益 194 億遠大於業外 15 億，與 6488 環球晶（業外 31.6 億 &gt; 本業 14.2 億）那種一次性業外撐 EPS 的狀況相反，這一點體質較健康。<br>
+    * <strong>26Q3 動能：</strong>月營收 7 月 480.8 億、8 月 489.9 億、9 月 497.1 億，合計 1,467.8 億，QoQ +39.6%、YoY +51.8%，已逼近 2024Q3 紅海繞行高峰的 1,528 億。Q3 財報預計 11 月中公告；若營益率同步回到 30% 以上，單季 EPS 有機會回到兩位數。
+  </p>
+
+  <!-- 2. 商業模式 -->
+  <div class="section-title">💡 商業模式</div>
+  <div class="grid2" style="margin-top:0;">
+    <div class="card">
+      <h3>怎麼賺錢</h3>
+      <p style="font-size:12px;color:#94a3b8;line-height:1.8;">
+        長榮海運的損益表基本上是<strong>一條公式：運價 × 載運量 − 固定成本</strong>。<br>
+        ① <strong>收入端</strong> — 幾乎全部來自貨櫃海運運費，主力航線為遠東／歐洲、遠東／美洲（美西＋美東）與亞洲區間。運價是純商品價格，由全球供需決定，公司無定價權。<br>
+        ② <strong>成本端</strong> — 船舶折舊、租船費、燃油、船員、港埠裝卸與內陸運輸。除燃油與裝卸隨量變動外，<strong>大部分為固定或半固定成本</strong>。<br>
+        這個結構造就極端的營運槓桿：營收 ±20% 會讓 EPS 動 ±100% 以上（26Q1→26Q2 即為實例）。也因此<strong>單季 EPS 絕對不可線性外推</strong>。
+      </p>
+      <p style="font-size:10px;color:#475569;margin-top:8px;">* 公司未按季揭露分航線營收與運價明細（無公開精確數字），上述結構依合併財報成本組成與產業慣例說明。</p>
+    </div>
+    <div class="card">
+      <h3>護城河評估</h3>
+      <div class="moat-row"><span class="moat-icon">✅</span><span>淨現金部位厚：26Q2 現金 1,747 億（每股約 81 元），撐得過運價低谷</span></div>
+      <div class="moat-row"><span class="moat-icon">✅</span><span>新造船隊大型化、低油耗，單箱成本優於同業平均</span></div>
+      <div class="moat-row"><span class="moat-icon">✅</span><span>聯營體系（Premier Alliance）共用艙位，航網覆蓋率不輸前五大</span></div>
+      <div class="moat-row"><span class="moat-icon">✅</span><span>低谷年仍有獲利與配息能力（2023 EPS 16.33 元、配息 70 元）</span></div>
+      <div class="moat-row"><span class="moat-icon">⚠️</span><span>運價為商品價格，無定價權 — 這是結構性缺陷，不是暫時的</span></div>
+      <div class="moat-row"><span class="moat-icon">⚠️</span><span>全球新船訂單量龐大，2026–2028 交付潮是長期運價壓力</span></div>
+      <div class="moat-row"><span class="moat-icon">⚠️</span><span>紅海／巴拿馬運河是雙面刃：繞行推升運價，恢復通行則運價回吐</span></div>
+    </div>
+  </div>
+
+  <div class="client-row">
+    <div class="client-block">
+      <h4>獲利驅動因子</h4>
+      <div class="client-item"><span>SCFI／FBX 運價指數</span><span class="badge badge-buy">最關鍵</span></div>
+      <div class="client-item"><span>紅海繞行是否延續</span><span class="badge badge-watch">地緣政治</span></div>
+      <div class="client-item"><span>全球新船交付量（供給）</span><span class="badge badge-avoid">長期壓力</span></div>
+      <div class="client-item"><span>燃油價格與低硫油價差</span><span class="badge badge-neutral">成本端</span></div>
+      <div class="client-item"><span>美國關稅與補庫存循環</span><span class="badge badge-watch">需求端</span></div>
+      <div class="client-item"><span>新台幣匯率</span><span class="badge badge-neutral">收入以美元計價</span></div>
+    </div>
+    <div class="client-block">
+      <h4>主要競爭對手</h4>
+      <div class="client-item"><span>地中海航運 MSC（瑞）</span><span class="badge badge-neutral">全球第一</span></div>
+      <div class="client-item"><span>馬士基 Maersk（丹）</span><span class="badge badge-neutral">全球第二</span></div>
+      <div class="client-item"><span>達飛 CMA CGM（法）</span><span class="badge badge-neutral">全球第三</span></div>
+      <div class="client-item"><span>中遠海運 COSCO（中）</span><span class="badge badge-neutral">全球第四</span></div>
+      <div class="client-item"><span>赫伯羅特 Hapag-Lloyd（德）／ONE（日）</span><span class="badge badge-neutral">全球第五～六</span></div>
+      <div class="client-item"><span>陽明 2609／萬海 2615（台）</span><span class="badge badge-neutral">台灣同業</span></div>
+    </div>
+  </div>
+  <p style="font-size:10px;color:#475569;margin-top:8px;">* 客戶端為全球貨主與承攬業者，分散且無單一大客戶集中度，故此處改列「獲利驅動因子」取代客戶清單。</p>
+
+  <!-- 3. 市場地位 -->
+  <div class="section-title">🌍 市場地位</div>
+  <div class="stat-bar">
+    <div class="stat-item">
+      <div class="stat-label">台灣貨櫃航運</div>
+      <div class="stat-val" style="color:#3b82f6;">龍頭</div>
+      <div class="stat-sub">規模大於陽明、萬海</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-label">全球運力排名</div>
+      <div class="stat-val" style="color:#22c55e;">第 6～7 大</div>
+      <div class="stat-sub">約占全球運力 5～6%</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-label">每股淨現金</div>
+      <div class="stat-val" style="color:#22c55e;">~81 元</div>
+      <div class="stat-sub">占股價約 31%</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-label">營運槓桿</div>
+      <div class="stat-val" style="color:#eab308;">極高</div>
+      <div class="stat-sub">營益率 9.7%→50.5% 都出現過</div>
+    </div>
+  </div>
+  <div style="margin-top:12px;font-size:11px;color:#64748b;border-top:1px solid #2d3748;padding-top:10px;">
+    📌 貨櫃航運是高度集中的寡占產業 — 前七大業者掌握約七成運力，且透過聯營協議共用艙位。長榮在這個格局裡屬「規模夠大能進第一線聯盟、但不具價格主導權」的位置。真正決定獲利的不是公司經營能力，而是<strong>全球運力供給 vs 貨量需求的落差</strong>，所以分析這檔股票時，運價指數（SCFI／FBX）與新船交付排程遠比公司財報前瞻性更高。<br>
+    * 全球運力排名與市占依公開產業統計（Alphaliner 等）概估，公司未按季揭露（無公開精確數字）。
+  </div>
+
+  <!-- 4. 估值指標 -->
+  <div class="section-title">💰 估值指標</div>
+  <div class="grid4" style="margin-top:0;">
+    <div class="card" style="text-align:center;">
+      <h3>本益比 P/E</h3>
+      <div class="val" id="fund-pe" style="color:#f8fafc;">計算中…</div>
+      <div class="note" id="fund-pe-note">TTM EPS 25.23 元（26Q2）</div>
+    </div>
+    <div class="card" style="text-align:center;">
+      <h3>正常化 P/E</h3>
+      <div class="val" id="fund-npe" style="color:#f8fafc;">計算中…</div>
+      <div class="note">正常化 EPS 31.5 元<br>歷史區間 3.41x~7.76x</div>
+    </div>
+    <div class="card" style="text-align:center;">
+      <h3>股價淨值比 P/B</h3>
+      <div class="val" id="fund-pb" style="color:#f8fafc;">計算中…</div>
+      <div class="note">每股淨值 259.2 元<br>26Q2 母公司權益 5,609 億</div>
+    </div>
+    <div class="card" style="text-align:center;">
+      <h3>ROE（TTM）</h3>
+      <div class="val yellow">9.7%</div>
+      <div class="note">2024 約 24%／2023 約 7%<br>正常化約 12%</div>
+    </div>
+  </div>
+  <div class="grid4">
+    <div class="card" style="text-align:center;">
+      <h3>前瞻 P/E（2026E）</h3>
+      <div class="val" id="fund-fpe" style="color:#f8fafc;">計算中…</div>
+      <div class="note">FactSet 共識 EPS 43.53 元</div>
+    </div>
+    <div class="card" style="text-align:center;">
+      <h3>現金股利</h3>
+      <div class="val yellow">16.0 元</div>
+      <div class="note">2026 年配｜26/06/17 除息</div>
+    </div>
+    <div class="card" style="text-align:center;">
+      <h3>殖利率</h3>
+      <div class="val" id="fund-yield" style="color:#f8fafc;">計算中…</div>
+      <div class="note">配息 16 元 ÷ 現價</div>
+    </div>
+    <div class="card" style="text-align:center;">
+      <h3>法人目標價</h3>
+      <div class="val" style="color:#f97316;">265 元</div>
+      <div class="note">FactSet｜26/10/16 調查</div>
+    </div>
+  </div>
+  <div class="info-box">
+    📌 <strong>估值解讀：</strong>
+    長榮目前是一檔「<strong>基本面在改善、價格也已反映</strong>」的循環股。運價反彈是真的 — 26Q3 月營收 QoQ +39.6%、毛利率已從 15.5% 的谷底回到 22.8%，而且獲利來自本業不是業外。FactSet 在 10 月把 2026E EPS 從 33.36 上修到 43.53 元、目標價給 265 元，也印證這一點。<br>
+    但價格端三個指標同時到頂：正常化 PER 8.24x（三年區間 3.41–7.76x 的上緣之外）、P/B 1.00x（近三年最高，過去兩年都在 0.71–0.86x）、股價 259.5 元高於三年最高月收盤 244.5 元。換句話說，<strong>市場已經把運價反彈當成既成事實在定價，而不是還在懷疑。</strong><br>
+    <strong>估值帶（126／189／252 元）維持以正常化 EPS 31.5 元為錨</strong>。要上修，條件是 26Q3／26Q4 財報證實全年 EPS 站上 40 元以上 — 屆時後泡沫四年中位數升到約 37.6 元，估值帶自然上移到 150／226／301 元。在循環高點用單季外推上修倍數，是這類股票最容易賠錢的做法。<br>
+    另一個值得注意的支撐：每股淨現金約 81 元（占股價 31%）、殖利率 6.16%。這讓下檔不像 2023 年那樣毫無防護 — 但要記得 2023 年配 70 元是把泡沫期賺的錢發出來，<strong>配息會隨運價循環大幅起落，不能當存股的穩定現金流看</strong>。
+  </div>
+
+  <p style="font-size:10px;color:#334155;margin-top:14px;line-height:1.6;">⚠️ 本分析僅供參考，不構成投資建議。長榮為強景氣循環股，單季高 EPS 不可線性外推，PER 區間需搭配運價循環位置判讀。2026E EPS 為 FactSet 法人共識（26/10/16），非本頁推估。</p>
+</div>
+
+<!-- ══ TAB 5: 完整摘要 ══ -->
+<div id="tab-summary" class="panel">
+  <div class="warn-box" style="margin-top:0;">
+    <h3>⚠️ 特別提醒：台股營運槓桿最極端的族群之一</h3>
+    <p style="font-size:12px;color:#fca5a5;line-height:1.8;">
+      長榮股本還原後的年度 EPS 走過這樣一條路：2021 年 <strong>110.46</strong> → 2022 年 <strong>154.45</strong> → 2023 年 <strong>16.33</strong> → 2024 年 <strong>64.45</strong> → 2025 年 <strong>31.69</strong> 元。<strong>高低差將近 10 倍。</strong><br>
+      在這種股票上，「最新 EPS × 歷史 PER」不只是不精確，而是<strong>方向性錯誤</strong>：EPS 創高時算出的合理價最高（但那正是賣點），EPS 落底時算出的合理價最低（但那正是買點）。本頁所有估值一律以正常化 EPS 為錨，就是為了避開這個陷阱。<br>
+      另外請注意：2021–2022 的獲利來自 COVID 港口壅塞吃掉全球一成以上有效運力的<strong>物理性供給衝擊</strong>（SCFI 由常態約 1,000 衝到 5,109），不是可重複的循環高峰。把那兩年算進五年平均會得到 75.48 元的「正常化」EPS、便宜價 302 元 — 比現價還高，等於直接推播買進假訊號。
+    </p>
+  </div>
+
+  <div class="section-title">📌 關鍵數據摘要</div>
+  <table>
+    <thead><tr><th>指標</th><th>數值</th><th>評估</th></tr></thead>
+    <tbody>
+      <tr><td>目前股價（2026/10/20）</td><td style="color:#ef4444;font-weight:700;">259.5 元</td><td><span class="badge badge-avoid">略高於昂貴價</span></td></tr>
+      <tr><td>TTM EPS（26Q2）</td><td style="color:#eab308;font-weight:700;">25.23 元</td><td><span class="badge badge-watch">單季 +93% 回升</span></td></tr>
+      <tr><td>正常化 EPS（估值基準）</td><td style="color:#22c55e;font-weight:700;">31.5 元</td><td><span class="badge badge-neutral">2023–25 後泡沫中位數</span></td></tr>
+      <tr><td>TTM PER</td><td style="color:#eab308;font-weight:700;">10.29x</td><td><span class="badge badge-neutral">與 EPS 反向，參考性低</span></td></tr>
+      <tr><td>正常化 PER</td><td style="color:#ef4444;font-weight:700;">8.24x</td><td><span class="badge badge-avoid">歷史區間 3.41–7.76x</span></td></tr>
+      <tr><td>便宜價（4x）</td><td style="color:#22c55e;">126 元</td><td><span class="badge badge-buy">運價破底參考</span></td></tr>
+      <tr><td>合理價（6x）</td><td style="color:#eab308;">189 元</td><td><span class="badge badge-watch">= 三年均價 192.4</span></td></tr>
+      <tr><td>昂貴價（8x）</td><td style="color:#f97316;">252 元</td><td><span class="badge badge-avoid">估值上限</span></td></tr>
+      <tr><td>目前股價 vs 合理價</td><td style="color:#ef4444;font-weight:700;">+37%</td><td><span class="badge badge-avoid">偏貴</span></td></tr>
+      <tr><td>P/B</td><td style="color:#ef4444;font-weight:700;">1.00x</td><td><span class="badge badge-avoid">淨值 259.2 元，近三年最高</span></td></tr>
+      <tr><td>每股淨現金</td><td style="color:#22c55e;font-weight:700;">~81 元</td><td><span class="badge badge-buy">占股價 31%</span></td></tr>
+      <tr><td>殖利率</td><td style="color:#22c55e;font-weight:700;">6.16%</td><td><span class="badge badge-buy">配息 16 元（但隨循環起落）</span></td></tr>
+      <tr><td>26Q2 毛利率／營益率</td><td style="color:#22c55e;font-weight:700;">22.8%／18.4%</td><td><span class="badge badge-buy">本業實質改善</span></td></tr>
+      <tr><td>26Q3 月營收合計</td><td style="color:#22c55e;font-weight:700;">1,467.8 億（+39.6% QoQ）</td><td><span class="badge badge-buy">逼近 24Q3 高峰</span></td></tr>
+      <tr><td>法人目標價</td><td style="color:#f97316;font-weight:700;">265 元</td><td><span class="badge badge-neutral">FactSet 26/10/16</span></td></tr>
+    </tbody>
+  </table>
+
+  <div class="section-title" style="margin-top:20px;">📐 估值帶對照（正常化 EPS 31.5 元）</div>
+  <table>
+    <thead><tr><th>估值帶</th><th>正常化 PER</th><th>對應股價</th><th>對應 P/B</th><th>說明</th></tr></thead>
+    <tbody>
+      <tr><td style="color:#22c55e;font-weight:600;">便宜帶</td><td>4x</td><td style="color:#22c55e;font-weight:700;">126 元</td><td>0.49x</td><td>近三年低點 3.41x（23M10 收 107.5 元）</td></tr>
+      <tr><td style="color:#eab308;font-weight:600;">合理帶</td><td>6x</td><td style="color:#eab308;font-weight:700;">189 元</td><td>0.73x</td><td>近三年均值 6.11x（36 個月均價 192.4 元）</td></tr>
+      <tr><td style="color:#f97316;font-weight:600;">昂貴帶</td><td>8x</td><td style="color:#f97316;font-weight:700;">252 元</td><td>0.97x</td><td>近三年高點 7.76x（25M05 收 244.5 元）</td></tr>
+      <tr class="danger"><td style="color:#ef4444;font-weight:600;">⚠️ 目前市場</td><td style="color:#ef4444;font-weight:700;">8.24x</td><td style="color:#ef4444;font-weight:700;">259.5 元</td><td style="color:#ef4444;font-weight:700;">1.00x</td><td>高於三年最高月收盤，P/B 首度站上 1.0x</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:11px;color:#64748b;margin-top:8px;">* P/B 以 26Q2 每股淨值 259.2 元計算。長榮在後泡沫時期（2024Q4–2026Q2）的 P/B 區間只有 0.71–0.86x，現價 1.00x 是這段期間首次站上淨值。</p>
+
+  <div class="section-title" style="margin-top:20px;">🔍 三種估值基準並列（避免單一視角）</div>
+  <table>
+    <thead><tr><th>基準</th><th>EPS</th><th>便宜／合理／昂貴</th><th>適用情境</th></tr></thead>
+    <tbody>
+      <tr class="highlight"><td><strong>正常化（本頁採用）</strong></td><td>31.5 元</td><td style="font-weight:700;">126 / 189 / 252</td><td>循環股標準做法，不受單季高低峰扭曲</td></tr>
+      <tr><td>最新 TTM</td><td>25.23 元</td><td>101 / 151 / 202</td><td>⚠️ 與 EPS 反向，循環回升初期會低估</td></tr>
+      <tr><td>2026E FactSet 共識</td><td>43.53 元</td><td>174 / 261 / 348</td><td>若運價維持高檔；目標價 265 ≈ 此列合理價 261</td></tr>
+      <tr class="danger"><td>2021–25 五年平均（含泡沫）</td><td>75.48 元</td><td style="color:#ef4444;">302 / 453 / 604</td><td>❌ 便宜價高於現價，假訊號，不採用</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:11px;color:#64748b;margin-top:8px;">* 總覽頁與 LINE 到價通知採用第一列（正常化）。有趣的是現價 259.5 元恰好落在三種合理基準的中間：高於 TTM 基準的昂貴價 202，低於 FactSet 基準的合理價 261 — 這代表市場目前的定價位置是「相信 2026 年 EPS 會到 40 元以上，但還沒相信這能延續到 2027 年」。</p>
+
+  <div class="info-box">
+    <strong>📌 投資結論（僅供參考）：</strong><br>
+    基本面改善是實質的。運價反彈已經走進損益表：毛利率 15.5% → 22.8%、營益率 10.3% → 18.4%、26Q3 月營收連三月站上 480 億以上、合計逼近 2024Q3 紅海繞行高峰。獲利來自本業（營業利益 194 億 ≫ 業外 15 億），不是一次性收益。FactSet 兩個月內把 2026E EPS 從 33.36 上修到 43.53 元，方向一致。<br>
+    但價格已經在反映它。<span style="color:#ef4444;">259.5 元 = 正常化 PER 8.24x、P/B 1.00x、高於近三年最高月收盤 244.5 元</span>，三個指標同時站在近三年最上緣，法人目標價 265 元也只剩 2% 空間。這不是泡沫，但也沒有安全邊際。<br>
+    <strong>操作上：</strong>這檔股票的歷史規律很清楚 — <strong>買點出現在運價破底、EPS 還在下修、股價跌破淨值的時候</strong>（2023M10 的 107.5 元，P/B 0.48x）；<strong>賣點出現在 EPS 創高、營收亮眼的時候</strong>（25M01 TTM EPS 69 元創高，之後一年股價沒再創高）。目前的位置偏向後者而非前者。<br>
+    現價不宜追高。若已持有，6.16% 殖利率與每股 81 元淨現金提供一定下檔支撐，可續抱但不宜加碼；若要新進場，126～189 元（P/B 0.49–0.73x）才是這檔股票有估值依據的區間。要上修估值帶，等 26Q3／26Q4 財報證實全年 EPS 站上 40 元 — 屆時後泡沫四年中位數升到約 37.6 元，估值帶自然移到 150／226／301 元。<br>
+    <strong>最大風險：</strong>紅海恢復通行 ＋ 2026–2028 新船交付潮同時發生。運力一旦釋放，以這個營運槓桿，EPS 回到 2023 年的 16 元只需要兩三個季度。
+  </div>
+
+  <p style="font-size:10px;color:#334155;margin-top:14px;line-height:1.6;">⚠️ 本分析僅供參考，不構成投資建議。股市有風險，請自行判斷。資料來源：FinMind 公開 API（股價、財報、配息）、FactSet 目標價（鉅亨網），截至 2026/10/20。所有 EPS 已以最新股數 21.6382 億股還原（2022 年減資 60%）。</p>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<script>
+function switchTab(id, btn) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ══ 估值常數 ══
+const TTM_EPS   = 25.23;   // 26Q2 TTM（僅供顯示即時 PER，不作估值基準）
+const NORM_EPS  = 31.5;    // 正常化 EPS：2023–2025 後泡沫三年中位數（股本還原，最新股數 21.6382 億股）
+const CHEAP     = 126;     // 31.5 × 4x
+const FAIR      = 189;     // 31.5 × 6x
+const EXPENSIVE = 252;     // 31.5 × 8x
+const BVPS      = 259.2;   // 26Q2 母公司權益 5,609 億 ÷ 21.6382 億股
+const ANNUAL_DIV = 16.0;   // 2026 年配（26/06/17 除息）
+const FWD_EPS   = 43.53;   // 2026E FactSet 共識（26/10/16）
+
+// ══ 數據定義（季末 TTM 為錨、季中月插值；EPS 全部以最新股數還原） ══
+const data = [
+  { m:'23M10', px:107.5, eps:24.51, per:4.39 },
+  { m:'23M11', px:112,   eps:20.42, per:5.48 },
+  { m:'23M12', px:143.5, eps:16.33, per:8.79 },
+  { m:'24M01', px:150.5, eps:18.23, per:8.26 },
+  { m:'24M02', px:165.5, eps:20.13, per:8.22 },
+  { m:'24M03', px:172,   eps:22.03, per:7.81 },
+  { m:'24M04', px:189.5, eps:25.79, per:7.35 },
+  { m:'24M05', px:210.5, eps:29.54, per:7.13 },
+  { m:'24M06', px:193,   eps:33.29, per:5.80 },
+  { m:'24M07', px:170.5, eps:39.46, per:4.32 },
+  { m:'24M08', px:188,   eps:45.62, per:4.12 },
+  { m:'24M09', px:201,   eps:51.78, per:3.88 },
+  { m:'24M10', px:205.5, eps:56.00, per:3.67 },
+  { m:'24M11', px:217,   eps:60.23, per:3.60 },
+  { m:'24M12', px:225,   eps:64.45, per:3.49 },
+  { m:'25M01', px:204.5, eps:65.98, per:3.10 },
+  { m:'25M02', px:216,   eps:67.52, per:3.20 },
+  { m:'25M03', px:220.5, eps:69.06, per:3.19 },
+  { m:'25M04', px:206.5, eps:66.21, per:3.12 },
+  { m:'25M05', px:244.5, eps:63.36, per:3.86 },
+  { m:'25M06', px:199,   eps:60.51, per:3.29 },
+  { m:'25M07', px:198,   eps:54.32, per:3.65 },
+  { m:'25M08', px:185.5, eps:48.13, per:3.85 },
+  { m:'25M09', px:179,   eps:41.94, per:4.27 },
+  { m:'25M10', px:193.5, eps:38.53, per:5.02 },
+  { m:'25M11', px:179.5, eps:35.11, per:5.11 },
+  { m:'25M12', px:190,   eps:31.69, per:6.00 },
+  { m:'26M01', px:186,   eps:28.76, per:6.47 },
+  { m:'26M02', px:197,   eps:25.82, per:7.63 },
+  { m:'26M03', px:199.5, eps:22.89, per:8.72 },
+  { m:'26M04', px:202,   eps:23.67, per:8.53 },
+  { m:'26M05', px:213,   eps:24.45, per:8.71 },
+  { m:'26M06', px:184.5, eps:25.23, per:7.31 },
+  { m:'26M07', px:204,   eps:25.23, per:8.09 },
+  { m:'26M08', px:233.5, eps:25.23, per:9.25 },
+  { m:'26M09', px:239.5, eps:25.23, per:9.49 },
+];
+
+const labels = data.map(d => d.m);
+const prices = data.map(d => d.px);
+
+const bandCheap = data.map(() => CHEAP);
+const bandFair  = data.map(() => FAIR);
+const bandExp   = data.map(() => EXPENSIVE);
+const ttmLine   = data.map(d => +(d.eps * 6).toFixed(1));
+
+// ══ PER 河流圖 ══
+const ctx1 = document.getElementById('riverChart').getContext('2d');
+new Chart(ctx1, {
+  type: 'line',
+  data: {
+    labels,
+    datasets: [
+      {
+        label: '昂貴價 252（正常化 8x）',
+        data: bandExp,
+        borderColor: '#ef4444',
+        borderWidth: 1.5,
+        borderDash: [4,3],
+        pointRadius: 0,
+        fill: false,
+        tension: 0,
+      },
+      {
+        label: '合理價 189（正常化 6x）',
+        data: bandFair,
+        borderColor: '#eab308',
+        borderWidth: 1.5,
+        borderDash: [4,3],
+        pointRadius: 0,
+        fill: false,
+        tension: 0,
+      },
+      {
+        label: '便宜價 126（正常化 4x）',
+        data: bandCheap,
+        borderColor: '#22c55e',
+        borderWidth: 1.5,
+        borderDash: [4,3],
+        pointRadius: 0,
+        fill: false,
+        tension: 0,
+      },
+      {
+        label: 'TTM EPS × 6x（對照：方向相反）',
+        data: ttmLine,
+        borderColor: '#64748b',
+        borderWidth: 1.5,
+        borderDash: [2,4],
+        pointRadius: 0,
+        fill: false,
+        tension: 0.3,
+      },
+      {
+        label: '月收盤價',
+        data: prices,
+        borderColor: '#ffffff',
+        backgroundColor: 'rgba(255,255,255,0.05)',
+        borderWidth: 2.5,
+        pointRadius: 2.5,
+        pointBackgroundColor: '#ffffff',
+        fill: false,
+        spanGaps: true,
+        tension: 0.3,
+        z: 10,
+      },
+    ]
+  },
+  options: {
+    responsive: true,
+    aspectRatio: 2.3,
+    interaction: { mode: 'index', intersect: false },
+    plugins: {
+      legend: { labels: { color: '#94a3b8', font: { size: 11 } } },
+      tooltip: {
+        callbacks: {
+          label: ctx => {
+            if (ctx.dataset.label === '月收盤價') return `收盤：${ctx.parsed.y}`;
+            return `${ctx.dataset.label}：${ctx.parsed.y ?? '—'}`;
+          },
+          afterBody: items => {
+            const i = items[0].dataIndex;
+            const d = data[i];
+            return `TTM EPS ${d.eps.toFixed(2)} 元｜TTM PER ${d.per.toFixed(2)}x｜正常化 PER ${(d.px / NORM_EPS).toFixed(2)}x`;
+          }
+        }
+      }
+    },
+    scales: {
+      x: { ticks: { color: '#64748b', maxRotation: 45, font: { size: 10 } }, grid: { color: '#1e2535' } },
+      y: { ticks: { color: '#64748b', font: { size: 10 }, callback: v => v.toLocaleString() }, grid: { color: '#1e2535' } }
+    }
+  }
+});
+
+// ══ EPS 趨勢圖 ══
+const ctx2 = document.getElementById('epsChart').getContext('2d');
+new Chart(ctx2, {
+  type: 'bar',
+  data: {
+    labels,
+    datasets: [
+      {
+        label: 'TTM EPS（元，股本還原後）',
+        data: data.map(d => d.eps),
+        backgroundColor: data.map(d => d.eps >= NORM_EPS ? '#22c55e99' : d.eps >= 20 ? '#eab30899' : '#ef444499'),
+        borderColor: data.map(d => d.eps >= NORM_EPS ? '#22c55e' : d.eps >= 20 ? '#eab308' : '#ef4444'),
+        borderWidth: 1,
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    aspectRatio: 2.6,
+    plugins: {
+      legend: { labels: { color: '#94a3b8', font: { size: 11 } } },
+      tooltip: {
+        callbacks: {
+          afterLabel: ctx => ctx.parsed.y >= NORM_EPS ? '高於正常化 31.5 元' : '低於正常化 31.5 元'
+        }
+      }
+    },
+    scales: {
+      x: { ticks: { color: '#64748b', maxRotation: 45, font: { size: 10 } }, grid: { color: '#1e2535' } },
+      y: {
+        ticks: { color: '#64748b', font: { size: 10 } },
+        grid: { color: '#1e2535' },
+        title: { display: true, text: 'TTM EPS（元）', color: '#64748b', font: { size: 11 } }
+      }
+    }
+  }
+});
+
+// ══ EPS 表格 ══
+const tbody = document.getElementById('eps-table-body');
+data.forEach(d => {
+  const npe = d.px / NORM_EPS;
+  const rowClass = npe > 8 ? ' class="danger"' : npe < 4 ? ' class="highlight"' : '';
+  const priceColor = npe > 8 ? 'color:#ef4444' : npe < 4 ? 'color:#22c55e' : 'color:#e2e8f0';
+  tbody.innerHTML += `<tr${rowClass}><td>${d.m}</td><td style="${priceColor}">${d.px}</td><td>${d.eps.toFixed(2)}</td><td>${d.per.toFixed(2)}x</td><td style="${priceColor};font-weight:700">${npe.toFixed(2)}x</td><td>${CHEAP}</td><td>${FAIR}</td><td>${EXPENSIVE}</td></tr>`;
+});
+
+// ══ 即時股價 ══
+async function updateLive() {
+  try {
+    const res = await fetch('https://taiwan-stock-price.david870114.workers.dev/?id=2603', { cache: 'no-cache' });
+    const d = JSON.parse(await res.text());
+    const price = parseFloat(d.price);
+    if (!price || isNaN(price)) return;
+
+    const ttmPE = (price / TTM_EPS).toFixed(2);
+    const normPE = (price / NORM_EPS).toFixed(2);
+    const pb = (price / BVPS).toFixed(2);
+    const yld = (ANNUAL_DIV / price * 100).toFixed(2);
+    const fpe = (price / FWD_EPS).toFixed(2);
+    const state = price >= EXPENSIVE ? '⚠️ 高於昂貴價' : price <= CHEAP ? '✅ 低於便宜價' : price <= FAIR ? '🟢 合理價以下' : '🟡 合理~昂貴之間';
+    const color = price >= EXPENSIVE ? '#ef4444' : price <= CHEAP ? '#22c55e' : price <= FAIR ? '#22c55e' : '#eab308';
+
+    document.getElementById('live-price').textContent = 'NT$ ' + price.toLocaleString();
+
+    const note = document.getElementById('live-per-note');
+    note.textContent = `正常化 PER ${normPE}x｜P/B ${pb}x｜殖利率 ${yld}%｜${state}`;
+    note.style.color = color;
+
+    const sc = document.getElementById('sc-live');
+    sc.textContent = `NT$ ${price.toLocaleString()}（正常化 PER ${normPE}x）`;
+    sc.style.color = color;
+
+    const scb = document.getElementById('sc-badge');
+    scb.textContent = price >= EXPENSIVE ? '高於昂貴價' : price <= CHEAP ? '低於便宜價' : price <= FAIR ? '合理價以下' : '合理~昂貴之間';
+    scb.className = 'badge ' + (price >= EXPENSIVE ? 'badge-avoid' : price <= FAIR ? 'badge-buy' : 'badge-watch');
+
+    const pe = document.getElementById('fund-pe');
+    pe.textContent = ttmPE + 'x';
+    pe.style.color = ttmPE > 12 ? '#ef4444' : ttmPE > 8 ? '#eab308' : '#22c55e';
+    document.getElementById('fund-pe-note').textContent = `TTM EPS 25.23 元（26Q2）｜股價 ${price.toLocaleString()}`;
+
+    const npe = document.getElementById('fund-npe');
+    npe.textContent = normPE + 'x';
+    npe.style.color = normPE > 8 ? '#ef4444' : normPE > 6 ? '#eab308' : '#22c55e';
+
+    const pbEl = document.getElementById('fund-pb');
+    pbEl.textContent = pb + 'x';
+    pbEl.style.color = pb > 0.95 ? '#ef4444' : pb > 0.75 ? '#eab308' : '#22c55e';
+
+    const fpeEl = document.getElementById('fund-fpe');
+    fpeEl.textContent = fpe + 'x';
+    fpeEl.style.color = fpe > 9 ? '#ef4444' : fpe > 6 ? '#eab308' : '#22c55e';
+
+    const yldEl = document.getElementById('fund-yield');
+    yldEl.textContent = yld + '%';
+    yldEl.style.color = yld < 3 ? '#ef4444' : yld < 5 ? '#eab308' : '#22c55e';
+  } catch(e) {}
+}
+
+window.addEventListener('load', updateLive);
+</script>
+</body>
+</html>

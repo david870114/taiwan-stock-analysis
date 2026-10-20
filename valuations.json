@@ -1,5 +1,5 @@
 {
- "updated": "2026-10-19",
+ "updated": "2026-10-20",
  "stocks": [
   {
    "id": "0050",
@@ -380,6 +380,16 @@
    "expensive": 116,
    "annualDiv": 0.8,
    "url": "1303_analysis.html"
+  },
+  {
+   "id": "2603",
+   "name": "長榮",
+   "tier": "spec",
+   "cheap": 126,
+   "fair": 189,
+   "expensive": 252,
+   "annualDiv": 16,
+   "url": "2603_analysis.html"
   }
  ]
 }
