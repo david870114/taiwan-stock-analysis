@@ -1,182 +1,193 @@
 {
-  "lastUpdated": "2026/10/19",
+  "lastUpdated": "2026/10/20",
   "market": {
-    "foreign": -767.43,
-    "investment_trust": 241.42,
-    "dealer": -362.63,
-    "total": -888.64,
-    "date": "2026/10/19",
+    "foreign": -795.4,
+    "investment_trust": 187.59,
+    "dealer": -355.79,
+    "total": -963.6,
+    "date": "2026/10/20",
     "unit": "億元"
   },
   "marketUnit": "億元",
   "topBuyers": [
     {
-      "code": "00632R",
-      "name": "元大台灣50反1",
-      "price": 9.75,
-      "change": "+0.1",
-      "changePct": "+1.04",
-      "foreignNet": 2308,
-      "trustNet": 0,
-      "dealerNet": 41344,
-      "totalNet": 43652
-    },
-    {
-      "code": "2409",
-      "name": "友達",
-      "price": 36.7,
-      "change": "+0.8",
-      "changePct": "+2.23",
-      "foreignNet": 8762,
-      "trustNet": 3141,
-      "dealerNet": 3489,
-      "totalNet": 15392
-    },
-    {
-      "code": "00680L",
-      "name": "元大美債20正2",
-      "price": 6.12,
-      "change": "+0.04",
-      "changePct": "+0.66",
-      "foreignNet": -350,
-      "trustNet": 0,
-      "dealerNet": 13608,
-      "totalNet": 13258
-    },
-    {
-      "code": "00664R",
-      "name": "國泰臺灣加權反1",
-      "price": 1.57,
-      "change": "+0.01",
-      "changePct": "+0.64",
-      "foreignNet": -3,
-      "trustNet": 0,
-      "dealerNet": 9650,
-      "totalNet": 9647
+      "code": "3231",
+      "name": "緯創",
+      "price": 189,
+      "change": "+9",
+      "changePct": "+5.00",
+      "foreignNet": 32813,
+      "trustNet": 8333,
+      "dealerNet": 1556,
+      "totalNet": 42703
     },
     {
       "code": "2002",
       "name": "中鋼",
-      "price": 19.5,
-      "change": "-0.05",
-      "changePct": "-0.26",
-      "foreignNet": 10021,
-      "trustNet": 89,
-      "dealerNet": -530,
-      "totalNet": 9580
+      "price": 19.6,
+      "change": "+0.1",
+      "changePct": "+0.51",
+      "foreignNet": 13459,
+      "trustNet": 11147,
+      "dealerNet": -39,
+      "totalNet": 24567
     },
     {
-      "code": "2884",
-      "name": "玉山金",
-      "price": 49.35,
-      "change": "+0.2",
-      "changePct": "+0.41",
-      "foreignNet": -2467,
-      "trustNet": 7158,
-      "dealerNet": 3961,
-      "totalNet": 8652
+      "code": "1802",
+      "name": "台玻",
+      "price": 67.4,
+      "change": "+1.4",
+      "changePct": "+2.12",
+      "foreignNet": 17678,
+      "trustNet": 25,
+      "dealerNet": 916,
+      "totalNet": 18618
     },
     {
-      "code": "2886",
-      "name": "兆豐金",
-      "price": 53.9,
-      "change": "+0.2",
-      "changePct": "+0.37",
-      "foreignNet": 1173,
-      "trustNet": 2287,
-      "dealerNet": 3952,
-      "totalNet": 7412
+      "code": "2324",
+      "name": "仁寶",
+      "price": 36.9,
+      "change": "+0.65",
+      "changePct": "+1.79",
+      "foreignNet": 14964,
+      "trustNet": -800,
+      "dealerNet": 1788,
+      "totalNet": 15952
     },
     {
-      "code": "9105",
-      "name": "泰金寶-DR",
-      "price": 9.13,
-      "change": "+0.07",
-      "changePct": "+0.77",
-      "foreignNet": 6719,
-      "trustNet": 0,
-      "dealerNet": 441,
-      "totalNet": 7160
-    },
-    {
-      "code": "00686R",
-      "name": "群益臺灣加權反1",
-      "price": 0.96,
+      "code": "00953B",
+      "name": "群益優選非投等債",
+      "price": 9.6,
       "change": "+0.01",
-      "changePct": "+1.05",
-      "foreignNet": 5,
+      "changePct": "+0.10",
+      "foreignNet": -1067,
       "trustNet": 0,
-      "dealerNet": 7046,
-      "totalNet": 7051
+      "dealerNet": 14555,
+      "totalNet": 13488
     },
     {
-      "code": "5880",
-      "name": "合庫金",
-      "price": 28.05,
-      "change": "-0.1",
-      "changePct": "-0.36",
-      "foreignNet": 1684,
-      "trustNet": 4707,
-      "dealerNet": 588,
-      "totalNet": 6979
+      "code": "00632R",
+      "name": "元大台灣50反1",
+      "price": 9.86,
+      "change": "+0.11",
+      "changePct": "+1.13",
+      "foreignNet": -1848,
+      "trustNet": 0,
+      "dealerNet": 14086,
+      "totalNet": 12238
+    },
+    {
+      "code": "2353",
+      "name": "宏碁",
+      "price": 32.4,
+      "change": "+0.35",
+      "changePct": "+1.09",
+      "foreignNet": 10792,
+      "trustNet": -923,
+      "dealerNet": 2250,
+      "totalNet": 12119
+    },
+    {
+      "code": "00664R",
+      "name": "國泰臺灣加權反1",
+      "price": 1.59,
+      "change": "+0.02",
+      "changePct": "+1.27",
+      "foreignNet": -7,
+      "trustNet": 0,
+      "dealerNet": 11008,
+      "totalNet": 11001
     },
     {
       "code": "00961",
       "name": "FT臺灣永續高息",
-      "price": 13.44,
-      "change": "0",
-      "changePct": "+0.00",
-      "foreignNet": 98,
+      "price": 13.46,
+      "change": "+0.02",
+      "changePct": "+0.15",
+      "foreignNet": 1294,
       "trustNet": 0,
-      "dealerNet": 6815,
-      "totalNet": 6913
+      "dealerNet": 7257,
+      "totalNet": 8551
     },
     {
-      "code": "1216",
-      "name": "統一",
-      "price": 79.6,
-      "change": "0",
-      "changePct": "+0.00",
-      "foreignNet": 6665,
-      "trustNet": -2039,
-      "dealerNet": 1980,
-      "totalNet": 6606
+      "code": "2356",
+      "name": "英業達",
+      "price": 60,
+      "change": "+0.9",
+      "changePct": "+1.52",
+      "foreignNet": 8068,
+      "trustNet": -1213,
+      "dealerNet": 1671,
+      "totalNet": 8526
     },
     {
-      "code": "2412",
-      "name": "中華電",
-      "price": 154.5,
-      "change": "+1.5",
-      "changePct": "+0.98",
-      "foreignNet": 3344,
-      "trustNet": 2417,
-      "dealerNet": 214,
-      "totalNet": 5976
+      "code": "4938",
+      "name": "和碩",
+      "price": 105,
+      "change": "+3",
+      "changePct": "+2.94",
+      "foreignNet": 7718,
+      "trustNet": -1012,
+      "dealerNet": 945,
+      "totalNet": 7651
     },
     {
-      "code": "2887",
-      "name": "台新新光金",
-      "price": 42.35,
-      "change": "-0.1",
-      "changePct": "-0.24",
-      "foreignNet": -3030,
-      "trustNet": 3915,
-      "dealerNet": 4776,
-      "totalNet": 5661
+      "code": "2377",
+      "name": "微星",
+      "price": 164.5,
+      "change": "+5",
+      "changePct": "+3.13",
+      "foreignNet": 5391,
+      "trustNet": -188,
+      "dealerNet": 783,
+      "totalNet": 5985
+    },
+    {
+      "code": "00680L",
+      "name": "元大美債20正2",
+      "price": 6.05,
+      "change": "-0.07",
+      "changePct": "-1.14",
+      "foreignNet": -330,
+      "trustNet": 0,
+      "dealerNet": 6235,
+      "totalNet": 5905
     },
     {
       "code": "9904",
       "name": "寶成",
-      "price": 26.4,
-      "change": "-0.1",
-      "changePct": "-0.38",
-      "foreignNet": 5745,
-      "trustNet": -989,
-      "dealerNet": 494,
-      "totalNet": 5250
+      "price": 26.55,
+      "change": "+0.15",
+      "changePct": "+0.57",
+      "foreignNet": 3215,
+      "trustNet": 1165,
+      "dealerNet": 973,
+      "totalNet": 5353
+    },
+    {
+      "code": "2317",
+      "name": "鴻海",
+      "price": 241.5,
+      "change": "+2",
+      "changePct": "+0.84",
+      "foreignNet": 3854,
+      "trustNet": 968,
+      "dealerNet": 397,
+      "totalNet": 5219
     }
   ],
   "history": [
+    {
+      "date": "2026/10/19",
+      "market": {
+        "foreign": -767.43,
+        "investment_trust": 241.42,
+        "dealer": -362.63,
+        "total": -888.64,
+        "date": "2026/10/19",
+        "unit": "億元"
+      }
+    },
     {
       "date": "2026/10/16",
       "market": {
@@ -229,17 +240,6 @@
         "dealer": -142.94,
         "total": -593.51,
         "date": "2026/10/12",
-        "unit": "億元"
-      }
-    },
-    {
-      "date": "2026/10/08",
-      "market": {
-        "foreign": -758.52,
-        "investment_trust": 30.09,
-        "dealer": -187.31,
-        "total": -915.75,
-        "date": "2026/10/08",
         "unit": "億元"
       }
     }
