@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>精材 3374 — 2026 股價推算分析</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #0f1117; color: #e2e8f0; padding: 16px; }
+  h1 { font-size: 18px; font-weight: 700; color: #f8fafc; margin-bottom: 4px; }
+  .subtitle { font-size: 12px; color: #94a3b8; margin-bottom: 16px; }
+  .tabs { display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; }
+  .tab { padding: 6px 14px; border-radius: 20px; font-size: 12px; cursor: pointer; border: 1px solid #334155; color: #94a3b8; background: transparent; transition: all 0.2s; }
+  .tab.active { background: #3b82f6; color: #fff; border-color: #3b82f6; }
+  .tab:hover:not(.active) { border-color: #64748b; color: #e2e8f0; }
+  .panel { display: none; }
+  .panel.active { display: block; }
+  canvas { width: 100% !important; border-radius: 10px; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+  .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-top: 16px; }
+  .grid4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 12px; margin-top: 16px; }
+  @media(max-width:640px){ .grid2,.grid3,.grid4{ grid-template-columns:1fr 1fr; } }
+  @media(max-width:400px){ .grid2,.grid3,.grid4{ grid-template-columns:1fr; } }
+  .card { background: #1e2535; border: 1px solid #2d3748; border-radius: 10px; padding: 14px; }
+  .card h3 { font-size: 12px; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
+  .card .val { font-size: 22px; font-weight: 700; }
+  .card .note { font-size: 11px; color: #64748b; margin-top: 4px; }
+  .green { color: #22c55e; } .yellow { color: #eab308; } .red { color: #ef4444; } .blue { color: #3b82f6; } .purple { color: #a855f7; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 12px; }
+  th { background: #1e2535; color: #64748b; padding: 8px 10px; text-align: left; font-weight: 600; font-size: 11px; text-transform: uppercase; }
+  td { padding: 8px 10px; border-bottom: 1px solid #1e2535; }
+  tr:hover td { background: #1a2030; }
+  tr.highlight td { background: #0f2a1e; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: 600; }
+  .badge-buy { background: #14532d; color: #86efac; }
+  .badge-watch { background: #713f12; color: #fde68a; }
+  .badge-avoid { background: #450a0a; color: #fca5a5; }
+  .badge-neutral { background: #1e293b; color: #94a3b8; }
+  .scenario-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 12px; }
+  @media(max-width:500px){ .scenario-grid{ grid-template-columns:1fr; } }
+  .scenario-card { border-radius: 10px; padding: 14px; text-align: center; }
+  .bear { background: linear-gradient(135deg, #1a0a0a, #2d1010); border: 1px solid #7f1d1d; }
+  .base { background: linear-gradient(135deg, #0a1a0a, #102d10); border: 1px solid #14532d; }
+  .bull { background: linear-gradient(135deg, #0a0f1a, #10182d); border: 1px solid #1d4ed8; }
+  .sc-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.7; margin-bottom: 6px; }
+  .sc-price { font-size: 22px; font-weight: 800; margin: 4px 0; }
+  .sc-detail { font-size: 10px; opacity: 0.65; line-height: 1.6; }
+  .section-title { font-size: 13px; font-weight: 600; color: #cbd5e1; margin: 16px 0 8px; }
+  .buy-signal { background: #0f2a1e; border: 1px solid #166534; border-radius: 10px; padding: 14px; margin-top: 12px; }
+  .buy-signal h3 { color: #86efac; font-size: 13px; margin-bottom: 8px; }
+  .buy-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid #1a3a2a; gap: 8px; }
+  .buy-row:last-child { border-bottom: none; }
+  .current-price-badge { background: #1e3a5f; border: 1px solid #3b82f6; border-radius: 8px; padding: 10px 14px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px; }
+  .warn-box { background: #2d1010; border: 1px solid #7f1d1d; border-radius: 10px; padding: 14px; margin-top: 12px; }
+  .warn-box h3 { color: #fca5a5; font-size: 13px; margin-bottom: 8px; }
+  .info-box { background: #1e2535; border: 1px solid #2d3748; border-radius: 10px; padding: 14px; margin-top: 12px; font-size: 12px; color: #94a3b8; line-height: 1.8; }
+  .info-box strong { color: #e2e8f0; }
+  .stat-bar { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 12px; }
+  .stat-item { background: #1e2535; border-radius: 10px; padding: 12px 16px; flex: 1; min-width: 120px; }
+  .stat-label { font-size: 10px; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+  .stat-val { font-size: 18px; font-weight: 700; color: #e2e8f0; }
+  .stat-sub { font-size: 10px; color: #64748b; margin-top: 2px; }
+  .client-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; }
+  @media(max-width:500px){ .client-row{ grid-template-columns:1fr; } }
+  .client-block { background: #1e2535; border-radius: 10px; padding: 14px; }
+  .client-block h4 { font-size: 11px; color: #64748b; text-transform: uppercase; margin-bottom: 10px; }
+  .client-item { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid #1a2030; font-size: 12px; }
+  .client-item:last-child { border-bottom: none; }
+  .moat-row { display: flex; align-items: flex-start; gap: 8px; padding: 5px 0; border-bottom: 1px solid #1a2030; font-size: 12px; }
+  .moat-row:last-child { border-bottom: none; }
+  .moat-icon { flex-shrink: 0; }
+</style>
+</head>
+<body>
+
+<div style="margin-bottom:12px;">
+  <a href="index.html" style="color:#64748b;font-size:12px;text-decoration:none;display:inline-flex;align-items:center;gap:4px;padding:5px 10px;border:1px solid #334155;border-radius:8px;transition:all 0.2s;" onmouseover="this.style.color='#e2e8f0';this.style.borderColor='#64748b'" onmouseout="this.style.color='#64748b';this.style.borderColor='#334155'">← 返回總覽</a>
+</div>
+<h1>🔬 精材 (3374) — 2026 股價推算分析</h1>
+<p class="subtitle">PER 河流圖估值 ✦ 三情境試算 ✦ 台積電轉投資（持股約 41%）✦ 晶圓級封裝／12 吋測試代工 ✦ 更新時間：2026年10月21日</p>
+
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('river', this)">📈 PER 河流圖</button>
+  <button class="tab" onclick="switchTab('scenario', this)">🎯 三情境買點</button>
+  <button class="tab" onclick="switchTab('eps', this)">📊 EPS 趨勢</button>
+  <button class="tab" onclick="switchTab('fundamental', this)">🏢 基本面分析</button>
+  <button class="tab" onclick="switchTab('summary', this)">📋 完整摘要</button>
+</div>
+
+<!-- ══ TAB 1: PER River ══ -->
+<div id="tab-river" class="panel active">
+  <div class="current-price-badge">
+    <span style="color:#94a3b8;font-size:12px;">目前股價（即時）</span>
+    <span style="color:#3b82f6;font-size:20px;font-weight:800;" id="live-price">載入中…</span>
+    <span style="color:#ef4444;font-size:12px;" id="live-per-note">⚠️ 目前 PER 約 74x，遠高於歷史區間上緣</span>
+  </div>
+  <canvas id="riverChart" height="340"></canvas>
+  <p style="font-size:11px;color:#475569;margin-top:8px;text-align:center;">* 河流帶＝各月 TTM EPS ×（21x／31x／45x／70x）。白線為月收盤價。月線只收「已收盤完整月份」，最後一點為 26M09（454.5 元）。</p>
+
+  <div class="warn-box" style="margin-top:14px;">
+    <h3>⚠️ 股價已刺穿 70x 河流帶上緣</h3>
+    <p style="font-size:12px;color:#fca5a5;line-height:1.8;">精材近三年逐月 PER 實際落在 <strong>21~45x</strong>（均值約 31x），即使 2024 年 CIS 回溫、股價衝到 266 元時也只到 44x。2026 年 8 月起股價自 277 元連續跳空噴出至 <strong>26M09 收 454.5 元（PER 71x）</strong>、10/21 漲停收 470.5 元（PER <strong>約 74x</strong>），為近三年均值的 2.4 倍。催化劑是<strong>台積電先進封裝產能滿載、測試訂單外溢</strong>的委外釋單題材，而非當期 EPS 跳升 — 26Q2 TTM EPS 仍只有 6.37 元（2022 年曾有 7.30 元）。</p>
+  </div>
+
+  <div class="info-box">
+    <strong>📌 為什麼估值帶用「最新 TTM EPS」而非正常化 EPS：</strong><br>
+    精材 25Q2 單季 EPS 由 1.26 掉到 <strong>0.24 元（−81%）</strong>，依規則觸發景氣循環股檢核。但檢核後判定<strong>仍適用 PER 法</strong>：① 該季是毛利率落到 15.6% 的單季低點（新廠折舊＋稼動率空窗），非記憶體式的多年循環；② 之後四季 EPS 1.59／1.90／1.42／1.46 已回到穩態，26Q1–Q2 毛利率回升至 27~30%；③ 營收連創新高（26Q3 27.02 億，YoY +29.3%），本業趨勢向上。<br>
+    以 TTM 6.37 元算出的估值帶（134／197／287）<strong>遠低於現價 470.5 元</strong>，產生的是「昂貴」訊號而非假性「便宜」訊號，無誤判推播風險。
+  </div>
+</div>
+
+<!-- ══ TAB 2: 三情境 ══ -->
+<div id="tab-scenario" class="panel">
+  <div class="grid2">
+    <div class="card"><h3>26Q2 TTM EPS（最新季末）</h3><div class="val green">6.37 元</div><div class="note">Q2 單季 1.46元 YoY +508%｜前季 TTM 5.15</div></div>
+    <div class="card"><h3>近三年 PER 區間</h3><div class="val yellow">21x ~ 45x</div><div class="note">均值約 31x；已排除 26M08–09 題材月（66–71x）</div></div>
+  </div>
+
+  <div class="section-title">三情境估值試算（基於 26Q2 TTM EPS = 6.37 元）</div>
+  <div class="scenario-grid">
+    <div class="scenario-card bear">
+      <div class="sc-label">🐻 悲觀（便宜價）</div>
+      <div class="sc-price" style="color:#fca5a5;">NT$ 134</div>
+      <div class="sc-detail">
+        PER 21x<br>
+        6.37元 × 21<br>
+        委外釋單題材退燒<br>
+        回到 2025 年 Q1 估值水準
+      </div>
+    </div>
+    <div class="scenario-card base">
+      <div class="sc-label">📊 合理價</div>
+      <div class="sc-price" style="color:#86efac;">NT$ 197</div>
+      <div class="sc-detail">
+        PER 31x<br>
+        6.37元 × 31<br>
+        對應近三年均值本益比<br>
+        台積電測試代工穩定放量
+      </div>
+    </div>
+    <div class="scenario-card bull">
+      <div class="sc-label">🚀 昂貴價</div>
+      <div class="sc-price" style="color:#93c5fd;">NT$ 287</div>
+      <div class="sc-detail">
+        PER 45x<br>
+        6.37元 × 45<br>
+        近三年（非題材）實際高點<br>
+        2024 CIS 回溫時的估值上緣
+      </div>
+    </div>
+  </div>
+
+  <div class="warn-box" style="margin-top:14px;">
+    <h3>⚠️ 目前股價 470.5 元（10/21）為昂貴價的 1.64 倍</h3>
+    <p style="font-size:12px;color:#fca5a5;line-height:1.8;">
+      以 26Q2 TTM EPS 6.37 元計算，470.5 元對應 PER <strong>73.9x</strong>，高於昂貴價（287 元，45x）<strong>約 64%</strong>，是合理價（197 元）的 2.4 倍。<br>
+      即使改用法人 2026 全年預估：共識 EPS <strong>6.77 元</strong>（2 家機構，YoY +35.7%）→ 前瞻 PER 69.5x；玉山證預估 <strong>7.14 元</strong>（營收 94.25 億）→ 65.9x。要讓現價落回 45x 昂貴帶，年度 EPS 需達 <strong>10.5 元</strong>（約為 2026E 的 1.55 倍）。<br>
+      10 月波動極大：單月最高 530、最低 399，10/14 收 499、10/16 收 433.5、10/21 漲停 470.5，追高須有停損紀律。
+    </p>
+  </div>
+
+  <div class="buy-signal">
+    <h3>✅ 合理進場參考區間（PER 法）</h3>
+    <div class="buy-row"><span style="font-size:12px;color:#86efac;">🟢 便宜價（PER 21x）</span><span style="font-weight:700;color:#86efac;">NT$ 134</span></div>
+    <div class="buy-row"><span style="font-size:12px;color:#fde68a;">🟡 合理價（PER 31x）</span><span style="font-weight:700;color:#fde68a;">NT$ 197</span></div>
+    <div class="buy-row"><span style="font-size:12px;color:#fca5a5;">🔴 昂貴價（PER 45x）</span><span style="font-weight:700;color:#fca5a5;">NT$ 287</span></div>
+    <div class="buy-row"><span style="font-size:12px;color:#ef4444;">⚠️ 目前股價（10/21）</span><span style="font-weight:700;color:#ef4444;">NT$ 470.5（PER ≈ 74x，嚴重高估）</span></div>
+  </div>
+
+  <div class="section-title">📐 前瞻基準對照（僅供參考，總覽與到價通知一律採 TTM 那一列）</div>
+  <table>
+    <thead>
+      <tr><th>EPS 基準</th><th>數值</th><th>便宜 21x</th><th>合理 31x</th><th>昂貴 45x</th><th>現價隱含 PER</th></tr>
+    </thead>
+    <tbody>
+      <tr class="highlight"><td>26Q2 TTM（實際，採用）</td><td style="color:#22c55e;font-weight:700;">6.37 元</td><td>134</td><td>197</td><td>287</td><td style="color:#ef4444;font-weight:700;">73.9x</td></tr>
+      <tr><td>2026E 法人共識（2 家）</td><td style="color:#eab308;">6.77 元</td><td>142</td><td>210</td><td>305</td><td style="color:#ef4444;">69.5x</td></tr>
+      <tr><td>2026E 玉山證（8/17 中立，目標價 340）</td><td style="color:#eab308;">7.14 元</td><td>150</td><td>221</td><td>321</td><td style="color:#ef4444;">65.9x</td></tr>
+      <tr><td>2027E 市場評論隱含值（前瞻 50.8x 回推）</td><td style="color:#94a3b8;">約 9.3 元</td><td>195</td><td>288</td><td>419</td><td style="color:#eab308;">50.6x</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:10px;color:#475569;margin-top:8px;">* 2027E 僅為市場評論「以明年預估獲利計算約 50.8 倍前瞻本益比」的回推值，非正式法人共識，不作為估值依據。</p>
+
+  <div class="info-box" style="margin-top:12px;">
+    <strong>⚡ 注意：精材屬「轉型成長＋題材高波動股」</strong><br>
+    精材的獲利基期不大（年 EPS 近四年落在 4.99~7.30 元），股本僅 27.14 億元（2.71 億股），籌碼輕、單日振幅常達 10% 以上，2026/10 單月即出現漲停與跌停。<br>
+    評估重點：① 中壢中興廠 12 吋測試／SLT 產能開出後的稼動率與毛利率 ② 台積電委外釋單的持續性（台積電同時是最大股東與約七成五營收來源）③ 擴產折舊對毛利的壓抑 ④ FY2026–2027 EPS 能否實質跳到 9~10 元以上。目前 74x 已把未來兩年的成長一次定價完畢。
+  </div>
+</div>
+
+<!-- ══ TAB 3: EPS 趨勢 ══ -->
+<div id="tab-eps" class="panel">
+  <canvas id="epsChart" height="260"></canvas>
+  <div class="section-title">📋 逐月明細表格（供驗證）</div>
+  <table>
+    <thead>
+      <tr>
+        <th>月份</th><th>收盤價</th><th>10x換算欄</th><th>河流圖EPS</th><th>目前PER</th><th>21x換算</th><th>31x換算</th><th>45x換算</th><th>70x換算</th>
+      </tr>
+    </thead>
+    <tbody id="eps-table-body">
+    </tbody>
+  </table>
+  <p style="font-size:10px;color:#475569;margin-top:8px;">* 河流圖 EPS 為季末 TTM EPS 之逐月內插值（＝10x換算欄 ÷ 10）。季末月（M03／M06／M09／M12）等於該季實際 TTM EPS。26M07–09 因 26Q3 財報未公告，沿用 26Q2 的 6.37 元。綠色列為 26Q2 財報後月份。</p>
+
+  <div class="section-title">📊 單季 EPS 與 TTM 對照</div>
+  <table>
+    <thead>
+      <tr><th>季度</th><th>單季 EPS</th><th>QoQ</th><th>TTM EPS</th><th>備註</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>24Q3</td><td>2.07</td><td style="color:#22c55e;">+72%</td><td>6.07</td><td style="color:#94a3b8;">CIS 回溫，單季高點</td></tr>
+      <tr><td>24Q4</td><td>1.68</td><td style="color:#ef4444;">−19%</td><td>6.15</td><td style="color:#94a3b8;">FY2024 全年 6.15 元</td></tr>
+      <tr><td>25Q1</td><td>1.26</td><td style="color:#ef4444;">−25%</td><td>6.21</td><td style="color:#94a3b8;">淡季</td></tr>
+      <tr><td>25Q2</td><td style="color:#ef4444;font-weight:700;">0.24</td><td style="color:#ef4444;font-weight:700;">−81%</td><td>5.25</td><td style="color:#fca5a5;">⚠️ 毛利率落至 15.6%，觸發循環股檢核</td></tr>
+      <tr><td>25Q3</td><td>1.59</td><td style="color:#22c55e;">+563%</td><td>4.77</td><td style="color:#94a3b8;">毛利率回升 29.1%</td></tr>
+      <tr><td>25Q4</td><td>1.90</td><td style="color:#22c55e;">+19%</td><td>4.99</td><td style="color:#94a3b8;">FY2025 全年 4.99 元；毛利率 32.8% 近年高點</td></tr>
+      <tr><td>26Q1</td><td>1.42</td><td style="color:#ef4444;">−25%</td><td>5.15</td><td style="color:#94a3b8;">營收 YoY +23.8%</td></tr>
+      <tr class="highlight"><td>26Q2 ✦</td><td style="color:#22c55e;font-weight:700;">1.46</td><td style="color:#22c55e;">+3%</td><td style="color:#22c55e;font-weight:700;">6.37</td><td style="color:#22c55e;">YoY +508%；營收 21.85 億 YoY +42.2%</td></tr>
+      <tr><td>26Q3（財報未出）</td><td style="color:#64748b;">—</td><td style="color:#64748b;">—</td><td style="color:#64748b;">—</td><td style="color:#eab308;">營收 27.02 億創單季新高（YoY +29.3%）</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ══ TAB 4: 基本面分析 ══ -->
+<div id="tab-fundamental" class="panel">
+
+  <!-- 1. 公司營運 -->
+  <div class="section-title">🏭 公司營運</div>
+  <div class="grid3">
+    <div class="card">
+      <h3>FY2025 全年營收</h3>
+      <div class="val blue" style="font-size:18px;">72.39 億</div>
+      <div class="note">YoY +2.5%（FY2024 70.60 億）</div>
+    </div>
+    <div class="card">
+      <h3>26Q3 單季營收</h3>
+      <div class="val green" style="font-size:18px;">27.02 億</div>
+      <div class="note">YoY +29.3%，創單季歷史新高</div>
+    </div>
+    <div class="card">
+      <h3>26Q2 毛利率</h3>
+      <div class="val yellow" style="font-size:18px;">27.7%</div>
+      <div class="note">YoY +12.1pp（25Q2 僅 15.6%）</div>
+    </div>
+  </div>
+
+  <div class="section-title">📊 近八季營運趨勢</div>
+  <table>
+    <thead>
+      <tr><th>期間</th><th>營收（億）</th><th>營收 YoY</th><th>毛利率</th><th>營業利益率</th><th>EPS</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>24Q3</td><td>21.66</td><td style="color:#22c55e;">+15.1%</td><td>39.8%</td><td>33.0%</td><td>2.07</td></tr>
+      <tr><td>24Q4</td><td>18.08</td><td style="color:#22c55e;">+1.5%</td><td>34.5%</td><td>27.0%</td><td>1.68</td></tr>
+      <tr><td>25Q1</td><td>15.45</td><td style="color:#22c55e;">+7.0%</td><td>29.7%</td><td>22.1%</td><td>1.26</td></tr>
+      <tr><td>25Q2</td><td>15.37</td><td style="color:#ef4444;">−6.4%</td><td style="color:#ef4444;">15.6%</td><td style="color:#ef4444;">10.7%</td><td style="color:#ef4444;">0.24</td></tr>
+      <tr><td>25Q3</td><td>20.90</td><td style="color:#ef4444;">−3.5%</td><td>29.1%</td><td>24.9%</td><td>1.59</td></tr>
+      <tr><td>25Q4</td><td>20.66</td><td style="color:#22c55e;">+14.2%</td><td>32.8%</td><td>27.3%</td><td>1.90</td></tr>
+      <tr><td>26Q1</td><td>19.14</td><td style="color:#22c55e;">+23.8%</td><td>29.7%</td><td>23.6%</td><td>1.42</td></tr>
+      <tr class="highlight"><td>26Q2 ✦</td><td style="color:#22c55e;font-weight:700;">21.85</td><td style="color:#22c55e;font-weight:700;">+42.2%</td><td style="color:#22c55e;">27.7%</td><td style="color:#22c55e;">22.3%</td><td style="color:#22c55e;font-weight:700;">1.46</td></tr>
+      <tr><td>26Q3（僅營收）</td><td style="color:#eab308;font-weight:700;">27.02</td><td style="color:#22c55e;font-weight:700;">+29.3%</td><td style="color:#64748b;">待公告</td><td style="color:#64748b;">待公告</td><td style="color:#64748b;">待公告</td></tr>
+    </tbody>
+  </table>
+  <div class="info-box" style="margin-top:10px;">
+    <strong>毛利率變化原因：</strong>25Q2 毛利率由 29.7% 急殺至 <strong>15.6%</strong>（EPS 僅 0.24 元），主因是中壢中興廠 12 吋測試產能開出初期的<strong>折舊先行＋稼動率空窗</strong>，加上傳統 CIS 封裝淡季。25Q3 起隨測試訂單放量回升至 29~33%。26Q2 毛利率 27.7% 較 26Q1 的 29.7% 略降，但營收同步跳增 14% 至 21.85 億，屬<strong>新增產能攤提期的正常擺盪</strong>；26Q3 營收再衝 27.02 億，稼動率應續升。<br>
+    <strong>月營收動能：</strong>26M07 8.61 億（YoY +31%）→ 26M08 9.09 億（+36.7%）→ 26M09 9.32 億（+21.3%），連三月創新高。
+  </div>
+
+  <!-- 2. 商業模式 -->
+  <div class="section-title">💡 商業模式</div>
+  <div class="grid2">
+    <div class="card">
+      <h3>怎麼賺錢</h3>
+      <div style="font-size:12px;color:#94a3b8;line-height:1.8;margin-top:6px;">
+        精材（Xintec）是台積電轉投資的封測廠，雙引擎結構：<br>
+        • <strong>晶圓級封裝 WLCSP／TSV</strong>：起家本業，用於 CIS 影像感測器、環境感測器、指紋辨識，全球 CIS 晶圓級封裝指標廠<br>
+        • <strong>12 吋晶圓測試／成品測試（FT）／系統級測試（SLT）</strong>：2021 年起承接台積電委外測試訂單，以中壢中興廠為基地<br>
+        FY2025 晶圓測試營收約 <strong>34.65 億（占 47.9%）</strong>，已<strong>超越傳統封裝</strong>成為第一大來源 — 公司性質正由「光學封裝廠」轉為「台積電測試代工廠」。
+      </div>
+    </div>
+    <div class="card">
+      <h3>護城河評估</h3>
+      <div style="font-size:12px;line-height:1.9;margin-top:6px;">
+        <div class="moat-row"><span class="moat-icon">✅</span><span><strong>台積電血緣：</strong>最大股東（持股約 41%）兼最大客戶，先進製程測試訂單具優先承接權</span></div>
+        <div class="moat-row"><span class="moat-icon">✅</span><span><strong>TSV 技術資產：</strong>矽穿孔與晶圓級封裝累積多年，CIS 領域門檻高</span></div>
+        <div class="moat-row"><span class="moat-icon">✅</span><span><strong>SLT 認證門檻：</strong>系統級測試需與客戶產品深度整合，轉換成本高</span></div>
+        <div class="moat-row"><span class="moat-icon">⚠️</span><span><strong>客戶極度集中：</strong>市場估台積電貢獻約七成五營收，議價權有限</span></div>
+        <div class="moat-row"><span class="moat-icon">⚠️</span><span><strong>資本密集：</strong>擴產折舊先行，25Q2 毛利率曾被壓到 15.6%</span></div>
+        <div class="moat-row"><span class="moat-icon">⚠️</span><span><strong>稼動率風險：</strong>產能開出後若訂單未同步，毛利立即受傷</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="client-row">
+    <div class="client-block">
+      <h4>主要客戶</h4>
+      <div class="client-item"><span>台積電（2330）</span><span class="badge badge-watch">約 75% 營收｜持股約 41%</span></div>
+      <div class="client-item"><span>CIS 感測器設計商</span><span class="badge badge-neutral">WLCSP／TSV 封裝</span></div>
+      <div class="client-item"><span>指紋辨識／環境感測</span><span class="badge badge-neutral">傳統封裝業務</span></div>
+      <div class="client-item"><span>手機鏡頭模組鏈</span><span class="badge badge-neutral">終端應用</span></div>
+    </div>
+    <div class="client-block">
+      <h4>主要競爭對手</h4>
+      <div class="client-item"><span>同欣電（6271）</span><span class="badge badge-avoid">CIS 封裝直接對手</span></div>
+      <div class="client-item"><span>京元電（2449）</span><span class="badge badge-avoid">晶圓／成品測試龍頭</span></div>
+      <div class="client-item"><span>欣銓（3264）</span><span class="badge badge-watch">專業測試</span></div>
+      <div class="client-item"><span>矽格（6257）</span><span class="badge badge-neutral">測試代工</span></div>
+      <div class="client-item"><span>日月光投控（3711）</span><span class="badge badge-avoid">OSAT 龍頭</span></div>
+    </div>
+  </div>
+
+  <!-- 3. 市場地位 -->
+  <div class="section-title">🌏 市場地位</div>
+  <div class="stat-bar">
+    <div class="stat-item"><div class="stat-label">產業地位</div><div class="stat-val yellow">CIS 晶圓級封裝指標廠</div><div class="stat-sub">TSV／WLCSP 技術領先</div></div>
+    <div class="stat-item"><div class="stat-label">成長引擎</div><div class="stat-val green">台積電委外測試</div><div class="stat-sub">12 吋測試／SLT／FT</div></div>
+    <div class="stat-item"><div class="stat-label">測試營收占比</div><div class="stat-val blue">約 48%</div><div class="stat-sub">FY2025 34.65 億，已超越封裝</div></div>
+    <div class="stat-item"><div class="stat-label">股本規模</div><div class="stat-val purple">27.14 億</div><div class="stat-sub">2.71 億股，籌碼輕、波動大</div></div>
+  </div>
+  <div class="info-box" style="margin-top:10px;">
+    精材在 CIS 晶圓級封裝為全球指標廠之一，但 2026 年的股價動能來自<strong>另一條腿</strong>：台積電先進封裝與先進製程產能滿載後，將 12 吋晶圓測試、成品測試與系統級測試（SLT）外包，精材以轉投資關係優先承接，中壢中興廠成為主要擴建據點。<br>
+    這條轉型確實已反映在數字上（測試營收 FY2025 占比近五成、26Q3 營收創新高），但同時讓公司變成<strong>單一客戶依賴度極高</strong>的代工廠 — 台積電自建測試產能的節奏、委外比例的調整，都會直接改寫精材的成長曲線。CIS 與 3D 感測封裝的全球市占率無公開精確數字。
+  </div>
+
+  <!-- 4. 估值指標 -->
+  <div class="section-title">💰 估值指標（即時）</div>
+  <div class="grid4">
+    <div class="card">
+      <h3>本益比 P/E</h3>
+      <div class="val red" id="fund-pe">計算中…</div>
+      <div class="note" id="fund-pe-note">TTM EPS = 6.37元（26Q2）</div>
+    </div>
+    <div class="card">
+      <h3>前瞻 P/E（2026E）</h3>
+      <div class="val red" id="fund-fpe">計算中…</div>
+      <div class="note">法人共識 EPS 6.77 元（YoY +35.7%）</div>
+    </div>
+    <div class="card">
+      <h3>股價淨值比 P/B</h3>
+      <div class="val red" id="fund-pb">計算中…</div>
+      <div class="note">BVPS 36.33 元（26Q2 權益 98.6 億 ÷ 2.71 億股）</div>
+    </div>
+    <div class="card">
+      <h3>ROE（TTM）</h3>
+      <div class="val green">18.1%</div>
+      <div class="note">TTM 淨利 17.27 億 ÷ 平均權益 95.6 億</div>
+    </div>
+  </div>
+  <div class="grid2">
+    <div class="card">
+      <h3>合理 P/E（歷史均值）</h3>
+      <div class="val yellow">31x</div>
+      <div class="note">近三年逐月 21~45x，均值約 31x</div>
+    </div>
+    <div class="card">
+      <h3>現金殖利率</h3>
+      <div class="val red" id="fund-yield">計算中…</div>
+      <div class="note">年配息 2.5 元（FY2025，26/06/24 除息）</div>
+    </div>
+  </div>
+
+  <div class="section-title">💵 配息紀錄</div>
+  <table>
+    <thead>
+      <tr><th>所屬年度</th><th>現金股利</th><th>除息日</th><th>配息率（概估）</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>109 年度</td><td style="color:#86efac;">2.5 元</td><td>2021/08/31</td><td style="color:#94a3b8;">—</td></tr>
+      <tr><td>110 年度</td><td style="color:#86efac;">3.0 元</td><td>2022/06/15</td><td style="color:#94a3b8;">約 41%（EPS 7.30）</td></tr>
+      <tr><td>111 年度</td><td style="color:#86efac;">3.0 元</td><td>2023/06/20</td><td style="color:#94a3b8;">約 41%（EPS 7.30）</td></tr>
+      <tr><td>112 年度</td><td style="color:#86efac;">2.0 元</td><td>2024/06/24</td><td style="color:#94a3b8;">約 40%（EPS 5.06）</td></tr>
+      <tr><td>113 年度</td><td style="color:#86efac;">2.5 元</td><td>2025/06/24</td><td style="color:#94a3b8;">約 41%（EPS 6.15）</td></tr>
+      <tr class="highlight"><td>114 年度 ✦</td><td style="color:#86efac;font-weight:700;">2.5 元</td><td>2026/06/24</td><td style="color:#22c55e;">約 50%（EPS 4.99）</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:10px;color:#475569;margin-top:8px;">* 配息率為現金股利 ÷ 對應年度 EPS 概估值。無股票股利，近六年未除權，月線與 EPS 不需還原。</p>
+
+  <div class="info-box" style="margin-top:12px;">
+    <strong>估值解讀：</strong>目前股價 470.5 元（10/21）對應 TTM PER <strong>約 74x</strong>、2026E 前瞻 PER <strong>約 70x</strong>、P/B <strong>約 13x</strong>，三項都遠離歷史區間（近三年 PER 21~45x）。公司 ROE 18.1% 屬良好水準，但 13x 的 P/B 隱含市場要求未來 ROE 大幅躍升。<br>
+    已知最新法人目標價為玉山證 <strong>340 元（2026/08/17，評等中立）</strong>，已被股價超越逾 38%，尚無 FactSet 中位數可引用，因此總覽頁「法人目標價」欄暫留空。<strong>現價完全由台積電委外釋單題材驅動，估值無安全邊際。</strong>
+  </div>
+
+  <p style="font-size:10px;color:#475569;margin-top:16px;text-align:center;">⚠️ 本分析僅供參考，不構成投資建議</p>
+</div>
+
+<!-- ══ TAB 5: 完整摘要 ══ -->
+<div id="tab-summary" class="panel">
+  <div class="card" style="margin-bottom:12px;">
+    <h3>📌 精材（3374）投資摘要</h3>
+    <div style="font-size:13px;line-height:2.0;margin-top:10px;color:#94a3b8;">
+      <strong style="color:#e2e8f0;">公司性質：</strong>台積電轉投資封測廠（持股約 41%），起家於 CIS 晶圓級封裝（WLCSP／TSV），2021 年起承接台積電 12 吋晶圓測試、成品測試（FT）與系統級測試（SLT）委外訂單，FY2025 測試營收占比約 48% 已超越封裝。<br>
+      <strong style="color:#e2e8f0;">獲利特性：</strong>年 EPS 近四年落在 4.99~7.30 元，26Q2 TTM EPS 6.37 元（26Q1 為 5.15）。25Q2 曾因擴產折舊＋淡季單季僅 0.24 元；26Q1–Q3 營收連續走高，26Q3 27.02 億創新高。<br>
+      <strong style="color:#e2e8f0;">估值基準：</strong>近三年逐月 PER 21~45x（均值約 31x，已排除 26M08–09 的 66~71x 題材月）。便宜價 134 元（21x）／ 合理價 197 元（31x）／ 昂貴價 287 元（45x）。<br>
+      <strong style="color:#ef4444;">目前股價：</strong>470.5 元（10/21 漲停），對應 PER 約 74x、P/B 約 13x，為昂貴價的 1.64 倍，屬<strong>台積電委外釋單題材的極度前瞻溢價</strong>。<br>
+      <strong style="color:#e2e8f0;">配息：</strong>FY2025 配息 2.5 元（26/06/24 除息），殖利率僅約 0.53%，無存股價值。<br>
+      <strong style="color:#e2e8f0;">關鍵觀察：</strong>① 中壢中興廠測試產能稼動率與毛利率 ② 台積電委外比例的持續性 ③ 26Q3／Q4 財報 EPS 能否跟上營收 ④ FY2027 EPS 能否實質站上 9~10 元 ⑤ 題材退燒後估值回歸速度。<br>
+      <strong style="color:#e2e8f0;">主要風險：</strong>估值嚴重透支、客戶集中台積電（約 75% 營收）、擴產折舊壓抑毛利、產能稼動率不足、股本小波動極大（10 月單月 399~530 元）。<br>
+      <strong style="color:#e2e8f0;">類股比較：</strong>同欣電（6271）、京元電（2449）、欣銓（3264）、矽格（6257）、日月光投控（3711）；本站已追蹤的封測同業為力成（6239）。
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <h3>✅ 投資亮點</h3>
+      <div style="font-size:12px;color:#86efac;line-height:2.0;margin-top:8px;">
+        ✅ 台積電持股約 41%，訂單承接有血緣優勢<br>
+        ✅ 測試業務占比近五成，結構性轉型已見數字<br>
+        ✅ 26Q3 營收 27.02 億創單季新高（YoY +29.3%）<br>
+        ✅ 26M07–09 月營收連三月新高<br>
+        ✅ 毛利率自 25Q2 低點 15.6% 回升至 27~33%<br>
+        ✅ ROE 18.1%，獲利品質尚佳
+      </div>
+    </div>
+    <div class="card">
+      <h3>⚠️ 主要風險</h3>
+      <div style="font-size:12px;color:#fca5a5;line-height:2.0;margin-top:8px;">
+        🔴 目前 470.5 元，PER 74x、P/B 13x 嚴重高估<br>
+        🔴 高於昂貴價（287 元）約 64%，無安全邊際<br>
+        🔴 台積電貢獻約 75% 營收，客戶集中度極高<br>
+        🔴 擴產折舊先行，稼動率不足即傷毛利<br>
+        🔴 股本僅 27.14 億，10 月振幅 399~530 元<br>
+        🔴 已知法人目標價（玉山證 340 元）已被超越
+      </div>
+    </div>
+  </div>
+
+  <div class="buy-signal" style="margin-top:12px;">
+    <h3>📊 各情境目標股價區間</h3>
+    <div class="buy-row"><span style="font-size:12px;color:#86efac;">🟢 TTM EPS 6.37元 × 21~31x（便宜~合理）</span><span style="font-weight:700;color:#86efac;">NT$ 134~197</span></div>
+    <div class="buy-row"><span style="font-size:12px;color:#fde68a;">🟡 2026E EPS 6.77元 × 31~45x</span><span style="font-weight:700;color:#fde68a;">NT$ 210~305</span></div>
+    <div class="buy-row"><span style="font-size:12px;color:#93c5fd;">🔵 2027E EPS 若達 9.3元 × 31~45x</span><span style="font-weight:700;color:#93c5fd;">NT$ 288~419</span></div>
+    <div class="buy-row"><span style="font-size:12px;color:#fca5a5;">🔴 目前 6.37元 × 74x（現況）</span><span style="font-weight:700;color:#fca5a5;">NT$ 470.5（極度前瞻溢價）</span></div>
+  </div>
+
+  <div class="info-box" style="margin-top:12px;">
+    <strong>💡 操作建議：</strong><br>
+    精材的轉型故事是真的 — 測試營收占比已近五成、營收連創新高、毛利率自低點回升，台積電持股約 41% 讓委外訂單具高度可見性。問題全在價格：470.5 元已是 TTM PER 74x、P/B 13x，<strong>即使拿 2027 年可能的 9.3 元 EPS 來算也還在 45x 昂貴帶之上</strong>。<br>
+    換句話說，市場不只把 2026 年的成長算進去，連 2027 年的樂觀情境都提前定價。若 26Q3／Q4 財報的 EPS 跟不上營收（折舊壓抑毛利），回測昂貴價（287 元）的修正幅度約 39%。<strong>追高風險極高，宜等財報實質驗證或估值回落至 45x 以下（約 287 元）再評估；已持有者應設定停損紀律，勿把題材股當存股。</strong>
+  </div>
+
+  <p style="font-size:10px;color:#475569;margin-top:16px;text-align:center;">⚠️ 本分析僅供參考，不構成投資建議。股市有風險，請自行判斷。</p>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<script>
+
+// ══ 切 Tab ══
+function switchTab(id, btn) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ══ 數據定義（eps = 季末 TTM EPS 逐月內插＝10x換算欄 ÷ 10） ══
+const data = [
+  { m:'23M10', px:115.5, eps:5.107, per:22.62 },
+  { m:'23M11', px:138,   eps:5.083, per:27.15 },
+  { m:'23M12', px:127.5, eps:5.06,  per:25.20 },
+  { m:'24M01', px:125.5, eps:5.18,  per:24.23 },
+  { m:'24M02', px:132,   eps:5.30,  per:24.91 },
+  { m:'24M03', px:124,   eps:5.42,  per:22.88 },
+  { m:'24M04', px:117,   eps:5.577, per:20.98 },
+  { m:'24M05', px:127.5, eps:5.733, per:22.24 },
+  { m:'24M06', px:180,   eps:5.89,  per:30.56 },
+  { m:'24M07', px:234.5, eps:5.95,  per:39.41 },
+  { m:'24M08', px:266,   eps:6.01,  per:44.26 },
+  { m:'24M09', px:205.5, eps:6.07,  per:33.86 },
+  { m:'24M10', px:213.5, eps:6.097, per:35.02 },
+  { m:'24M11', px:191,   eps:6.123, per:31.19 },
+  { m:'24M12', px:198,   eps:6.15,  per:32.20 },
+  { m:'25M01', px:210,   eps:6.17,  per:34.04 },
+  { m:'25M02', px:180,   eps:6.19,  per:29.08 },
+  { m:'25M03', px:142.5, eps:6.21,  per:22.95 },
+  { m:'25M04', px:133.5, eps:5.89,  per:22.67 },
+  { m:'25M05', px:139.5, eps:5.57,  per:25.04 },
+  { m:'25M06', px:147.5, eps:5.25,  per:28.10 },
+  { m:'25M07', px:147.5, eps:5.09,  per:28.98 },
+  { m:'25M08', px:137,   eps:4.93,  per:27.79 },
+  { m:'25M09', px:143.5, eps:4.77,  per:30.08 },
+  { m:'25M10', px:153,   eps:4.843, per:31.59 },
+  { m:'25M11', px:145,   eps:4.917, per:29.49 },
+  { m:'25M12', px:139,   eps:4.99,  per:27.86 },
+  { m:'26M01', px:167,   eps:5.043, per:33.12 },
+  { m:'26M02', px:193.5, eps:5.097, per:37.96 },
+  { m:'26M03', px:153.5, eps:5.15,  per:29.81 },
+  { m:'26M04', px:200.5, eps:5.557, per:36.08 },
+  { m:'26M05', px:259,   eps:5.963, per:43.43 },
+  { m:'26M06', px:286.5, eps:6.37,  per:44.98 },
+  { m:'26M07', px:277,   eps:6.37,  per:43.49 },
+  { m:'26M08', px:422.5, eps:6.37,  per:66.33 },
+  { m:'26M09', px:454.5, eps:6.37,  per:71.35 },
+];
+
+const labels = data.map(d => d.m);
+const prices = data.map(d => d.px);
+
+const r21 = data.map(d => +(d.eps * 21).toFixed(1));
+const r31 = data.map(d => +(d.eps * 31).toFixed(1));
+const r45 = data.map(d => +(d.eps * 45).toFixed(1));
+const r70 = data.map(d => +(d.eps * 70).toFixed(1));
+
+// ══ PER 河流圖 ══
+const ctx1 = document.getElementById('riverChart').getContext('2d');
+new Chart(ctx1, {
+  type: 'line',
+  data: {
+    labels,
+    datasets: [
+      { label: '70x（題材泡沫）', data: r70, borderColor: '#a855f7', borderWidth: 1.5, borderDash: [2,3], pointRadius: 0, fill: false, tension: 0.3 },
+      { label: '45x（昂貴）', data: r45, borderColor: '#ef4444', borderWidth: 1.5, borderDash: [4,3], pointRadius: 0, fill: false, tension: 0.3 },
+      { label: '31x（合理）', data: r31, borderColor: '#22c55e', borderWidth: 1.5, borderDash: [4,3], pointRadius: 0, fill: false, tension: 0.3 },
+      { label: '21x（便宜）', data: r21, borderColor: '#3b82f6', borderWidth: 1.5, borderDash: [4,3], pointRadius: 0, fill: false, tension: 0.3 },
+      {
+        label: '月收盤價', data: prices,
+        borderColor: '#ffffff', backgroundColor: 'rgba(255,255,255,0.05)',
+        borderWidth: 2.5, pointRadius: 2.5, pointBackgroundColor: '#ffffff',
+        fill: false, spanGaps: true, tension: 0.3, z: 10,
+      },
+    ]
+  },
+  options: {
+    responsive: true,
+    aspectRatio: 2.3,
+    interaction: { mode: 'index', intersect: false },
+    plugins: {
+      legend: { labels: { color: '#94a3b8', font: { size: 11 } } },
+      tooltip: {
+        callbacks: {
+          label: ctx => {
+            if (ctx.dataset.label === '月收盤價') return `收盤：${ctx.parsed.y}`;
+            return `${ctx.dataset.label}：${ctx.parsed.y ?? '—'}`;
+          }
+        }
+      }
+    },
+    scales: {
+      x: { ticks: { color: '#64748b', maxRotation: 45, font: { size: 10 } }, grid: { color: '#1e2535' } },
+      y: { ticks: { color: '#64748b', font: { size: 10 } }, grid: { color: '#1e2535' } }
+    }
+  }
+});
+
+// ══ EPS 趨勢圖 ══
+const ctx2 = document.getElementById('epsChart').getContext('2d');
+new Chart(ctx2, {
+  type: 'bar',
+  data: {
+    labels,
+    datasets: [
+      {
+        label: 'TTM EPS（元）',
+        data: data.map(d => d.eps),
+        backgroundColor: '#22c55e99',
+        borderColor: '#22c55e',
+        borderWidth: 1,
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    aspectRatio: 2.6,
+    plugins: { legend: { labels: { color: '#94a3b8', font: { size: 11 } } } },
+    scales: {
+      x: { ticks: { color: '#64748b', maxRotation: 45, font: { size: 10 } }, grid: { color: '#1e2535' } },
+      y: {
+        ticks: { color: '#64748b', font: { size: 10 } },
+        grid: { color: '#1e2535' },
+        title: { display: true, text: 'EPS（元）', color: '#64748b', font: { size: 11 } }
+      }
+    }
+  }
+});
+
+// ══ EPS 表格 ══
+const tbody = document.getElementById('eps-table-body');
+data.forEach(d => {
+  const isHighlight = d.m >= '26M07';
+  const rowClass = isHighlight ? ' class="highlight"' : '';
+  const epsStr = d.eps.toFixed(3);
+  const perStr = d.per.toFixed(2);
+  const tenxStr = (d.eps * 10).toFixed(1);
+  const c21 = (d.eps * 21).toFixed(1);
+  const c31 = (d.eps * 31).toFixed(1);
+  const c45 = (d.eps * 45).toFixed(1);
+  const c70 = (d.eps * 70).toFixed(1);
+  const priceColor = d.px > d.eps * 45 ? 'color:#ef4444' : d.px < d.eps * 21 ? 'color:#22c55e' : 'color:#e2e8f0';
+  tbody.innerHTML += `<tr${rowClass}><td>${d.m}</td><td style="${priceColor}">${d.px}</td><td>${tenxStr}</td><td>${epsStr}</td><td>${perStr}</td><td>${c21}</td><td>${c31}</td><td>${c45}</td><td>${c70}</td></tr>`;
+});
+
+// ══ 即時股價 ══
+const TTM_EPS = 6.37;
+const FWD_EPS = 6.77;
+const BVPS = 36.33;
+const ANNUAL_DIV = 2.5;
+const CHEAP = 134, FAIR = 197, EXPENSIVE = 287;
+
+async function fetchLive() {
+  const res = await fetch('https://taiwan-stock-price.david870114.workers.dev/?id=3374', { cache: 'no-cache' });
+  const d = JSON.parse(await res.text());
+  const price = parseFloat(d.price);
+  return (price && !isNaN(price)) ? price : null;
+}
+
+async function updateAll() {
+  try {
+    const price = await fetchLive();
+    if (!price) return;
+
+    document.getElementById('live-price').textContent = 'NT$ ' + price.toLocaleString();
+    const pe = (price / TTM_EPS).toFixed(1);
+    const note = document.getElementById('live-per-note');
+    note.textContent = `TTM PER ≈ ${pe}x（EPS 6.37元）${price > EXPENSIVE ? '｜⚠️ 超過昂貴價，嚴重高估' : price > FAIR ? '｜🟡 偏高' : price > CHEAP ? '｜✅ 合理區間' : '｜🟢 便宜'}`;
+    note.style.color = price > EXPENSIVE ? '#ef4444' : price > FAIR ? '#eab308' : '#22c55e';
+
+    const peEl = document.getElementById('fund-pe');
+    if (peEl) {
+      peEl.textContent = pe + 'x';
+      peEl.style.color = pe > 45 ? '#ef4444' : pe > 31 ? '#eab308' : '#22c55e';
+    }
+    const peNote = document.getElementById('fund-pe-note');
+    if (peNote) peNote.textContent = `TTM EPS = 6.37元 ｜ 股價 ${price}`;
+
+    const fpeEl = document.getElementById('fund-fpe');
+    if (fpeEl) {
+      const fpe = (price / FWD_EPS).toFixed(1);
+      fpeEl.textContent = fpe + 'x';
+      fpeEl.style.color = fpe > 45 ? '#ef4444' : fpe > 31 ? '#eab308' : '#22c55e';
+    }
+
+    const pbEl = document.getElementById('fund-pb');
+    if (pbEl) {
+      const pb = (price / BVPS).toFixed(1);
+      pbEl.textContent = pb + 'x';
+      pbEl.style.color = pb > 6 ? '#ef4444' : pb > 3 ? '#eab308' : '#22c55e';
+    }
+
+    const yEl = document.getElementById('fund-yield');
+    if (yEl) {
+      const yld = (ANNUAL_DIV / price * 100).toFixed(2);
+      yEl.textContent = yld + '%';
+      yEl.style.color = yld < 2 ? '#ef4444' : yld < 4 ? '#eab308' : '#22c55e';
+    }
+  } catch(e) {}
+}
+
+window.addEventListener('load', updateAll);
+
+</script>
+</body>
+</html>

@@ -768,6 +768,18 @@ td.grow-cell.na   { color:#475569; font-weight:400; }
               <div class="mc-vs-val" id="cv-2303">—</div>
             </div>
           </a>
+          <a class="mini-card" href="3374_analysis.html">
+            <div class="mc-left">
+              <span class="mc-code">3374</span>
+              <span class="mc-name">精材</span>
+            </div>
+            <div class="mc-right">
+              <div class="mc-price-label">目前股價</div>
+              <div class="mc-price-val" id="cp-3374">…</div>
+              <div class="mc-vs-label">vs 合理價</div>
+              <div class="mc-vs-val" id="cv-3374">—</div>
+            </div>
+          </a>
           <div class="mini-card no-data">
             <div class="mc-left">
               <span class="mc-code">3711</span>
@@ -1104,6 +1116,16 @@ td.grow-cell.na   { color:#475569; font-weight:400; }
         <td class="price-cell loading td-cur" id="price-6239">…</td>
         <td id="vs-6239" class="loading">—</td>
         <td class="td-tp">— <span class="per-sub">封測</span></td>
+      </tr>
+      <tr>
+        <td class="code code-pkg">3374</td>
+        <td class="name"><a href="3374_analysis.html">精材</a></td>
+        <td>134 <span class="per-sub">21x PER</span></td>
+        <td>197 <span class="per-sub">31x PER</span></td>
+        <td>287 <span class="per-sub">45x PER</span></td>
+        <td class="price-cell loading td-cur" id="price-3374">…</td>
+        <td id="vs-3374" class="loading">—</td>
+        <td class="td-tp">— <span class="per-sub">玉山340元已超越</span></td>
       </tr>
       <tr>
         <td class="code code-wafer">6488</td>
@@ -2011,6 +2033,7 @@ var STOCKS = [
   { id:'2454',  fairValue:1213, expValue:1577 },
   { id:'2303',  fairValue:120,  expValue:214  },
   { id:'6239',  fairValue:152,  expValue:222 },
+  { id:'3374',  fairValue:197,  expValue:287 },
   { id:'6488',  fairValue:486,  expValue:702 },
   { id:'5483',  fairValue:154,  expValue:220 },
   { id:'2382',  fairValue:413,  expValue:596 },
@@ -2043,7 +2066,7 @@ var STOCKS = [
   { id:'00631L', fairValue:32, expValue:42 },
 ];
 
-var CHAIN_STOCKS = ['6488','5483','2330','2454','2303','6239','2382','3231','6669','2345','3596','3017','3324','8210','2301','2308','3037','2408','2337','2344','6770','8046','00919','00878','00981A','00991A','00631L'];
+var CHAIN_STOCKS = ['6488','5483','2330','2454','2303','6239','3374','2382','3231','6669','2345','3596','3017','3324','8210','2301','2308','3037','2408','2337','2344','6770','8046','00919','00878','00981A','00991A','00631L'];
 
 async function fetchPrice(id) {
   try {
@@ -2310,6 +2333,7 @@ var TRACKED = [
   { id:'2454', name:'聯發科',     tier:'growth', fairValue:1213, expValue:1577, fairPER:20, tp:null, cheapValue:910, annualDiv:53.5 },  // 半年配：25H1 29＋25H2 24.5＝53.5元；TTM EPS 62.9；26M04起ASIC題材PER 41→68x遠超歷史區間15–23x
   { id:'2303', name:'聯電',       tier:'spec',   fairValue:120,   expValue:214,  fairPER:18, tp:null, cheapValue:80,  annualDiv:2.61 },  // FY2025 配息 2.61元（26/07/08除息）
   { id:'6239', name:'力成',       tier:'spec',   fairValue:152,  expValue:222,  fairPER:15, tp:null, cheapValue:111,  annualDiv:4.5  },  // 封測，FY2025配息4.5元（前三年7元）；近三年PER 11~24x；現價PER 41x嚴重高估
+  { id:'3374', name:'精材',       tier:'spec',   fairValue:197,  expValue:287,  fairPER:31, tp:null, cheapValue:134,  annualDiv:2.5  },  // 台積電轉投資（持股約41%）CIS晶圓級封裝＋台積電委外12吋測試/SLT；26Q2 TTM EPS 6.37 × 21/31/45x（近三年逐月PER 21–45x均值31x，已排除26M08–09題材月66–71x）。⚠25Q1→25Q2 單季EPS 1.26→0.24（−81%）觸發循環股檢核，但判定仍適用PER法：該季為擴產折舊＋淡季單季低點（毛利率15.6%），其後四季1.59/1.90/1.42/1.46已回穩、營收連創新高（26Q3 27.02億 YoY+29.3%），且TTM估值帶遠低於現價→產生「昂貴」而非假「便宜」訊號。26/10/21 現價470.5元 = PER 74x、2026E前瞻PER 69.5x（共識EPS 6.77）、P/B 13x；FY2025配息2.5元（26/06/24除息）；法人目標價僅玉山證340元（26/08/17中立）已被超越，無FactSet中位數可用→tp留null
   { id:'2308', name:'台達電',     tier:'growth', fairValue:848,  expValue:1005,  fairPER:27, tp:2565, cheapValue:691, annualDiv:11.6 },  // FY2025 配息 11.6元（26/06/17除息）
   { id:'2382', name:'廣達',       tier:'growth', fairValue:413,  expValue:596,  fairPER:18, tp:413,  cheapValue:298, annualDiv:15.6 },  // 26Q2 TTM EPS 22.94 × 13/18/26
   { id:'3231', name:'緯創',       tier:'growth', fairValue:229,  expValue:331,  fairPER:18, tp:278, cheapValue:178, annualDiv:5.5  },  // 26Q2 TTM EPS 12.73 × 14/18/26x（2026/09 依分析頁歷史 PER 區間由 10/18/30x 修正）

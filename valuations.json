@@ -1,5 +1,5 @@
 {
- "updated": "2026-10-20",
+ "updated": "2026-10-21",
  "stocks": [
   {
    "id": "0050",
@@ -120,6 +120,16 @@
    "expensive": 222,
    "annualDiv": 4.5,
    "url": "6239_analysis.html"
+  },
+  {
+   "id": "3374",
+   "name": "精材",
+   "tier": "spec",
+   "cheap": 134,
+   "fair": 197,
+   "expensive": 287,
+   "annualDiv": 2.5,
+   "url": "3374_analysis.html"
   },
   {
    "id": "2308",
