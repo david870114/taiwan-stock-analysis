@@ -302,6 +302,16 @@
    "url": "8046_analysis.html"
   },
   {
+   "id": "4958",
+   "name": "臻鼎-KY",
+   "tier": "spec",
+   "cheap": 91,
+   "fair": 146,
+   "expensive": 246,
+   "annualDiv": 3.42,
+   "url": "4958_analysis.html"
+  },
+  {
    "id": "3481",
    "name": "群創",
    "tier": "spec",

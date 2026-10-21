@@ -962,8 +962,20 @@ td.grow-cell.na   { color:#475569; font-weight:400; }
     <div class="chain-node">
       <div class="node-box c-pcb">
         <div class="node-tier">配套</div>
-        <div class="node-type">ABF 載板<br>高階基板</div>
+        <div class="node-type">載板／PCB<br>軟板・HDI</div>
         <div class="node-stocks">
+          <a class="mini-card" href="4958_analysis.html">
+            <div class="mc-left">
+              <span class="mc-code">4958</span>
+              <span class="mc-name">臻鼎-KY</span>
+            </div>
+            <div class="mc-right">
+              <div class="mc-price-label">目前股價</div>
+              <div class="mc-price-val" id="cp-4958">…</div>
+              <div class="mc-vs-label">vs 合理價</div>
+              <div class="mc-vs-val" id="cv-4958">—</div>
+            </div>
+          </a>
           <a class="mini-card" href="3037_analysis.html">
             <div class="mc-left">
               <span class="mc-code">3037</span>
@@ -1325,7 +1337,7 @@ td.grow-cell.na   { color:#475569; font-weight:400; }
 
 <!-- ABF 載板 -->
 <div class="section">
-  <div class="section-title">ABF 載板／高階基板</div>
+  <div class="section-title">載板／PCB／軟板</div>
   <table>
   <colgroup><col class="col-code"><col class="col-name"><col class="col-price"><col class="col-price"><col class="col-price"><col class="col-cur"><col class="col-vs"><col class="col-tp"></colgroup>
     <thead>
@@ -1361,6 +1373,19 @@ td.grow-cell.na   { color:#475569; font-weight:400; }
         <td class="price-cell loading td-cur" id="price-8046">…</td>
         <td id="vs-8046" class="loading">—</td>
         <td class="td-tp">—</td>
+      </tr>
+      <tr>
+        <td class="code code-pcb">4958</td>
+        <td class="name">
+          <a href="4958_analysis.html">臻鼎-KY</a><br>
+          <span class="fwd-note">* 全球 PCB 龍頭／軟板市占 30%；AI 轉型前瞻溢價，26Q2 TTM EPS 9.10 元；2026E 法人共識 13.79 元（前瞻 PER 41.9x）</span>
+        </td>
+        <td>91 <span class="per-sub">10x PER</span></td>
+        <td>146 <span class="per-sub">16x PER</span></td>
+        <td>246 <span class="per-sub">27x PER</span></td>
+        <td class="price-cell loading td-cur" id="price-4958">…</td>
+        <td id="vs-4958" class="loading">—</td>
+        <td class="td-tp">644 <span class="per-sub">FactSet中位 10/07</span></td>
       </tr>
     </tbody>
   </table>
@@ -2057,6 +2082,7 @@ var STOCKS = [
   { id:'2408',  fairValue:279,  expValue:391 },
   { id:'6770',  fairValue:44,   expValue:62  },
   { id:'8046',  fairValue:119,  expValue:198 },
+  { id:'4958',  fairValue:146,  expValue:246 },
   { id:'1303',  fairValue:81,   expValue:116 },
   { id:'2603',  fairValue:189,  expValue:252 },
   { id:'1519',  fairValue:733,  expValue:947 },
@@ -2066,7 +2092,7 @@ var STOCKS = [
   { id:'00631L', fairValue:32, expValue:42 },
 ];
 
-var CHAIN_STOCKS = ['6488','5483','2330','2454','2303','6239','3374','2382','3231','6669','2345','3596','3017','3324','8210','2301','2308','3037','2408','2337','2344','6770','8046','00919','00878','00981A','00991A','00631L'];
+var CHAIN_STOCKS = ['6488','5483','2330','2454','2303','6239','3374','2382','3231','6669','2345','3596','3017','3324','8210','2301','2308','3037','2408','2337','2344','6770','8046','4958','00919','00878','00981A','00991A','00631L'];
 
 async function fetchPrice(id) {
   try {
@@ -2353,6 +2379,7 @@ var TRACKED = [
   { id:'8210', name:'勤誠',       tier:'spec',   fairValue:845,  expValue:1152, fairPER:22, tp:null, cheapValue:537, annualDiv:14.0 },  // 1.02% × 1375
   { id:'3037', name:'欣興',       tier:'spec',   fairValue:141,  expValue:211,  fairPER:20, tp:1280, cheapValue:84,   annualDiv:2.0  },  // ABF 景氣循環；⚠26Q2 TTM EPS 7.06→15.49（單季 3.28→8.45，+158%）觸發循環股檢核，估值帶維持 26Q1 EPS 7.03 × 12/20/30x，勿機械式重算（2026/09 退回 8 月前估值）
   { id:'8046', name:'南電',       tier:'spec',   fairValue:119,  expValue:198,  fairPER:12, tp:null, cheapValue:79,  annualDiv:2.0  },  // ABF 景氣循環；⚠26Q2 TTM EPS 4.72→8.51（單季 2.03→3.50，+72%）觸發循環股檢核，估值帶維持 2026E 法人共識 EPS 9.88 × 8/12/20x，勿機械式重算（2026/09 退回 8 月前估值）
+  { id:'4958', name:'臻鼎-KY',    tier:'spec',   fairValue:146,  expValue:246,  fairPER:16, tp:644,  cheapValue:91,  annualDiv:3.42 },  // 全球PCB龍頭/軟板市占30%；26Q2 TTM EPS 9.10 × 10/16/27x（近三年逐月PER 10.5~28.6x，已排除26M04-09題材月45~69x）；⚠單季EPS 3.12→1.33（−57%）→2.19（+65%）觸發檢核，判定為蘋果鏈季節性非循環，維持PER法；2026E FactSet共識13.79元（10/07）前瞻PER 41.9x，前瞻基準僅列於分析頁對照，總覽與LINE到價一律採TTM那一列
   { id:'3481', name:'群創',       tier:'spec',   fairValue:30,   expValue:50,   fairPER:20, tp:null, cheapValue:15,  annualDiv:1.0  },  // FY2025 恢復配息 1元（26/06/11除息）；⚠26Q2 TTM EPS 0.78元（單季 0.2→0.57，+185%；PER 62x），PER法失效，估值帶維持以正常化EPS 1.5元推算，勿依最新TTM機械式重算
   { id:'2337', name:'旺宏',       tier:'spec',   fairValue:163,  expValue:218,  fairPER:12, tp:183,  cheapValue:109, annualDiv:0    },  // 虧損轉盈，尚未配息；⚠26Q2 TTM EPS 13.58→4.23元（記憶體循環回落），估值帶維持正常化EPS推算，勿依最新TTM機械式重算
   { id:'2344', name:'華邦電',     tier:'spec',   fairValue:88,   expValue:115,  fairPER:26, tp:null, cheapValue:67,  annualDiv:0.5  },  // 25H2 配息 0.5元（26/03/27除息），恢復配息；⚠26Q2 TTM EPS 3.38→9.06元（+168%，記憶體循環高峰），現價PER僅18x；估值帶維持正常化EPS，勿依高峰EPS×26倍機械式重算
