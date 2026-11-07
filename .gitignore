@@ -1,0 +1,3 @@
+node_modules/
+# ic-test.mjs 的兩年歷史資料快取（可重抓，不進版控）
+scripts/.ic-cache.json
