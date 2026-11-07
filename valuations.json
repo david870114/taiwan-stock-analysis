@@ -1,5 +1,5 @@
 {
- "updated": "2026-10-21",
+ "updated": "2026-11-07",
  "stocks": [
   {
    "id": "0050",
@@ -9,6 +9,7 @@
    "fair": 64,
    "expensive": 107,
    "annualDiv": 1.6,
+   "tp": null,
    "url": "0050_analysis.html"
   },
   {
@@ -19,6 +20,7 @@
    "fair": 148,
    "expensive": 248,
    "annualDiv": 8.198,
+   "tp": null,
    "url": "006208_analysis.html"
   },
   {
@@ -29,6 +31,7 @@
    "fair": 51,
    "expensive": 58,
    "annualDiv": 4.08,
+   "tp": null,
    "url": "0056_analysis.html"
   },
   {
@@ -39,6 +42,7 @@
    "fair": 36,
    "expensive": 45,
    "annualDiv": 2.49,
+   "tp": null,
    "url": "00878_analysis.html"
   },
   {
@@ -49,6 +53,7 @@
    "fair": 34,
    "expensive": 43,
    "annualDiv": 3.42,
+   "tp": null,
    "url": "00919_analysis.html"
   },
   {
@@ -59,6 +64,7 @@
    "fair": 32,
    "expensive": 42,
    "annualDiv": 2.52,
+   "tp": null,
    "url": "00981A_analysis.html"
   },
   {
@@ -69,6 +75,7 @@
    "fair": 19,
    "expensive": 25,
    "annualDiv": null,
+   "tp": null,
    "url": "00991A_analysis.html"
   },
   {
@@ -79,6 +86,7 @@
    "fair": 32,
    "expensive": 42,
    "annualDiv": null,
+   "tp": null,
    "url": "00631L_analysis.html"
   },
   {
@@ -89,6 +97,7 @@
    "fair": 1898,
    "expensive": 2416,
    "annualDiv": 24,
+   "tp": 3160,
    "url": "2330_analysis.html"
   },
   {
@@ -99,6 +108,7 @@
    "fair": 1213,
    "expensive": 1577,
    "annualDiv": 53.5,
+   "tp": null,
    "url": "2454_analysis.html"
   },
   {
@@ -109,6 +119,7 @@
    "fair": 120,
    "expensive": 214,
    "annualDiv": 2.61,
+   "tp": null,
    "url": "2303_analysis.html"
   },
   {
@@ -119,6 +130,7 @@
    "fair": 152,
    "expensive": 222,
    "annualDiv": 4.5,
+   "tp": null,
    "url": "6239_analysis.html"
   },
   {
@@ -129,6 +141,7 @@
    "fair": 197,
    "expensive": 287,
    "annualDiv": 2.5,
+   "tp": null,
    "url": "3374_analysis.html"
   },
   {
@@ -139,6 +152,7 @@
    "fair": 848,
    "expensive": 1005,
    "annualDiv": 11.6,
+   "tp": 2565,
    "url": "2308_analysis.html"
   },
   {
@@ -149,6 +163,7 @@
    "fair": 413,
    "expensive": 596,
    "annualDiv": 15.6,
+   "tp": 413,
    "url": "2382_analysis.html"
   },
   {
@@ -159,6 +174,7 @@
    "fair": 229,
    "expensive": 331,
    "annualDiv": 5.5,
+   "tp": 278,
    "url": "3231_analysis.html"
   },
   {
@@ -169,6 +185,7 @@
    "fair": 1655,
    "expensive": 2037,
    "annualDiv": 15,
+   "tp": 3500,
    "url": "2345_per_analysis_2026.html"
   },
   {
@@ -179,6 +196,7 @@
    "fair": 1953,
    "expensive": 2554,
    "annualDiv": 20.9,
+   "tp": 3880,
    "url": "3017_analysis.html"
   },
   {
@@ -189,6 +207,7 @@
    "fair": 1219,
    "expensive": 1567,
    "annualDiv": 11.9,
+   "tp": 1353,
    "url": "3324_analysis.html"
   },
   {
@@ -199,6 +218,7 @@
    "fair": 298,
    "expensive": 372,
    "annualDiv": 6,
+   "tp": null,
    "url": "2327_analysis.html"
   },
   {
@@ -209,6 +229,7 @@
    "fair": 196,
    "expensive": 267,
    "annualDiv": 2.5,
+   "tp": null,
    "url": "2492_analysis.html"
   },
   {
@@ -219,6 +240,7 @@
    "fair": 96,
    "expensive": 140,
    "annualDiv": 5.8,
+   "tp": null,
    "url": "3026_analysis.html"
   },
   {
@@ -229,6 +251,7 @@
    "fair": 733,
    "expensive": 947,
    "annualDiv": 11,
+   "tp": null,
    "url": "1519_analysis.html"
   },
   {
@@ -239,6 +262,7 @@
    "fair": 182,
    "expensive": 213,
    "annualDiv": 6,
+   "tp": null,
    "url": "1513_analysis.html"
   },
   {
@@ -249,6 +273,7 @@
    "fair": 1577,
    "expensive": 2102,
    "annualDiv": 48.4,
+   "tp": 2716,
    "url": "6669_analysis.html"
   },
   {
@@ -259,6 +284,7 @@
    "fair": 171,
    "expensive": 222,
    "annualDiv": 5.5,
+   "tp": null,
    "url": "2301_analysis.html"
   },
   {
@@ -269,6 +295,7 @@
    "fair": 182,
    "expensive": 286,
    "annualDiv": 9,
+   "tp": null,
    "url": "3596_analysis.html"
   },
   {
@@ -279,6 +306,7 @@
    "fair": 845,
    "expensive": 1152,
    "annualDiv": 14,
+   "tp": null,
    "url": "8210_analysis.html"
   },
   {
@@ -289,6 +317,7 @@
    "fair": 141,
    "expensive": 211,
    "annualDiv": 2,
+   "tp": 1280,
    "url": "3037_analysis.html"
   },
   {
@@ -299,6 +328,7 @@
    "fair": 119,
    "expensive": 198,
    "annualDiv": 2,
+   "tp": null,
    "url": "8046_analysis.html"
   },
   {
@@ -309,6 +339,7 @@
    "fair": 146,
    "expensive": 246,
    "annualDiv": 3.42,
+   "tp": 644,
    "url": "4958_analysis.html"
   },
   {
@@ -319,6 +350,7 @@
    "fair": 30,
    "expensive": 50,
    "annualDiv": 1,
+   "tp": null,
    "url": "3481_analysis.html"
   },
   {
@@ -329,6 +361,7 @@
    "fair": 163,
    "expensive": 218,
    "annualDiv": 0,
+   "tp": 183,
    "url": "2337_analysis.html"
   },
   {
@@ -339,6 +372,7 @@
    "fair": 88,
    "expensive": 115,
    "annualDiv": 0.5,
+   "tp": null,
    "url": "2344_analysis.html"
   },
   {
@@ -349,6 +383,7 @@
    "fair": 719,
    "expensive": 925,
    "annualDiv": 35,
+   "tp": null,
    "url": "3260_analysis.html"
   },
   {
@@ -359,6 +394,7 @@
    "fair": 279,
    "expensive": 391,
    "annualDiv": 1.35,
+   "tp": 618,
    "url": "2408_analysis.html"
   },
   {
@@ -369,6 +405,7 @@
    "fair": 44,
    "expensive": 62,
    "annualDiv": 0.23,
+   "tp": null,
    "url": "6770_analysis.html"
   },
   {
@@ -379,6 +416,7 @@
    "fair": 486,
    "expensive": 702,
    "annualDiv": 7.7,
+   "tp": 1443,
    "url": "6488_analysis.html"
   },
   {
@@ -389,6 +427,7 @@
    "fair": 154,
    "expensive": 220,
    "annualDiv": 3.5,
+   "tp": null,
    "url": "5483_analysis.html"
   },
   {
@@ -399,6 +438,7 @@
    "fair": 81,
    "expensive": 116,
    "annualDiv": 0.8,
+   "tp": null,
    "url": "1303_analysis.html"
   },
   {
@@ -409,6 +449,7 @@
    "fair": 189,
    "expensive": 252,
    "annualDiv": 16,
+   "tp": 265,
    "url": "2603_analysis.html"
   }
  ]

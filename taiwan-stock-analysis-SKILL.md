@@ -8,10 +8,12 @@ description: 台股個股深度分析 skill。當使用者說「分析 XXXX 股�
 ## 系統架構
 
 GitHub Pages: david870114/taiwan-stock-analysis
+- home.html — 首頁（六個分頁入口 ＋「近期操作排名 Top 15」，見下方「首頁操作排名」章節）
 - index.html — 總覽頁（所有股票 + 即時股價，每分鐘自動更新）
 - {代號}_analysis.html — 個股/ETF 分析頁
 - my-stocks.html — 我的股票分頁（登入制個人資產＋LINE 到價通知，見下方「我的股票分頁」章節）
-- valuations.json — 全部追蹤股的便宜/合理/昂貴價（由 `node scripts/export-valuations.mjs` 從 TRACKED 產生，**改完 TRACKED 必須重跑**）
+- valuations.json — 全部追蹤股的便宜/合理/昂貴價＋法人目標價（由 `node scripts/export-valuations.mjs` 從 TRACKED 產生，**改完 TRACKED 必須重跑**）
+- chips.json — 首頁排名的籌碼面資料（由 `node scripts/update-chips.mjs` 從 FinMind 產生，GitHub Actions 每交易日收盤後自動更新）
 - 即時股價 API：https://taiwan-stock-price.david870114.workers.dev/?id={代號}
 - 我的股票後端 API：https://my-stocks-api.david870114.workers.dev（Cloudflare Worker，原始碼在 repo 的 `worker/`）
 - Repo 路徑：C:\Users\USER\Desktop\taiwan-stock-analysis\
@@ -398,6 +400,49 @@ window.addEventListener('load', updateLiveMetric);
 - **3231 緯創估值倍數**：2026/09 起改為 14/18/26x（原 10/18/30x 與分析頁歷史區間不一致）。
 - **分析頁寫死的價位門檻**（如 `if (price < 1156)`、ETF 的 `d.px < 28.6`）改估值時要一起改；ETF 盡量寫成 `annualDiv/0.10` 形式。千分位逗號不可寫進 JS 數字（`price < 3,447` 是逗號運算子，條件恆真）。
 - git push 由 Claude 自動執行，不需使用者手動操作
+
+---
+
+## 首頁操作排名（home.html + chips.json）
+
+首頁上半是六個分頁入口（AI 產業鏈／其他追蹤清單／ETF／資金配置／法人動態／我的股票，前五個用 `index.html#hash` 直接開對應分頁），下半是「近期操作排名 Top 15」：把 41 檔追蹤標的（個股與 ETF 混排）用同一把尺打分數，一開首頁就看得到現在該買／該減碼什麼。
+
+### 評分公式（總分 100）
+
+**基本面 60 分 — 絕對值，對照各分析頁的估值帶**
+
+| 項目 | 配分 | 算法 |
+|------|------|------|
+| 估值位階 | 35 | `clamp((昂貴價 − 現價) ÷ (昂貴價 − 便宜價), 0, 1) × 35` |
+| 殖利率 | 15 | `clamp(年化配息 ÷ 現價 ÷ 6%, 0, 1) × 15`；無配息 0 分 |
+| 法人目標價空間 | 10 | `clamp(((目標價 − 現價) ÷ 現價) ÷ 30%, 0, 1) × 10`；無 tp 給中性 4 分 |
+
+**籌碼面 40 分 — 同儕百分位（在 41 檔內比名次）**
+
+| 項目 | 配分 | 算法 |
+|------|------|------|
+| 外資 20 日買超強度 | 15 | `外資20日淨買 ÷ (20日均量 × 20)` 的百分位 × 15 |
+| 投信 20 日買超強度 | 10 | 同式百分位 × 10 |
+| 近 5 日買盤動能 | 15 | `(外資+投信)5日淨買 ÷ (均量 × 5)` 百分位 × 10 ＋ `買超天數 ÷ 5 × 5` |
+
+兩邊的尺度刻意不同：**籌碼面用相對名次**（大盤全面賣超時絕對值會集體歸零、失去鑑別力），**基本面用絕對估值帶**（否則全面高估時仍會推出「最便宜的貴股」）。買超一律除以成交量，大小型股才可比。
+
+### 建議動作（由上往下，第一個命中者）
+
+| 條件 | 動作 |
+|------|------|
+| 現價 ≥ 昂貴價 | 🔴 減碼／不追高（硬門檻，分數再高也不追） |
+| 現價 ≤ 便宜價 且 總分 ≥ 55 | 🟢 積極買進 |
+| 總分 ≥ 65 且 現價 < 合理價 | 🟢 分批買進 |
+| 總分 ≥ 50 | 🔵 觀察／定期定額 |
+| 其餘 | ⚪ 持有、暫不加碼 |
+
+### 維護
+
+- `chips.json` 由 `node scripts/update-chips.mjs` 產生（FinMind `TaiwanStockInstitutionalInvestorsBuySell` ＋ `TaiwanStockPrice`，上市櫃都有資料，逐檔間隔 200ms），已掛進 `.github/workflows/update-institutional.yml`，每交易日 17:00 自動更新並 commit
+- 新增／移除追蹤標的後：`node scripts/export-valuations.mjs` → `node scripts/update-chips.mjs`，首頁排名即自動納入，**home.html 不用改**
+- 首頁即時股價同樣受股價 Worker 限流，逐檔間隔 250ms，第一輪漏掉的隔 600ms 再補抓一輪，快取 key 與 index.html 共用 `tw-stock-last-prices`
+- 分數只是排序工具：估值帶若是循環股的正常化 EPS（記憶體、面板、被動元件、航運），排名會跟著那條正常化帶走，不會因單季 EPS 跳動亂跳
 
 ---
 

@@ -26,6 +26,7 @@ const out = {
     fair: s.fairValue ?? null,
     expensive: s.expValue ?? null,
     annualDiv: s.annualDiv ?? null,
+    tp: s.tp ?? null,              // 法人目標價（首頁排名的基本面項目之一）
     url: s.url || (s.id + '_analysis.html')
   }))
 };

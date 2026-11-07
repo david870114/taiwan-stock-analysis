@@ -70,6 +70,107 @@
   .entry.accent { border-color: #1e3050; }
   .entry.accent .title { color: #93c5fd; }
 
+  /* ── 近期操作排名 ── */
+  .rank { margin-top: 36px; }
+  .rank-head { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; margin-bottom: 4px; }
+  .rank-head h2 { font-size: 17px; font-weight: 700; }
+  .rank-head .asof { font-size: 11px; color: #64748b; margin-left: auto; }
+  .rank-sub { font-size: 12px; color: #94a3b8; line-height: 1.6; margin-bottom: 12px; }
+
+  /* 今日動作摘要 */
+  .summary {
+    display: flex; gap: 8px; flex-wrap: wrap;
+    margin-bottom: 14px;
+  }
+  .sum-pill {
+    background: #1e2535; border: 1px solid #1e2535;
+    border-radius: 999px; padding: 6px 13px;
+    font-size: 12px; color: #94a3b8;
+  }
+  .sum-pill b { color: #e2e8f0; font-weight: 700; }
+  .sum-pill.buy  { border-color: #1b3a2a; }
+  .sum-pill.sell { border-color: #3f2026; }
+
+  .rank-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  table.rank-table {
+    width: 100%; border-collapse: collapse;
+    font-size: 13px; min-width: 560px;
+  }
+  .rank-table th {
+    font-size: 11px; font-weight: 600; color: #64748b;
+    text-align: right; padding: 0 8px 8px;
+    border-bottom: 1px solid #1e2535;
+    white-space: nowrap;
+  }
+  .rank-table th:nth-child(1), .rank-table th:nth-child(2) { text-align: left; }
+  .rank-table td {
+    padding: 9px 8px; text-align: right;
+    border-bottom: 1px solid #161c28;
+    white-space: nowrap;
+  }
+  .rank-table tr:last-child td { border-bottom: none; }
+  /* 手機：藏掉 vs 合理價／基本面／籌碼面，留下最關鍵的現價・總分・建議動作 */
+  .act .short { display: none; }
+  @media(max-width:640px){
+    table.rank-table { min-width: 0; font-size: 12px; }
+    .rank-table th, .rank-table td { padding-left: 4px; padding-right: 4px; }
+    .rank-table th:nth-child(4), .rank-table td:nth-child(4),
+    .rank-table th:nth-child(5), .rank-table td:nth-child(5),
+    .rank-table th:nth-child(6), .rank-table td:nth-child(6) { display: none; }
+    .rank-table .c-name { white-space: normal; line-height: 1.35; }
+    .rank-table .c-name .sid { display: block; margin: 0 0 1px; }
+    .act .full  { display: none; }
+    .act .short { display: inline; }
+  }
+
+  .rank-table .c-rank { width: 26px; text-align: left; color: #64748b; font-size: 12px; }
+  .rank-table .c-name { text-align: left; }
+  .rank-table .c-name a { color: #e2e8f0; text-decoration: none; font-weight: 600; }
+  .rank-table .c-name a:hover { color: #93c5fd; }
+  .rank-table .c-name .sid { color: #64748b; font-size: 11px; font-family: monospace; margin-right: 6px; }
+  .rank-table .num { font-family: "SF Mono", Consolas, monospace; }
+  .rank-table .total { font-weight: 700; color: #e2e8f0; }
+  .rank-table .stale { color: #64748b; }
+
+  .green  { color: #22c55e; }
+  .red    { color: #ef4444; }
+  .yellow { color: #fbbf24; }
+  .muted  { color: #64748b; }
+
+  .act { font-size: 12px; font-weight: 600; }
+  .act-buy    { color: #22c55e; }
+  .act-accum  { color: #4ade80; }
+  .act-watch  { color: #7db8f7; }
+  .act-hold   { color: #94a3b8; }
+  .act-reduce { color: #ef4444; }
+
+  /* 分數條（基本面／籌碼面） */
+  .bar { display: inline-block; width: 42px; height: 4px; background: #1e2535; border-radius: 2px; vertical-align: middle; margin-left: 6px; }
+  .bar > i { display: block; height: 100%; border-radius: 2px; background: #3b82f6; }
+
+  .rank-status { font-size: 11px; color: #64748b; margin-top: 10px; }
+
+  /* 公式說明 */
+  details.formula { margin-top: 14px; }
+  details.formula summary {
+    font-size: 12px; color: #7db8f7; cursor: pointer;
+    list-style: none; padding: 7px 0;
+  }
+  details.formula summary::-webkit-details-marker { display: none; }
+  details.formula summary::before { content: "▸ "; }
+  details.formula[open] summary::before { content: "▾ "; }
+  details.formula .fbody {
+    background: #1e2535; border-radius: 10px; padding: 16px 18px;
+    font-size: 12px; color: #94a3b8; line-height: 1.75;
+  }
+  details.formula .fbody h4 { font-size: 12px; color: #e2e8f0; margin: 12px 0 4px; }
+  details.formula .fbody h4:first-child { margin-top: 0; }
+  details.formula .fbody code {
+    font-family: "SF Mono", Consolas, monospace; font-size: 11px;
+    background: #141b2d; color: #93c5fd; padding: 1px 5px; border-radius: 4px;
+  }
+  details.formula .fbody ul { margin: 4px 0 0 18px; }
+
   /* ── 頁尾 ── */
   .foot {
     margin-top: 32px;
@@ -139,11 +240,262 @@
 
   </div>
 
+  <!-- ── 近期操作排名 ── -->
+  <div class="rank">
+    <div class="rank-head">
+      <h2>🎯 近期操作排名 Top 15</h2>
+      <span class="asof" id="rank-asof">—</span>
+    </div>
+    <p class="rank-sub">基本面 60 分（估值位階、殖利率、法人目標價）＋ 籌碼面 40 分（外資／投信買超強度），不分個股與 ETF，分數越高代表現在越值得買。</p>
+
+    <div class="summary" id="rank-summary"></div>
+
+    <div class="rank-scroll">
+      <table class="rank-table">
+        <thead>
+          <tr>
+            <th>#</th><th>標的</th><th>現價</th><th>vs 合理價</th>
+            <th>基本面</th><th>籌碼面</th><th>總分</th><th>建議動作</th>
+          </tr>
+        </thead>
+        <tbody id="rank-body">
+          <tr><td colspan="8" class="muted" style="text-align:center;padding:24px">載入中…</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="rank-status" id="rank-status"></div>
+
+    <details class="formula">
+      <summary>計分公式說明</summary>
+      <div class="fbody">
+        <h4>基本面 60 分（絕對值，對照各頁估值帶）</h4>
+        <ul>
+          <li><b>估值位階 35 分</b>　<code>(昂貴價 − 現價) ÷ (昂貴價 − 便宜價)</code>，夾在 0～1 後 ×35。跌到便宜價以下拿滿分，漲過昂貴價得 0。</li>
+          <li><b>殖利率 15 分</b>　<code>年化配息 ÷ 現價 ÷ 6%</code>，夾在 0～1 後 ×15。殖利率 6% 以上滿分；無配息得 0。</li>
+          <li><b>法人目標價空間 10 分</b>　<code>((目標價 − 現價) ÷ 現價) ÷ 30%</code>，夾在 0～1 後 ×10。沒有法人覆蓋的給中性 4 分，不扣分。</li>
+        </ul>
+        <h4>籌碼面 40 分（同儕百分位，在追蹤的 41 檔中比名次）</h4>
+        <ul>
+          <li><b>外資 20 日買超強度 15 分</b>　<code>外資 20 日淨買張數 ÷ (20 日均量 × 20)</code> 的百分位 ×15。除以成交量是為了讓大小型股可比。</li>
+          <li><b>投信 20 日買超強度 10 分</b>　同式取百分位 ×10。投信部位小但方向性強，權重給一半。</li>
+          <li><b>近 5 日買盤動能 15 分</b>　<code>(外資 + 投信) 5 日淨買 ÷ (均量 × 5)</code> 的百分位 ×10，再加 <code>近 5 日買超天數 ÷ 5</code> ×5（看買盤連不連續）。</li>
+        </ul>
+        <p style="margin-top:10px">籌碼面用<b>相對名次</b>而非絕對門檻，是因為大盤全面賣超時絕對值會集體歸零、失去鑑別力；基本面則必須用絕對估值帶，否則在全面高估時仍會推出「最便宜的貴股」。</p>
+        <h4>建議動作判定（由上往下第一個命中者）</h4>
+        <ul>
+          <li>🔴 <b>減碼／不追高</b>　現價 ≥ 昂貴價（硬門檻，分數再高也不追）</li>
+          <li>🟢 <b>積極買進</b>　現價 ≤ 便宜價 且 總分 ≥ 55</li>
+          <li>🟢 <b>分批買進</b>　總分 ≥ 65 且 現價 &lt; 合理價</li>
+          <li>🔵 <b>觀察／定期定額</b>　總分 ≥ 50</li>
+          <li>⚪ <b>持有、暫不加碼</b>　其餘</li>
+        </ul>
+        <p style="margin-top:10px">⚠️ 估值帶來自各分析頁，循環股（記憶體、面板、被動元件、航運）採正常化 EPS，不隨單季 EPS 跳動；分數只是排序工具，實際進出仍要看個股基本面有沒有變化。</p>
+      </div>
+    </details>
+  </div>
+
   <div class="foot">
     資料來源：GoodInfo、FinMind、證交所。估值僅供參考，不構成投資建議。
   </div>
 
 </div>
+
+<script>
+/* ══════════════════════════════════════════════════════════
+   近期操作排名
+   資料：valuations.json（估值帶／配息／法人目標價，由 TRACKED 匯出）
+         chips.json（外資・投信買賣超，每交易日收盤後由 GitHub Actions 更新）
+         即時股價 Worker（逐檔間隔 250ms，上游瞬間大量請求會回 520）
+══════════════════════════════════════════════════════════ */
+var PRICE_API  = 'https://taiwan-stock-price.david870114.workers.dev/?id=';
+var CACHE_KEY  = 'tw-stock-last-prices';   // 與 index.html 共用同一份快取
+var TOP_N      = 15;
+
+var VALS = [], CHIPS = {}, PRICE = {}, LIVE = {};
+
+function clamp01(x) { return Math.max(0, Math.min(1, x)); }
+function fmtPct(v)  { return (v > 0 ? '+' : '') + v.toFixed(1) + '%'; }
+
+/* 同儕百分位：在 arr 中比 v 小的比例（並列取中間值） */
+function pctRank(arr, v) {
+  if (!arr.length) return 0.5;
+  var below = 0, equal = 0;
+  for (var i = 0; i < arr.length; i++) {
+    if (arr[i] < v) below++;
+    else if (arr[i] === v) equal++;
+  }
+  return (below + equal / 2) / arr.length;
+}
+
+/* 籌碼面三個指標的標準化值（除以成交量，讓大小型股可比） */
+function chipRatios(c) {
+  if (!c || !c.avgVol20) return null;
+  var base20 = c.avgVol20 * 20, base5 = c.avgVol20 * 5;
+  return {
+    f20: c.f20 / base20,
+    t20: c.t20 / base20,
+    m5:  (c.f5 + c.t5) / base5,
+    days: (c.buyDays5 || 0) / 5
+  };
+}
+
+function scoreStock(v, c, price, pool) {
+  /* ── 基本面 60 ── */
+  var valS = (price && v.expensive > v.cheap)
+    ? clamp01((v.expensive - price) / (v.expensive - v.cheap)) * 35 : 17.5;
+  var yld  = (price && v.annualDiv) ? v.annualDiv / price * 100 : 0;
+  var yldS = clamp01(yld / 6) * 15;
+  var tpUp = (price && v.tp) ? (v.tp - price) / price : null;
+  var tpS  = tpUp === null ? 4 : clamp01(tpUp / 0.30) * 10;
+  var fund = valS + yldS + tpS;
+
+  /* ── 籌碼面 40（同儕百分位）── */
+  var r = chipRatios(c), chip;
+  if (!r) {
+    chip = 20;   // 無籌碼資料 → 中性分，不獎不罰
+  } else {
+    chip = pctRank(pool.f20, r.f20) * 15
+         + pctRank(pool.t20, r.t20) * 10
+         + pctRank(pool.m5,  r.m5)  * 10
+         + r.days * 5;
+  }
+
+  return { fund: fund, chip: chip, total: fund + chip, yld: yld, tpUp: tpUp };
+}
+
+function actionOf(s, v, price) {
+  if (price && v.expensive && price >= v.expensive) return { txt:'🔴 減碼／不追高', short:'🔴 減碼', cls:'act-reduce', kind:'sell' };
+  if (price && v.cheap && price <= v.cheap && s.total >= 55) return { txt:'🟢 積極買進', short:'🟢 積極買', cls:'act-buy', kind:'buy' };
+  if (s.total >= 65 && price && v.fair && price < v.fair)    return { txt:'🟢 分批買進', short:'🟢 分批買', cls:'act-accum', kind:'buy' };
+  if (s.total >= 50) return { txt:'🔵 觀察／定期定額', short:'🔵 觀察', cls:'act-watch', kind:'watch' };
+  return { txt:'⚪ 持有、暫不加碼', short:'⚪ 持有', cls:'act-hold', kind:'hold' };
+}
+
+function priceOf(id) {
+  if (LIVE[id]) return { px: LIVE[id], live: true };
+  if (PRICE[id]) return { px: PRICE[id], live: false };
+  var c = CHIPS[id];
+  return c && c.close ? { px: c.close, live: false } : { px: null, live: false };
+}
+
+function render() {
+  var pool = { f20: [], t20: [], m5: [] };
+  VALS.forEach(function(v) {
+    var r = chipRatios(CHIPS[v.id]);
+    if (r) { pool.f20.push(r.f20); pool.t20.push(r.t20); pool.m5.push(r.m5); }
+  });
+
+  var rows = VALS.map(function(v) {
+    var p = priceOf(v.id);
+    var s = scoreStock(v, CHIPS[v.id], p.px, pool);
+    return { v: v, s: s, px: p.px, live: p.live, act: actionOf(s, v, p.px) };
+  }).sort(function(a, b) { return b.s.total - a.s.total; });
+
+  /* 摘要 */
+  var buy    = rows.filter(function(r){ return r.act.kind === 'buy';   });
+  var sell   = rows.filter(function(r){ return r.act.kind === 'sell';  });
+  var watch  = rows.filter(function(r){ return r.act.kind === 'watch'; });
+  var sum = '<span class="sum-pill buy">🟢 可買進 <b>' + buy.length + '</b> 檔</span>' +
+            '<span class="sum-pill">🔵 觀察 <b>' + watch.length + '</b> 檔</span>' +
+            '<span class="sum-pill sell">🔴 已過昂貴價 <b>' + sell.length + '</b> 檔</span>';
+  if (buy.length)  sum += '<span class="sum-pill buy">現在買：<b>' + buy.slice(0,4).map(function(r){ return r.v.name; }).join('、') + (buy.length>4?' 等':'') + '</b></span>';
+  if (sell.length) sum += '<span class="sum-pill sell">該減碼：<b>' + sell.slice(0,4).map(function(r){ return r.v.name; }).join('、') + (sell.length>4?' 等':'') + '</b></span>';
+  document.getElementById('rank-summary').innerHTML = sum;
+
+  /* 表格 */
+  var html = '';
+  rows.slice(0, TOP_N).forEach(function(r, i) {
+    var v = r.v, s = r.s;
+    var vsTxt = '—', vsCls = 'muted';
+    if (r.px && v.fair) {
+      var pct = (r.px - v.fair) / v.fair * 100;
+      vsTxt = fmtPct(pct);
+      vsCls = r.px < v.cheap ? 'green' : r.px < v.fair ? 'green' : (v.expensive && r.px >= v.expensive) ? 'red' : 'yellow';
+    }
+    html +=
+      '<tr>' +
+        '<td class="c-rank">' + (i + 1) + '</td>' +
+        '<td class="c-name"><a href="' + v.url + '"><span class="sid">' + v.id + '</span>' + v.name + '</a></td>' +
+        '<td class="num' + (r.live ? '' : ' stale') + '">' + (r.px ? r.px.toLocaleString() + (r.live ? '' : '°') : '—') + '</td>' +
+        '<td class="num ' + vsCls + '">' + vsTxt + '</td>' +
+        '<td class="num">' + s.fund.toFixed(0) + '<span class="bar"><i style="width:' + (s.fund / 60 * 100).toFixed(0) + '%"></i></span></td>' +
+        '<td class="num">' + s.chip.toFixed(0) + '<span class="bar"><i style="width:' + (s.chip / 40 * 100).toFixed(0) + '%;background:#a855f7"></i></span></td>' +
+        '<td class="num total">' + s.total.toFixed(0) + '</td>' +
+        '<td class="act ' + r.act.cls + '"><span class="full">' + r.act.txt + '</span>' +
+          '<span class="short">' + r.act.short + '</span></td>' +
+      '</tr>';
+  });
+  document.getElementById('rank-body').innerHTML = html;
+}
+
+/* ── 即時股價：逐檔序列請求、間隔 250ms，結果存 localStorage ── */
+function sleep(ms) { return new Promise(function(res){ setTimeout(res, ms); }); }
+
+async function fetchOne(id) {
+  try {
+    var res  = await fetch(PRICE_API + id, { cache:'no-cache', mode:'cors', credentials:'omit' });
+    var data = JSON.parse(await res.text());
+    if (data.price && data.price !== '-') { LIVE[id] = parseFloat(data.price); return true; }
+  } catch (e) {}
+  return false;
+}
+
+async function fetchPrices() {
+  var status = document.getElementById('rank-status');
+  var ok = 0;
+  for (var i = 0; i < VALS.length; i++) {
+    if (await fetchOne(VALS[i].id)) ok++;
+    status.textContent = '即時股價載入中… ' + (i + 1) + '/' + VALS.length;
+    if (i % 8 === 7) render();
+    await sleep(250);
+  }
+
+  // 被上游限流的那幾檔隔久一點再補抓一輪（同 index.html 的重試策略）
+  var miss = VALS.filter(function(v){ return !LIVE[v.id]; });
+  for (var j = 0; j < miss.length; j++) {
+    status.textContent = '補抓限流的 ' + miss.length + ' 檔… ' + (j + 1) + '/' + miss.length;
+    if (await fetchOne(miss[j].id)) ok++;
+    await sleep(600);
+  }
+
+  try {
+    var merged = Object.assign({}, PRICE, LIVE);
+    localStorage.setItem(CACHE_KEY, JSON.stringify({ prices: merged, ts: Date.now() }));
+  } catch (e) {}
+  render();
+  status.textContent = ok === VALS.length
+    ? '即時股價已更新（' + new Date().toLocaleTimeString('zh-TW', { hour:'2-digit', minute:'2-digit' }) + '）'
+    : '已取得 ' + ok + '/' + VALS.length + ' 檔即時價，其餘以 ° 標示（上個交易日收盤或快取）。';
+}
+
+async function init() {
+  try {
+    var raw = localStorage.getItem(CACHE_KEY);
+    if (raw) { var o = JSON.parse(raw); if (o && o.prices) PRICE = o.prices; }
+  } catch (e) {}
+
+  try {
+    var r = await Promise.all([
+      fetch('valuations.json', { cache:'no-cache' }).then(function(x){ return x.json(); }),
+      fetch('chips.json',      { cache:'no-cache' }).then(function(x){ return x.json(); })
+    ]);
+    VALS  = r[0].stocks || [];
+    CHIPS = r[1].stocks || {};
+    document.getElementById('rank-asof').textContent =
+      '估值 ' + r[0].updated + '　籌碼 ' + (r[1].asOf || r[1].updated);
+  } catch (e) {
+    document.getElementById('rank-body').innerHTML =
+      '<tr><td colspan="8" class="muted" style="text-align:center;padding:24px">資料載入失敗，請重新整理</td></tr>';
+    return;
+  }
+
+  render();
+  fetchPrices();
+}
+
+window.addEventListener('DOMContentLoaded', init);
+</script>
 
 </body>
 </html>
