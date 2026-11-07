@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>台股投資分析 — 首頁</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #0f1117;
+    color: #e2e8f0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    min-height: 100vh;
+    padding: 64px 20px 48px;
+  }
+
+  .wrap { max-width: 720px; margin: 0 auto; }
+
+  /* ── 標題 ── */
+  .hero { margin-bottom: 36px; }
+  .hero h1 {
+    font-size: 26px; font-weight: 700;
+    letter-spacing: -0.01em;
+    margin-bottom: 8px;
+  }
+  .hero p {
+    font-size: 13px; color: #94a3b8;
+    line-height: 1.6;
+  }
+
+  /* ── 入口按鈕 ── */
+  .menu {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  @media(max-width:640px){ .menu { grid-template-columns: 1fr; } }
+
+  .entry {
+    display: flex; align-items: flex-start; gap: 13px;
+    background: #1e2535;
+    border: 1px solid #1e2535;
+    border-radius: 12px;
+    padding: 18px 18px 17px;
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 0.15s, background 0.15s, transform 0.15s;
+  }
+  .entry:hover {
+    border-color: #3b82f6;
+    background: #232c40;
+    transform: translateY(-2px);
+  }
+  .entry .icon { font-size: 20px; line-height: 1.2; }
+  .entry .txt { flex: 1; min-width: 0; }
+  .entry .title {
+    display: block;
+    font-size: 14px; font-weight: 700;
+    color: #e2e8f0;
+    margin-bottom: 5px;
+  }
+  .entry .desc {
+    display: block;
+    font-size: 12px; color: #94a3b8;
+    line-height: 1.55;
+  }
+
+  /* 我的股票 — 獨立網址，給一點區隔 */
+  .entry.accent { border-color: #1e3050; }
+  .entry.accent .title { color: #93c5fd; }
+
+  /* ── 頁尾 ── */
+  .foot {
+    margin-top: 32px;
+    font-size: 11px; color: #64748b;
+    line-height: 1.7;
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <div class="hero">
+    <h1>📊 台股投資分析</h1>
+    <p>PER 河流圖估值、ETF 殖利率追蹤、資金配置與法人動態。</p>
+  </div>
+
+  <div class="menu">
+
+    <a class="entry" href="index.html#watchlist">
+      <span class="icon">📊</span>
+      <span class="txt">
+        <span class="title">AI 產業鏈</span>
+        <span class="desc">半導體、伺服器、散熱、網通追蹤清單，含即時股價與估值對照</span>
+      </span>
+    </a>
+
+    <a class="entry" href="index.html#nonai">
+      <span class="icon">🏭</span>
+      <span class="txt">
+        <span class="title">其他追蹤清單</span>
+        <span class="desc">重電、塑化、航運等非 AI 產業鏈個股</span>
+      </span>
+    </a>
+
+    <a class="entry" href="index.html#etf">
+      <span class="icon">📈</span>
+      <span class="txt">
+        <span class="title">ETF 追蹤與配息試算</span>
+        <span class="desc">殖利率河流圖比較、除息行事曆、存股配息試算</span>
+      </span>
+    </a>
+
+    <a class="entry" href="index.html#allocator">
+      <span class="icon">💰</span>
+      <span class="txt">
+        <span class="title">資金配置試算</span>
+        <span class="desc">依核心／成長／衛星比重，試算每檔的買進張數</span>
+      </span>
+    </a>
+
+    <a class="entry" href="index.html#institutional">
+      <span class="icon">🏛</span>
+      <span class="txt">
+        <span class="title">法人動態</span>
+        <span class="desc">三大法人買賣超與個股買超排行</span>
+      </span>
+    </a>
+
+    <a class="entry accent" href="my-stocks.html">
+      <span class="icon">👤</span>
+      <span class="txt">
+        <span class="title">我的股票</span>
+        <span class="desc">登入管理持股與追蹤清單、損益走勢、LINE 到價通知</span>
+      </span>
+    </a>
+
+  </div>
+
+  <div class="foot">
+    資料來源：GoodInfo、FinMind、證交所。估值僅供參考，不構成投資建議。
+  </div>
+
+</div>
+
+</body>
+</html>
