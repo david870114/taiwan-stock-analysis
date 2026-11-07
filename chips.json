@@ -12,7 +12,22 @@
    "t5": 16681.4,
    "t20": 36324.5,
    "buyDays5": 0,
-   "ret20": -18.26
+   "ret5": -19.09,
+   "ret20": -18.26,
+   "ret60": 27.39,
+   "ret240": 465.58,
+   "fund": {
+    "quarter": "2026-06-30",
+    "epsTtm": 6.2,
+    "epsYoY": null,
+    "gmLatest": 18.9,
+    "gmYoYpp": 10.3,
+    "npmLatest": 32,
+    "npmYoYpp": 38.2,
+    "rev3mYoY": 55.6,
+    "revMonth": "2026-11-01"
+   },
+   "fundUpdated": "2026-11-07"
   },
   "1513": {
    "close": 138.5,
@@ -23,7 +38,22 @@
    "t5": -38,
    "t20": -527.1,
    "buyDays5": 1,
-   "ret20": -17.07
+   "ret5": -9.48,
+   "ret20": -17.07,
+   "ret60": -12.06,
+   "ret240": -1.02,
+   "fund": {
+    "quarter": "2026-06-30",
+    "epsTtm": 8.89,
+    "epsYoY": 22.5,
+    "gmLatest": 28.4,
+    "gmYoYpp": 3.8,
+    "npmLatest": 16.8,
+    "npmYoYpp": 3.6,
+    "rev3mYoY": 7.9,
+    "revMonth": "2026-10-01"
+   },
+   "fundUpdated": "2026-11-07"
   },
   "1519": {
    "close": 452,
@@ -34,7 +64,22 @@
    "t5": 58.2,
    "t20": -207.7,
    "buyDays5": 2,
-   "ret20": -35.06
+   "ret5": -17.97,
+   "ret20": -35.06,
+   "ret60": -30.78,
+   "ret240": -32.31,
+   "fund": {
+    "quarter": "2026-06-30",
+    "epsTtm": 15.28,
+    "epsYoY": 0.3,
+    "gmLatest": 43.5,
+    "gmYoYpp": 3.1,
+    "npmLatest": 18.7,
+    "npmYoYpp": 5.7,
+    "rev3mYoY": 2.8,
+    "revMonth": "2026-10-01"
+   },
+   "fundUpdated": "2026-11-07"
   },
   "2301": {
    "close": 198,
@@ -45,7 +90,22 @@
    "t5": -114.2,
    "t20": 3849.5,
    "buyDays5": 0,
-   "ret20": -33.78
+   "ret5": -17.67,
+   "ret20": -33.78,
+   "ret60": -19.1,
+   "ret240": 22.17,
+   "fund": {
+    "quarter": "2026-09-30",
+    "epsTtm": 9.77,
+    "epsYoY": 55.6,
+    "gmLatest": 25.9,
+    "gmYoYpp": 0.9,
+    "npmLatest": 12.9,
+    "npmYoYpp": 2.6,
+    "rev3mYoY": 28,
+    "revMonth": "2026-10-01"
+   },
+   "fundUpdated": "2026-11-07"
   },
   "2303": {
    "close": 92,
@@ -56,7 +116,22 @@
    "t5": -28698.2,
    "t20": -175951.6,
    "buyDays5": 1,
-   "ret20": -37.63
+   "ret5": -17.49,
+   "ret20": -37.63,
+   "ret60": -20.69,
+   "ret240": 107.95,
+   "fund": {
+    "quarter": "2026-09-30",
+    "epsTtm": 6.8,
+    "epsYoY": 111.8,
+    "gmLatest": 34,
+    "gmYoYpp": 4.1,
+    "npmLatest": 22.1,
+    "npmYoYpp": -3.2,
+    "rev3mYoY": 25.2,
+    "revMonth": "2026-11-01"
+   },
+   "fundUpdated": "2026-11-07"
   },
   "2308": {
    "close": 1055,
@@ -67,7 +142,22 @@
    "t5": 576.6,
    "t20": -1724.5,
    "buyDays5": 0,
-   "ret20": -48.54
+   "ret5": -20.97,
+   "ret20": -48.54,
+   "ret60": -36.06,
+   "ret240": 9.9,
+   "fund": {
+    "quarter": "2026-09-30",
+    "epsTtm": 33.3,
+    "epsYoY": 73.2,
+    "gmLatest": 34.1,
+    "gmYoYpp": -0.8,
+    "npmLatest": 11.9,
+    "npmYoYpp": -0.5,
+    "rev3mYoY": 31.1,
+    "revMonth": "2026-10-01"
+   },
+   "fundUpdated": "2026-11-07"
   },
   "2327": {
    "close": 374,
@@ -78,7 +168,22 @@
    "t5": -4898.1,
    "t20": 1662.8,
    "buyDays5": 0,
-   "ret20": -40.16
+   "ret5": -25.5,
+   "ret20": -40.16,
+   "ret60": -30.74,
+   "ret240": 60.63,
+   "fund": {
+    "quarter": "2026-06-30",
+    "epsTtm": 14.88,
+    "epsYoY": -61.4,
+    "gmLatest": 38.5,
+    "gmYoYpp": 2.9,
+    "npmLatest": 21.2,
+    "npmYoYpp": 5.9,
+    "rev3mYoY": 49.7,
+    "revMonth": "2026-10-01"
+   },
+   "fundUpdated": "2026-11-07"
   },
   "2330": {
    "close": 2135,
@@ -89,7 +194,22 @@
    "t5": 17152.2,
    "t20": 39575,
    "buyDays5": 0,
-   "ret20": -17.41
+   "ret5": -9.92,
+   "ret20": -17.41,
+   "ret60": -9.65,
+   "ret240": 48.03,
+   "fund": {
+    "quarter": "2026-06-30",
+    "epsTtm": 86.28,
+    "epsYoY": 53.2,
+    "gmLatest": 67.7,
+    "gmYoYpp": 9.1,
+    "npmLatest": 55.6,
+    "npmYoYpp": 13,
+    "rev3mYoY": 50.9,
+    "revMonth": "2026-10-01"
+   },
+   "fundUpdated": "2026-11-07"
   },
   "2337": {
    "close": 75.8,
@@ -100,7 +220,22 @@
    "t5": 55,
    "t20": 3756,
    "buyDays5": 1,
-   "ret20": -36.57
+   "ret5": -20.55,
+   "ret20": -36.57,
+   "ret60": -37.61,
+   "ret240": 115.04,
+   "fund": {
+    "quarter": "2026-09-30",
+    "epsTtm": 10.18,
+    "epsYoY": null,
+    "gmLatest": 70.5,
+    "gmYoYpp": 57,
+    "npmLatest": 45.2,
+    "npmYoYpp": 55.7,
+    "rev3mYoY": 207.3,
+    "revMonth": "2026-11-01"
+   },
+   "fundUpdated": "2026-11-07"
   },
   "2344": {
    "close": 120.5,
@@ -111,7 +246,22 @@
    "t5": -5892.4,
    "t20": -22516.5,
    "buyDays5": 1,
-   "ret20": -32.11
+   "ret5": -26.75,
+   "ret20": -32.11,
+   "ret60": -26.3,
+   "ret240": 108.49,
+   "fund": {
+    "quarter": "2026-09-30",
+    "epsTtm": 15.99,
+    "epsYoY": null,
+    "gmLatest": 70.6,
+    "gmYoYpp": 23.9,
+    "npmLatest": 43,
+    "npmYoYpp": 29.5,
+    "rev3mYoY": 266.7,
+    "revMonth": "2026-11-01"
+   },
+   "fundUpdated": "2026-11-07"
   },
   "2345": {
    "close": 1280,
@@ -122,7 +272,22 @@
    "t5": -55.4,
    "t20": 2770.5,
    "buyDays5": 0,
-   "ret20": -37.56
+   "ret5": -20.74,
+   "ret20": -37.56,
+   "ret60": -42.21,
+   "ret240": 28.37,
+   "fund": {
+    "quarter": "2026-06-30",
+    "epsTtm": 63.65,
+    "epsYoY": 105.1,
+    "gmLatest": 19.7,
+    "gmYoYpp": 1.8,
+    "npmLatest": 11.6,
+    "npmYoYpp": 3.3,
+    "rev3mYoY": 71.8,
+    "revMonth": "2026-11-01"
+   },
+   "fundUpdated": "2026-11-07"
   },
   "2382": {
    "close": 290.5,
@@ -133,7 +298,22 @@
    "t5": 5829.6,
    "t20": 13888.6,
    "buyDays5": 2,
-   "ret20": -12.89
+   "ret5": -8.65,
+   "ret20": -12.89,
+   "ret60": -2.52,
+   "ret240": 5.54,
+   "fund": {
+    "quarter": "2026-06-30",
+    "epsTtm": 22.94,
+    "epsYoY": 28.4,
+    "gmLatest": 5,
+    "gmYoYpp": -2,
+    "npmLatest": 2.8,
+    "npmYoYpp": -0.6,
+    "rev3mYoY": 125.2,
+    "revMonth": "2026-10-01"
+   },
+   "fundUpdated": "2026-11-07"
   },
   "2408": {
    "close": 343.5,
@@ -144,7 +324,22 @@
    "t5": -6548.3,
    "t20": -22364,
    "buyDays5": 2,
-   "ret20": -34.57
+   "ret5": -24.42,
+   "ret20": -34.57,
+   "ret60": -24.84,
+   "ret240": 134.43,
+   "fund": {
+    "quarter": "2026-09-30",
+    "epsTtm": 52.05,
+    "epsYoY": null,
+    "gmLatest": 85.7,
+    "gmYoYpp": 67.2,
+    "npmLatest": 65.6,
+    "npmYoYpp": 57.2,
+    "rev3mYoY": 538.7,
+    "revMonth": "2026-11-01"
+   },
+   "fundUpdated": "2026-11-07"
   },
   "2454": {
    "close": 3390,
@@ -155,7 +350,22 @@
    "t5": 4444.3,
    "t20": 8653.3,
    "buyDays5": 0,
-   "ret20": -31.1
+   "ret5": -13.41,
+   "ret20": -31.1,
+   "ret60": -13.08,
+   "ret240": 175.9,
+   "fund": {
+    "quarter": "2026-06-30",
+    "epsTtm": 60.69,
+    "epsYoY": -9.2,
+    "gmLatest": 46.2,
+    "gmYoYpp": -2.9,
+    "npmLatest": 16,
+    "npmYoYpp": -2.5,
+    "rev3mYoY": 18.3,
+    "revMonth": "2026-10-01"
+   },
+   "fundUpdated": "2026-11-07"
   },
   "2492": {
    "close": 258.5,
@@ -166,7 +376,22 @@
    "t5": -3975,
    "t20": 10412,
    "buyDays5": 3,
-   "ret20": -33.63
+   "ret5": -32.15,
+   "ret20": -33.63,
+   "ret60": 2.99,
+   "ret240": 121.17,
+   "fund": {
+    "quarter": "2026-06-30",
+    "epsTtm": 8.9,
+    "epsYoY": 147.9,
+    "gmLatest": 20.3,
+    "gmYoYpp": 3.3,
+    "npmLatest": 13.9,
+    "npmYoYpp": 16.1,
+    "rev3mYoY": 47.2,
+    "revMonth": "2026-10-01"
+   },
+   "fundUpdated": "2026-11-07"
   },
   "2603": {
    "close": 246.5,
@@ -177,7 +402,22 @@
    "t5": 4731.4,
    "t20": 19004.7,
    "buyDays5": 2,
-   "ret20": 4.23
+   "ret5": -9.21,
+   "ret20": 4.23,
+   "ret60": 18.8,
+   "ret240": 42.13,
+   "fund": {
+    "quarter": "2026-06-30",
+    "epsTtm": 25.23,
+    "epsYoY": -58.4,
+    "gmLatest": 22.8,
+    "gmYoYpp": 1.2,
+    "npmLatest": 15.2,
+    "npmYoYpp": 2.6,
+    "rev3mYoY": 51.8,
+    "revMonth": "2026-10-01"
+   },
+   "fundUpdated": "2026-11-07"
   },
   "3017": {
    "close": 2310,
@@ -188,7 +428,22 @@
    "t5": 1753,
    "t20": 5773,
    "buyDays5": 2,
-   "ret20": -37.31
+   "ret5": -25.36,
+   "ret20": -37.31,
+   "ret60": -16.48,
+   "ret240": 58.77,
+   "fund": {
+    "quarter": "2026-06-30",
+    "epsTtm": 75.13,
+    "epsYoY": 145.3,
+    "gmLatest": 32.6,
+    "gmYoYpp": 8.2,
+    "npmLatest": 19.5,
+    "npmYoYpp": 6,
+    "rev3mYoY": 51.8,
+    "revMonth": "2026-10-01"
+   },
+   "fundUpdated": "2026-11-07"
   },
   "3026": {
    "close": 475.5,
@@ -199,7 +454,22 @@
    "t5": -2808,
    "t20": -1011,
    "buyDays5": 4,
-   "ret20": -40.26
+   "ret5": -32.74,
+   "ret20": -40.26,
+   "ret60": -11.12,
+   "ret240": 343.13,
+   "fund": {
+    "quarter": "2026-09-30",
+    "epsTtm": 12.92,
+    "epsYoY": 110.8,
+    "gmLatest": 29.8,
+    "gmYoYpp": 11.6,
+    "npmLatest": 15.9,
+    "npmYoYpp": 7.8,
+    "rev3mYoY": 31.6,
+    "revMonth": "2026-11-01"
+   },
+   "fundUpdated": "2026-11-07"
   },
   "3037": {
    "close": 727,
@@ -210,7 +480,22 @@
    "t5": 2360.8,
    "t20": 10012.6,
    "buyDays5": 0,
-   "ret20": -44.5
+   "ret5": -26.49,
+   "ret20": -44.5,
+   "ret60": -23.87,
+   "ret240": 355.75,
+   "fund": {
+    "quarter": "2026-09-30",
+    "epsTtm": 20.41,
+    "epsYoY": 871.9,
+    "gmLatest": 28.8,
+    "gmYoYpp": 15.5,
+    "npmLatest": 19.1,
+    "npmYoYpp": 12.6,
+    "rev3mYoY": 62.8,
+    "revMonth": "2026-11-01"
+   },
+   "fundUpdated": "2026-11-07"
   },
   "3231": {
    "close": 160,
@@ -221,7 +506,22 @@
    "t5": 5303.7,
    "t20": 11500.3,
    "buyDays5": 0,
-   "ret20": -15.57
+   "ret5": -12.81,
+   "ret20": -15.57,
+   "ret60": -12.81,
+   "ret240": 20.64,
+   "fund": {
+    "quarter": "2026-06-30",
+    "epsTtm": 12.75,
+    "epsYoY": 73,
+    "gmLatest": 5.7,
+    "gmYoYpp": 1.2,
+    "npmLatest": 1.7,
+    "npmYoYpp": 0.5,
+    "rev3mYoY": 121.6,
+    "revMonth": "2026-11-01"
+   },
+   "fundUpdated": "2026-11-07"
   },
   "3260": {
    "close": 299.5,
@@ -232,7 +532,22 @@
    "t5": 784.7,
    "t20": 2646.3,
    "buyDays5": 2,
-   "ret20": -19.05
+   "ret5": -13.56,
+   "ret20": -19.05,
+   "ret60": -23.54,
+   "ret240": 68.57,
+   "fund": {
+    "quarter": "2026-06-30",
+    "epsTtm": 81.11,
+    "epsYoY": 978.6,
+    "gmLatest": 42.1,
+    "gmYoYpp": 23.1,
+    "npmLatest": 27.3,
+    "npmYoYpp": 20.4,
+    "rev3mYoY": 252.1,
+    "revMonth": "2026-11-01"
+   },
+   "fundUpdated": "2026-11-07"
   },
   "3324": {
    "close": 1055,
@@ -243,7 +558,22 @@
    "t5": 312.4,
    "t20": 1161.6,
    "buyDays5": 3,
-   "ret20": -31.05
+   "ret5": -20.68,
+   "ret20": -31.05,
+   "ret60": 3.94,
+   "ret240": 2.11,
+   "fund": {
+    "quarter": "2026-06-30",
+    "epsTtm": 43.81,
+    "epsYoY": 157.4,
+    "gmLatest": 28.4,
+    "gmYoYpp": 2.3,
+    "npmLatest": 11.1,
+    "npmYoYpp": 8.2,
+    "rev3mYoY": 43.5,
+    "revMonth": "2026-11-01"
+   },
+   "fundUpdated": "2026-11-07"
   },
   "3374": {
    "close": 375,
@@ -254,18 +584,48 @@
    "t5": 4.5,
    "t20": -1504.4,
    "buyDays5": 2,
-   "ret20": -23.08
+   "ret5": -23.16,
+   "ret20": -23.08,
+   "ret60": 22.35,
+   "ret240": 152.08,
+   "fund": {
+    "quarter": "2026-09-30",
+    "epsTtm": 7.03,
+    "epsYoY": 47.4,
+    "gmLatest": 32.9,
+    "gmYoYpp": 3.9,
+    "npmLatest": 22.5,
+    "npmYoYpp": 1.9,
+    "rev3mYoY": 29.3,
+    "revMonth": "2026-10-01"
+   },
+   "fundUpdated": "2026-11-07"
   },
   "3481": {
    "close": 36.05,
    "date": "2026-11-06",
    "avgVol20": 121666.7,
-   "f5": 19745,
-   "f20": -30525.4,
-   "t5": -80.8,
-   "t20": 1863.5,
-   "buyDays5": 2,
-   "ret20": -29.45
+   "f5": 0,
+   "f20": 0,
+   "t5": 0,
+   "t20": 0,
+   "buyDays5": 0,
+   "ret5": -15.28,
+   "ret20": -29.45,
+   "ret60": -24.19,
+   "ret240": 166.3,
+   "fund": {
+    "quarter": "2026-06-30",
+    "epsTtm": 0.78,
+    "epsYoY": -30.4,
+    "gmLatest": 14.6,
+    "gmYoYpp": 6.2,
+    "npmLatest": 7.1,
+    "npmYoYpp": 8.5,
+    "rev3mYoY": -0.4,
+    "revMonth": "2026-10-01"
+   },
+   "fundUpdated": "2026-11-07"
   },
   "3596": {
    "close": 136.5,
@@ -276,7 +636,22 @@
    "t5": 13.1,
    "t20": -61.4,
    "buyDays5": 4,
-   "ret20": -12.5
+   "ret5": -8.7,
+   "ret20": -12.5,
+   "ret60": -23.53,
+   "ret240": -25.5,
+   "fund": {
+    "quarter": "2026-09-30",
+    "epsTtm": 13.04,
+    "epsYoY": 5.8,
+    "gmLatest": 14.9,
+    "gmYoYpp": -0.4,
+    "npmLatest": 5.2,
+    "npmYoYpp": -0.2,
+    "rev3mYoY": 6.9,
+    "revMonth": "2026-11-01"
+   },
+   "fundUpdated": "2026-11-07"
   },
   "4958": {
    "close": 373,
@@ -287,7 +662,22 @@
    "t5": 3490.9,
    "t20": 12271.2,
    "buyDays5": 0,
-   "ret20": -35.02
+   "ret5": -23.25,
+   "ret20": -35.02,
+   "ret60": -21.14,
+   "ret240": 143.08,
+   "fund": {
+    "quarter": "2026-06-30",
+    "epsTtm": 9.1,
+    "epsYoY": -3.2,
+    "gmLatest": 23.1,
+    "gmYoYpp": 4.7,
+    "npmLatest": 4.9,
+    "npmYoYpp": 3.4,
+    "rev3mYoY": 38.9,
+    "revMonth": "2026-11-01"
+   },
+   "fundUpdated": "2026-11-07"
   },
   "5483": {
    "close": 144.5,
@@ -298,7 +688,22 @@
    "t5": 398.4,
    "t20": 2301.8,
    "buyDays5": 3,
-   "ret20": -32.79
+   "ret5": -16.95,
+   "ret20": -32.79,
+   "ret60": -14.24,
+   "ret240": 28.04,
+   "fund": {
+    "quarter": "2026-06-30",
+    "epsTtm": 9.37,
+    "epsYoY": 78.5,
+    "gmLatest": 22.7,
+    "gmYoYpp": -2.7,
+    "npmLatest": 9.3,
+    "npmYoYpp": 5.7,
+    "rev3mYoY": 5.4,
+    "revMonth": "2026-11-01"
+   },
+   "fundUpdated": "2026-11-07"
   },
   "6239": {
    "close": 203.5,
@@ -309,7 +714,22 @@
    "t5": 1297.1,
    "t20": 2851.8,
    "buyDays5": 2,
-   "ret20": -34.46
+   "ret5": -20.51,
+   "ret20": -34.46,
+   "ret60": -22.48,
+   "ret240": 22.06,
+   "fund": {
+    "quarter": "2026-09-30",
+    "epsTtm": 11.57,
+    "epsYoY": 65.3,
+    "gmLatest": 24,
+    "gmYoYpp": 7.9,
+    "npmLatest": 10.3,
+    "npmYoYpp": 2.6,
+    "rev3mYoY": 25.5,
+    "revMonth": "2026-11-01"
+   },
+   "fundUpdated": "2026-11-07"
   },
   "6488": {
    "close": 512,
@@ -320,7 +740,22 @@
    "t5": -6408.1,
    "t20": -8904,
    "buyDays5": 0,
-   "ret20": -57.51
+   "ret5": -32.28,
+   "ret20": -57.51,
+   "ret60": -41.28,
+   "ret240": 28.32,
+   "fund": {
+    "quarter": "2026-09-30",
+    "epsTtm": 19.61,
+    "epsYoY": 69.6,
+    "gmLatest": 20,
+    "gmYoYpp": 1.6,
+    "npmLatest": 10.1,
+    "npmYoYpp": -3.5,
+    "rev3mYoY": 0.3,
+    "revMonth": "2026-11-01"
+   },
+   "fundUpdated": "2026-11-07"
   },
   "6669": {
    "close": 1555,
@@ -331,7 +766,22 @@
    "t5": -476.9,
    "t20": -12064,
    "buyDays5": 4,
-   "ret20": -32.1
+   "ret5": -14.09,
+   "ret20": -32.1,
+   "ret60": -23.96,
+   "ret240": 17.12,
+   "fund": {
+    "quarter": "2026-09-30",
+    "epsTtm": 272.05,
+    "epsYoY": 13.8,
+    "gmLatest": 8.9,
+    "gmYoYpp": 0.1,
+    "npmLatest": 5.4,
+    "npmYoYpp": -0.4,
+    "rev3mYoY": 76.2,
+    "revMonth": "2026-11-01"
+   },
+   "fundUpdated": "2026-11-07"
   },
   "6770": {
    "close": 52.9,
@@ -342,7 +792,22 @@
    "t5": 2206.1,
    "t20": 28625.7,
    "buyDays5": 1,
-   "ret20": -28.8
+   "ret5": -20.57,
+   "ret20": -28.8,
+   "ret60": -18.97,
+   "ret240": 73.73,
+   "fund": {
+    "quarter": "2026-06-30",
+    "epsTtm": 3.32,
+    "epsYoY": null,
+    "gmLatest": 28.3,
+    "gmYoYpp": 37.3,
+    "npmLatest": 19,
+    "npmYoYpp": 48.6,
+    "rev3mYoY": 80.3,
+    "revMonth": "2026-10-01"
+   },
+   "fundUpdated": "2026-11-07"
   },
   "8046": {
    "close": 875,
@@ -353,7 +818,22 @@
    "t5": 1299.1,
    "t20": 6389.4,
    "buyDays5": 2,
-   "ret20": -41.86
+   "ret5": -26.47,
+   "ret20": -41.86,
+   "ret60": -18.98,
+   "ret240": 221.19,
+   "fund": {
+    "quarter": "2026-09-30",
+    "epsTtm": 12.49,
+    "epsYoY": 773.4,
+    "gmLatest": 29.3,
+    "gmYoYpp": 19.7,
+    "npmLatest": 20.1,
+    "npmYoYpp": 13.5,
+    "rev3mYoY": null,
+    "revMonth": null
+   },
+   "fundUpdated": "2026-11-07"
   },
   "8210": {
    "close": 546,
@@ -364,7 +844,22 @@
    "t5": -299,
    "t20": -736,
    "buyDays5": 4,
-   "ret20": -38.31
+   "ret5": -23.74,
+   "ret20": -38.31,
+   "ret60": -51.03,
+   "ret240": -45.36,
+   "fund": {
+    "quarter": "2026-09-30",
+    "epsTtm": 38.5,
+    "epsYoY": 58.3,
+    "gmLatest": 25.8,
+    "gmYoYpp": -5.5,
+    "npmLatest": 13.6,
+    "npmYoYpp": -3.9,
+    "rev3mYoY": 22.4,
+    "revMonth": "2026-11-01"
+   },
+   "fundUpdated": "2026-11-07"
   },
   "0050": {
    "close": 92.5,
@@ -375,7 +870,12 @@
    "t5": 22412,
    "t20": 58003.2,
    "buyDays5": 0,
-   "ret20": -20.6
+   "ret5": -11.86,
+   "ret20": -20.6,
+   "ret60": -10.06,
+   "ret240": 50.88,
+   "fund": null,
+   "fundUpdated": "2026-11-07"
   },
   "006208": {
    "close": 210.1,
@@ -386,7 +886,12 @@
    "t5": 212,
    "t20": 368,
    "buyDays5": 1,
-   "ret20": -20.99
+   "ret5": -12.73,
+   "ret20": -20.99,
+   "ret60": -10.73,
+   "ret240": 50.05,
+   "fund": null,
+   "fundUpdated": "2026-11-07"
   },
   "0056": {
    "close": 49.91,
@@ -397,7 +902,12 @@
    "t5": 3260,
    "t20": 17520,
    "buyDays5": 1,
-   "ret20": -14.1
+   "ret5": -10.64,
+   "ret20": -11.51,
+   "ret60": 0.72,
+   "ret240": 51.5,
+   "fund": null,
+   "fundUpdated": "2026-11-07"
   },
   "00878": {
    "close": 31.99,
@@ -408,7 +918,12 @@
    "t5": 0,
    "t20": 0,
    "buyDays5": 0,
-   "ret20": -9.04
+   "ret5": -8.1,
+   "ret20": -9.04,
+   "ret60": 0.51,
+   "ret240": 64.3,
+   "fund": null,
+   "fundUpdated": "2026-11-07"
   },
   "00919": {
    "close": 30.14,
@@ -419,7 +934,12 @@
    "t5": 0,
    "t20": -100,
    "buyDays5": 0,
-   "ret20": -5.22
+   "ret5": -7.52,
+   "ret20": -5.22,
+   "ret60": 4.87,
+   "ret240": 59.61,
+   "fund": null,
+   "fundUpdated": "2026-11-07"
   },
   "00981A": {
    "close": 21.46,
@@ -430,7 +950,12 @@
    "t5": 0,
    "t20": 2327,
    "buyDays5": 0,
-   "ret20": -34.17
+   "ret5": -19.5,
+   "ret20": -34.17,
+   "ret60": -21.73,
+   "ret240": 47.32,
+   "fund": null,
+   "fundUpdated": "2026-11-07"
   },
   "00991A": {
    "close": 12.77,
@@ -441,7 +966,12 @@
    "t5": -1340,
    "t20": -1340,
    "buyDays5": 1,
-   "ret20": -34.01
+   "ret5": -21.22,
+   "ret20": -34.01,
+   "ret60": -24.26,
+   "ret240": null,
+   "fund": null,
+   "fundUpdated": "2026-11-07"
   },
   "00631L": {
    "close": 26.3,
@@ -452,7 +982,12 @@
    "t5": 514,
    "t20": -4386,
    "buyDays5": 0,
-   "ret20": -37.22
+   "ret5": -23.01,
+   "ret20": -37.22,
+   "ret60": -21.91,
+   "ret240": -92.49,
+   "fund": null,
+   "fundUpdated": "2026-11-07"
   }
  }
 }

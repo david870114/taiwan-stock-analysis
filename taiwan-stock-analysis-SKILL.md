@@ -405,17 +405,31 @@ window.addEventListener('load', updateLiveMetric);
 
 ## 首頁操作排名（home.html + chips.json）
 
-首頁上半是六個分頁入口（AI 產業鏈／其他追蹤清單／ETF／資金配置／法人動態／我的股票，前五個用 `index.html#hash` 直接開對應分頁），下半是「近期操作排名 Top 15」：把 41 檔追蹤標的（個股與 ETF 混排）用同一把尺打分數，一開首頁就看得到現在該買／該減碼什麼。
+首頁上半是六個分頁入口（AI 產業鏈／其他追蹤清單／ETF／資金配置／法人動態／我的股票，前五個用 `index.html#hash` 直接開對應分頁），下半是「近期操作排名 Top 15」＋「該減碼」清單：把 41 檔追蹤標的（個股與 ETF 混排）用同一把尺打分數，一開首頁就看得到現在該買／該減碼什麼。
+
+**首頁不抓即時股價**（2026/11 改）：價格一律用 `chips.json` 的前一交易日收盤，每交易日收盤後由 GitHub Actions 更新。index.html 與 my-stocks.html 的即時股價不受影響。
 
 ### 評分公式（總分 100）
 
-**基本面 60 分 — 絕對值，對照各分析頁的估值帶**
+**基本面 60 分 — 絕對值，對照各分析頁的估值帶與 FinMind 季報**
 
 | 項目 | 配分 | 算法 |
 |------|------|------|
-| 估值位階 | 35 | `clamp((昂貴價 − 現價) ÷ (昂貴價 − 便宜價), 0, 1) × 35` |
-| 殖利率 | 15 | `clamp(年化配息 ÷ 現價 ÷ 6%, 0, 1) × 15`；無配息 0 分 |
-| 法人目標價空間 | 10 | `clamp(((目標價 − 現價) ÷ 現價) ÷ 30%, 0, 1) × 10`；無 tp 給中性 4 分 |
+| 估值位階 | 22 | `clamp((昂貴價 − 現價) ÷ (昂貴價 − 便宜價), 0, 1) × 22` |
+| 財務品質 | 24 | 見下表 |
+| 殖利率 | 8 | `clamp(年化配息 ÷ 現價 ÷ 6%, 0, 1) × 8`；無配息 0 分 |
+| 法人目標價空間 | 6 | `clamp(((目標價 − 現價) ÷ 現價) ÷ 30%, 0, 1) × 6`；無 tp 給中性 3 分 |
+
+**財務品質 24 分**（子項缺資料給一半中性分；**ETF 無季報 → 整塊給中性 12 分**）
+
+| 子項 | 配分 | 線性區間（低→0 分，高→滿分） |
+|------|------|------|
+| EPS 成長（TTM YoY） | 8 | −20% → +50% |
+| 毛利率 vs 去年同季（百分點） | 6 | −3pp → +3pp |
+| 淨利率 vs 去年同季（百分點） | 5 | −3pp → +3pp |
+| 近三月累計營收 YoY | 5 | −20% → +40% |
+
+毛利率／淨利率一律跟**去年同季**比，不跟上一季比，否則淡旺季會被誤判成趨勢（臻鼎、南電這類蘋果鏈最明顯）。淨利率優先取 `EquityAttributableToOwnersOfParent`（歸屬母公司），控股公司（4958、5483）用合併淨利會灌水。月營收是台股特有的領先指標，每月 10 號公布，比季報早約兩個月反應轉折。
 
 **籌碼面 40 分 — 同儕百分位（在 41 檔內比名次）**
 
@@ -450,17 +464,48 @@ window.addEventListener('load', updateLiveMetric);
 
 | 條件 | 動作 |
 |------|------|
-| 現價 ≥ 昂貴價 | 🔴 減碼／不追高（硬門檻，分數再高也不追） |
+| 觸發減碼條件（見下） | 🔴 減碼／不追高（硬門檻，分數再高也不追） |
 | 現價 ≤ 便宜價 且 總分 ≥ 55 | 🟢 積極買進 |
 | 總分 ≥ 65 且 現價 < 合理價 | 🟢 分批買進 |
 | 總分 ≥ 50 | 🔵 觀察／定期定額 |
 | 其餘 | ⚪ 持有、暫不加碼 |
 
+### 「該減碼」清單（Top 15 下方獨立一區）
+
+任一條件命中就列入，並在頁面寫出原因；兩條都中就列兩個原因：
+
+1. **估值**：收盤 ≥ 昂貴價 → 「收盤 2,180 已站上昂貴價 2,100」
+2. **基本面惡化**：毛利率年減 ≥ 2pp **且** TTM EPS 年減 → 「毛利率年減 3.2pp、EPS 年減 18%」
+
+用「且」不是「或」：單季毛利率波動很常見，兩個同時轉壞才算趨勢。排序以超過昂貴價的幅度大者在前，純基本面觸發的排後面。首頁不知道實際持股，所以區塊文案寫的是「目前不建議加碼」。
+
+### 漲幅欄（只顯示，不計分）
+
+5 日／1 月／3 月／1 年 = 5／20／60／240 個交易日，**一律還原除權息**：用 `TaiwanStockDividendResult` 的 `after_price ÷ before_price` 當係數，把事件日之前的收盤連乘還原（FinMind 的 `TaiwanStockPriceAdj` 要付費，不能用）。不還原的話 6669（2026-09-02 除權，7800→2615）會出現 −66% 的假跌幅。顏色用**台股慣例紅漲綠跌**，與「vs 合理價」的綠便宜／紅昂貴是兩套 class（`.up`/`.down` vs `.green`/`.red`），不可共用。
+
+### chips.json 欄位
+
+```
+stocks[代號] = {
+  close, date,                      // 前一交易日收盤與日期
+  avgVol20, f5, f20, t5, t20, buyDays5,   // 籌碼（張）
+  ret5, ret20, ret60, ret240,       // 還原後報酬率 %
+  fund: {                           // ETF 為 null
+    quarter, epsTtm, epsYoY,
+    gmLatest, gmYoYpp, npmLatest, npmYoYpp,
+    rev3mYoY, revMonth
+  },
+  fundUpdated                       // 財報抓取日，超過 6 天才重抓
+}
+```
+
 ### 維護
 
-- `chips.json` 由 `node scripts/update-chips.mjs` 產生（FinMind `TaiwanStockInstitutionalInvestorsBuySell` ＋ `TaiwanStockPrice`，上市櫃都有資料，逐檔間隔 200ms），已掛進 `.github/workflows/update-institutional.yml`，每交易日 17:00 自動更新並 commit
+- `chips.json` 由 `node scripts/update-chips.mjs` 產生，已掛進 `.github/workflows/update-institutional.yml`（每交易日收盤後自動更新並 commit，該步驟設 `if: always()`，GoodInfo 爬蟲掛掉也會跑）
+- **請求數控制**：每檔每日 3 次（price／institutional／dividendResult）＝ 123 次；財報與月營收只在 `fundUpdated` 超過 6 天或缺值時才抓（那天 205 次）。FinMind 免費約 300 次/小時，兩者都在額度內。`--full` 強制全抓
+- 單檔抓失敗（多半是限流）會**沿用上一輪的值**並在日誌標 ⚠，不會讓那檔從排名中消失
 - 新增／移除追蹤標的後：`node scripts/export-valuations.mjs` → `node scripts/update-chips.mjs`，首頁排名即自動納入，**home.html 不用改**
-- 首頁即時股價同樣受股價 Worker 限流，逐檔間隔 250ms，第一輪漏掉的隔 600ms 再補抓一輪，快取 key 與 index.html 共用 `tw-stock-last-prices`
+- 自動抓的財報**只影響分數**，不會回頭改估值帶、不寫進 valuations.json、不影響 LINE 到價通知 — 循環股的正常化估值帶仍由人工維護
 - 分數只是排序工具：估值帶若是循環股的正常化 EPS（記憶體、面板、被動元件、航運），排名會跟著那條正常化帶走，不會因單季 EPS 跳動亂跳
 
 ---

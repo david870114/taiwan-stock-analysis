@@ -94,7 +94,7 @@
   .rank-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
   table.rank-table {
     width: 100%; border-collapse: collapse;
-    font-size: 13px; min-width: 560px;
+    font-size: 13px; min-width: 880px;
   }
   .rank-table th {
     font-size: 11px; font-weight: 600; color: #64748b;
@@ -109,20 +109,18 @@
     white-space: nowrap;
   }
   .rank-table tr:last-child td { border-bottom: none; }
-  /* 手機：藏掉 vs 合理價／基本面／籌碼面，留下最關鍵的現價・總分・建議動作 */
-  .act .short { display: none; }
+  /* 手機：欄位不隱藏，整張表左右捲（.rank-scroll） */
   @media(max-width:640px){
-    table.rank-table { min-width: 0; font-size: 12px; }
-    .rank-table th, .rank-table td { padding-left: 4px; padding-right: 4px; }
-    .rank-table th:nth-child(4), .rank-table td:nth-child(4),
-    .rank-table th:nth-child(5), .rank-table td:nth-child(5),
-    .rank-table th:nth-child(6), .rank-table td:nth-child(6) { display: none; }
-    .rank-table .c-name { white-space: normal; line-height: 1.35; }
-    .rank-table .c-name .sid { display: block; margin: 0 0 1px; }
-    .act .full  { display: none; }
-    .act .short { display: inline; }
+    .rank-table { font-size: 12px; }
+    .rank-table th, .rank-table td { padding-left: 5px; padding-right: 5px; }
   }
 
+  /* 往右捲時，名次與標的固定在左側，才知道每一列是哪一檔 */
+  .rank-table th:nth-child(1), .rank-table td:nth-child(1) { position: sticky; left: 0;  z-index: 1; background: #0f1117; }
+  .rank-table th:nth-child(2), .rank-table td:nth-child(2) {
+    position: sticky; left: 26px; z-index: 1; background: #0f1117;
+    box-shadow: 1px 0 0 #1e2535;      /* 凍結欄的分隔線，讓捲動時的交界清楚 */
+  }
   .rank-table .c-rank { width: 26px; text-align: left; color: #64748b; font-size: 12px; }
   .rank-table .c-name { text-align: left; }
   .rank-table .c-name a { color: #e2e8f0; text-decoration: none; font-weight: 600; }
@@ -132,10 +130,18 @@
   .rank-table .total { font-weight: 700; color: #e2e8f0; }
   .rank-table .stale { color: #64748b; }
 
+  /* 估值狀態：綠＝便宜、紅＝昂貴 */
   .green  { color: #22c55e; }
   .red    { color: #ef4444; }
   .yellow { color: #fbbf24; }
   .muted  { color: #64748b; }
+
+  /* 漲跌幅：台股慣例紅漲綠跌，與上面的估值顏色是兩套，不可混用 */
+  .up   { color: #ef4444; }
+  .down { color: #22c55e; }
+  .flat { color: #64748b; }
+  .rank-table th.g-ret { color: #475569; }
+  .rank-table td.ret { font-size: 12px; }
 
   .act { font-size: 12px; font-weight: 600; }
   .act-buy    { color: #22c55e; }
@@ -149,6 +155,24 @@
   .bar > i { display: block; height: 100%; border-radius: 2px; background: #3b82f6; }
 
   .rank-status { font-size: 11px; color: #64748b; margin-top: 10px; }
+
+  /* ── 該減碼清單 ── */
+  .cut { margin-top: 26px; }
+  .cut h3 { font-size: 15px; font-weight: 700; margin-bottom: 3px; }
+  .cut .cut-sub { font-size: 12px; color: #94a3b8; margin-bottom: 12px; line-height: 1.6; }
+  .cut-row {
+    display: flex; align-items: baseline; gap: 10px;
+    background: #1e2535; border-left: 3px solid #ef4444;
+    border-radius: 8px; padding: 11px 14px; margin-bottom: 8px;
+    flex-wrap: wrap;
+  }
+  .cut-row a { color: #e2e8f0; text-decoration: none; font-weight: 700; font-size: 13px; }
+  .cut-row a:hover { color: #93c5fd; }
+  .cut-row .sid { color: #64748b; font-size: 11px; font-family: monospace; margin-right: 6px; }
+  .cut-row .why { font-size: 12px; color: #94a3b8; line-height: 1.6; }
+  .cut-row .why b { color: #ef4444; font-weight: 600; }
+  .cut-row .cut-score { margin-left: auto; font-size: 11px; color: #64748b; font-family: "SF Mono", Consolas, monospace; }
+  .cut-empty { font-size: 12px; color: #64748b; background: #1e2535; border-radius: 8px; padding: 14px; }
 
   /* 公式說明 */
   details.formula { margin-top: 14px; }
@@ -246,7 +270,7 @@
       <h2>🎯 近期操作排名 Top 15</h2>
       <span class="asof" id="rank-asof">—</span>
     </div>
-    <p class="rank-sub">基本面 60 分（估值位階、殖利率、法人目標價）＋ 籌碼面 40 分（外資／投信買超強度），不分個股與 ETF，分數越高代表現在越值得買。</p>
+    <p class="rank-sub">基本面 60 分（估值位階、財務品質、殖利率、法人目標價）＋ 籌碼面 40 分（外資／投信買超強度），不分個股與 ETF，分數越高代表現在越值得買。收盤價為前一交易日，每個交易日收盤後自動更新；漲幅只供對照，不計入分數。觸發減碼的標的已排除，列在下方。</p>
 
     <div class="summary" id="rank-summary"></div>
 
@@ -254,27 +278,44 @@
       <table class="rank-table">
         <thead>
           <tr>
-            <th>#</th><th>標的</th><th>現價</th><th>vs 合理價</th>
+            <th>#</th><th>標的</th><th>收盤價</th><th>vs 合理價</th>
+            <th class="g-ret">5日</th><th class="g-ret">1月</th><th class="g-ret">3月</th><th class="g-ret">1年</th>
             <th>基本面</th><th>籌碼面</th><th>總分</th><th>建議動作</th>
           </tr>
         </thead>
         <tbody id="rank-body">
-          <tr><td colspan="8" class="muted" style="text-align:center;padding:24px">載入中…</td></tr>
+          <tr><td colspan="12" class="muted" style="text-align:center;padding:24px">載入中…</td></tr>
         </tbody>
       </table>
     </div>
 
     <div class="rank-status" id="rank-status"></div>
 
+    <!-- ── 該減碼清單 ── -->
+    <div class="cut">
+      <h3>🔴 該減碼</h3>
+      <p class="cut-sub">估值已過昂貴價，或毛利率與 EPS 同時轉壞的標的。首頁不知道你實際持股，這裡只是「目前不建議加碼、有持股可考慮減碼」的清單。</p>
+      <div id="cut-list"></div>
+    </div>
+
     <details class="formula">
       <summary>計分公式說明</summary>
       <div class="fbody">
-        <h4>基本面 60 分（絕對值，對照各頁估值帶）</h4>
+        <h4>基本面 60 分（絕對值，對照各頁估值帶與財報）</h4>
         <ul>
-          <li><b>估值位階 35 分</b>　<code>(昂貴價 − 現價) ÷ (昂貴價 − 便宜價)</code>，夾在 0～1 後 ×35。跌到便宜價以下拿滿分，漲過昂貴價得 0。</li>
-          <li><b>殖利率 15 分</b>　<code>年化配息 ÷ 現價 ÷ 6%</code>，夾在 0～1 後 ×15。殖利率 6% 以上滿分；無配息得 0。</li>
-          <li><b>法人目標價空間 10 分</b>　<code>((目標價 − 現價) ÷ 現價) ÷ 30%</code>，夾在 0～1 後 ×10。沒有法人覆蓋的給中性 4 分，不扣分。</li>
+          <li><b>估值位階 22 分</b>　<code>(昂貴價 − 現價) ÷ (昂貴價 − 便宜價)</code>，夾在 0～1 後 ×22。跌到便宜價以下拿滿分，漲過昂貴價得 0。</li>
+          <li><b>財務品質 24 分</b>　見下一段。</li>
+          <li><b>殖利率 8 分</b>　<code>年化配息 ÷ 現價 ÷ 6%</code>，夾在 0～1 後 ×8。殖利率 6% 以上滿分；無配息得 0。</li>
+          <li><b>法人目標價空間 6 分</b>　<code>((目標價 − 現價) ÷ 現價) ÷ 30%</code>，夾在 0～1 後 ×6。沒有法人覆蓋的給中性 3 分，不扣分。</li>
         </ul>
+        <h4>財務品質 24 分（FinMind 季報與月營收，每週更新）</h4>
+        <ul>
+          <li><b>EPS 成長 8 分</b>　近四季 EPS 合計與去年同期相比的年增率：−20% 得 0 分、+50% 以上滿分。用 TTM 是為了平滑單季波動。</li>
+          <li><b>毛利率變化 6 分</b>　最新季毛利率 − <b>去年同季</b>毛利率（百分點）：−3pp 得 0 分、+3pp 滿分。用同季相比才不會被淡旺季誤導。</li>
+          <li><b>淨利率變化 5 分</b>　同樣用去年同季比較，區間相同。抓得到「毛利持平但費用或業外吃掉獲利」的情況；控股公司（如臻鼎、中美晶）一律用歸屬母公司淨利，不用合併淨利。</li>
+          <li><b>月營收動能 5 分</b>　近三月累計營收年增率：−20% 得 0 分、+40% 以上滿分。台股每月 10 號公布，比季報早兩個月反應轉折。</li>
+        </ul>
+        <p style="margin-top:10px">ETF 沒有財報（查詢回 0 筆），財務品質整塊給中性 12 分，不獎不罰；個股若某一項缺資料，該項給一半分數。</p>
         <h4>籌碼面 40 分（同儕百分位，在追蹤的 41 檔中比名次）</h4>
         <ul>
           <li><b>外資 20 日買超強度 18 分</b>　<code>外資 20 日淨買張數 ÷ (20 日均量 × 20)</code> 的百分位 ×18。除以成交量是為了讓大小型股可比。</li>
@@ -292,13 +333,16 @@
         <p>所以<b>主權重留在 20 日</b>：持有期以月計時它最準，7 日反而較差（5.1% vs 6.9%）。只有在看「未來一週」時短窗才略勝（3 日 4.4% vs 20 日 3.7%），而那段已由上面的「近 5 日買盤動能」涵蓋。</p>
         <h4>建議動作判定（由上往下第一個命中者）</h4>
         <ul>
-          <li>🔴 <b>減碼／不追高</b>　現價 ≥ 昂貴價（硬門檻，分數再高也不追）</li>
+          <li>🔴 <b>減碼／不追高</b>　現價 ≥ 昂貴價（硬門檻，分數再高也不追），或毛利率年減 ≥ 2pp <b>且</b> EPS 年減</li>
           <li>🟢 <b>積極買進</b>　現價 ≤ 便宜價 且 總分 ≥ 55</li>
           <li>🟢 <b>分批買進</b>　總分 ≥ 65 且 現價 &lt; 合理價</li>
           <li>🔵 <b>觀察／定期定額</b>　總分 ≥ 50</li>
           <li>⚪ <b>持有、暫不加碼</b>　其餘</li>
         </ul>
-        <p style="margin-top:10px">⚠️ 估值帶來自各分析頁，循環股（記憶體、面板、被動元件、航運）採正常化 EPS，不隨單季 EPS 跳動；分數只是排序工具，實際進出仍要看個股基本面有沒有變化。</p>
+        <p style="margin-top:10px">基本面觸發減碼用「毛利率下滑 <b>且</b> EPS 衰退」而非「或」，是因為單一季毛利率波動很常見，兩個同時轉壞才是趨勢。</p>
+        <h4>漲幅欄（只顯示，不計分）</h4>
+        <p>5 日／1 月／3 月／1 年對應 5、20、60、240 個交易日，<b>已還原除權息</b>（用除權息前後參考價的比值回推，否則像緯穎 2026/09 除權後會出現 −66% 的假跌幅）。顏色依台股慣例紅漲綠跌，與左邊「vs 合理價」的綠便宜／紅昂貴是兩套，不要混看。</p>
+        <p style="margin-top:10px">⚠️ 估值帶來自各分析頁，循環股（記憶體、面板、被動元件、航運）採正常化 EPS，不隨單季 EPS 跳動；這裡自動抓的財報只影響分數，不會回頭改估值帶，也不會影響 LINE 到價通知。分數只是排序工具，實際進出仍要看個股基本面有沒有變化。</p>
       </div>
     </details>
   </div>
@@ -313,14 +357,12 @@
 /* ══════════════════════════════════════════════════════════
    近期操作排名
    資料：valuations.json（估值帶／配息／法人目標價，由 TRACKED 匯出）
-         chips.json（外資・投信買賣超，每交易日收盤後由 GitHub Actions 更新）
-         即時股價 Worker（逐檔間隔 250ms，上游瞬間大量請求會回 520）
+         chips.json（收盤價、漲幅、外資・投信買賣超、季報財務指標，
+                     每交易日收盤後由 GitHub Actions 更新）
+   收盤價為前一交易日，不抓即時股價。
 ══════════════════════════════════════════════════════════ */
-var PRICE_API  = 'https://taiwan-stock-price.david870114.workers.dev/?id=';
-var CACHE_KEY  = 'tw-stock-last-prices';   // 與 index.html 共用同一份快取
-var TOP_N      = 15;
-
-var VALS = [], CHIPS = {}, PRICE = {}, LIVE = {};
+var TOP_N = 15;
+var VALS = [], CHIPS = {};
 
 function clamp01(x) { return Math.max(0, Math.min(1, x)); }
 function fmtPct(v)  { return (v > 0 ? '+' : '') + v.toFixed(1) + '%'; }
@@ -348,15 +390,32 @@ function chipRatios(c) {
   };
 }
 
+/* 財務品質 24 分：EPS 成長 8 ／ 毛利率 6 ／ 淨利率 5 ／ 月營收 5
+   缺資料的子項給一半中性分；ETF 沒有財報 → 整塊 12 分 */
+function fundQuality(c) {
+  var f = c && c.fund;
+  if (!f) return { score: 12, items: null };
+  function pick(v, lo, hi, full) {
+    if (v === null || v === undefined) return full / 2;
+    return clamp01((v - lo) / (hi - lo)) * full;
+  }
+  var eps = pick(f.epsYoY,   -20, 50, 8);   // TTM EPS 年增率 %
+  var gm  = pick(f.gmYoYpp,   -3,  3, 6);   // 毛利率 vs 去年同季（百分點）
+  var npm = pick(f.npmYoYpp,  -3,  3, 5);   // 淨利率 vs 去年同季（百分點）
+  var rev = pick(f.rev3mYoY, -20, 40, 5);   // 近三月累計營收年增率 %
+  return { score: eps + gm + npm + rev, items: { eps: eps, gm: gm, npm: npm, rev: rev } };
+}
+
 function scoreStock(v, c, price, pool) {
   /* ── 基本面 60 ── */
   var valS = (price && v.expensive > v.cheap)
-    ? clamp01((v.expensive - price) / (v.expensive - v.cheap)) * 35 : 17.5;
+    ? clamp01((v.expensive - price) / (v.expensive - v.cheap)) * 22 : 11;
+  var fq   = fundQuality(c);
   var yld  = (price && v.annualDiv) ? v.annualDiv / price * 100 : 0;
-  var yldS = clamp01(yld / 6) * 15;
+  var yldS = clamp01(yld / 6) * 8;
   var tpUp = (price && v.tp) ? (v.tp - price) / price : null;
-  var tpS  = tpUp === null ? 4 : clamp01(tpUp / 0.30) * 10;
-  var fund = valS + yldS + tpS;
+  var tpS  = tpUp === null ? 3 : clamp01(tpUp / 0.30) * 6;
+  var fund = valS + fq.score + yldS + tpS;
 
   /* ── 籌碼面 40（同儕百分位）── */
   var r = chipRatios(c), chip;
@@ -371,22 +430,36 @@ function scoreStock(v, c, price, pool) {
          + r.days * 5;
   }
 
-  return { fund: fund, chip: chip, total: fund + chip, yld: yld, tpUp: tpUp };
+  return { fund: fund, chip: chip, total: fund + chip, yld: yld, tpUp: tpUp, fq: fq };
 }
 
-function actionOf(s, v, price) {
-  if (price && v.expensive && price >= v.expensive) return { txt:'🔴 減碼／不追高', short:'🔴 減碼', cls:'act-reduce', kind:'sell' };
-  if (price && v.cheap && price <= v.cheap && s.total >= 55) return { txt:'🟢 積極買進', short:'🟢 積極買', cls:'act-buy', kind:'buy' };
-  if (s.total >= 65 && price && v.fair && price < v.fair)    return { txt:'🟢 分批買進', short:'🟢 分批買', cls:'act-accum', kind:'buy' };
-  if (s.total >= 50) return { txt:'🔵 觀察／定期定額', short:'🔵 觀察', cls:'act-watch', kind:'watch' };
-  return { txt:'⚪ 持有、暫不加碼', short:'⚪ 持有', cls:'act-hold', kind:'hold' };
+/* 該減碼的理由；回傳空陣列代表不用減碼 */
+function cutReasons(v, c, price) {
+  var out = [];
+  if (price && v.expensive && price >= v.expensive) {
+    out.push('收盤 ' + price.toLocaleString() + ' 已站上昂貴價 ' + v.expensive.toLocaleString());
+  }
+  var f = c && c.fund;
+  // 用「且」而非「或」：單季毛利率波動很常見，兩個同時轉壞才算趨勢
+  if (f && f.gmYoYpp !== null && f.gmYoYpp <= -2 && f.epsYoY !== null && f.epsYoY < 0) {
+    out.push('毛利率年減 ' + Math.abs(f.gmYoYpp).toFixed(1) + 'pp、EPS 年減 ' + Math.abs(f.epsYoY).toFixed(0) + '%');
+  }
+  return out;
 }
 
-function priceOf(id) {
-  if (LIVE[id]) return { px: LIVE[id], live: true };
-  if (PRICE[id]) return { px: PRICE[id], live: false };
-  var c = CHIPS[id];
-  return c && c.close ? { px: c.close, live: false } : { px: null, live: false };
+function actionOf(s, v, price, cuts) {
+  if (cuts.length) return { txt:'🔴 減碼／不追高', cls:'act-reduce', kind:'sell' };
+  if (price && v.cheap && price <= v.cheap && s.total >= 55) return { txt:'🟢 積極買進', cls:'act-buy', kind:'buy' };
+  if (s.total >= 65 && price && v.fair && price < v.fair)    return { txt:'🟢 分批買進', cls:'act-accum', kind:'buy' };
+  if (s.total >= 50) return { txt:'🔵 觀察／定期定額', cls:'act-watch', kind:'watch' };
+  return { txt:'⚪ 持有、暫不加碼', cls:'act-hold', kind:'hold' };
+}
+
+/* 漲跌幅欄：台股慣例紅漲綠跌 */
+function retCell(v) {
+  if (v === null || v === undefined) return '<td class="num ret muted">—</td>';
+  var cls = v > 0 ? 'up' : v < 0 ? 'down' : 'flat';
+  return '<td class="num ret ' + cls + '">' + (v > 0 ? '+' : '') + v.toFixed(1) + '%</td>';
 }
 
 function render() {
@@ -396,95 +469,78 @@ function render() {
     if (r) { pool.f20.push(r.f20); pool.t20.push(r.t20); pool.m5.push(r.m5); }
   });
 
-  var rows = VALS.map(function(v) {
-    var p = priceOf(v.id);
-    var s = scoreStock(v, CHIPS[v.id], p.px, pool);
-    return { v: v, s: s, px: p.px, live: p.live, act: actionOf(s, v, p.px) };
+  // 沒有收盤價的（抓取失敗）不參與排名，否則會拿中性分排出一個假名次
+  var rows = VALS.filter(function(v){ var c = CHIPS[v.id]; return c && c.close; }).map(function(v) {
+    var c  = CHIPS[v.id];
+    var px = c && c.close ? c.close : null;
+    var s  = scoreStock(v, c, px, pool);
+    var cuts = cutReasons(v, c, px);
+    return { v: v, c: c, s: s, px: px, cuts: cuts, act: actionOf(s, v, px, cuts) };
   }).sort(function(a, b) { return b.s.total - a.s.total; });
 
   /* 摘要 */
-  var buy    = rows.filter(function(r){ return r.act.kind === 'buy';   });
-  var sell   = rows.filter(function(r){ return r.act.kind === 'sell';  });
-  var watch  = rows.filter(function(r){ return r.act.kind === 'watch'; });
+  var buy   = rows.filter(function(r){ return r.act.kind === 'buy';   });
+  var sell  = rows.filter(function(r){ return r.act.kind === 'sell';  });
+  var watch = rows.filter(function(r){ return r.act.kind === 'watch'; });
+  var names = function(a){ return a.slice(0, 4).map(function(r){ return r.v.name; }).join('、') + (a.length > 4 ? ' 等' : ''); };
   var sum = '<span class="sum-pill buy">🟢 可買進 <b>' + buy.length + '</b> 檔</span>' +
             '<span class="sum-pill">🔵 觀察 <b>' + watch.length + '</b> 檔</span>' +
-            '<span class="sum-pill sell">🔴 已過昂貴價 <b>' + sell.length + '</b> 檔</span>';
-  if (buy.length)  sum += '<span class="sum-pill buy">現在買：<b>' + buy.slice(0,4).map(function(r){ return r.v.name; }).join('、') + (buy.length>4?' 等':'') + '</b></span>';
-  if (sell.length) sum += '<span class="sum-pill sell">該減碼：<b>' + sell.slice(0,4).map(function(r){ return r.v.name; }).join('、') + (sell.length>4?' 等':'') + '</b></span>';
+            '<span class="sum-pill sell">🔴 該減碼 <b>' + sell.length + '</b> 檔</span>';
+  if (buy.length)  sum += '<span class="sum-pill buy">現在買：<b>' + names(buy) + '</b></span>';
+  if (sell.length) sum += '<span class="sum-pill sell">該減碼：<b>' + names(sell) + '</b></span>';
   document.getElementById('rank-summary').innerHTML = sum;
 
-  /* 表格 */
+  /* Top 15 表格 */
+  // 觸發減碼的標的不列進買進排名，改列在下方「該減碼」區，避免同一張表混兩種動作
+  var buyRank = rows.filter(function(r){ return r.act.kind !== 'sell'; });
   var html = '';
-  rows.slice(0, TOP_N).forEach(function(r, i) {
-    var v = r.v, s = r.s;
+  buyRank.slice(0, TOP_N).forEach(function(r, i) {
+    var v = r.v, s = r.s, c = r.c || {};
     var vsTxt = '—', vsCls = 'muted';
     if (r.px && v.fair) {
-      var pct = (r.px - v.fair) / v.fair * 100;
-      vsTxt = fmtPct(pct);
-      vsCls = r.px < v.cheap ? 'green' : r.px < v.fair ? 'green' : (v.expensive && r.px >= v.expensive) ? 'red' : 'yellow';
+      vsTxt = fmtPct((r.px - v.fair) / v.fair * 100);
+      vsCls = r.px < v.fair ? 'green' : (v.expensive && r.px >= v.expensive) ? 'red' : 'yellow';
     }
+    var tip = c.fund
+      ? v.name + '　' + c.fund.quarter + '：毛利率 ' + c.fund.gmLatest + '%（年' +
+        (c.fund.gmYoYpp >= 0 ? '增 ' : '減 ') + Math.abs(c.fund.gmYoYpp) + 'pp）、淨利率 ' + c.fund.npmLatest +
+        '%、TTM EPS ' + c.fund.epsTtm + (c.fund.epsYoY === null ? '' : '（年' + (c.fund.epsYoY >= 0 ? '增 ' : '減 ') + Math.abs(c.fund.epsYoY) + '%）') +
+        (c.fund.rev3mYoY === null ? '' : '、近三月營收年' + (c.fund.rev3mYoY >= 0 ? '增 ' : '減 ') + Math.abs(c.fund.rev3mYoY) + '%')
+      : v.name + '：ETF，無季報，財務品質以中性分計';
     html +=
-      '<tr>' +
+      '<tr title="' + tip + '">' +
         '<td class="c-rank">' + (i + 1) + '</td>' +
         '<td class="c-name"><a href="' + v.url + '"><span class="sid">' + v.id + '</span>' + v.name + '</a></td>' +
-        '<td class="num' + (r.live ? '' : ' stale') + '">' + (r.px ? r.px.toLocaleString() + (r.live ? '' : '°') : '—') + '</td>' +
+        '<td class="num">' + (r.px ? r.px.toLocaleString() : '—') + '</td>' +
         '<td class="num ' + vsCls + '">' + vsTxt + '</td>' +
+        retCell(c.ret5) + retCell(c.ret20) + retCell(c.ret60) + retCell(c.ret240) +
         '<td class="num">' + s.fund.toFixed(0) + '<span class="bar"><i style="width:' + (s.fund / 60 * 100).toFixed(0) + '%"></i></span></td>' +
         '<td class="num">' + s.chip.toFixed(0) + '<span class="bar"><i style="width:' + (s.chip / 40 * 100).toFixed(0) + '%;background:#a855f7"></i></span></td>' +
         '<td class="num total">' + s.total.toFixed(0) + '</td>' +
-        '<td class="act ' + r.act.cls + '"><span class="full">' + r.act.txt + '</span>' +
-          '<span class="short">' + r.act.short + '</span></td>' +
+        '<td class="act ' + r.act.cls + '">' + r.act.txt + '</td>' +
       '</tr>';
   });
   document.getElementById('rank-body').innerHTML = html;
-}
 
-/* ── 即時股價：逐檔序列請求、間隔 250ms，結果存 localStorage ── */
-function sleep(ms) { return new Promise(function(res){ setTimeout(res, ms); }); }
-
-async function fetchOne(id) {
-  try {
-    var res  = await fetch(PRICE_API + id, { cache:'no-cache', mode:'cors', credentials:'omit' });
-    var data = JSON.parse(await res.text());
-    if (data.price && data.price !== '-') { LIVE[id] = parseFloat(data.price); return true; }
-  } catch (e) {}
-  return false;
-}
-
-async function fetchPrices() {
-  var status = document.getElementById('rank-status');
-  var ok = 0;
-  for (var i = 0; i < VALS.length; i++) {
-    if (await fetchOne(VALS[i].id)) ok++;
-    status.textContent = '即時股價載入中… ' + (i + 1) + '/' + VALS.length;
-    if (i % 8 === 7) render();
-    await sleep(250);
-  }
-
-  // 被上游限流的那幾檔隔久一點再補抓一輪（同 index.html 的重試策略）
-  var miss = VALS.filter(function(v){ return !LIVE[v.id]; });
-  for (var j = 0; j < miss.length; j++) {
-    status.textContent = '補抓限流的 ' + miss.length + ' 檔… ' + (j + 1) + '/' + miss.length;
-    if (await fetchOne(miss[j].id)) ok++;
-    await sleep(600);
-  }
-
-  try {
-    var merged = Object.assign({}, PRICE, LIVE);
-    localStorage.setItem(CACHE_KEY, JSON.stringify({ prices: merged, ts: Date.now() }));
-  } catch (e) {}
-  render();
-  status.textContent = ok === VALS.length
-    ? '即時股價已更新（' + new Date().toLocaleTimeString('zh-TW', { hour:'2-digit', minute:'2-digit' }) + '）'
-    : '已取得 ' + ok + '/' + VALS.length + ' 檔即時價，其餘以 ° 標示（上個交易日收盤或快取）。';
+  /* 該減碼清單：過昂貴價越多的排前面，純基本面觸發的排後面 */
+  var cutRows = rows.filter(function(r){ return r.cuts.length; }).sort(function(a, b) {
+    var over = function(r) {
+      return (r.px && r.v.expensive && r.px >= r.v.expensive) ? (r.px - r.v.expensive) / r.v.expensive : -1;
+    };
+    return over(b) - over(a);
+  });
+  document.getElementById('cut-list').innerHTML = cutRows.length
+    ? cutRows.map(function(r) {
+        return '<div class="cut-row">' +
+          '<a href="' + r.v.url + '"><span class="sid">' + r.v.id + '</span>' + r.v.name + '</a>' +
+          '<span class="why">' + r.cuts.map(function(x){ return '<b>' + x + '</b>'; }).join('　／　') + '</span>' +
+          '<span class="cut-score">總分 ' + r.s.total.toFixed(0) + '</span>' +
+        '</div>';
+      }).join('')
+    : '<div class="cut-empty">目前沒有標的觸發減碼條件。</div>';
 }
 
 async function init() {
-  try {
-    var raw = localStorage.getItem(CACHE_KEY);
-    if (raw) { var o = JSON.parse(raw); if (o && o.prices) PRICE = o.prices; }
-  } catch (e) {}
-
   try {
     var r = await Promise.all([
       fetch('valuations.json', { cache:'no-cache' }).then(function(x){ return x.json(); }),
@@ -492,19 +548,24 @@ async function init() {
     ]);
     VALS  = r[0].stocks || [];
     CHIPS = r[1].stocks || {};
+    var anyFund = Object.keys(CHIPS).map(function(k){ return CHIPS[k].fund; }).filter(Boolean)[0];
     document.getElementById('rank-asof').textContent =
-      '估值 ' + r[0].updated + '　籌碼 ' + (r[1].asOf || r[1].updated);
+      '收盤 ' + (r[1].asOf || r[1].updated) + '　估值 ' + r[0].updated + (anyFund ? '　財報 ' + anyFund.quarter : '');
   } catch (e) {
     document.getElementById('rank-body').innerHTML =
-      '<tr><td colspan="8" class="muted" style="text-align:center;padding:24px">資料載入失敗，請重新整理</td></tr>';
+      '<tr><td colspan="12" class="muted" style="text-align:center;padding:24px">資料載入失敗，請重新整理</td></tr>';
     return;
   }
 
   render();
-  fetchPrices();
+  var missing = VALS.filter(function(v){ var x = CHIPS[v.id]; return !x || !x.close; });
+  document.getElementById('rank-status').textContent =
+    '收盤價與籌碼每個交易日收盤後自動更新（GitHub Actions），財報與月營收每週重抓一次。' +
+    (missing.length ? '　⚠ ' + missing.map(function(v){ return v.name; }).join('、') + ' 本次取不到資料，未列入排名。' : '');
 }
 
 window.addEventListener('DOMContentLoaded', init);
+
 </script>
 
 </body>
