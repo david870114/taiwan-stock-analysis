@@ -499,6 +499,18 @@ stocks[代號] = {
 }
 ```
 
+### 估值帶健檢工具
+
+`node scripts/band-review.mjs 8046 3037 ...`（或 `--over` / `--under` 自動挑出現價高於昂貴價／低於便宜價的）會印出每檔的：
+
+- 現有帶與回推的 EPS 基準、最新 TTM EPS 與隱含 PER
+- 近三年逐月 PER 區間（用當月「已公告」的 TTM，不是拿今天的 EPS 回頭套）
+- 年度 EPS、推估股數（抓現增／減資／股票股利造成的股本變動）
+- 近三年月收盤分布、用正常化 EPS 回推的逐月 PER（循環股專用）
+- 逐月 P/B（用當時淨值，不是用最新淨值回推過去）與毛利率趨勢
+
+**只印結果，不會自動改 index.html 或 valuations.json** — 估值帶一律人工判斷後再改，這是 LINE 假訊號的最後一道閘門。
+
 ### 維護
 
 - `chips.json` 由 `node scripts/update-chips.mjs` 產生，已掛進 `.github/workflows/update-institutional.yml`（每交易日收盤後自動更新並 commit，該步驟設 `if: always()`，GoodInfo 爬蟲掛掉也會跑）
