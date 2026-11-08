@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>旺宏 2337 — 2026 股價推算分析</title>
+<title>旺宏 2337 — P/B 區間估值分析</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #0f1117; color: #e2e8f0; padding: 16px; }
   h1 { font-size: 18px; font-weight: 700; color: #f8fafc; margin-bottom: 4px; }
-  .subtitle { font-size: 12px; color: #94a3b8; margin-bottom: 16px; }
+  .subtitle { font-size: 12px; color: #94a3b8; margin-bottom: 14px; }
   .tabs { display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; }
   .tab { padding: 6px 14px; border-radius: 20px; font-size: 12px; cursor: pointer; border: 1px solid #334155; color: #94a3b8; background: transparent; transition: all 0.2s; }
   .tab.active { background: #3b82f6; color: #fff; border-color: #3b82f6; }
@@ -46,237 +46,147 @@
   .current-price-badge { background: #1e3a5f; border: 1px solid #3b82f6; border-radius: 8px; padding: 10px 14px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px; }
   .back-btn { color: #64748b; font-size: 12px; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; padding: 5px 10px; border: 1px solid #334155; border-radius: 8px; margin-bottom: 12px; transition: all 0.2s; }
   .back-btn:hover { color: #e2e8f0; border-color: #64748b; }
-  .notice { background: #1e2535; border-left: 3px solid #eab308; border-radius: 0 8px 8px 0; padding: 10px 14px; font-size: 11px; color: #94a3b8; margin-bottom: 14px; line-height: 1.7; }
+  .notice { background: #1e2535; border-left: 3px solid #eab308; border-radius: 0 8px 8px 0; padding: 12px 14px; font-size: 12px; color: #94a3b8; margin-bottom: 14px; line-height: 1.8; }
   .notice strong { color: #fde68a; }
-</style>
-
-<style>
-  .band-update {
-    background: #1b2030; border-left: 3px solid #3b82f6; border-radius: 8px;
-    padding: 12px 16px; margin: 0 0 18px; font-size: 13px; line-height: 1.75; color: #94a3b8;
-  }
-  .band-update b { color: #e2e8f0; }
-  .band-update .tag { color: #7db8f7; font-weight: 700; }
+  .notice b { color: #e2e8f0; }
+  .dtable th { text-align: center; }
+  .dtable td { text-align: center; }
+  .dtable tr.qend td { background: #1a2f4a; font-weight: 600; }
+  .band-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 12px 0; }
+  .band-box { border-radius: 8px; padding: 10px 8px; text-align: center; background: #161c2b; border: 1px solid #263044; }
+  .band-box .lv { font-size: 10px; color: #64748b; letter-spacing: .05em; }
+  .band-box .px { font-size: 18px; font-weight: 800; margin: 3px 0; }
+  .band-box .mx { font-size: 10px; color: #64748b; }
 </style>
 </head>
 <body>
 
 <a href="index.html" class="back-btn">← 返回總覽</a>
 
-<h1>💾 旺宏電子 (2337) — 2026 股價推算分析</h1>
-<p class="subtitle">前瞻 PER 估值 ✦ 三情境買點 ✦ EPS 趨勢 ✦ 更新時間：2026年9月17日</p>
-<div class="band-update"><span class="tag">2026/11/07 估值帶已更新</span>　現行便宜／合理／昂貴價為 <b>31 / 43 / 113</b>（P/B 法（0.83／1.17／3.05x × BVPS 37.03））。2023–25 連三年虧損、TTM 剛轉正，EPS 不適合當錨，改以淨值為錨；本頁的 PER 分析仍為原內容。總覽頁與首頁排名以這組數字為準，本頁以下的圖表與文字仍是上次季更的內容，將於下次重繪時一併更新。</div>
+<h1>💾 旺宏電子 (2337) — P/B 區間估值分析</h1>
+<p class="subtitle">淨值區間圖 ✦ 三情境買點 ✦ 淨值與獲利趨勢 ✦ 估值基準：2026Q3 財報（BVPS 37.04）✦ 更新時間：2026年11月8日</p>
 
 <div class="notice">
-  <strong>⚠️ 為何使用前瞻 PER？</strong> 旺宏 2023–2025 年 EPS 連續虧損，TTM EPS 為負時本益比無意義，goodinfo 等平台顯示「無」屬正常。2026 Q1 終結連 10 季虧損（EPS +0.9元），Q2 單季 EPS 3.91 元，TTM 轉正為 4.19 元（上半年 4.81 元）。本頁改用 <strong>法人 2026E 共識 EPS 13.63 元</strong>（FactSet 中位數，10 位分析師），搭配旺宏歷史多頭 PER 帶估值。
+  <strong>⚠️ 為何改用 P/B，不用本益比？</strong>
+  旺宏 <b>2023Q3 至 2025Q4 連續 10 季虧損</b>（2023Q1 也是虧損，中間只有 2023Q2 以 +0.04 元勉強損平），TTM EPS 為負時本益比根本算不出來；2026 年轉盈後又三級跳（Q1 0.90 → Q2 3.91 → Q3 5.52 元），TTM 從負值變成 10.18 元，用它當估值錨會讓便宜價每季暴衝一次。
+  本頁原本改用「法人 2026E 共識 EPS 13.63 元」的前瞻本益比，但那組預估在 5 月做出、分析師區間從 5.62 到 30.02 元（差 5 倍），實際上只是把猜 EPS 的工作外包給別人。
+  淨值不會這樣跳：旺宏即使連虧十季，每股淨值也只從 26.4 元緩降到 22.9 元，而且<b>有過真實跌破淨值的紀錄（2023–25 最低 0.78x）</b>，這給了估值帶一個經得起檢驗的下界。本頁因此改用「<b>P/B × 每股淨值</b>」，並以<b>當時已公告的淨值</b>（季末＋2 個月才算可得）回推歷史 P/B。
 </div>
 
 <div class="tabs">
-  <button class="tab active" onclick="switchTab('river', this)">📈 前瞻 PER 河流圖</button>
+  <button class="tab active" onclick="switchTab('river', this)">📈 P/B 區間圖</button>
   <button class="tab" onclick="switchTab('scenario', this)">🎯 三情境買點</button>
-  <button class="tab" onclick="switchTab('eps', this)">📊 EPS 趨勢</button>
+  <button class="tab" onclick="switchTab('book', this)">📊 淨值與獲利趨勢</button>
   <button class="tab" onclick="switchTab('fundamental', this)">🏢 基本面分析</button>
   <button class="tab" onclick="switchTab('summary', this)">📋 完整摘要</button>
 </div>
 
-<!-- TAB 1: PER River -->
+<!-- TAB 1 -->
 <div id="tab-river" class="panel active">
   <div class="current-price-badge">
     <span style="color:#94a3b8;font-size:12px;">目前股價（即時）</span>
     <span style="color:#3b82f6;font-size:20px;font-weight:800;" id="live-price">載入中…</span>
-    <span style="color:#22c55e;font-size:12px;">前瞻 PER ≈ 8.5x（2026E EPS 13.63元）接近便宜價</span>
+    <span style="color:#eab308;font-size:12px;" id="live-pb">P/B 計算中…</span>
+  </div>
+  <div class="band-strip">
+    <div class="band-box"><div class="lv">便宜價</div><div class="px" style="color:#3b82f6;">31</div><div class="mx">0.84x BVPS</div></div>
+    <div class="band-box"><div class="lv">合理價</div><div class="px" style="color:#22c55e;">43</div><div class="mx">1.16x BVPS</div></div>
+    <div class="band-box"><div class="lv">昂貴價</div><div class="px" style="color:#eab308;">113</div><div class="mx">3.05x BVPS</div></div>
+    <div class="band-box"><div class="lv">每股淨值</div><div class="px" style="color:#e2e8f0;">37.04</div><div class="mx">26Q3 ÷ 19.80 億股</div></div>
   </div>
   <canvas id="riverChart" height="340"></canvas>
-  <p style="font-size:11px;color:#475569;margin-top:8px;text-align:center;">* 前瞻 PER 帶以 FactSet 法人 2026E EPS 共識 13.63 元為基準；26Q2 為實際收盤（26M06 155.5 元）；26M08 收 126 元、9/17 116.5 元</p>
+  <p style="font-size:11px;color:#475569;margin-top:8px;text-align:center;">* 各倍數線 = 該月「<b style="color:#64748b;">當時已公告</b>」的每股淨值 × 倍數；白線為月收盤價</p>
+  <div class="notice" style="border-left-color:#3b82f6;margin-top:14px;">
+    <strong style="color:#93c5fd;">📐 這三個數字怎麼來的，以及它的弱點</strong>
+    近 36 個月逐月 P/B 的分布為：最低 0.78、<b>P10 0.84</b>、P25 0.90、<b>中位 1.09</b>、<b>P75 3.05</b>、P90 4.68、最高 6.34。便宜價取 P10（0.84x）、合理價取略高於中位的 1.16x、昂貴價取 P75（3.05x）。
+    <br><br>
+    <b>要誠實說明的弱點：</b>旺宏近三年的 P/B 是<b>雙峰分布</b>——2023–2025 虧損期幾乎都在 0.8–1.2x，2026 年 AI 記憶體熱潮又一口氣衝到 3–6.3x，<b>中間的 1.2–3.0x 幾乎沒有樣本</b>。所以「合理價 43」與「昂貴價 113」之間那一大段並沒有歷史依據，不要把落在區間中央當成「價格合理」的證據。
+    真正有參考價值的是兩個邊界：<b>跌破 43 元（1.16x）在過去三年幾乎都是買點</b>；<b>站上 113 元（3.05x）則只在 2026 年這一波出現過</b>，屬於需要獲利持續性支撐的價位。
+  </div>
 </div>
 
-<!-- TAB 2: 三情境 -->
+<!-- TAB 2 -->
 <div id="tab-scenario" class="panel">
   <div class="grid2">
-    <div class="card"><h3>2026 Q2 EPS（最新實際）</h3><div class="val green">+3.91 元</div><div class="note">Q1 0.9 → Q2 3.91 ✦ 上半年 4.81 元，TTM 4.19 元</div></div>
-    <div class="card"><h3>2026E EPS（法人中位數）</h3><div class="val blue">13.63 元</div><div class="note">FactSet 10位分析師（5月）✦ 最高30.02 / 最低5.62；需下半年 EPS 8.8 元達標</div></div>
+    <div class="card"><h3>每股淨值（26Q3）</h3><div class="val green">37.04 元</div><div class="note">25Q3 低點 22.88 → 四季增加 62%；母公司權益 733.3 億 ÷ 流通股 19.80 億股</div></div>
+    <div class="card"><h3>目前 P/B</h3><div class="val yellow" id="sc-pb">—</div><div class="note">現價 ÷ 37.04；合理 1.16x、昂貴 3.05x</div></div>
   </div>
-  <div class="section-title">2026 全年三情境 EPS 與股價推算</div>
+  <div class="section-title">三情境估值（基於 26Q3 每股淨值 37.04 元）</div>
   <div class="scenario-grid">
     <div class="scenario-card bear">
       <div class="sc-label">🐻 悲觀</div>
-      <div class="sc-price red">45–90</div>
-      <div class="sc-detail">EPS 5–8元<br>PER 8–12x<br>景氣提早反轉<br>TLC 取代 MLC 加速</div>
+      <div class="sc-price red">29–43</div>
+      <div class="sc-detail">P/B 0.78–1.16x<br>NAND/NOR 報價反轉<br>回到虧損期的折價<br>曾真實跌破淨值</div>
     </div>
     <div class="scenario-card base">
       <div class="sc-label">⚖️ 基本</div>
-      <div class="sc-price green">109–196</div>
-      <div class="sc-detail">EPS 13–14元<br>PER 8–14x<br>法人共識中位<br>eMMC 缺貨延續</div>
+      <div class="sc-price green">43–74</div>
+      <div class="sc-detail">P/B 1.16–2.0x<br>獲利站穩但不續飆<br>MLC 缺口逐步緩解<br>歷史樣本最少的區間</div>
     </div>
     <div class="scenario-card bull">
       <div class="sc-label">🚀 樂觀</div>
-      <div class="sc-price" style="color:#60a5fa;">240–480</div>
-      <div class="sc-detail">EPS 19–30元<br>PER 12–16x<br>MLC 缺口超預期<br>法人最高估 30元</div>
+      <div class="sc-price" style="color:#60a5fa;">74–113</div>
+      <div class="sc-detail">P/B 2.0–3.05x<br>ROE 維持 50%+<br>MLC 缺口延續到 2027<br>法人目標價 183 元</div>
     </div>
   </div>
+  <div class="notice" style="border-left-color:#22c55e;margin-top:14px;">
+    <strong style="color:#86efac;">🔁 P/B 法的重點：帶會自己往上長</strong>
+    旺宏 26Q3 單季賺 5.52 元，淨值一季增加 5.75 元（31.29 → 37.04）。若 26Q4 再賺 5–6 元，<b>BVPS 會升到 42–43 元</b>，同一組倍數下的便宜價從 31 升到 <b>35–36</b>、昂貴價升到 128–131。
+    但反面也要記住：<b>2023–2025 連虧三年時，淨值是往下走的</b>（26.1 → 22.9 元），帶會跟著下移。P/B 法不是把估值變樂觀，而是讓估值跟著「實際留在公司裡的錢」走，不必去猜下一年的 EPS。<b>每季財報後都要重算一次。</b>
+  </div>
   <div class="buy-signal">
-    <h3>💰 2026 分批建倉買點建議（基本～樂觀情境）</h3>
+    <h3>💰 分批建倉買點建議</h3>
     <div class="buy-row">
-      <span style="color:#86efac;font-size:13px;font-weight:600;">第一批（30%）</span>
-      <span style="color:#fde68a;font-size:14px;font-weight:700;">109–130 元</span>
-      <span class="badge badge-buy">積極進場 前瞻PER 8–9.5x</span>
+      <span style="color:#86efac;font-size:13px;font-weight:600;">第一批（40%）</span>
+      <span style="color:#fde68a;font-size:14px;font-weight:700;">31–43 元</span>
+      <span class="badge badge-buy">P/B 0.84–1.16x 歷史買點區</span>
     </div>
     <div class="buy-row">
       <span style="color:#86efac;font-size:13px;font-weight:600;">第二批（40%）</span>
-      <span style="color:#fde68a;font-size:14px;font-weight:700;">130–163 元</span>
-      <span class="badge badge-buy">主力倉位 前瞻PER 9.5–12x</span>
+      <span style="color:#fde68a;font-size:14px;font-weight:700;">43–58 元</span>
+      <span class="badge badge-buy">P/B 1.16–1.57x 主力倉位</span>
     </div>
     <div class="buy-row">
-      <span style="color:#86efac;font-size:13px;font-weight:600;">第三批（30%）</span>
-      <span style="color:#fde68a;font-size:14px;font-weight:700;">163–190 元</span>
-      <span class="badge badge-watch">動能追加 前瞻PER 12–14x</span>
+      <span style="color:#86efac;font-size:13px;font-weight:600;">第三批（20%）</span>
+      <span style="color:#fde68a;font-size:14px;font-weight:700;">58–74 元</span>
+      <span class="badge badge-watch">P/B 1.57–2.0x 動能追加</span>
     </div>
     <div class="buy-row" style="border-top:1px solid #166534;margin-top:8px;padding-top:10px;">
-      <span style="color:#fca5a5;font-size:12px;">觀望/分批減倉</span>
-      <span style="color:#fca5a5;font-size:13px;font-weight:700;">218 元以上</span>
-      <span class="badge badge-avoid">前瞻PER > 16x</span>
+      <span style="color:#fca5a5;font-size:12px;">分批減碼</span>
+      <span style="color:#fca5a5;font-size:13px;font-weight:700;">113 元以上</span>
+      <span class="badge badge-avoid">P/B > 3.05x</span>
     </div>
-    <p style="font-size:11px;color:#eab308;margin-top:10px;">💡 目前股價 116.5 元（9/17）落在第一批區間（前瞻PER 8.5x），自 26Q1 高點 169 元回落 31%；需確認下半年 EPS 能否達共識 13.63 元。</p>
+    <p style="font-size:11px;color:#eab308;margin-top:10px;" id="buy-now-note">—</p>
   </div>
 </div>
 
-<!-- TAB 3: EPS -->
-<div id="tab-eps" class="panel">
-  <canvas id="epsChart" height="300"></canvas>
-  <div class="grid2">
-    <div class="card"><h3>2026 Q1 單季營收</h3><div class="val green">104.7 億</div><div class="note">季增 +35% ✦ 年增 +71%（14季新高）</div></div>
-    <div class="card"><h3>2026/04 月營收</h3><div class="val blue">59.1 億</div><div class="note">年增 +153.7%，刷新單月歷史紀錄</div></div>
+<!-- TAB 3 -->
+<div id="tab-book" class="panel">
+  <canvas id="bookChart" height="300"></canvas>
+  <p style="font-size:11px;color:#475569;margin-top:8px;text-align:center;">* 柱為每股淨值（左軸），線為單季 EPS（右軸）。連虧 10 季期間淨值只從 26.4 緩降到 22.9，這是它能當估值錨的原因</p>
+  <div class="section-title" style="margin-top:16px;">📋 逐月明細表（供對帳：收盤 ÷ 當時 BVPS = P/B）</div>
+  <div style="overflow-x:auto;">
+    <table class="dtable">
+      <thead><tr><th>月份</th><th>收盤價</th><th>當時 BVPS</th><th>淨值季別</th><th>P/B</th><th>便宜 0.84x</th><th>合理 1.16x</th><th>昂貴 3.05x</th></tr></thead>
+      <tbody id="detailTbody"></tbody>
+    </table>
   </div>
-  <div class="section-title">📋 逐季 EPS 明細表</div>
-  <table>
-    <thead>
-      <tr>
-        <th>年度/季</th>
-        <th>單季 EPS（元）</th>
-        <th>單季營收（億）</th>
-        <th>毛利率</th>
-        <th>備註</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr><td>2022 Q1</td><td style="color:#22c55e;">+3.67</td><td>109.8</td><td>51.1%</td><td>記憶體多頭高峰</td></tr>
-      <tr><td>2022 Q2</td><td style="color:#22c55e;">+2.64</td><td>113.0</td><td>50.2%</td><td></td></tr>
-      <tr><td>2022 Q3</td><td style="color:#22c55e;">+1.59</td><td>103.4</td><td>44.5%</td><td>景氣開始下滑</td></tr>
-      <tr><td>2022 Q4</td><td style="color:#22c55e;">+0.67</td><td>108.6</td><td>38.2%</td><td></td></tr>
-      <tr><td>2023 Q1</td><td style="color:#ef4444;">-0.22</td><td>69.5</td><td>17.6%</td><td>庫存去化、價格崩跌</td></tr>
-      <tr><td>2023 Q2</td><td style="color:#ef4444;">-0.03</td><td>65.1</td><td>14.2%</td><td></td></tr>
-      <tr><td>2023 Q3</td><td style="color:#ef4444;">-0.22</td><td>67.5</td><td>15.9%</td><td></td></tr>
-      <tr><td>2023 Q4</td><td style="color:#ef4444;">-0.54</td><td>74.1</td><td>13.5%</td><td></td></tr>
-      <tr><td>2024 Q1</td><td style="color:#ef4444;">-0.58</td><td>61.0</td><td>12.6%</td><td></td></tr>
-      <tr><td>2024 Q2</td><td style="color:#ef4444;">-0.15</td><td>62.4</td><td>17.1%</td><td></td></tr>
-      <tr><td>2024 Q3</td><td style="color:#ef4444;">-0.16</td><td>64.8</td><td>19.2%</td><td></td></tr>
-      <tr><td>2024 Q4</td><td style="color:#ef4444;">-0.84</td><td>70.7</td><td>14.6%</td><td></td></tr>
-      <tr><td>2025 Q1</td><td style="color:#ef4444;">-0.47</td><td>58.5</td><td>17.7%</td><td></td></tr>
-      <tr><td>2025 Q2</td><td style="color:#ef4444;">-0.69</td><td>60.8</td><td>16.3%</td><td></td></tr>
-      <tr><td>2025 Q3</td><td style="color:#ef4444;">-0.47</td><td>68.3</td><td>18.9%</td><td>營收緩步回升</td></tr>
-      <tr><td>2025 Q4</td><td style="color:#ef4444;">-0.16</td><td>100.3</td><td>24.2%</td><td>報價開始反彈</td></tr>
-      <tr><td style="color:#f8fafc;font-weight:700;">2026 Q1 ✨</td><td style="color:#22c55e;font-weight:700;">+0.9</td><td style="font-weight:700;">104.7</td><td style="font-weight:700;">40.8%</td><td style="color:#22c55e;">終結連 10 季虧損</td></tr>
-      <tr style="background:#1a2d1a;"><td style="color:#64748b;font-style:italic;">2026 全年（法人預估）</td><td style="color:#3b82f6;font-style:italic;">13.63元（中位）</td><td style="font-style:italic;">917–1,091</td><td style="font-style:italic;">56%+</td><td style="font-style:italic;">前瞻估值基礎</td></tr>
-    </tbody>
-  </table>
 </div>
 
-<!-- TAB 4: Summary -->
-<div id="tab-summary" class="panel">
-  <div class="section-title">📌 關鍵基本面數據</div>
-  <table>
-    <thead><tr><th>指標</th><th>數值</th><th>評估</th></tr></thead>
-    <tbody>
-      <tr><td>目前股價（2026/9/17）</td><td style="color:#3b82f6;font-weight:700;">~116.5 元</td><td><span class="badge badge-buy">接近便宜價 109</span></td></tr>
-      <tr><td>26Q2 實際 EPS</td><td style="color:#22c55e;font-weight:700;">單季 3.91 元／TTM 4.19 元</td><td><span class="badge badge-buy">獲利大幅改善</span></td></tr>
-      <tr><td>2026E EPS（FactSet 中位）</td><td style="color:#22c55e;font-weight:700;">13.63 元</td><td><span class="badge badge-buy">基本情境</span></td></tr>
-      <tr><td>2026E EPS（法人最高/最低）</td><td>30.02 / 5.62 元</td><td><span class="badge badge-watch">分歧極大</span></td></tr>
-      <tr><td>目前前瞻 PER</td><td style="color:#22c55e;font-weight:700;">8.5x（116.5÷13.63）</td><td><span class="badge badge-buy">接近便宜帶</span></td></tr>
-      <tr><td>每股淨值（2026 Q1）</td><td>25.58 元</td><td><span class="badge badge-avoid">PBR 6.6x（偏高）</span></td></tr>
-      <tr><td>2026 Q1 毛利率</td><td style="color:#22c55e;font-weight:700;">40.8%（季增 16.6pp）</td><td><span class="badge badge-buy">大幅改善</span></td></tr>
-      <tr><td>2026/04 月營收</td><td style="color:#22c55e;font-weight:700;">59.1億（年增+153.7%）</td><td><span class="badge badge-buy">歷史新高</span></td></tr>
-      <tr><td>FactSet 目標價中位數（8/17）</td><td style="color:#3b82f6;font-weight:700;">183 元</td><td><span class="badge badge-watch">現價 116.5 元，潛在 +57%</span></td></tr>
-      <tr><td>中信投顧目標價（5月）</td><td style="color:#3b82f6;font-weight:700;">182 元（EPS 13.42元）</td><td><span class="badge badge-buy">買進</span></td></tr>
-      <tr><td>元大投顧目標價（5月）</td><td style="color:#3b82f6;font-weight:700;">180 元（EPS 19元）</td><td><span class="badge badge-buy">買進</span></td></tr>
-      <tr><td>擴產計畫</td><td>220億，月產能 2→3 萬片</td><td><span class="badge badge-buy">積極佈局</span></td></tr>
-      <tr><td>前瞻PER 估值帶</td><td>低8x / 均12x / 高16x</td><td><span class="badge badge-watch">參考</span></td></tr>
-    </tbody>
-  </table>
-  <div class="section-title" style="margin-top:20px;">⚡ 催化劑 vs 風險</div>
-  <div class="grid2">
-    <div class="card">
-      <h3>🚀 利多</h3>
-      <div style="font-size:12px;line-height:1.9;color:#86efac;">
-        ✓ MLC NAND 結構缺口：大廠轉產 HBM，2026年 MLC 產能年減 41.7%<br>
-        ✓ eMMC 報價暴漲：Q1 NAND 營收季增 90%、年增 382%<br>
-        ✓ NOR 轉單：中芯、華虹亦減產 NOR<br>
-        ✓ 4月營收 59.1億，刷新單月歷史紀錄<br>
-        ✓ 220億擴產，月產能目標 3 萬片<br>
-        ✓ 任天堂 Switch 2 題材加持 ROM 產品線
-      </div>
-    </div>
-    <div class="card">
-      <h3>⚠️ 風險</h3>
-      <div style="font-size:12px;line-height:1.9;color:#fca5a5;">
-        ✗ PBR 6.6x 遠超 2017年 NOR 高峰 3.2x<br>
-        ✗ 記憶體景氣若提早反轉，估值快速下修<br>
-        ✗ 客戶加速導入 TLC 取代 MLC<br>
-        ✗ 聯電代工 NOR/MLC 最快 2027H2 量產<br>
-        ✗ 法人 EPS 估值分歧大（5.62–30.02元）<br>
-        ✗ 擴產設備進機時程若延後
-      </div>
-    </div>
-  </div>
-  <p style="font-size:10px;color:#475569;margin-top:14px;line-height:1.6;">⚠️ 本分析僅供參考，不構成投資建議。股市有風險，投資前請自行判斷。</p>
-</div>
-
-
-<!-- TAB: 基本面分析 -->
+<!-- TAB 4 -->
 <div id="tab-fundamental" class="panel">
-  <div style="background:#1a1000;border:1px solid #713f12;border-radius:8px;padding:10px;margin-bottom:12px;font-size:11px;color:#fde68a;">⚠️ 前瞻 P/E 估值：歷史有虧損紀錄，用前瞻 EPS 13.63 元估算，非 TTM</div>
-  <!-- ── 公司營運 ── -->
-  <div class="section-title">📊 公司營運</div>
+  <div class="section-title">📊 公司營運（數據由 FinMind 逐季財報計算）</div>
   <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;">
-    <div class="card"><h3>毛利率（最新季）</h3><div class="val yellow">~38%</div><div class="note">營業利益率 ~20%</div></div>
-    <div class="card"><h3>ROE（年化）</h3><div class="val green">~12%</div><div class="note">股東權益報酬率</div></div>
-    <div class="card"><h3>營收成長</h3><div class="val green" style="font-size:16px;">2025 全年 YoY +45%（復甦中）</div><div class="note">年增率</div></div>
+    <div class="card"><h3>毛利率（26Q3）</h3><div class="val green">70.5%</div><div class="note">營業利益率 53.4%／淨利率 45.2%；25Q3 僅 13.5%</div></div>
+    <div class="card"><h3>ROE（26Q3 單季年化）</h3><div class="val green">59.7%</div><div class="note">25Q3 為 −8.1%，一年內由虧轉盈</div></div>
+    <div class="card"><h3>單季營收（26Q3）</h3><div class="val green" style="font-size:18px;">242.4 億</div><div class="note">年增 +195%；近三月累計年增 +207%</div></div>
   </div>
   <div style="background:#1e2535;border:1px solid #2d3748;border-radius:10px;padding:14px;margin-bottom:14px;">
-    <div style="font-size:12px;font-weight:700;color:#cbd5e1;margin-bottom:10px;">毛利率 / 營業利益率 / EPS 趨勢</div>
-    <table style="margin:0;">
-      <thead><tr><th>期間</th><th>營收 YoY</th><th>毛利率</th><th>營業利益率</th><th>EPS</th></tr></thead>
-      <tbody>
-        <tr style=""><td>2022 全年</td>
-          <td style="color:#22c55e">+5%</td>
-          <td>48%</td>
-          <td>34%</td>
-          <td style="color:#22c55e">6.45</td>
-        </tr>
-        <tr style=""><td>2023 全年</td>
-          <td style="color:#22c55e">-30%</td>
-          <td>25%</td>
-          <td>5%</td>
-          <td style="color:#22c55e">-3.20</td>
-        </tr>
-        <tr style=""><td>2024 全年</td>
-          <td style="color:#22c55e">+35%</td>
-          <td>33%</td>
-          <td>16%</td>
-          <td style="color:#22c55e">7.20</td>
-        </tr>
-        <tr style=""><td>2025 全年</td>
-          <td style="color:#22c55e">+45%</td>
-          <td>~38%</td>
-          <td>~20%</td>
-          <td style="color:#22c55e">~10.0</td>
-        </tr>
-        <tr style=""><td>2026E（前瞻）</td>
-          <td style="color:#22c55e">+20%E</td>
-          <td>~40%E</td>
-          <td>~22%E</td>
-          <td style="color:#22c55e">13.63E</td>
-        </tr>
-      </tbody>
+    <div style="font-size:12px;font-weight:700;color:#cbd5e1;margin-bottom:4px;">年度營收 / 毛利率 / EPS / 每股淨值</div>
+    <div style="font-size:11px;color:#64748b;">以逐季財報加總，非估算值；2026 為截至最新財報的累計</div>
+    <table style="margin:0;" id="annualTable">
+      <thead><tr><th>期間</th><th>營收（億）</th><th>營收 YoY</th><th>毛利率</th><th>EPS</th><th>期末 BVPS</th></tr></thead>
+      <tbody></tbody>
     </table>
   </div>
 
@@ -285,14 +195,14 @@
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
     <div class="card">
       <h3>怎麼賺錢 — NOR Flash 記憶體製造</h3>
-      <div style="font-size:12px;line-height:1.9;color:#cbd5e1;margin-top:4px;">全球 NOR Flash 記憶體龍頭，專注利基型記憶體（MCU 用、汽車電子、工業、AI 邊緣計算）。NOR Flash 市場規模小但利潤高，旺宏全球市占率約 16–18%，僅次於美光。</div>
+      <div style="font-size:12px;line-height:1.9;color:#cbd5e1;margin-top:4px;">全球 NOR Flash 記憶體龍頭，專注利基型記憶體（MCU 用、汽車電子、工業、AI 邊緣計算），並有 MLC NAND 與 ROM 產品線。NOR Flash 市場規模小但利潤高，旺宏全球市占率約 16–18%，僅次於美光。</div>
     </div>
     <div class="card">
       <h3>護城河評估</h3>
       <div style="font-size:12px;line-height:1.7;margin-top:4px;"><div style="color:#22c55e;">✅ NOR Flash 全球龍頭</div><div style="color:#64748b;font-size:11px;margin-bottom:6px;">全球市占率 ~16–18%，僅次美光</div>
 <div style="color:#22c55e;">✅ 利基市場</div><div style="color:#64748b;font-size:11px;margin-bottom:6px;">NOR Flash 應用分散（汽車/工業/IoT），中國廠難追</div>
 <div style="color:#22c55e;">✅ 轉型 AI 邊緣</div><div style="color:#64748b;font-size:11px;margin-bottom:6px;">AI 邊緣裝置需要 NOR Flash 儲存模型，新成長動能</div>
-<div style="color:#ef4444;">⚠️ 歷史虧損</div><div style="color:#64748b;font-size:11px;margin-bottom:6px;">2021–2023 曾大幅虧損，需關注景氣循環</div>
+<div style="color:#ef4444;">⚠️ 連虧 10 季</div><div style="color:#64748b;font-size:11px;margin-bottom:6px;">2023Q3–2025Q4 連續虧損，循環底部可以又深又久</div>
 </div>
     </div>
   </div>
@@ -341,94 +251,199 @@
   <!-- ── 產業地位 ── -->
   <div class="section-title">🌐 產業地位</div>
   <div style="background:#1e2535;border:1px solid #2d3748;border-radius:10px;padding:14px;margin-bottom:14px;">
-    <div style="font-size:12px;color:#94a3b8;line-height:1.8;">📌 全球 NOR Flash 市占第 2，台灣最大 NOR Flash 廠</div>
+    <div style="font-size:12px;color:#94a3b8;line-height:1.8;">📌 全球 NOR Flash 市占第 2，台灣最大 NOR Flash 廠；MLC NAND 受惠大廠轉產 HBM 造成的結構性缺口</div>
   </div>
 
   <!-- ── 估值 ── -->
   <div class="section-title">💰 估值指標</div>
   <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:10px;">
     <div class="card" style="text-align:center;">
-      <h3>TTM P/E</h3>
-      <div class="val" id="fund-pe-2337" style="color:#f8fafc;">…</div>
-      <div class="note" id="fund-pe-note-2337">TTM EPS 13.63 元</div>
+      <h3>P/B（估值主軸）</h3>
+      <div class="val" id="fund-pb" style="color:#f8fafc;">…</div>
+      <div class="note" id="fund-pb-note">BVPS 37.04（26Q3）</div>
     </div>
     <div class="card" style="text-align:center;">
-      <h3>前瞻 P/E</h3>
-      <div class="val yellow">~12x（前瞻）</div>
-      <div class="note">13.63 元（2026E，法人共識）</div>
+      <h3>TTM P/E（僅參考）</h3>
+      <div class="val" id="fund-pe" style="color:#64748b;">…</div>
+      <div class="note">TTM EPS 10.18（26Q3）— 剛由負轉正，不作估值依據</div>
     </div>
     <div class="card" style="text-align:center;">
-      <h3>P/B（估算）</h3>
-      <div class="val" style="color:#f97316;">~2.6x</div>
-      <div class="note">每股淨值約 58.0 元</div>
+      <h3>法人目標價</h3>
+      <div class="val blue">183 元</div>
+      <div class="note" id="fund-tp">FactSet 中位數；相當於 P/B 4.94x</div>
     </div>
     <div class="card" style="text-align:center;">
-      <h3>ROE</h3>
-      <div class="val green">~12%</div>
-      <div class="note">股東權益報酬率</div>
+      <h3>ROE（26Q3 年化）</h3>
+      <div class="val green">59.7%</div>
+      <div class="note">高 ROE 會讓淨值快速墊高，帶也跟著上移</div>
     </div>
   </div>
-  <p style="font-size:10px;color:#334155;margin-top:10px;line-height:1.6;">⚠️ 本分析僅供參考，不構成投資建議。部分數據為估算值，請以公開財報為準。</p>
+  <p style="font-size:10px;color:#334155;margin-top:10px;line-height:1.6;">⚠️ 本分析僅供參考，不構成投資建議。</p>
+</div>
+
+<!-- TAB 5 -->
+<div id="tab-summary" class="panel">
+  <div class="section-title">📌 關鍵數據</div>
+  <table>
+    <thead><tr><th>指標</th><th>數值</th><th>評估</th></tr></thead>
+    <tbody>
+      <tr><td>收盤價（2026/11/06）</td><td style="color:#3b82f6;font-weight:700;">75.8 元</td><td><span class="badge badge-watch">P/B 2.05x，合理偏高</span></td></tr>
+      <tr><td>每股淨值（26Q3）</td><td style="color:#22c55e;font-weight:700;">37.04 元</td><td><span class="badge badge-buy">25Q3 低點 22.88 → +62%</span></td></tr>
+      <tr><td>便宜價（P/B 0.84x）</td><td>31 元</td><td><span class="badge badge-buy">近三年 P10</span></td></tr>
+      <tr><td>合理價（P/B 1.16x）</td><td>43 元</td><td><span class="badge badge-watch">略高於中位 1.09x</span></td></tr>
+      <tr><td>昂貴價（P/B 3.05x）</td><td>113 元</td><td><span class="badge badge-avoid">近三年 P75</span></td></tr>
+      <tr><td>近三年 P/B 區間</td><td>0.78 – 6.34x（中位 1.09）</td><td><span class="badge badge-avoid">雙峰分布，中段無樣本</span></td></tr>
+      <tr><td>連續虧損紀錄</td><td>2023Q3 – 2025Q4，共 10 季</td><td><span class="badge badge-avoid">EPS 不可當估值錨</span></td></tr>
+      <tr><td>TTM EPS（26Q3）</td><td>10.18 元（單季 5.52）</td><td><span class="badge badge-watch">剛轉正，持續性待驗證</span></td></tr>
+      <tr><td>26Q3 毛利率</td><td style="color:#22c55e;font-weight:700;">70.5%</td><td><span class="badge badge-watch">25Q3 僅 13.5%，波動極大</span></td></tr>
+      <tr><td>近一年報酬</td><td style="color:#ef4444;font-weight:700;">+115.0%</td><td><span class="badge badge-watch">近一月 −36.6%，回落劇烈</span></td></tr>
+      <tr><td>法人目標價（FactSet 中位）</td><td style="color:#3b82f6;font-weight:700;">183 元</td><td><span class="badge badge-avoid">相當於 P/B 4.94x，高於近三年 P90</span></td></tr>
+      <tr><td>配息</td><td>無（連年虧損期間未配發）</td><td><span class="badge badge-avoid">無殖利率保護</span></td></tr>
+    </tbody>
+  </table>
+
+  <div class="section-title" style="margin-top:20px;">📈 淨值 vs EPS 的對照</div>
+  <div class="card" style="margin-top:0;">
+    <div style="font-size:12px;line-height:2;color:#cbd5e1;">
+      <span style="color:#64748b;">23Q4</span>　EPS −0.55 元　BVPS 26.07　<span style="color:#64748b;">庫存去化、報價崩跌</span><br>
+      <span style="color:#64748b;">24Q4</span>　EPS −0.83 元　BVPS 23.72　<span style="color:#64748b;">毛利率 13.2%，虧損最深</span><br>
+      <span style="color:#64748b;">25Q3</span>　EPS −0.47 元　BVPS 22.88　<span style="color:#64748b;">淨值谷底，股價曾跌破淨值（P/B 0.78x）</span><br>
+      <span style="color:#64748b;">25Q4</span>　EPS −0.15 元　BVPS 24.69　<span style="color:#64748b;">報價開始反彈，接近損平</span><br>
+      <span style="color:#22c55e;font-weight:700;">26Q1</span>　EPS +0.90 元　BVPS 26.25　<span style="color:#64748b;">終結連 10 季虧損，毛利率跳至 40.8%</span><br>
+      <span style="color:#22c55e;font-weight:700;">26Q2</span>　EPS +3.91 元　BVPS 31.29　<span style="color:#64748b;">毛利率 64.4%</span><br>
+      <span style="color:#22c55e;font-weight:700;">26Q3</span>　EPS +5.52 元　BVPS 37.04　<span style="color:#64748b;">三年內 EPS 由 −0.55 到 +5.52，淨值只從 26.1 到 37.0 → 這就是該用淨值當錨的理由</span>
+    </div>
+  </div>
+
+  <div class="section-title" style="margin-top:20px;">⚡ 催化劑 vs 風險</div>
+  <div class="grid2">
+    <div class="card">
+      <h3>🚀 利多</h3>
+      <div style="font-size:12px;line-height:1.9;color:#86efac;">
+        ✓ MLC NAND 結構缺口：大廠轉產 HBM，MLC 產能大幅縮減<br>
+        ✓ 毛利率由 13.5% 升至 70.5%，營業利益率 53.4%<br>
+        ✓ 26Q3 單季營收 242.4 億，年增 +195%<br>
+        ✓ NOR 轉單：中國同業亦減產 NOR<br>
+        ✓ ROE 59.7%，淨值每季墊高（帶會自動上移）<br>
+        ✓ AI 邊緣裝置需要 NOR Flash 儲存模型
+      </div>
+    </div>
+    <div class="card">
+      <h3>⚠️ 風險</h3>
+      <div style="font-size:12px;line-height:1.9;color:#fca5a5;">
+        ✗ 現價 P/B 2.05x 已遠高於近三年中位 1.09x<br>
+        ✗ 連虧 10 季的紀錄顯示底部可以非常深、非常久<br>
+        ✗ 客戶加速導入 TLC 取代 MLC<br>
+        ✗ 記憶體報價若反轉，淨值成長停滯、帶不再上移<br>
+        ✗ 法人目標價 183 元隱含 P/B 4.94x，缺乏歷史支撐<br>
+        ✗ 無配息，沒有殖利率保護
+      </div>
+    </div>
+  </div>
+  <p style="font-size:10px;color:#475569;margin-top:14px;line-height:1.6;">⚠️ 本分析僅供參考，不構成投資建議。股市有風險，投資前請自行判斷。</p>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <script>
+const BVPS = 37.04;
+const M_CHEAP = 0.84, M_FAIR = 1.16, M_EXP = 3.05;
+const P_CHEAP = 31, P_FAIR = 43, P_EXP = 113;
+const TTM_EPS = 10.18;
+
+const MON = [
+  { m:'23M12', close:31.35, bvps:26.43, q:'23-09', pb:1.19 },
+  { m:'24M01', close:29.2, bvps:26.43, q:'23-09', pb:1.1 },
+  { m:'24M02', close:28.45, bvps:26.43, q:'23-09', pb:1.08 },
+  { m:'24M03', close:26.7, bvps:26.07, q:'23-12', pb:1.02 },
+  { m:'24M04', close:27.6, bvps:26.07, q:'23-12', pb:1.06 },
+  { m:'24M05', close:27.15, bvps:25.79, q:'24-03', pb:1.05 },
+  { m:'24M06', close:26.05, bvps:25.79, q:'24-03', pb:1.01 },
+  { m:'24M07', close:29.4, bvps:25.79, q:'24-03', pb:1.14 },
+  { m:'24M08', close:27.7, bvps:24.89, q:'24-06', pb:1.11 },
+  { m:'24M09', close:26.8, bvps:24.89, q:'24-06', pb:1.08 },
+  { m:'24M10', close:24.15, bvps:24.89, q:'24-06', pb:0.97 },
+  { m:'24M11', close:20.95, bvps:24.59, q:'24-09', pb:0.85 },
+  { m:'24M12', close:19.8, bvps:24.59, q:'24-09', pb:0.81 },
+  { m:'25M01', close:19.2, bvps:24.59, q:'24-09', pb:0.78 },
+  { m:'25M02', close:22, bvps:24.59, q:'24-09', pb:0.89 },
+  { m:'25M03', close:20.7, bvps:23.72, q:'24-12', pb:0.87 },
+  { m:'25M04', close:19.85, bvps:23.72, q:'24-12', pb:0.84 },
+  { m:'25M05', close:21.55, bvps:23.69, q:'25-03', pb:0.91 },
+  { m:'25M06', close:21.25, bvps:23.69, q:'25-03', pb:0.9 },
+  { m:'25M07', close:18.95, bvps:23.69, q:'25-03', pb:0.8 },
+  { m:'25M08', close:20.1, bvps:22.91, q:'25-06', pb:0.88 },
+  { m:'25M09', close:25.05, bvps:22.91, q:'25-06', pb:1.09 },
+  { m:'25M10', close:31.2, bvps:22.91, q:'25-06', pb:1.36 },
+  { m:'25M11', close:34.1, bvps:22.88, q:'25-09', pb:1.49 },
+  { m:'25M12', close:39.45, bvps:22.88, q:'25-09', pb:1.72 },
+  { m:'26M01', close:92.8, bvps:22.88, q:'25-09', pb:4.06 },
+  { m:'26M02', close:110, bvps:22.88, q:'25-09', pb:4.81 },
+  { m:'26M03', close:115.5, bvps:24.69, q:'25-12', pb:4.68 },
+  { m:'26M04', close:154, bvps:24.69, q:'25-12', pb:6.24 },
+  { m:'26M05', close:166.5, bvps:26.25, q:'26-03', pb:6.34 },
+  { m:'26M06', close:155.5, bvps:26.25, q:'26-03', pb:5.92 },
+  { m:'26M07', close:100.5, bvps:26.25, q:'26-03', pb:3.83 },
+  { m:'26M08', close:126, bvps:31.29, q:'26-06', pb:4.03 },
+  { m:'26M09', close:122.5, bvps:31.29, q:'26-06', pb:3.91 },
+  { m:'26M10', close:95.4, bvps:31.29, q:'26-06', pb:3.05 },
+  { m:'26M11', close:75.8, bvps:37.04, q:'26-09', pb:2.05 },
+];
+const QTR = [
+  { date:'2022-12-31', eps:0.33, rev:9077926000, gm:34.12, bvps:28.38 },
+  { date:'2023-03-31', eps:-0.19, rev:7103843000, gm:25.14, bvps:28.38 },
+  { date:'2023-06-30', eps:0.04, rev:7428887000, gm:28.3, bvps:26.7 },
+  { date:'2023-09-30', eps:-0.22, rev:7283103000, gm:24.18, bvps:26.43 },
+  { date:'2023-12-31', eps:-0.55, rev:5807775000, gm:19.13, bvps:26.07 },
+  { date:'2024-03-31', eps:-0.58, rev:5760461000, gm:19.83, bvps:25.79 },
+  { date:'2024-06-30', eps:-0.15, rev:6455575000, gm:29.98, bvps:24.89 },
+  { date:'2024-09-30', eps:-0.16, rev:7754539000, gm:28.94, bvps:24.59 },
+  { date:'2024-12-31', eps:-0.83, rev:5912900000, gm:13.15, bvps:23.72 },
+  { date:'2025-03-31', eps:-0.47, rev:6137377000, gm:17.7, bvps:23.69 },
+  { date:'2025-06-30', eps:-0.69, rev:6799341000, gm:15.65, bvps:22.91 },
+  { date:'2025-09-30', eps:-0.47, rev:8214162000, gm:13.54, bvps:22.88 },
+  { date:'2025-12-31', eps:-0.15, rev:7729106000, gm:24.17, bvps:24.69 },
+  { date:'2026-03-31', eps:0.9, rev:10468868000, gm:40.8, bvps:26.25 },
+  { date:'2026-06-30', eps:3.91, rev:19124524000, gm:64.42, bvps:31.29 },
+  { date:'2026-09-30', eps:5.52, rev:24237272000, gm:70.49, bvps:37.04 },
+];
+
 function switchTab(id, btn) {
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
   document.getElementById('tab-' + id).classList.add('active');
   btn.classList.add('active');
-  if (id === 'eps' && !window.epsDrawn) drawEPS();
+  if (id === 'book' && !window.bookDrawn) drawBook();
 }
 
-const quarters = ['25Q1','25Q2','25Q3','25Q4','26Q1','26Q2','26Q3E','26Q4E'];
-const fwdEPS   = [13.63, 13.63, 13.63, 13.63, 13.63, 13.63, 13.63, 13.63];
-const closePx  = [20.0, 22.5, 20.8, 28.4, 169, 155.5, 116.5, null];
-
-function makeBand(arr, mult) { return arr.map(e => +(e * mult).toFixed(1)); }
-
-
-async function updateFundamentalPE_2337() {
-  try {
-    const res = await fetch('https://taiwan-stock-price.david870114.workers.dev/?id=2337', { cache: 'no-cache' });
-    const data = JSON.parse(await res.text());
-    const price = parseFloat(data.price);
-    if (price && !isNaN(price)) {
-      const ttm = 13.63;
-      const pe = (price / ttm).toFixed(1);
-      const el = document.getElementById('fund-pe-2337');
-      const noteEl = document.getElementById('fund-pe-note-2337');
-      if (el) {
-        el.textContent = pe + 'x';
-        el.style.color = pe > 40 ? '#ef4444' : pe > 25 ? '#eab308' : '#22c55e';
-      }
-      if (noteEl) noteEl.textContent = '股價 ' + price.toLocaleString() + ' ｜ TTM EPS 13.63';
-    }
-  } catch(e) {}
-}
-window.addEventListener('load', updateFundamentalPE_2337);
+const labels = MON.map(d => d.m);
+const band = m => MON.map(d => Math.round(d.bvps * m * 10) / 10);
 
 window.addEventListener('load', () => {
   setTimeout(() => {
-    const ctx = document.getElementById('riverChart').getContext('2d');
-    new Chart(ctx, {
+    new Chart(document.getElementById('riverChart').getContext('2d'), {
       type: 'line',
       data: {
-        labels: quarters,
+        labels,
         datasets: [
-          { label: '前瞻PER 20x', data: makeBand(fwdEPS,20), borderColor:'#ef4444', backgroundColor:'rgba(239,68,68,0.04)', borderWidth:1, borderDash:[5,4], pointRadius:0, fill:false },
-          { label: '前瞻PER 16x（昂貴）', data: makeBand(fwdEPS,16), borderColor:'#f97316', backgroundColor:'rgba(249,115,22,0.06)', borderWidth:1.5, pointRadius:0, fill:'-1' },
-          { label: '前瞻PER 12x（合理）', data: makeBand(fwdEPS,12), borderColor:'#eab308', backgroundColor:'rgba(234,179,8,0.07)', borderWidth:1.5, pointRadius:0, fill:'-1' },
-          { label: '前瞻PER 8x（便宜）',  data: makeBand(fwdEPS, 8), borderColor:'#22c55e', backgroundColor:'rgba(34,197,94,0.07)', borderWidth:1.5, pointRadius:0, fill:'-1' },
-          { label: '前瞻PER 4x（底部）',  data: makeBand(fwdEPS, 4), borderColor:'#3b82f6', backgroundColor:'rgba(59,130,246,0.04)', borderWidth:1, borderDash:[5,4], pointRadius:0, fill:'-1' },
-          { label: '實際/目前股價', data: closePx, borderColor:'#ffffff', borderWidth:2.5, pointRadius:3, pointBackgroundColor:'#fff', fill:false, tension:0.3, spanGaps:true },
+          { label: 'P/B 5.0x', data: band(5.0), borderColor:'#ef4444', borderWidth:1, borderDash:[5,4], pointRadius:0, fill:false },
+          { label: 'P/B 3.05x（昂貴 113）', data: band(M_EXP), borderColor:'#eab308', borderWidth:1.5, pointRadius:0, fill:false },
+          { label: 'P/B 2.0x', data: band(2.0), borderColor:'#f97316', borderWidth:1, borderDash:[5,4], pointRadius:0, fill:false },
+          { label: 'P/B 1.16x（合理 43）', data: band(M_FAIR), borderColor:'#22c55e', borderWidth:1.5, pointRadius:0, fill:false },
+          { label: 'P/B 0.84x（便宜 31）', data: band(M_CHEAP), borderColor:'#3b82f6', borderWidth:1.5, pointRadius:0, fill:false },
+          { label: '月收盤價', data: MON.map(d=>d.close), borderColor:'#ffffff', borderWidth:2.5, pointRadius:2, pointBackgroundColor:'#fff', fill:false, tension:0.3, spanGaps:true },
         ]
       },
       options: {
         responsive:true, interaction:{ mode:'index', intersect:false },
         plugins: {
           legend:{ labels:{ color:'#94a3b8', font:{size:11}, boxWidth:18 } },
-          tooltip:{ backgroundColor:'#1e2535', titleColor:'#f8fafc', bodyColor:'#94a3b8', borderColor:'#334155', borderWidth:1 }
+          tooltip:{
+            backgroundColor:'#1e2535', titleColor:'#f8fafc', bodyColor:'#94a3b8', borderColor:'#334155', borderWidth:1,
+            callbacks: { afterBody: items => {
+              const d = MON[items[0].dataIndex];
+              return 'P/B ' + d.pb + 'x　淨值 ' + d.bvps + '（' + d.q + ' 財報）';
+            } }
+          }
         },
         scales: {
           x:{ ticks:{ color:'#64748b', font:{size:10}, maxRotation:45 }, grid:{ color:'rgba(30,37,53,0.8)' } },
@@ -436,59 +451,115 @@ window.addEventListener('load', () => {
         }
       }
     });
+
+    const tbody = document.getElementById('detailTbody');
+    [...MON].reverse().forEach(d => {
+      const tr = document.createElement('tr');
+      if (['03','06','09','12'].includes(d.m.slice(-2))) tr.className = 'qend';
+      const col = d.pb <= M_CHEAP ? '#22c55e' : d.pb >= M_EXP ? '#ef4444' : '#eab308';
+      tr.innerHTML = '<td>'+d.m+'</td><td>'+d.close+'</td><td>'+d.bvps+'</td><td style="color:#64748b">'+d.q+'</td>'+
+        '<td style="color:'+col+';font-weight:700">'+d.pb+'x</td>'+
+        '<td>'+(d.bvps*M_CHEAP).toFixed(1)+'</td><td>'+(d.bvps*M_FAIR).toFixed(1)+'</td><td>'+(d.bvps*M_EXP).toFixed(1)+'</td>';
+      tbody.appendChild(tr);
+    });
+
+    const byYear = {};
+    for (const q of QTR) {
+      const y = q.date.slice(0, 4);
+      (byYear[y] = byYear[y] || []).push(q);
+    }
+    const years = Object.keys(byYear).sort();
+    const atb = document.querySelector('#annualTable tbody');
+    const sum = (a, k) => a.reduce((s, x) => s + (x[k] || 0), 0);
+    years.forEach((y, i) => {
+      const qs = byYear[y];
+      if (qs.length < 4 && i < years.length - 1) return;
+      const prev = byYear[String(+y - 1)];
+      const rev = sum(qs, 'rev'), eps = sum(qs, 'eps');
+      const gp = qs.reduce((s, x) => s + (x.gm != null && x.rev ? x.gm / 100 * x.rev : 0), 0);
+      let yoy = '—';
+      if (prev && prev.length >= qs.length) {
+        const pr = sum(prev.slice(0, qs.length), 'rev');   // 累計年度要比去年同樣季數，否則 YoY 失真
+        if (pr > 0) yoy = (rev / pr - 1) * 100;
+      }
+      const tr = document.createElement('tr');
+      const tag = qs.length === 4 ? y + ' 全年' : y + ' 累計 Q1–Q' + qs.length;
+      tr.innerHTML = '<td>' + (qs.length === 4 ? tag : '<strong>' + tag + '</strong>') + '</td>' +
+        '<td>' + (rev / 1e8).toFixed(1) + '</td>' +
+        '<td style="color:' + (yoy === '—' ? '#64748b' : yoy >= 0 ? '#ef4444' : '#22c55e') + '">' +
+          (yoy === '—' ? '—' : (yoy >= 0 ? '+' : '') + yoy.toFixed(0) + '%') + '</td>' +
+        '<td>' + (rev > 0 ? (gp / rev * 100).toFixed(1) + '%' : '—') + '</td>' +
+        '<td style="color:' + (eps >= 0 ? '#22c55e' : '#ef4444') + '">' + eps.toFixed(2) + '</td>' +
+        '<td>' + (qs[qs.length - 1].bvps ?? '—') + '</td>';
+      atb.appendChild(tr);
+    });
   }, 200);
 });
 
-function drawEPS() {
-  window.epsDrawn = true;
-  const ctx2 = document.getElementById('epsChart').getContext('2d');
-  const labels = ['22Q1','22Q2','22Q3','22Q4','23Q1','23Q2','23Q3','23Q4','24Q1','24Q2','24Q3','24Q4','25Q1','25Q2','25Q3','25Q4','26Q1','26Q2','26E'];
-  const eps    = [3.67, 2.64, 1.59, 0.67, -0.22, -0.03, -0.22, -0.54, -0.58, -0.15, -0.16, -0.84, -0.47, -0.69, -0.47, -0.16, 0.9, 3.91, 13.63];
-  new Chart(ctx2, {
-    type: 'bar',
+function drawBook() {
+  window.bookDrawn = true;
+  new Chart(document.getElementById('bookChart').getContext('2d'), {
     data: {
-      labels,
-      datasets: [{
-        label: '單季 EPS（元）',
-        data: eps,
-        backgroundColor: eps.map((v,i) => i===labels.length-1 ? 'rgba(59,130,246,0.7)' : v>=0 ? 'rgba(34,197,94,0.7)' : 'rgba(239,68,68,0.7)'),
-        borderColor:      eps.map((v,i) => i===labels.length-1 ? '#3b82f6' : v>=0 ? '#22c55e' : '#ef4444'),
-        borderWidth:1.5, borderRadius:4
-      }]
+      labels: QTR.map(q => q.date.slice(2, 7)),
+      datasets: [
+        { type:'bar', label:'每股淨值 BVPS（元，左軸）', data: QTR.map(q => q.bvps),
+          backgroundColor:'rgba(59,130,246,0.55)', borderColor:'#3b82f6', borderWidth:1.5, borderRadius:5, yAxisID:'y' },
+        { type:'line', label:'單季 EPS（元，右軸）', data: QTR.map(q => q.eps),
+          borderColor:'#22c55e', backgroundColor:'#22c55e', borderWidth:2.5, pointRadius:3, tension:0.25, yAxisID:'y1' },
+      ]
     },
     options: {
-      responsive:true,
-      plugins:{
-        legend:{ labels:{ color:'#94a3b8' } },
-        tooltip:{ backgroundColor:'#1e2535', bodyColor:'#94a3b8' }
-      },
-      scales:{
-        x:{ ticks:{ color:'#64748b', font:{size:10}, maxRotation:45 }, grid:{ color:'rgba(30,37,53,0.8)' } },
-        y:{ ticks:{ color:'#64748b', callback: v => v+'元' }, grid:{ color:'rgba(30,37,53,0.8)' } }
+      responsive:true, interaction:{ mode:'index', intersect:false },
+      plugins:{ legend:{ labels:{ color:'#94a3b8', font:{size:11} } },
+                tooltip:{ backgroundColor:'#1e2535', titleColor:'#f8fafc', bodyColor:'#94a3b8', borderColor:'#334155', borderWidth:1 } },
+      scales: {
+        x:{ ticks:{ color:'#64748b', maxRotation:45 }, grid:{ color:'rgba(30,37,53,0.8)' } },
+        y:{ position:'left', ticks:{ color:'#60a5fa', callback: v => v + '元' }, grid:{ color:'rgba(30,37,53,0.8)' } },
+        y1:{ position:'right', ticks:{ color:'#4ade80', callback: v => v + '元' }, grid:{ drawOnChartArea:false } }
       }
     }
   });
 }
 
-async function updateLivePrice_2337() {
+async function updateLive() {
+  let price = null;
   try {
     const res = await fetch('https://taiwan-stock-price.david870114.workers.dev/?id=2337', { cache: 'no-cache' });
-    const data = JSON.parse(await res.text());
-    const price = parseFloat(data.price);
-    if (price && !isNaN(price)) {
-      const el = document.getElementById('live-price');
-      if (el) el.textContent = price.toLocaleString();
-      const pe = (price / 13.63).toFixed(1);
-      const perEl = document.getElementById('live-per');
-      if (perEl) {
-        perEl.textContent = 'PER ≈ ' + pe + 'x（TTM EPS 13.63元）';
-        perEl.style.color = pe > 40 ? '#ef4444' : pe > 25 ? '#eab308' : '#22c55e';
-      }
-    }
-  } catch(e) {}
-}
+    const d = JSON.parse(await res.text());
+    const p = parseFloat(d.price);
+    if (p && !isNaN(p)) price = p;
+  } catch (e) {}
+  if (price === null) price = MON[MON.length - 1].close;
 
-window.addEventListener('load', updateLivePrice_2337);
+  const pb = price / BVPS;
+  const stage = pb <= M_CHEAP ? ['便宜', '#22c55e'] : pb <= M_FAIR ? ['合理', '#4ade80']
+              : pb <= M_EXP  ? ['合理偏高', '#eab308'] : ['昂貴', '#ef4444'];
+  const set = (id, txt, color) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.textContent = txt;
+    if (color) el.style.color = color;
+  };
+  set('live-price', price.toLocaleString());
+  set('live-pb', 'P/B ' + pb.toFixed(2) + 'x（' + stage[0] + '）｜淨值 ' + BVPS, stage[1]);
+  set('sc-pb', pb.toFixed(2) + 'x', stage[1]);
+  set('fund-pb', pb.toFixed(2) + 'x', stage[1]);
+  set('fund-pb-note', '股價 ' + price.toLocaleString() + ' ÷ BVPS ' + BVPS + ' → ' + stage[0]);
+  set('fund-pe', (price / TTM_EPS).toFixed(1) + 'x');
+  set('fund-tp', '相當於 P/B 4.94x｜距現價 ' + ((183 / price - 1) * 100).toFixed(0) + '%');
+
+  const note = document.getElementById('buy-now-note');
+  if (note) {
+    const zone = price < P_CHEAP ? '已低於便宜價，可從第一批開始布局'
+      : price < P_FAIR ? '落在第一批區間（P/B 0.84–1.16x），歷史上的買點區'
+      : price < 58 ? '落在第二批區間（P/B 1.16–1.57x）'
+      : price < 74 ? '落在第三批區間（P/B 1.57–2.0x），僅適合小量動能追加'
+      : price < P_EXP ? '高於第三批上緣，建議等回落至 74 元以下'
+      : '已站上昂貴價 ' + P_EXP + '，應分批減碼';
+    note.textContent = '💡 目前股價 ' + price.toLocaleString() + ' 元（P/B ' + pb.toFixed(2) + 'x）' + zone + '。';
+  }
+}
+window.addEventListener('load', updateLive);
 </script>
 </body>
 </html>
